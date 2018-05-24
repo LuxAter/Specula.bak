@@ -6,3 +6,4 @@ build/*
 specula
 unit-test
 .gdb_history
+tmp*

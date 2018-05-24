@@ -88,7 +88,7 @@ void specula::image::Image::Grad(double r1, double g1, double b1, double r2,
   }
 }
 
-bool specula::image::Image::WriteBitmap(std::string file) {
+bool specula::image::Image::WriteBitmap(std::string file_name) {
   char padding_data[4] = {0x00, 0x00, 0x00, 0x00};
   unsigned padding = (4 - ((width_ * 3) % 4)) % 4;
   std::vector<unsigned char> byte_data = GetByteImg(BGR);
@@ -114,7 +114,7 @@ bool specula::image::Image::WriteBitmap(std::string file) {
   unsigned short h_reserved2 = 0;
   unsigned h_off_bits = header_size + info_size;
 
-  std::ofstream out(file.c_str(), std::ios::binary);
+  std::ofstream out(file_name.c_str(), std::ios::binary);
   if (out.is_open()) {
     out.write(reinterpret_cast<const char*>(&h_type), sizeof(unsigned short));
     out.write(reinterpret_cast<const char*>(&h_size), sizeof(unsigned));
@@ -167,7 +167,6 @@ bool specula::image::Image::WritePng(std::string file_name) {
   if (setjmp(png_jmpbuf(png))) {
     return false;
   }
-  // std::vector<unsigned char> pixel_data = GetByteImg(BGR);
   unsigned char** byte_data = (png_bytepp)malloc(height_ * sizeof(png_bytep));
   for (unsigned i = 0; i < height_; i++) {
     byte_data[i] = (png_bytep)malloc(6 * width_ * sizeof(png_byte));

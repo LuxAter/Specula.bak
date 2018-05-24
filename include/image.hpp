@@ -30,8 +30,8 @@ namespace image {
 
     void Grad(double r1, double g1, double b1, double r2, double g2, double b2);
 
-    bool WriteBitmap(std::string file);
-    bool WritePng(std::string file);
+    bool WriteBitmap(std::string file_name);
+    bool WritePng(std::string file_name);
 
     std::vector<float> Data();
 

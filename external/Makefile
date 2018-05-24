@@ -7,10 +7,10 @@ define print
 printf "%b%s%b\n" "$(2)" "$(1)" "$(NO_COLOR)"
 endef
 
-all: gtest libpng
+all: gtest libpng 
 
 .PHONY : clean
-clean: gtest_clean libpng_clean
+clean: gtest_clean libpng_clean 
 
 GTEST_ALL = $(BASE_PATH)/$(BUILD_DIR)/gtest/gtest-all.o
 GTEST_MAIN = $(BASE_PATH)/$(BUILD_DIR)/gtest/gtests_main.o
