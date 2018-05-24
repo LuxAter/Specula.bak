@@ -1,9 +1,6 @@
 SHELL = /bin/bash
 
 export NAME= specula
-export LINK= -lpthread -lOpenCL
-export INCLUDE=
-export TYPE= TYPE(lib/exe)
 
 export SOURCE_DIR= src
 export TEST_DIR= test
@@ -13,11 +10,15 @@ export INCLUDE_DIR= include
 export DOC_DIR= docs
 
 export BASE_PATH=$(shell pwd)
+export INSTALL_PATH=/usr/local
 
 export COMPILER=clang++
 export CXXFLAGS= -MMD -std=c++17 -w -c
 
-export INSTALL_PATH=/usr/local
+export LINK= -L$(BASE_PATH)$(BUILD_DIR)/libpng/lib -lpthread -lOpenCL -lpng
+export INCLUDE=
+export TYPE= TYPE(lib/exe)
+
 
 # export GCOV_LINK = --coverage
 # export GCOV_FLAG = -fprofile-arcs -ftest-coverage
@@ -61,6 +62,9 @@ all: external source test
 
 .PHONY : clean
 clean: clean-source clean-test
+
+.PHONY : clean-all
+clean-all: clean-external clean-source clean-test
 
 .PHONY : install
 install: source root-access install-source

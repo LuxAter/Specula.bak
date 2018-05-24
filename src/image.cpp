@@ -1,8 +1,12 @@
 #include "image.hpp"
 
+#include <math.h>
+
 #include <fstream>
 #include <string>
 #include <vector>
+
+#include <png.h>
 
 #include <iostream>
 
@@ -144,6 +148,59 @@ bool specula::image::Image::WriteBitmap(std::string file) {
     return true;
   }
   return false;
+}
+
+bool specula::image::Image::WritePng(std::string file_name) {
+  FILE* file = fopen(file_name.c_str(), "wb");
+  if (!file) {
+    return false;
+  }
+  png_structp png =
+      png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+  if (!png) {
+    return false;
+  }
+  png_infop info = png_create_info_struct(png);
+  if (!info) {
+    return false;
+  }
+  if (setjmp(png_jmpbuf(png))) {
+    return false;
+  }
+  // std::vector<unsigned char> pixel_data = GetByteImg(BGR);
+  unsigned char** byte_data = (png_bytepp)malloc(height_ * sizeof(png_bytep));
+  for (unsigned i = 0; i < height_; i++) {
+    byte_data[i] = (png_bytep)malloc(6 * width_ * sizeof(png_byte));
+  }
+  for (unsigned x = 0; x < width_; ++x) {
+    for (unsigned y = 0; y < height_; ++y) {
+      unsigned id = 6 * x;
+      unsigned pixel = (x + (y * width_)) * 3;
+      unsigned r = (pixel_data_[pixel] * 65535 + 0.5);
+      unsigned g = (pixel_data_[pixel + 1] * 65535 + 0.5);
+      unsigned b = (pixel_data_[pixel + 2] * 65535 + 0.5);
+      byte_data[y][id] =
+          static_cast<char>(std::floor(static_cast<double>(r) / 256.0));
+      byte_data[y][id + 1] = static_cast<char>(r % 256);
+      byte_data[y][id + 2] =
+          static_cast<char>(std::floor(static_cast<double>(g) / 256.0));
+      byte_data[y][id + 3] = static_cast<char>(g % 256);
+      byte_data[y][id + 4] =
+          static_cast<char>(std::floor(static_cast<double>(b) / 256.0));
+      byte_data[y][id + 5] = static_cast<char>(b % 256);
+    }
+  }
+  png_init_io(png, file);
+  png_set_IHDR(png, info, width_, height_, 16, PNG_COLOR_TYPE_RGB,
+               PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_DEFAULT,
+               PNG_FILTER_TYPE_DEFAULT);
+  png_write_info(png, info);
+  png_write_image(png, byte_data);
+  png_write_end(png, NULL);
+  png_free_data(png, info, PNG_FREE_ALL, -1);
+  png_destroy_write_struct(&png, (png_infopp)NULL);
+  fclose(file);
+  return true;
 }
 
 std::vector<float> specula::image::Image::Data() { return pixel_data_; }

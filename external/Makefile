@@ -7,10 +7,10 @@ define print
 printf "%b%s%b\n" "$(2)" "$(1)" "$(NO_COLOR)"
 endef
 
-all: gtest
+all: gtest libpng
 
 .PHONY : clean
-clean: gtest_clean
+clean: gtest_clean libpng_clean
 
 GTEST_ALL = $(BASE_PATH)/$(BUILD_DIR)/gtest/gtest-all.o
 GTEST_MAIN = $(BASE_PATH)/$(BUILD_DIR)/gtest/gtests_main.o
@@ -48,3 +48,14 @@ $(GTEST_MAIN):
 	mkdir -p $(@D)
 	$(call print,Building $@,$(COMPILE_COLOR))
 	$(COMPILER) -isystem $(GTEST_DIR)/include -I$(GTEST_DIR) -pthread -c $(GTEST_DIR)/src/gtest_main.cc -o $@
+
+.PHONY : libpng 
+libpng:
+	if [ ! -f "./libpng/configure" ]; then cd libpng && ./autogen.sh; fi
+	if [ ! -f "./libpng/Makefile" ]; then cd libpng && ./configure --prefix=$(BASE_PATH)/$(BUILD_DIR)/libpng; fi
+	cd libpng && $(MAKE)
+	cd libpng && $(MAKE) install
+
+.PHONY : libpng_clean
+libpng_clean:
+	cd libpng && $(MAKE) clean

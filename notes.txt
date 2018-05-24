@@ -1,11 +1,11 @@
   Image
-    RGB data
+  X RGB data
     Load
       PNG
       JPEG
       BMP
     Save
-      PNG
+    X PNG
       JPEG
     X BMP
   Object
