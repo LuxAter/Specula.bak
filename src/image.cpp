@@ -10,17 +10,17 @@
 
 #include <iostream>
 
-specula::image::Image::Image() {}
+specula::Image::Image() {}
 
-specula::image::Image::Image(unsigned px_w, unsigned px_h)
+specula::Image::Image(unsigned px_w, unsigned px_h)
     : width_(px_w),
       height_(px_h),
       size_(px_h * px_w),
       pixel_data_((px_w * px_h) * 3) {}
 
-specula::image::Image::~Image() {}
+specula::Image::~Image() {}
 
-void specula::image::Image::SetPixel(unsigned x, unsigned y, int red, int green,
+void specula::Image::SetPixel(unsigned x, unsigned y, int red, int green,
                                      int blue) {
   unsigned pixel = (y * width_) + x;
   if (pixel < size_) {
@@ -31,7 +31,7 @@ void specula::image::Image::SetPixel(unsigned x, unsigned y, int red, int green,
   }
 }
 
-void specula::image::Image::SetPixel(unsigned x, unsigned y, float red,
+void specula::Image::SetPixel(unsigned x, unsigned y, float red,
                                      float green, float blue) {
   unsigned pixel = (y * width_) + x;
   if (pixel < size_) {
@@ -42,7 +42,7 @@ void specula::image::Image::SetPixel(unsigned x, unsigned y, float red,
   }
 }
 
-void specula::image::Image::SetPixel(unsigned x, unsigned y, double red,
+void specula::Image::SetPixel(unsigned x, unsigned y, double red,
                                      double green, double blue) {
   unsigned pixel = (y * width_) + x;
   if (pixel < size_) {
@@ -53,7 +53,7 @@ void specula::image::Image::SetPixel(unsigned x, unsigned y, double red,
   }
 }
 
-void specula::image::Image::Fill(int red, int green, int blue) {
+void specula::Image::Fill(int red, int green, int blue) {
   float fred = (red / 256.0), fgreen = (green / 256.0), fblue = (blue / 256.0);
   for (unsigned x = 0; x < width_; ++x) {
     for (unsigned y = 0; y < height_; ++y) {
@@ -61,14 +61,14 @@ void specula::image::Image::Fill(int red, int green, int blue) {
     }
   }
 }
-void specula::image::Image::Fill(float red, float green, float blue) {
+void specula::Image::Fill(float red, float green, float blue) {
   for (unsigned x = 0; x < width_; ++x) {
     for (unsigned y = 0; y < height_; ++y) {
       SetPixel(x, y, red, green, blue);
     }
   }
 }
-void specula::image::Image::Fill(double red, double green, double blue) {
+void specula::Image::Fill(double red, double green, double blue) {
   for (unsigned x = 0; x < width_; ++x) {
     for (unsigned y = 0; y < height_; ++y) {
       SetPixel(x, y, red, green, blue);
@@ -76,7 +76,7 @@ void specula::image::Image::Fill(double red, double green, double blue) {
   }
 }
 
-void specula::image::Image::Grad(double r1, double g1, double b1, double r2,
+void specula::Image::Grad(double r1, double g1, double b1, double r2,
                                  double g2, double b2) {
   for (unsigned x = 0; x < width_; ++x) {
     for (unsigned y = 0; y < height_; ++y) {
@@ -88,7 +88,7 @@ void specula::image::Image::Grad(double r1, double g1, double b1, double r2,
   }
 }
 
-bool specula::image::Image::WriteBitmap(std::string file_name) {
+bool specula::Image::WriteBitmap(std::string file_name) {
   char padding_data[4] = {0x00, 0x00, 0x00, 0x00};
   unsigned padding = (4 - ((width_ * 3) % 4)) % 4;
   std::vector<unsigned char> byte_data = GetByteImg(BGR);
@@ -150,7 +150,7 @@ bool specula::image::Image::WriteBitmap(std::string file_name) {
   return false;
 }
 
-bool specula::image::Image::WritePng(std::string file_name) {
+bool specula::Image::WritePng(std::string file_name) {
   FILE* file = fopen(file_name.c_str(), "wb");
   if (!file) {
     return false;
@@ -202,9 +202,9 @@ bool specula::image::Image::WritePng(std::string file_name) {
   return true;
 }
 
-std::vector<float> specula::image::Image::Data() { return pixel_data_; }
+std::vector<float> specula::Image::Data() { return pixel_data_; }
 
-std::vector<unsigned char> specula::image::Image::GetByteImg(ByteOrder order) {
+std::vector<unsigned char> specula::Image::GetByteImg(ByteOrder order) {
   std::vector<unsigned char> byte_data(3 * size_);
   for (unsigned x = 0; x < width_; ++x) {
     for (unsigned y = 0; y < height_; ++y) {
