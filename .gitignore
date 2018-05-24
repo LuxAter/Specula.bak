@@ -3,9 +3,6 @@
 *.log
 *.swp
 build/*
-{{Docs}}/html/*
-{{Docs}}/latex/*
-{{Docs}}/xml/*
-Specula
+specula
 unit-test
 .gdb_history
