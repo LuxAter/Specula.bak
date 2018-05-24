@@ -7,7 +7,7 @@
     Save
       PNG
       JPEG
-      BMP
+    X BMP
   Object
     Sphere:Object
     Cube:Object
