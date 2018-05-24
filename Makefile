@@ -17,7 +17,7 @@ export CXXFLAGS= -MMD -std=c++17 -w -c
 
 export LINK_DIRS = -L$(BASE_PATH)/$(BUILD_DIR)/libpng/lib 
 export LINK= $(LINK_DIRS) -lpthread -lOpenCL -lpng -ljpeg
-export INCLUDE= -I$(BASE_PATH)/$(BUILD_DIR)/libpng/include 
+export INCLUDE= -I$(BASE_PATH)/$(EXTERNAL_DIR)/estl/estl -I$(BASE_PATH)/$(BUILD_DIR)/libpng/include
 export TYPE= TYPE(lib/exe)
 
 

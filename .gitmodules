@@ -4,3 +4,6 @@
 [submodule "external/libpng"]
 	path = external/libpng
 	url = https://github.com/glennrp/libpng
+[submodule "external/estl"]
+	path = external/estl
+	url = https://github.com/LuxAtrumStudio/estl
