@@ -53,9 +53,9 @@ $(GTEST_MAIN):
 libpng:
 	if [ ! -f "./libpng/configure" ]; then cd libpng && ./autogen.sh; fi
 	if [ ! -f "./libpng/Makefile" ]; then cd libpng && ./configure --prefix=$(BASE_PATH)/$(BUILD_DIR)/libpng; fi
-	cd libpng && $(MAKE)
-	cd libpng && $(MAKE) install
+	if [ ! -d "$(BASE_PATH)/$(BUILD_DIR)/libpng" ]; then cd libpng && $(MAKE) install; fi
 
 .PHONY : libpng_clean
 libpng_clean:
 	cd libpng && $(MAKE) clean
+	if [ -d "$(BASE_PATH)/$(BUILD_DIR)/libpng" ]; then rm -r $(BASE_PATH)/$(BUILD_DIR)/libpng; fi

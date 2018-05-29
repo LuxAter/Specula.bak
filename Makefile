@@ -12,11 +12,28 @@ export DOC_DIR= docs
 export BASE_PATH=$(shell pwd)
 export INSTALL_PATH=/usr/local
 
+export OPENCL=0
+ifneq ("$(wildcard /usr/lib/x86_64-linux-gnu/libOpenCL.so.1)", "")
+  OPENCL = 1
+else
+  OPENCL = 0
+endif
+
 export COMPILER=clang++
-export CXXFLAGS= -MMD -std=c++17 -w -c
+ifeq ($(OPENCL),1)
+export COMMANDS= -D __OPEN_CL__
+else
+export COMMANDS=
+endif
+export CXXFLAGS= -MMD -std=c++17 -w -c $(COMMANDS)
 
 export LINK_DIRS = -L$(BASE_PATH)/$(BUILD_DIR)/libpng/lib 
-export LINK= $(LINK_DIRS) -lpthread -lOpenCL -lpng -ljpeg
+ifeq ($(OPENCL),1)
+export LINK= $(LINK_DIRS) -lpthread -lpng -lOpenCL
+else
+export LINK= $(LINK_DIRS) -lpthread -lpng
+endif
+
 export INCLUDE= -I$(BASE_PATH)/$(EXTERNAL_DIR)/estl/estl -I$(BASE_PATH)/$(BUILD_DIR)/libpng/include
 export TYPE= TYPE(lib/exe)
 
