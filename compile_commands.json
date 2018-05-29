@@ -1,0 +1,67 @@
+[
+    {
+        "arguments": [
+            "c++",
+            "-c",
+            "-I/home/arden/Programming/cpp/specula/include",
+            "-I/home/arden/Programming/cpp/specula/external/estl/estl",
+            "-I/home/arden/Programming/cpp/specula/build/libpng/include",
+            "-std=c++17",
+            "-w",
+            "-o",
+            "/home/arden/Programming/cpp/specula/build/src/./image.o",
+            "image.cpp"
+        ],
+        "directory": "/home/arden/Programming/cpp/specula/src",
+        "file": "image.cpp"
+    },
+    {
+        "arguments": [
+            "c++",
+            "-c",
+            "-I/home/arden/Programming/cpp/specula/include",
+            "-I/home/arden/Programming/cpp/specula/external/estl/estl",
+            "-I/home/arden/Programming/cpp/specula/build/libpng/include",
+            "-I/home/arden/Programming/cpp/specula/external/googletest/googletest/include",
+            "-std=c++17",
+            "-w",
+            "-o",
+            "/home/arden/Programming/cpp/specula/build/test/./tmp.o",
+            "tmp.cpp"
+        ],
+        "directory": "/home/arden/Programming/cpp/specula/test",
+        "file": "tmp.cpp"
+    },
+    {
+        "arguments": [
+            "c++",
+            "-c",
+            "-I/home/arden/Programming/cpp/specula/include",
+            "-I/home/arden/Programming/cpp/specula/external/estl/estl",
+            "-I/home/arden/Programming/cpp/specula/build/libpng/include",
+            "-std=c++17",
+            "-w",
+            "-o",
+            "/home/arden/Programming/cpp/specula/build/src/./main.o",
+            "main.cpp"
+        ],
+        "directory": "/home/arden/Programming/cpp/specula/src",
+        "file": "main.cpp"
+    },
+    {
+        "arguments": [
+            "c++",
+            "-c",
+            "-I/home/arden/Programming/cpp/specula/include",
+            "-I/home/arden/Programming/cpp/specula/external/estl/estl",
+            "-I/home/arden/Programming/cpp/specula/build/libpng/include",
+            "-std=c++17",
+            "-w",
+            "-o",
+            "/home/arden/Programming/cpp/specula/build/src/./material.o",
+            "material.cpp"
+        ],
+        "directory": "/home/arden/Programming/cpp/specula/src",
+        "file": "material.cpp"
+    }
+]

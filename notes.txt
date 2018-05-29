@@ -1,0 +1,20 @@
+  Image
+  X RGB data
+    Load
+      PNG
+      JPEG
+      BMP
+    Save
+    X PNG
+      JPEG
+    X BMP
+  Object
+    Sphere:Object
+    Cube:Object
+    Plane:Object
+    Rectangle:Object
+    Triangle:Object
+    Polygon:Object
+    Mesh:Object
+  Material
+  Render
