@@ -1,4 +1,4 @@
-#include "sphere.hpp"
+#include "object/sphere.hpp"
 #include "object.hpp"
 
 #include <memory>

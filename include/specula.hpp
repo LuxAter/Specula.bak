@@ -1,0 +1,7 @@
+#include "color.hpp"
+#include "image.hpp"
+#include "material.hpp"
+#include "object.hpp"
+#include "object/circle.hpp"
+#include "object/plane.hpp"
+#include "object/sphere.hpp"

@@ -4,17 +4,18 @@
       PNG
       JPEG
       BMP
-    Save
+  X Save
     X PNG
       JPEG
     X BMP
   Object
-    Sphere:Object
+  X Sphere:Object
+  X Circle:Object
     Cube:Object
-    Plane:Object
+  X Plane:Object
     Rectangle:Object
     Triangle:Object
     Polygon:Object
     Mesh:Object
-  Material
+X Material
   Render

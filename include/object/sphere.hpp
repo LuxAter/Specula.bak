@@ -1,13 +1,13 @@
-#ifndef SPECULA_SPHERE_HPP_
-#define SPECULA_SPHERE_HPP_
+#ifndef SPECULA_OBJECT_SPHERE_HPP_
+#define SPECULA_OBJECT_SPHERE_HPP_
 
 #include <memory>
 
 #include "basic/matrix.hpp"
 #include "basic/vector.hpp"
 
-#include "material.hpp"
-#include "object.hpp"
+#include "../material.hpp"
+#include "../object.hpp"
 
 namespace specula {
   class Sphere : public Object {
@@ -23,4 +23,4 @@ namespace specula {
   };
 } // namespace specula
 
-#endif  // SPECULA_SPHERE_HPP_
+#endif  // SPECULA_OBJECT_SPHERE_HPP_
