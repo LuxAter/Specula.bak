@@ -11,7 +11,9 @@ specula::Material::Material()
       sharpness(60),
       ambient({1.0, 1.0, 1.0}),
       diffuse({1.0, 1.0, 1.0}),
-      specular({1.0, 1.0, 1.0}) {}
+      specular({1.0, 1.0, 1.0}),
+      emisivity(0),
+      emmisive({1.0, 1.0, 1.0}) {}
 
 specula::Material::Material(std::string n, Color am, Color di, Color sp,
                             double se, double tr, double od, int sh)

@@ -6,7 +6,7 @@
 #include "color.hpp"
 
 namespace specula {
-class Material {
+struct Material {
  public:
   Material();
   Material(std::string n, Color am, Color di, Color sp, double se, double tr,
@@ -17,6 +17,9 @@ class Material {
   double transparency, optical_density;
   int illum, sharpness;
   Color ambient, diffuse, specular;
+
+  double emisivity;
+  Color emmisive;
 
  private:
 };

@@ -10,6 +10,8 @@
 
 #include <iostream>
 
+#include "basic/format.hpp"
+
 specula::Image::Image() {}
 
 specula::Image::Image(unsigned px_w, unsigned px_h)
@@ -21,7 +23,7 @@ specula::Image::Image(unsigned px_w, unsigned px_h)
 specula::Image::~Image() {}
 
 void specula::Image::SetPixel(unsigned x, unsigned y, int red, int green,
-                                     int blue) {
+                              int blue) {
   unsigned pixel = (y * width_) + x;
   if (pixel < size_) {
     pixel *= 3;
@@ -31,8 +33,8 @@ void specula::Image::SetPixel(unsigned x, unsigned y, int red, int green,
   }
 }
 
-void specula::Image::SetPixel(unsigned x, unsigned y, float red,
-                                     float green, float blue) {
+void specula::Image::SetPixel(unsigned x, unsigned y, float red, float green,
+                              float blue) {
   unsigned pixel = (y * width_) + x;
   if (pixel < size_) {
     pixel *= 3;
@@ -42,8 +44,8 @@ void specula::Image::SetPixel(unsigned x, unsigned y, float red,
   }
 }
 
-void specula::Image::SetPixel(unsigned x, unsigned y, double red,
-                                     double green, double blue) {
+void specula::Image::SetPixel(unsigned x, unsigned y, double red, double green,
+                              double blue) {
   unsigned pixel = (y * width_) + x;
   if (pixel < size_) {
     pixel *= 3;
@@ -76,8 +78,8 @@ void specula::Image::Fill(double red, double green, double blue) {
   }
 }
 
-void specula::Image::Grad(double r1, double g1, double b1, double r2,
-                                 double g2, double b2) {
+void specula::Image::Grad(double r1, double g1, double b1, double r2, double g2,
+                          double b2) {
   for (unsigned x = 0; x < width_; ++x) {
     for (unsigned y = 0; y < height_; ++y) {
       double a = (double)y / height_;
@@ -200,6 +202,25 @@ bool specula::Image::WritePng(std::string file_name) {
   png_destroy_write_struct(&png, (png_infopp)NULL);
   fclose(file);
   return true;
+}
+
+std::string specula::Image::WriteAnsii(bool thick) {
+  std::string result;
+  std::string character = "\u2588";
+  if (thick) {
+    character += "\u2588";
+  }
+  for (unsigned y = 0; y < height_; ++y) {
+    for (unsigned x = 0; x < width_; ++x) {
+      unsigned pixel = (x + (y * width_)) * 3;
+      result += estl::base::format(
+          "\033[38;2;%d;%d;%dm%s\033[0m", int(255 * pixel_data_[pixel + 0]),
+          int(255 * pixel_data_[pixel + 1]), int(255 * pixel_data_[pixel + 2]),
+          character.c_str());
+    }
+    result += "\n";
+  }
+  return result;
 }
 
 std::vector<float> specula::Image::Data() { return pixel_data_; }

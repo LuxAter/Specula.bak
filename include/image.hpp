@@ -24,6 +24,7 @@ class Image {
 
   bool WriteBitmap(std::string file_name);
   bool WritePng(std::string file_name);
+  std::string WriteAnsii(bool thick=true);
 
   std::vector<float> Data();
 

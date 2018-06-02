@@ -39,6 +39,7 @@ bool specula::Sphere::Intersect(const estl::base::Vec3d& start,
   return true;
 }
 
+
 bool specula::Sphere::Quad(double a, double b, double c, double& x0, double& x1){
   double discr = (b * b) - (4 * a * c);
   if (discr < 0){
@@ -51,4 +52,8 @@ bool specula::Sphere::Quad(double a, double b, double c, double& x0, double& x1)
     x1 = c / q;
   }
   return true;
+}
+
+std::unique_ptr<specula::Object> specula::CreateObjectSphere(const double& r, Material mat){
+  return std::unique_ptr<Object>(new Sphere(r, mat));
 }

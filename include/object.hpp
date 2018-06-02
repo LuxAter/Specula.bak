@@ -35,7 +35,7 @@ struct IntersectData {
   Material mat;
   estl::base::Vec3d normal;
   estl::base::Vec3d point;
-  const std::shared_ptr<Object> obj;
+  const Object* obj;
 };
 }  // namespace specula
 
