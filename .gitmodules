@@ -3,7 +3,7 @@
 	url = https://github.com/google/googletest
 [submodule "external/libpng"]
 	path = external/libpng
-	url = https://github.com/glennrp/libpng
+	url = http://github.com/glennrp/libpng
 [submodule "external/estl"]
 	path = external/estl
-	url = https://github.com/LuxAtrumStudio/estl
+	url = http://github.com/LuxAtrumStudio/estl

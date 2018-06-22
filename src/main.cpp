@@ -38,7 +38,7 @@ int main(int argc, char const* argv[]) {
   mat.emisivity = 1.0;
   scene.objects.push_back(specula::CreateObjectSphere(0.25, mat));
   scene.objects.back()->Translate(3.0, 0.0, 10.0);
-  specula::Image img = specula::RenderImage(50, 50, scene, {1, 1000});
+  specula::Image img = specula::RenderImage(100, 100, scene, {2, 100});
   std::cout << img.WriteAnsii();
   // img.WritePng("test.png");
   // specula::Color c = specula::CastRay({0, 0, 0}, {1, 0, 0}, scene, {0, 10});
