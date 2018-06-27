@@ -58,6 +58,7 @@ specula::Color specula::CastRay(const estl::base::Vec3d& start,
       // std::cout << indirect_color.r << "\n";
       // std::cout << r_theta << "," << r_phi << "\n";
     }
+    indirect_color = indirect_color / opt.sample_count;
     if (isec.mat.emisivity != 0) {
       hit_color = Mix(isec.mat.emmisive, isec.mat.emisivity, Mix(isec.mat.diffuse, 0.5, indirect_color));
     } else {
