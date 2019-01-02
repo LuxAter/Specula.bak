@@ -1,170 +1,163 @@
-SHELL = /bin/bash
 
-export NAME= specula
-
-export SOURCE_DIR= src
-export TEST_DIR= test
-export EXTERNAL_DIR = external
-export BUILD_DIR= build
-export INCLUDE_DIR= include
-export DOC_DIR= docs
-
-export BASE_PATH=$(shell pwd)
-export INSTALL_PATH=/usr/local
-
-export OPENCL=0
-ifneq ("$(wildcard /usr/lib/x86_64-linux-gnu/libOpenCL.so.1)", "")
-  OPENCL = 1
-else
-  OPENCL = 0
-endif
-
-export COMPILER=clang++
-ifeq ($(OPENCL),1)
-export COMMANDS= -D __OPEN_CL__
-else
-export COMMANDS=
-endif
-export CXXFLAGS= -MMD -std=c++17 -w -c $(COMMANDS)
-
-export LINK_DIRS = -L$(BASE_PATH)/$(BUILD_DIR)/libpng/lib 
-ifeq ($(OPENCL),1)
-export LINK= $(LINK_DIRS) -lpthread -lpng -lOpenCL
-else
-export LINK= $(LINK_DIRS) -lpthread -lpng
-endif
-
-export INCLUDE= -I$(BASE_PATH)/$(EXTERNAL_DIR)/estl/estl -I$(BASE_PATH)/$(BUILD_DIR)/libpng/include
-export TYPE= TYPE(lib/exe)
-
-
-# export GCOV_LINK = --coverage
-# export GCOV_FLAG = -fprofile-arcs -ftest-coverage
-
-export COMMON_INCLUDE=-I$(BASE_PATH)/$(INCLUDE_DIR) $(INCLUDE)
-
-export SECTION_COLOR=\033[1;97m
-export TARGET_COLOR=\033[0;34m
-export LINK_COLOR=\033[0;35m
-export CLEAN_COLOR=\033[0;33m
-export COMPILE_COLOR=\033[0;32m
-export INSTALL_COLOR=\033[0;36m
-export ERROR_COLOR=\033[1;31m
-export NO_COLOR=\033[m
-
+SHELL=/bin/bash
 ifndef .VERBOSE
-  .SILENT:
+    .SILENT:
 endif
+ROOT=$(shell pwd)
+ROOT=/home/arden/Programming/cpp/specula
+CXX=clang++
+CXXIGNORE=
+CXXFLAGS=-std=c++17 -fPIC -Wall -Wpedantic --static
+LINK=-lz
+SOURCE=source
+INCLUDE_DIR=include
+INCLUDE=-I$(ROOT)/$(EXTERNAL)/estl -I$(ROOT)/$(BUILD)/libpng/include
+BUILD=build
+EXTERNAL=external
+TEST=test
+COMMON_INCLUDE=-I$(ROOT)/$(INCLUDE_DIR) $(INCLUDE)
 
-define print_section
-str="$(1)";\
-    line_length=$${#str};\
-    printf "%b%s\n" "$(SECTION_COLOR)" "$$str";\
-    while [ $$line_length -gt 0 ]; do\
-      printf "=";\
-      let line_length=line_length-1;\
-    done;\
-    printf "%b\n" "$(NO_COLOR)"
+SCAN_COLOR=\033[1;35m
+BUILD_COLOR=\033[32m
+CLEAN_COLOR=\033[1;33m
+LINK_COLOR=\033[1;32m
+INSTALL_COLOR=\033[1;36m
+CMD_COLOR=\033[1;34m
+HELP_COLOR=\033[1;34m
+
+define scan_target
+printf "%b%s%b\n" "$(SCAN_COLOR)" "Scaning dependencies for target $(1)" "\033[0m"
 endef
-
-define print
-printf "%b%s%b\n" "$(2)" "$(1)" "$(NO_COLOR)"
+define complete_target
+printf "%s\n" "Built target $(1)"
 endef
-
+define clean_target
+printf "%b%s%b\n" "$(CLEAN_COLOR)" "Cleaning target $(1)" "\033[0m"
+endef
+define install_target
+printf "%b%s%b\n" "$(INSTALL_COLOR)" "Installing target $(1)" "\033[0m"
+endef
+define uninstall_target
+printf "%b%s%b\n" "$(INSTALL_COLOR)" "Unnstalling target $(1)" "\033[0m"
+endef
+define print_build_c
+str=$$(realpath --relative-to="$(ROOT)" "$(1)");    printf "%b%s%b\n" "$(BUILD_COLOR)" "Building C object $$str" "\033[0m"
+endef
+define print_build_cpp
+str=$$(realpath --relative-to="$(ROOT)" "$(1)");    printf "%b%s%b\n" "$(BUILD_COLOR)" "Building C++ object $$str" "\033[0m"
+endef
+define print_link_lib
+str=$$(realpath --relative-to="$(ROOT)" "$(1)");    printf "%b%s%b\n" "$(LINK_COLOR)" "Linking static library $$str" "\033[0m"
+endef
+define print_link_exe
+str=$$(realpath --relative-to="$(ROOT)" "$(1)");    printf "%b%s%b\n" "$(LINK_COLOR)" "Linking executable $$str" "\033[0m"
+endef
+define print_run_cmd
+printf "%b%s%b\n" "$(CMD_COLOR)" "Running '$(1)'" "\033[0m"
+endef
 define help
-printf "%b%*s%b: %s\n" "$(TARGET_COLOR)" 14 "$(1)" "$(NO_COLOR)" "$(2)"
+printf "%b%*s%b: %s\n" "$(HELP_COLOR)" 20 "$(1)" "\033[0m" "$(2)"
 endef
 
-.PHONY : all
-all: external source test
+all: build-specula
 
-.PHONY : clean
-clean: clean-source clean-test
+clean: clean-specula clean-libspecula.a
 
-.PHONY : clean-all
-clean-all: clean-external clean-source clean-test
 
-.PHONY : install
-install: source root-access install-source
-	if [ $(TYPE) == "lib" ] && ! [ -d "$(INSTALL_PATH)/include/$(NAME)" ]; then \
-	  $(call print,Installing include directory,$(INSTALL_COLOR));\
-	  sudo mkdir $(INSTALL_PATH)/include/ -p;\
-	  sudo cp $(INCLUDE_DIR)/ $(INSTALL_PATH)/include/$(NAME)/ -r;\
-	fi
+# SPECULA {{{
 
-.PHONY : uninstall
-uninstall: root-access uninstall-source
-	if [ $(TYPE) == "lib" ] && [ -d "$(INSTALL_PATH)/include/$(NAME)" ]; then \
-	  $(call print,Uninstalling include directory,$(INSTALL_COLOR));\
-	  sudo rm $(INSTALL_PATH)/include/$(NAME) -rf;\
-	fi
+SPECULA=$(ROOT)/specula
+SPECULA_FILES=source/main.cpp
+SPECULA_OBJS=$(SPECULA_FILES:%=$(ROOT)/$(BUILD)/%.o)
+-include $(SPECULA_OBJS:.o=.d)
 
-.PHONY : help
-help:
-	$(call print_section,Makefile Help)
-	printf "List of all acceptable make targets\n\n"
-	$(call help,all,Builds external, source, and test files and projects)
-	$(call help,clean,Clean files created from external, source, and test)
-	$(call help,help,Display this help page)
-	$(call help,external,Builds external files and projects)
-	$(call help,clean-external,Cleans files created from external)
-	$(call help,source,Builds source files and projects)
-	$(call help,clean-source,Cleans files created from source)
-	$(call help,test,Builds test files and projects)
-	$(call help,clean-test,Cleans files created from test)
+build-specula: build-libspecula.a pre-specula $(SPECULA)
+	$(call complete_target,$(shell basename $(SPECULA)))
 
-.PHONY : root-access
-root-access:
-	if [[ $$UID != 0 ]]; then \
-	  $(call print,Target requiers root access,$(ERROR_COLOR)); \
-	  exit 1; \
-	fi
+clean-specula:
+	$(call clean_target,$(shell basename $(SPECULA)))
+	if [ -e "$(SPECULA)" ]; then rm $(SPECULA); fi
 
-.PHONY : external
-external:
-	$(call print_section,External Dependencies)
-	if [ -d "$(EXTERNAL_DIR)" ]; then cd "$(EXTERNAL_DIR)" && $(MAKE); fi
-.PHONY : clean-external
-clean-external:
-	$(call print_section,External Dependencies)
-	if [ -d "$(EXTERNAL_DIR)" ]; then cd "$(EXTERNAL_DIR)" && $(MAKE) clean; fi
+pre-specula:
+	$(call scan_target,$(shell basename $(SPECULA)))
 
-.PHONY : source
-source:
-	$(call print_section,Source Files)
-	if [ -d "$(SOURCE_DIR)" ]; then cd "$(SOURCE_DIR)" && $(MAKE); fi
-.PHONY : clean-source
-clean-source:
-	$(call print_section,Source Files)
-	if [ -d "$(SOURCE_DIR)" ]; then cd "$(SOURCE_DIR)" && $(MAKE) clean; fi
-.PHONY : install-source
-install-source:
-	$(call print_section,Source Files)
-	if [ -d "$(SOURCE_DIR)" ]; then cd "$(SOURCE_DIR)" && $(MAKE) install; fi
-.PHONY: uninstall-source
-uninstall-source:
-	$(call print_section,Source Files)
-	if [ -d "$(SOURCE_DIR)" ]; then cd "$(SOURCE_DIR)" && $(MAKE) uninstall; fi
+$(SPECULA): $(SPECULA_OBJS) FORCE
+	$(call print_link_exe,$(shell basename $(SPECULA)))
+	$(CXX) $(SPECULA_OBJS) $(LIBSPECULA.A) $(LINK) $(COMMON_INCLUDE) -o $(SPECULA)
 
-.PHONY : test
-test:
-	$(call print_section,Unit Tests)
-	if [ -d "$(TEST_DIR)" ]; then cd "$(TEST_DIR)" && $(MAKE); fi
-.PHONY : clean-test
-clean-test:
-	$(call print_section,Unit Tests)
-	if [ -d "$(TEST_DIR)" ]; then cd "$(TEST_DIR)" && $(MAKE) clean; fi
+install-specula: build-specula
+	$(call install_target,$(shell basename $(SPECULA)))
+	mkdir -p $(INSTALL_PATH)/bin/
+	cp $(SPECULA) $(INSTALL_PATH)/bin
 
-.PHONY: docs
-docs:
-	$(call print_section,Documentation)
-	$(call print,Running doxygen...,$(COMPILE_COLOR))
-	doxygen
+uninstall-specula:
+	$(call uninstall_target,$(shell basename $(SPECULA)))
+	if [ -e "$(INSTALL_PATH)/bin/$(shell basename $(SPECULA))" ]; then rm $(INSTALL_PATH)/bin/$(shell basename $(SPECULA)); fi
 
-.PHONY: clean-docs
-clean-docs:
-	$(call print_section,Documentation)
-	if [ -d "$(DOC_DIR)/html" ]; then rm "$(DOC_DIR)/html" -r ;fi
-	if [ -d "$(DOC_DIR)/latex" ]; then rm "$(DOC_DIR)/latex" -r ;fi
-	if [ -d "$(DOC_DIR)/xml" ]; then rm "$(DOC_DIR)/xml" -r ;fi
-	$(call print,Cleaned Documentation,$(CLEAN_COLOR))
+# }}}
+# LIBSPECULA.A {{{
+
+LIBSPECULA.A=build/libspecula.a
+LIBSPECULA.A_FILES=$(filter-out source/main.cpp, $(shell find "source/" -name "*.cpp"))
+LIBSPECULA.A_OBJS=$(LIBSPECULA.A_FILES:%=$(ROOT)/$(BUILD)/%.o)
+-include $(LIBSPECULA.A_OBJS:.o=.d)
+
+build-libspecula.a: build-libpng.a pre-libspecula.a $(LIBSPECULA.A)
+	$(call complete_target,$(shell basename $(LIBSPECULA.A)))
+
+clean-libspecula.a: clean-libpng.a
+	$(call clean_target,$(shell basename $(LIBSPECULA.A)))
+	if [ -e "$(LIBSPECULA.A)" ]; then rm $(LIBSPECULA.A); fi
+
+pre-libspecula.a:
+	$(call scan_target,$(shell basename $(LIBSPECULA.A)))
+
+$(LIBSPECULA.A): $(LIBSPECULA.A_OBJS) FORCE
+	$(call print_link_lib,$(shell basename $(LIBSPECULA.A)))
+	ar rcs $@ $(LIBSPECULA.A_OBJS)
+	mkdir -p $(ROOT)/tmp/libpng.a && cd $(ROOT)/tmp/libpng.a && ar x $(ROOT)/build/libpng.a/lib/libpng.a && ar qc $(ROOT)/$@ $(ROOT)/tmp/libpng.a/*.o && rm -rf $(ROOT)/tmp/libpng.a
+
+install-libspecula.a: build-libspecula.a
+	$(call install_target,$(shell basename $(LIBSPECULA.A)))
+	mkdir -p $(INSTALL_PATH)/lib/
+	mkdir -p $(INSTALL_PATH)/include/$(NAME)/
+	cp $(LIBSPECULA.A) $(INSTALL_PATH)/lib
+	if [ ! -z "$(INCLUDE_DIR)" ]; then cp -R $(INCLUDE_DIR)/ $(INSTALL_PATH)/include/$(NAME)/; fi
+	if [ ! -z "$(shell find $(SOURCE_DIR) -name "*.h")" ]; then cd $(SOURCE_DIR) && cp --parents $(sehll cd $(SOURCE_DIR) && find . -name "*.h") $(INSTALL_PATH)/include/$(NAME); fi
+	if [ ! -z "$(shell find $(SOURCE_DIR) -name "*.hpp")" ]; then cd $(SOURCE_DIR) && cp --parents $(sehll cd $(SOURCE_DIR) && find . -name "*.hpp") $(INSTALL_PATH)/include/$(NAME); fi
+
+uninstall-libspecula.a:
+	$(call uninstall_target,$(shell basename $(LIBSPECULA.A)))
+	if [ ! -e "$(INSTALL_PATH)/lib/$(shell basename $(LIBSPECULA.A))" ]; then rm $(INSTALL_PATH)/lib/$(shell basename $(LIBSPECULA.A)); fi
+	if [ ! -e "$(INSTALL_PATH)/include/$(NAME)" ]; then rm $(INSTALL_PATH)/include/$(NAME) -r; fi
+
+# }}}
+# LIBPNG.A {{{
+
+build-libpng.a: pre-libpng.a
+	if [ ! -f "external/libpng/configure" ]; then $(call print_run_cmd,autogen.sh) && cd external/libpng && ./autogen.sh; fi
+	if [ ! -f "external/libpng/Makefile" ]; then $(call print_run_cmd,configure) && cd external/libpng && ./configure --prefix=$(ROOT)/build/libpng.a; fi
+	if [ ! -d "$(ROOT)/build/libpng.a" ]; then $(call print_run_cmd,make) && cd external/libpng && make install; fi
+	$(call complete_target,libpng.a)
+
+clean-libpng.a:
+	$(call clean_target,libpng.a)
+	if [ -e "external/libpng/Makefile" ]; then cd external/libpng && make clean && rm Makefile; fi
+	if [ -d "$(ROOT)/build/libpng.a" ]; then rm $(ROOT)/build/libpng.a -r; fi
+
+pre-libpng.a:
+	$(call scan_target,libpng.a)
+
+# }}}
+
+$(ROOT)/$(BUILD)/%.cpp.o: %.cpp
+	$(call print_build_cpp,$@)
+	mkdir -p $(@D)
+	$(CXX) $(CXXFLAGS) -MMD -c $(COMMON_INCLUDE) $< -o $@
+
+$(ROOT)/$(BUILD)/%.c.o: %.c
+	$(call print_build_c,$@)
+	mkdir -p $(@D)
+	$(CC) $(CCFLAGS) -MMD -c $(COMMON_INCLUDE) $< -o $@
+
+FORCE:
