@@ -5,20 +5,17 @@
   "link": "-lz",
   "source": "source",
   "include_dir": "include",
-  "include": [
-    "-I$(ROOT)/$(EXTERNAL)/estl",
-    "-I$(ROOT)/$(BUILD)/libpng/include"
-  ],
+  "include": ["-I$(ROOT)/$(EXTERNAL)/estl", "-I$(ROOT)/$(BUILD)/libpng/include"],
   "build": "build",
   "external": "external",
   "test": "test",
+  "example": "example",
   "specula": {
     "path": "$(ROOT)/specula",
     "files": "{{source}}/main.cpp",
     "type": "exe",
-    "dep": [
-      "libspecula.a"
-    ]
+    "dep": ["libspecula.a"],
+    "group": "main"
   },
   "libspecula.a": {
     "path": "{{build}}/libspecula.a",
@@ -26,9 +23,7 @@
     "files_exclude": "{{source}}/main.cpp",
     "type": "lib",
     "join": true,
-    "dep": [
-      "libpng.a"
-    ]
+    "dep": ["libpng.a"]
   },
   "libpng.a": {
     "path": "$(ROOT)/{{build}}/libpng.a",

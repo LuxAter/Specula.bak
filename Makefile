@@ -15,6 +15,7 @@ INCLUDE=-I$(ROOT)/$(EXTERNAL)/estl -I$(ROOT)/$(BUILD)/libpng/include
 BUILD=build
 EXTERNAL=external
 TEST=test
+EXAMPLE=example
 COMMON_INCLUDE=-I$(ROOT)/$(INCLUDE_DIR) $(INCLUDE)
 
 SCAN_COLOR=\033[1;35m
@@ -60,9 +61,9 @@ printf "%b%*s%b: %s\n" "$(HELP_COLOR)" 20 "$(1)" "\033[0m" "$(2)"
 endef
 
 all: build-specula
-
-clean: clean-specula clean-libspecula.a
-
+clean: clean-specula
+install: install-specula
+uninstall: uninstall-specula
 
 # SPECULA {{{
 
