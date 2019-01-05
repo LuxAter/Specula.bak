@@ -1,6 +1,9 @@
 #ifndef SPECULA_OBJECT_OBJECT_HPP_
 #define SPECULA_OBJECT_OBJECT_HPP_
 
+#include <limits>
+#include <memory>
+
 #include "../math/math.hpp"
 #include "material.hpp"
 
@@ -18,6 +21,8 @@ namespace object {
     Material material_;
     math::Mat4d mat_, mat_inv_;
   };
+
+  std::unique_ptr<Object> GenerateObject(Material mat = Material());
 }  // namespace object
 }  // namespace specula
 

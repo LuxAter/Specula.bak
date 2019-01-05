@@ -1,325 +1,7 @@
 [
     {
         "arguments": [
-            "cc",
-            "-c",
-            "-DHAVE_CONFIG_H",
-            "-I.",
-            "-g",
-            "-O2",
-            "-o",
-            "contrib/libtests/pngunknown.o",
-            "contrib/libtests/pngunknown.c"
-        ],
-        "directory": "/home/arden/Programming/cpp/specula/external/libpng",
-        "file": "contrib/libtests/pngunknown.c"
-    },
-    {
-        "arguments": [
-            "cc",
-            "-c",
-            "-DHAVE_CONFIG_H",
-            "-I.",
-            "-g",
-            "-O2",
-            "-fPIC",
-            "-DPIC",
-            "-o",
-            ".libs/pngpread.o",
-            "pngpread.c"
-        ],
-        "directory": "/home/arden/Programming/cpp/specula/external/libpng",
-        "file": "pngpread.c"
-    },
-    {
-        "arguments": [
-            "cc",
-            "-c",
-            "-DHAVE_CONFIG_H",
-            "-I.",
-            "-g",
-            "-O2",
-            "-fPIC",
-            "-DPIC",
-            "-o",
-            "mips/.libs/mips_init.o",
-            "mips/mips_init.c"
-        ],
-        "directory": "/home/arden/Programming/cpp/specula/external/libpng",
-        "file": "mips/mips_init.c"
-    },
-    {
-        "arguments": [
-            "cc",
-            "-c",
-            "-DHAVE_CONFIG_H",
-            "-I.",
-            "-g",
-            "-O2",
-            "-o",
-            "contrib/tools/pngfix.o",
-            "contrib/tools/pngfix.c"
-        ],
-        "directory": "/home/arden/Programming/cpp/specula/external/libpng",
-        "file": "contrib/tools/pngfix.c"
-    },
-    {
-        "arguments": [
-            "cc",
-            "-c",
-            "-DHAVE_CONFIG_H",
-            "-I.",
-            "-g",
-            "-O2",
-            "-fPIC",
-            "-DPIC",
-            "-o",
-            ".libs/pngset.o",
-            "pngset.c"
-        ],
-        "directory": "/home/arden/Programming/cpp/specula/external/libpng",
-        "file": "pngset.c"
-    },
-    {
-        "arguments": [
-            "cc",
-            "-c",
-            "-DHAVE_CONFIG_H",
-            "-I.",
-            "-g",
-            "-O2",
-            "-o",
-            "intel/intel_init.o",
-            "intel/intel_init.c"
-        ],
-        "directory": "/home/arden/Programming/cpp/specula/external/libpng",
-        "file": "intel/intel_init.c"
-    },
-    {
-        "arguments": [
-            "cc",
-            "-c",
-            "-DHAVE_CONFIG_H",
-            "-I.",
-            "-g",
-            "-O2",
-            "-fPIC",
-            "-DPIC",
-            "-o",
-            "intel/.libs/filter_sse2_intrinsics.o",
-            "intel/filter_sse2_intrinsics.c"
-        ],
-        "directory": "/home/arden/Programming/cpp/specula/external/libpng",
-        "file": "intel/filter_sse2_intrinsics.c"
-    },
-    {
-        "arguments": [
-            "cc",
-            "-c",
-            "-DHAVE_CONFIG_H",
-            "-I.",
-            "-g",
-            "-O2",
-            "-o",
-            "pngread.o",
-            "pngread.c"
-        ],
-        "directory": "/home/arden/Programming/cpp/specula/external/libpng",
-        "file": "pngread.c"
-    },
-    {
-        "arguments": [
-            "cc",
-            "-c",
-            "-DHAVE_CONFIG_H",
-            "-I.",
-            "-g",
-            "-O2",
-            "-fPIC",
-            "-DPIC",
-            "-o",
-            ".libs/pngrutil.o",
-            "pngrutil.c"
-        ],
-        "directory": "/home/arden/Programming/cpp/specula/external/libpng",
-        "file": "pngrutil.c"
-    },
-    {
-        "arguments": [
-            "cc",
-            "-c",
-            "-DHAVE_CONFIG_H",
-            "-I.",
-            "-g",
-            "-O2",
-            "-o",
-            "pngtrans.o",
-            "pngtrans.c"
-        ],
-        "directory": "/home/arden/Programming/cpp/specula/external/libpng",
-        "file": "pngtrans.c"
-    },
-    {
-        "arguments": [
-            "cc",
-            "-c",
-            "-DHAVE_CONFIG_H",
-            "-I.",
-            "-g",
-            "-O2",
-            "-fPIC",
-            "-DPIC",
-            "-o",
-            "mips/.libs/filter_msa_intrinsics.o",
-            "mips/filter_msa_intrinsics.c"
-        ],
-        "directory": "/home/arden/Programming/cpp/specula/external/libpng",
-        "file": "mips/filter_msa_intrinsics.c"
-    },
-    {
-        "arguments": [
-            "cc",
-            "-c",
-            "-DHAVE_CONFIG_H",
-            "-I.",
-            "-g",
-            "-O2",
-            "-fPIC",
-            "-DPIC",
-            "-o",
-            "powerpc/.libs/powerpc_init.o",
-            "powerpc/powerpc_init.c"
-        ],
-        "directory": "/home/arden/Programming/cpp/specula/external/libpng",
-        "file": "powerpc/powerpc_init.c"
-    },
-    {
-        "arguments": [
-            "cc",
-            "-c",
-            "-DHAVE_CONFIG_H",
-            "-I.",
-            "-g",
-            "-O2",
-            "-o",
-            "mips/filter_msa_intrinsics.o",
-            "mips/filter_msa_intrinsics.c"
-        ],
-        "directory": "/home/arden/Programming/cpp/specula/external/libpng",
-        "file": "mips/filter_msa_intrinsics.c"
-    },
-    {
-        "arguments": [
-            "cc",
-            "-c",
-            "-DHAVE_CONFIG_H",
-            "-I.",
-            "-g",
-            "-O2",
-            "-o",
-            "pngset.o",
-            "pngset.c"
-        ],
-        "directory": "/home/arden/Programming/cpp/specula/external/libpng",
-        "file": "pngset.c"
-    },
-    {
-        "arguments": [
-            "cc",
-            "-c",
-            "-DHAVE_CONFIG_H",
-            "-I.",
-            "-g",
-            "-O2",
-            "-fPIC",
-            "-DPIC",
-            "-o",
-            ".libs/pngerror.o",
-            "pngerror.c"
-        ],
-        "directory": "/home/arden/Programming/cpp/specula/external/libpng",
-        "file": "pngerror.c"
-    },
-    {
-        "arguments": [
-            "cc",
-            "-c",
-            "-DHAVE_CONFIG_H",
-            "-I.",
-            "-g",
-            "-O2",
-            "-fPIC",
-            "-DPIC",
-            "-o",
-            "powerpc/.libs/filter_vsx_intrinsics.o",
-            "powerpc/filter_vsx_intrinsics.c"
-        ],
-        "directory": "/home/arden/Programming/cpp/specula/external/libpng",
-        "file": "powerpc/filter_vsx_intrinsics.c"
-    },
-    {
-        "arguments": [
-            "cc",
-            "-c",
-            "-DHAVE_CONFIG_H",
-            "-I.",
-            "-g",
-            "-O2",
-            "-o",
-            "pngerror.o",
-            "pngerror.c"
-        ],
-        "directory": "/home/arden/Programming/cpp/specula/external/libpng",
-        "file": "pngerror.c"
-    },
-    {
-        "arguments": [
-            "cc",
-            "-c",
-            "-DHAVE_CONFIG_H",
-            "-I.",
-            "-g",
-            "-O2",
-            "-o",
-            "pngrtran.o",
-            "pngrtran.c"
-        ],
-        "directory": "/home/arden/Programming/cpp/specula/external/libpng",
-        "file": "pngrtran.c"
-    },
-    {
-        "arguments": [
-            "cc",
-            "-c",
-            "-DHAVE_CONFIG_H",
-            "-I.",
-            "-g",
-            "-O2",
-            "-o",
-            "pngrio.o",
-            "pngrio.c"
-        ],
-        "directory": "/home/arden/Programming/cpp/specula/external/libpng",
-        "file": "pngrio.c"
-    },
-    {
-        "arguments": [
-            "cc",
-            "-c",
-            "-DHAVE_CONFIG_H",
-            "-I.",
-            "-g",
-            "-O2",
-            "-o",
-            "pngget.o",
-            "pngget.c"
-        ],
-        "directory": "/home/arden/Programming/cpp/specula/external/libpng",
-        "file": "pngget.c"
-    },
-    {
-        "arguments": [
-            "cc",
+            "gcc",
             "-c",
             "-DHAVE_CONFIG_H",
             "-I.",
@@ -336,7 +18,22 @@
     },
     {
         "arguments": [
-            "cc",
+            "gcc",
+            "-c",
+            "-DHAVE_CONFIG_H",
+            "-I.",
+            "-g",
+            "-O2",
+            "-o",
+            "mips/filter_msa_intrinsics.o",
+            "mips/filter_msa_intrinsics.c"
+        ],
+        "directory": "/home/arden/Programming/cpp/specula/external/libpng",
+        "file": "mips/filter_msa_intrinsics.c"
+    },
+    {
+        "arguments": [
+            "gcc",
             "-c",
             "-DHAVE_CONFIG_H",
             "-I.",
@@ -345,45 +42,15 @@
             "-fPIC",
             "-DPIC",
             "-o",
-            ".libs/pngwrite.o",
-            "pngwrite.c"
+            "powerpc/.libs/powerpc_init.o",
+            "powerpc/powerpc_init.c"
         ],
         "directory": "/home/arden/Programming/cpp/specula/external/libpng",
-        "file": "pngwrite.c"
+        "file": "powerpc/powerpc_init.c"
     },
     {
         "arguments": [
-            "cc",
-            "-c",
-            "-DHAVE_CONFIG_H",
-            "-I.",
-            "-g",
-            "-O2",
-            "-o",
-            "pngmem.o",
-            "pngmem.c"
-        ],
-        "directory": "/home/arden/Programming/cpp/specula/external/libpng",
-        "file": "pngmem.c"
-    },
-    {
-        "arguments": [
-            "cc",
-            "-c",
-            "-DHAVE_CONFIG_H",
-            "-I.",
-            "-g",
-            "-O2",
-            "-o",
-            "pngwio.o",
-            "pngwio.c"
-        ],
-        "directory": "/home/arden/Programming/cpp/specula/external/libpng",
-        "file": "pngwio.c"
-    },
-    {
-        "arguments": [
-            "cc",
+            "gcc",
             "-c",
             "-DHAVE_CONFIG_H",
             "-I.",
@@ -392,15 +59,15 @@
             "-fPIC",
             "-DPIC",
             "-o",
-            ".libs/pngrtran.o",
-            "pngrtran.c"
+            ".libs/pngerror.o",
+            "pngerror.c"
         ],
         "directory": "/home/arden/Programming/cpp/specula/external/libpng",
-        "file": "pngrtran.c"
+        "file": "pngerror.c"
     },
     {
         "arguments": [
-            "cc",
+            "gcc",
             "-c",
             "-DHAVE_CONFIG_H",
             "-I.",
@@ -415,197 +82,7 @@
     },
     {
         "arguments": [
-            "cc",
-            "-c",
-            "-DHAVE_CONFIG_H",
-            "-I.",
-            "-g",
-            "-O2",
-            "-o",
-            "contrib/tools/png-fix-itxt.o",
-            "contrib/tools/png-fix-itxt.c"
-        ],
-        "directory": "/home/arden/Programming/cpp/specula/external/libpng",
-        "file": "contrib/tools/png-fix-itxt.c"
-    },
-    {
-        "arguments": [
-            "cc",
-            "-c",
-            "-DHAVE_CONFIG_H",
-            "-I.",
-            "-g",
-            "-O2",
-            "-o",
-            "powerpc/powerpc_init.o",
-            "powerpc/powerpc_init.c"
-        ],
-        "directory": "/home/arden/Programming/cpp/specula/external/libpng",
-        "file": "powerpc/powerpc_init.c"
-    },
-    {
-        "arguments": [
-            "cc",
-            "-c",
-            "-DHAVE_CONFIG_H",
-            "-I.",
-            "-g",
-            "-O2",
-            "-o",
-            "pngrutil.o",
-            "pngrutil.c"
-        ],
-        "directory": "/home/arden/Programming/cpp/specula/external/libpng",
-        "file": "pngrutil.c"
-    },
-    {
-        "arguments": [
-            "cc",
-            "-c",
-            "-DHAVE_CONFIG_H",
-            "-I.",
-            "-g",
-            "-O2",
-            "-o",
-            "contrib/libtests/pngstest.o",
-            "contrib/libtests/pngstest.c"
-        ],
-        "directory": "/home/arden/Programming/cpp/specula/external/libpng",
-        "file": "contrib/libtests/pngstest.c"
-    },
-    {
-        "arguments": [
-            "cc",
-            "-c",
-            "-DHAVE_CONFIG_H",
-            "-I.",
-            "-g",
-            "-O2",
-            "-fPIC",
-            "-DPIC",
-            "-o",
-            ".libs/pngtrans.o",
-            "pngtrans.c"
-        ],
-        "directory": "/home/arden/Programming/cpp/specula/external/libpng",
-        "file": "pngtrans.c"
-    },
-    {
-        "arguments": [
-            "cc",
-            "-c",
-            "-DHAVE_CONFIG_H",
-            "-I.",
-            "-g",
-            "-O2",
-            "-o",
-            "pngwtran.o",
-            "pngwtran.c"
-        ],
-        "directory": "/home/arden/Programming/cpp/specula/external/libpng",
-        "file": "pngwtran.c"
-    },
-    {
-        "arguments": [
-            "cc",
-            "-c",
-            "-DHAVE_CONFIG_H",
-            "-I.",
-            "-g",
-            "-O2",
-            "-fPIC",
-            "-DPIC",
-            "-o",
-            ".libs/pngmem.o",
-            "pngmem.c"
-        ],
-        "directory": "/home/arden/Programming/cpp/specula/external/libpng",
-        "file": "pngmem.c"
-    },
-    {
-        "arguments": [
-            "cc",
-            "-c",
-            "-DHAVE_CONFIG_H",
-            "-I.",
-            "-g",
-            "-O2",
-            "-o",
-            "pngpread.o",
-            "pngpread.c"
-        ],
-        "directory": "/home/arden/Programming/cpp/specula/external/libpng",
-        "file": "pngpread.c"
-    },
-    {
-        "arguments": [
-            "cc",
-            "-c",
-            "-DHAVE_CONFIG_H",
-            "-I.",
-            "-g",
-            "-O2",
-            "-fPIC",
-            "-DPIC",
-            "-o",
-            ".libs/pngget.o",
-            "pngget.c"
-        ],
-        "directory": "/home/arden/Programming/cpp/specula/external/libpng",
-        "file": "pngget.c"
-    },
-    {
-        "arguments": [
-            "cc",
-            "-c",
-            "-DHAVE_CONFIG_H",
-            "-I.",
-            "-g",
-            "-O2",
-            "-o",
-            "powerpc/filter_vsx_intrinsics.o",
-            "powerpc/filter_vsx_intrinsics.c"
-        ],
-        "directory": "/home/arden/Programming/cpp/specula/external/libpng",
-        "file": "powerpc/filter_vsx_intrinsics.c"
-    },
-    {
-        "arguments": [
-            "cc",
-            "-c",
-            "-DHAVE_CONFIG_H",
-            "-I.",
-            "-g",
-            "-O2",
-            "-fPIC",
-            "-DPIC",
-            "-o",
-            ".libs/pngrio.o",
-            "pngrio.c"
-        ],
-        "directory": "/home/arden/Programming/cpp/specula/external/libpng",
-        "file": "pngrio.c"
-    },
-    {
-        "arguments": [
-            "cc",
-            "-c",
-            "-DHAVE_CONFIG_H",
-            "-I.",
-            "-g",
-            "-O2",
-            "-fPIC",
-            "-DPIC",
-            "-o",
-            ".libs/pngwio.o",
-            "pngwio.c"
-        ],
-        "directory": "/home/arden/Programming/cpp/specula/external/libpng",
-        "file": "pngwio.c"
-    },
-    {
-        "arguments": [
-            "cc",
+            "gcc",
             "-c",
             "-DHAVE_CONFIG_H",
             "-I.",
@@ -620,7 +97,71 @@
     },
     {
         "arguments": [
-            "cc",
+            "gcc",
+            "-c",
+            "-DHAVE_CONFIG_H",
+            "-I.",
+            "-g",
+            "-O2",
+            "-o",
+            "contrib/libtests/timepng.o",
+            "contrib/libtests/timepng.c"
+        ],
+        "directory": "/home/arden/Programming/cpp/specula/external/libpng",
+        "file": "contrib/libtests/timepng.c"
+    },
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-DHAVE_CONFIG_H",
+            "-I.",
+            "-g",
+            "-O2",
+            "-o",
+            "pngwrite.o",
+            "pngwrite.c"
+        ],
+        "directory": "/home/arden/Programming/cpp/specula/external/libpng",
+        "file": "pngwrite.c"
+    },
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-DHAVE_CONFIG_H",
+            "-I.",
+            "-g",
+            "-O2",
+            "-fPIC",
+            "-DPIC",
+            "-o",
+            "mips/.libs/filter_msa_intrinsics.o",
+            "mips/filter_msa_intrinsics.c"
+        ],
+        "directory": "/home/arden/Programming/cpp/specula/external/libpng",
+        "file": "mips/filter_msa_intrinsics.c"
+    },
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-DHAVE_CONFIG_H",
+            "-I.",
+            "-g",
+            "-O2",
+            "-fPIC",
+            "-DPIC",
+            "-o",
+            ".libs/pngset.o",
+            "pngset.c"
+        ],
+        "directory": "/home/arden/Programming/cpp/specula/external/libpng",
+        "file": "pngset.c"
+    },
+    {
+        "arguments": [
+            "gcc",
             "-c",
             "-DHAVE_CONFIG_H",
             "-I.",
@@ -637,52 +178,178 @@
     },
     {
         "arguments": [
-            "cc",
+            "gcc",
+            "-c",
+            "-DHAVE_CONFIG_H",
+            "-I.",
+            "-g",
+            "-O2",
+            "-fPIC",
+            "-DPIC",
+            "-o",
+            ".libs/pngmem.o",
+            "pngmem.c"
+        ],
+        "directory": "/home/arden/Programming/cpp/specula/external/libpng",
+        "file": "pngmem.c"
+    },
+    {
+        "arguments": [
+            "gcc",
             "-c",
             "-DHAVE_CONFIG_H",
             "-I.",
             "-g",
             "-O2",
             "-o",
-            "contrib/libtests/pngimage.o",
-            "contrib/libtests/pngimage.c"
+            "powerpc/filter_vsx_intrinsics.o",
+            "powerpc/filter_vsx_intrinsics.c"
         ],
         "directory": "/home/arden/Programming/cpp/specula/external/libpng",
-        "file": "contrib/libtests/pngimage.c"
+        "file": "powerpc/filter_vsx_intrinsics.c"
     },
     {
         "arguments": [
-            "cc",
+            "gcc",
+            "-c",
+            "-DHAVE_CONFIG_H",
+            "-I.",
+            "-g",
+            "-O2",
+            "-fPIC",
+            "-DPIC",
+            "-o",
+            "powerpc/.libs/filter_vsx_intrinsics.o",
+            "powerpc/filter_vsx_intrinsics.c"
+        ],
+        "directory": "/home/arden/Programming/cpp/specula/external/libpng",
+        "file": "powerpc/filter_vsx_intrinsics.c"
+    },
+    {
+        "arguments": [
+            "gcc",
             "-c",
             "-DHAVE_CONFIG_H",
             "-I.",
             "-g",
             "-O2",
             "-o",
-            "pngwrite.o",
-            "pngwrite.c"
+            "contrib/libtests/pngstest.o",
+            "contrib/libtests/pngstest.c"
         ],
         "directory": "/home/arden/Programming/cpp/specula/external/libpng",
-        "file": "pngwrite.c"
+        "file": "contrib/libtests/pngstest.c"
     },
     {
         "arguments": [
-            "cc",
+            "gcc",
             "-c",
             "-DHAVE_CONFIG_H",
             "-I.",
             "-g",
             "-O2",
             "-o",
-            "pngwutil.o",
-            "pngwutil.c"
+            "pngread.o",
+            "pngread.c"
         ],
         "directory": "/home/arden/Programming/cpp/specula/external/libpng",
-        "file": "pngwutil.c"
+        "file": "pngread.c"
     },
     {
         "arguments": [
-            "cc",
+            "gcc",
+            "-c",
+            "-DHAVE_CONFIG_H",
+            "-I.",
+            "-g",
+            "-O2",
+            "-o",
+            "contrib/libtests/pngvalid.o",
+            "contrib/libtests/pngvalid.c"
+        ],
+        "directory": "/home/arden/Programming/cpp/specula/external/libpng",
+        "file": "contrib/libtests/pngvalid.c"
+    },
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-DHAVE_CONFIG_H",
+            "-I.",
+            "-g",
+            "-O2",
+            "-fPIC",
+            "-DPIC",
+            "-o",
+            ".libs/pngrutil.o",
+            "pngrutil.c"
+        ],
+        "directory": "/home/arden/Programming/cpp/specula/external/libpng",
+        "file": "pngrutil.c"
+    },
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-DHAVE_CONFIG_H",
+            "-I.",
+            "-g",
+            "-O2",
+            "-o",
+            "powerpc/powerpc_init.o",
+            "powerpc/powerpc_init.c"
+        ],
+        "directory": "/home/arden/Programming/cpp/specula/external/libpng",
+        "file": "powerpc/powerpc_init.c"
+    },
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-DHAVE_CONFIG_H",
+            "-I.",
+            "-g",
+            "-O2",
+            "-o",
+            "pngerror.o",
+            "pngerror.c"
+        ],
+        "directory": "/home/arden/Programming/cpp/specula/external/libpng",
+        "file": "pngerror.c"
+    },
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-DHAVE_CONFIG_H",
+            "-I.",
+            "-g",
+            "-O2",
+            "-o",
+            "contrib/tools/png-fix-itxt.o",
+            "contrib/tools/png-fix-itxt.c"
+        ],
+        "directory": "/home/arden/Programming/cpp/specula/external/libpng",
+        "file": "contrib/tools/png-fix-itxt.c"
+    },
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-DHAVE_CONFIG_H",
+            "-I.",
+            "-g",
+            "-O2",
+            "-o",
+            "mips/mips_init.o",
+            "mips/mips_init.c"
+        ],
+        "directory": "/home/arden/Programming/cpp/specula/external/libpng",
+        "file": "mips/mips_init.c"
+    },
+    {
+        "arguments": [
+            "gcc",
             "-c",
             "-DHAVE_CONFIG_H",
             "-I.",
@@ -699,37 +366,22 @@
     },
     {
         "arguments": [
-            "cc",
+            "gcc",
             "-c",
             "-DHAVE_CONFIG_H",
             "-I.",
             "-g",
             "-O2",
             "-o",
-            "png.o",
-            "png.c"
+            "contrib/libtests/pngimage.o",
+            "contrib/libtests/pngimage.c"
         ],
         "directory": "/home/arden/Programming/cpp/specula/external/libpng",
-        "file": "png.c"
+        "file": "contrib/libtests/pngimage.c"
     },
     {
         "arguments": [
-            "cc",
-            "-c",
-            "-DHAVE_CONFIG_H",
-            "-I.",
-            "-g",
-            "-O2",
-            "-o",
-            "contrib/libtests/timepng.o",
-            "contrib/libtests/timepng.c"
-        ],
-        "directory": "/home/arden/Programming/cpp/specula/external/libpng",
-        "file": "contrib/libtests/timepng.c"
-    },
-    {
-        "arguments": [
-            "cc",
+            "gcc",
             "-c",
             "-DHAVE_CONFIG_H",
             "-I.",
@@ -738,45 +390,81 @@
             "-fPIC",
             "-DPIC",
             "-o",
-            "intel/.libs/intel_init.o",
-            "intel/intel_init.c"
+            ".libs/pngrtran.o",
+            "pngrtran.c"
         ],
         "directory": "/home/arden/Programming/cpp/specula/external/libpng",
-        "file": "intel/intel_init.c"
+        "file": "pngrtran.c"
     },
     {
         "arguments": [
-            "cc",
+            "gcc",
             "-c",
             "-DHAVE_CONFIG_H",
             "-I.",
             "-g",
             "-O2",
             "-o",
-            "intel/filter_sse2_intrinsics.o",
-            "intel/filter_sse2_intrinsics.c"
+            "pngget.o",
+            "pngget.c"
         ],
         "directory": "/home/arden/Programming/cpp/specula/external/libpng",
-        "file": "intel/filter_sse2_intrinsics.c"
+        "file": "pngget.c"
     },
     {
         "arguments": [
-            "cc",
+            "gcc",
             "-c",
             "-DHAVE_CONFIG_H",
             "-I.",
             "-g",
             "-O2",
+            "-fPIC",
+            "-DPIC",
             "-o",
-            "mips/mips_init.o",
-            "mips/mips_init.c"
+            ".libs/pngrio.o",
+            "pngrio.c"
         ],
         "directory": "/home/arden/Programming/cpp/specula/external/libpng",
-        "file": "mips/mips_init.c"
+        "file": "pngrio.c"
     },
     {
         "arguments": [
-            "cc",
+            "gcc",
+            "-c",
+            "-DHAVE_CONFIG_H",
+            "-I.",
+            "-g",
+            "-O2",
+            "-fPIC",
+            "-DPIC",
+            "-o",
+            ".libs/pngget.o",
+            "pngget.c"
+        ],
+        "directory": "/home/arden/Programming/cpp/specula/external/libpng",
+        "file": "pngget.c"
+    },
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-DHAVE_CONFIG_H",
+            "-I.",
+            "-g",
+            "-O2",
+            "-fPIC",
+            "-DPIC",
+            "-o",
+            ".libs/pngwio.o",
+            "pngwio.c"
+        ],
+        "directory": "/home/arden/Programming/cpp/specula/external/libpng",
+        "file": "pngwio.c"
+    },
+    {
+        "arguments": [
+            "gcc",
             "-c",
             "-DHAVE_CONFIG_H",
             "-I.",
@@ -793,17 +481,329 @@
     },
     {
         "arguments": [
-            "cc",
+            "gcc",
+            "-c",
+            "-DHAVE_CONFIG_H",
+            "-I.",
+            "-g",
+            "-O2",
+            "-fPIC",
+            "-DPIC",
+            "-o",
+            ".libs/pngwrite.o",
+            "pngwrite.c"
+        ],
+        "directory": "/home/arden/Programming/cpp/specula/external/libpng",
+        "file": "pngwrite.c"
+    },
+    {
+        "arguments": [
+            "gcc",
             "-c",
             "-DHAVE_CONFIG_H",
             "-I.",
             "-g",
             "-O2",
             "-o",
-            "contrib/libtests/pngvalid.o",
-            "contrib/libtests/pngvalid.c"
+            "contrib/libtests/pngunknown.o",
+            "contrib/libtests/pngunknown.c"
         ],
         "directory": "/home/arden/Programming/cpp/specula/external/libpng",
-        "file": "contrib/libtests/pngvalid.c"
+        "file": "contrib/libtests/pngunknown.c"
+    },
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-DHAVE_CONFIG_H",
+            "-I.",
+            "-g",
+            "-O2",
+            "-o",
+            "pngrutil.o",
+            "pngrutil.c"
+        ],
+        "directory": "/home/arden/Programming/cpp/specula/external/libpng",
+        "file": "pngrutil.c"
+    },
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-DHAVE_CONFIG_H",
+            "-I.",
+            "-g",
+            "-O2",
+            "-fPIC",
+            "-DPIC",
+            "-o",
+            "intel/.libs/filter_sse2_intrinsics.o",
+            "intel/filter_sse2_intrinsics.c"
+        ],
+        "directory": "/home/arden/Programming/cpp/specula/external/libpng",
+        "file": "intel/filter_sse2_intrinsics.c"
+    },
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-DHAVE_CONFIG_H",
+            "-I.",
+            "-g",
+            "-O2",
+            "-o",
+            "intel/filter_sse2_intrinsics.o",
+            "intel/filter_sse2_intrinsics.c"
+        ],
+        "directory": "/home/arden/Programming/cpp/specula/external/libpng",
+        "file": "intel/filter_sse2_intrinsics.c"
+    },
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-DHAVE_CONFIG_H",
+            "-I.",
+            "-g",
+            "-O2",
+            "-o",
+            "contrib/tools/pngfix.o",
+            "contrib/tools/pngfix.c"
+        ],
+        "directory": "/home/arden/Programming/cpp/specula/external/libpng",
+        "file": "contrib/tools/pngfix.c"
+    },
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-DHAVE_CONFIG_H",
+            "-I.",
+            "-g",
+            "-O2",
+            "-o",
+            "intel/intel_init.o",
+            "intel/intel_init.c"
+        ],
+        "directory": "/home/arden/Programming/cpp/specula/external/libpng",
+        "file": "intel/intel_init.c"
+    },
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-DHAVE_CONFIG_H",
+            "-I.",
+            "-g",
+            "-O2",
+            "-o",
+            "pngpread.o",
+            "pngpread.c"
+        ],
+        "directory": "/home/arden/Programming/cpp/specula/external/libpng",
+        "file": "pngpread.c"
+    },
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-DHAVE_CONFIG_H",
+            "-I.",
+            "-g",
+            "-O2",
+            "-fPIC",
+            "-DPIC",
+            "-o",
+            "intel/.libs/intel_init.o",
+            "intel/intel_init.c"
+        ],
+        "directory": "/home/arden/Programming/cpp/specula/external/libpng",
+        "file": "intel/intel_init.c"
+    },
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-DHAVE_CONFIG_H",
+            "-I.",
+            "-g",
+            "-O2",
+            "-o",
+            "pngset.o",
+            "pngset.c"
+        ],
+        "directory": "/home/arden/Programming/cpp/specula/external/libpng",
+        "file": "pngset.c"
+    },
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-DHAVE_CONFIG_H",
+            "-I.",
+            "-g",
+            "-O2",
+            "-o",
+            "pngmem.o",
+            "pngmem.c"
+        ],
+        "directory": "/home/arden/Programming/cpp/specula/external/libpng",
+        "file": "pngmem.c"
+    },
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-DHAVE_CONFIG_H",
+            "-I.",
+            "-g",
+            "-O2",
+            "-o",
+            "pngwutil.o",
+            "pngwutil.c"
+        ],
+        "directory": "/home/arden/Programming/cpp/specula/external/libpng",
+        "file": "pngwutil.c"
+    },
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-DHAVE_CONFIG_H",
+            "-I.",
+            "-g",
+            "-O2",
+            "-fPIC",
+            "-DPIC",
+            "-o",
+            "mips/.libs/mips_init.o",
+            "mips/mips_init.c"
+        ],
+        "directory": "/home/arden/Programming/cpp/specula/external/libpng",
+        "file": "mips/mips_init.c"
+    },
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-DHAVE_CONFIG_H",
+            "-I.",
+            "-g",
+            "-O2",
+            "-o",
+            "png.o",
+            "png.c"
+        ],
+        "directory": "/home/arden/Programming/cpp/specula/external/libpng",
+        "file": "png.c"
+    },
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-DHAVE_CONFIG_H",
+            "-I.",
+            "-g",
+            "-O2",
+            "-fPIC",
+            "-DPIC",
+            "-o",
+            ".libs/pngpread.o",
+            "pngpread.c"
+        ],
+        "directory": "/home/arden/Programming/cpp/specula/external/libpng",
+        "file": "pngpread.c"
+    },
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-DHAVE_CONFIG_H",
+            "-I.",
+            "-g",
+            "-O2",
+            "-o",
+            "pngtrans.o",
+            "pngtrans.c"
+        ],
+        "directory": "/home/arden/Programming/cpp/specula/external/libpng",
+        "file": "pngtrans.c"
+    },
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-DHAVE_CONFIG_H",
+            "-I.",
+            "-g",
+            "-O2",
+            "-o",
+            "pngwio.o",
+            "pngwio.c"
+        ],
+        "directory": "/home/arden/Programming/cpp/specula/external/libpng",
+        "file": "pngwio.c"
+    },
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-DHAVE_CONFIG_H",
+            "-I.",
+            "-g",
+            "-O2",
+            "-o",
+            "pngrio.o",
+            "pngrio.c"
+        ],
+        "directory": "/home/arden/Programming/cpp/specula/external/libpng",
+        "file": "pngrio.c"
+    },
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-DHAVE_CONFIG_H",
+            "-I.",
+            "-g",
+            "-O2",
+            "-o",
+            "pngwtran.o",
+            "pngwtran.c"
+        ],
+        "directory": "/home/arden/Programming/cpp/specula/external/libpng",
+        "file": "pngwtran.c"
+    },
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-DHAVE_CONFIG_H",
+            "-I.",
+            "-g",
+            "-O2",
+            "-o",
+            "pngrtran.o",
+            "pngrtran.c"
+        ],
+        "directory": "/home/arden/Programming/cpp/specula/external/libpng",
+        "file": "pngrtran.c"
+    },
+    {
+        "arguments": [
+            "gcc",
+            "-c",
+            "-DHAVE_CONFIG_H",
+            "-I.",
+            "-g",
+            "-O2",
+            "-fPIC",
+            "-DPIC",
+            "-o",
+            ".libs/pngtrans.o",
+            "pngtrans.c"
+        ],
+        "directory": "/home/arden/Programming/cpp/specula/external/libpng",
+        "file": "pngtrans.c"
     }
 ]

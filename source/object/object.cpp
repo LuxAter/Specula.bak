@@ -1,6 +1,7 @@
 #include "object/object.hpp"
 
 #include <limits>
+#include <memory>
 
 #include "math/math.hpp"
 
@@ -24,4 +25,9 @@ void specula::object::Object::Translate(const math::Vec3d& pos) {
 
 double specula::object::Object::DE(const math::Vec3d& p) {
   return std::numeric_limits<double>::infinity();
+}
+
+std::unique_ptr<specula::object::Object> specula::object::GenerateObject(
+    Material mat) {
+  return std::unique_ptr<Object>(new Object(mat));
 }

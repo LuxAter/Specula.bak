@@ -9,8 +9,8 @@ namespace specula {
 namespace image {
   class Image {
    public:
-    Image(const std::size_t& res, const double& ratio=16.0/9.0);
-    Image(const std::size_t& width, const std::size_t& height);
+    explicit Image(const std::size_t& res, const double& ratio=16.0/9.0);
+    explicit Image(const std::size_t& width, const std::size_t& height);
     Image(const Image& copy);
     ~Image();
 

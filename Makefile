@@ -6,8 +6,8 @@ endif
 ROOT=$(shell pwd)
 CXX=clang++
 CXXIGNORE=
-CXXFLAGS=-std=c++17 -fPIC -Wall -Wpedantic --static -D__OPEN_CL__
-LINK=-lpthread -lz -lOpenCL
+CXXFLAGS=-std=c++17 -fPIC -Wall -Wpedantic --static
+LINK=-lpthread -lz
 SOURCE=source
 INCLUDE_DIR=include
 INCLUDE=-I$(ROOT)/$(EXTERNAL)/estl -I$(ROOT)/$(BUILD)/libpng/include
