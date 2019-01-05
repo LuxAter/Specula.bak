@@ -16,7 +16,9 @@ namespace math {
   template <typename _T>
   struct Vec2 {
     Vec2() : x(_T()), y(_T()) {}
-    explicit Vec2(const _T& v) : x(v), y(v) {}
+    Vec2(const _T& v) : x(v), y(v) {}
+    Vec2(const Vec3<_T>& v) : x(v.x), y(v.y) {}
+    Vec2(const Vec4<_T>& v) : x(v.x), y(v.y) {}
     Vec2(const _T& a, const _T& b) : x(a), y(b) {}
     Vec2(const Vec2<_T>& copy) : x(copy.x), y(copy.y) {}
 
@@ -103,7 +105,8 @@ namespace math {
   template <typename _T>
   struct Vec3 {
     Vec3() : x(_T()), y(_T()), z(_T()) {}
-    explicit Vec3(const _T& v) : x(v), y(v), z(v) {}
+    Vec3(const _T& v) : x(v), y(v), z(v) {}
+    Vec3(const Vec4<_T>& v) : x(v.x), y(v.y), z(v.z) {}
     Vec3(const _T& a, const _T& b, const _T& c) : x(a), y(b), z(c) {}
     Vec3(const Vec2<_T>& ab, const _T& c) : x(ab.x), y(ab.y), z(c) {}
     Vec3(const _T& a, const Vec2<_T>& bc) : x(a), y(bc.x), z(bc.y) {}

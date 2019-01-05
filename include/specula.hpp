@@ -6,6 +6,8 @@
 #include "color.hpp"
 #include "util/util.hpp"
 
+#include "thread/cl.hpp"
+
 namespace specula {
 } // namespace specula
 

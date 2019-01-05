@@ -1,8 +1,8 @@
 {
   "CXX": "clang++",
   "CXXIGNORE": "",
-  "CXXFLAGS": ["-std=c++17", "-fPIC", "-Wall", "-Wpedantic", "--static"],
-  "link": "-lz",
+  "CXXFLAGS": ["-std=c++17", "-fPIC", "-Wall", "-Wpedantic", "--static", "-D__OPEN_CL__"],
+  "link": "-lpthread -lz -lOpenCL",
   "source": "source",
   "include_dir": "include",
   "include": ["-I$(ROOT)/$(EXTERNAL)/estl", "-I$(ROOT)/$(BUILD)/libpng/include"],

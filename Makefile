@@ -4,11 +4,10 @@ ifndef .VERBOSE
     .SILENT:
 endif
 ROOT=$(shell pwd)
-ROOT=/home/arden/Programming/cpp/specula
 CXX=clang++
 CXXIGNORE=
-CXXFLAGS=-std=c++17 -fPIC -Wall -Wpedantic --static
-LINK=-lz
+CXXFLAGS=-std=c++17 -fPIC -Wall -Wpedantic --static -D__OPEN_CL__
+LINK=-lpthread -lz -lOpenCL
 SOURCE=source
 INCLUDE_DIR=include
 INCLUDE=-I$(ROOT)/$(EXTERNAL)/estl -I$(ROOT)/$(BUILD)/libpng/include

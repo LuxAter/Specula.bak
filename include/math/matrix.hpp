@@ -615,6 +615,11 @@ namespace math {
         lhs.ba * rhs.aa + lhs.bb * rhs.ba, lhs.ba * rhs.ab + lhs.bb * rhs.bb};
   }
   template <typename _T>
+  inline Vec2<_T> operator*(const Mat2<_T>& lhs, const Vec2<_T>& rhs) {
+    return Vec2<_T>{lhs.aa * rhs.x + lhs.ab * rhs.y,
+                    lhs.ba * rhs.x + lhs.bb * rhs.y};
+  }
+  template <typename _T>
   inline Mat2<_T> operator/(const Mat2<_T>& lhs, const _T& rhs) {
     return Mat2{lhs.aa / rhs, lhs.ab / rhs, lhs.ba / rhs, lhs.bb / rhs};
   }
@@ -667,6 +672,18 @@ namespace math {
         lhs.ca * rhs.ab + lhs.cb * rhs.bb + lhs.cc * rhs.cb,
         lhs.ca * rhs.ac + lhs.cb * rhs.bc + lhs.cc * rhs.cc,
     };
+  }
+  template <typename _T>
+  inline Vec3<_T> operator*(const Mat3<_T>& lhs, const Vec2<_T>& rhs) {
+    return Vec3<_T>{lhs.aa * rhs.x + lhs.ab * rhs.y,
+                    lhs.ba * rhs.x + lhs.bb * rhs.y,
+                    lhs.ca * rhs.x + lhs.cb * rhs.y};
+  }
+  template <typename _T>
+  inline Vec3<_T> operator*(const Mat3<_T>& lhs, const Vec3<_T>& rhs) {
+    return Vec3<_T>{lhs.aa * rhs.x + lhs.ab * rhs.y + lhs.ac * rhs.z,
+                    lhs.ba * rhs.x + lhs.bb * rhs.y + lhs.bc * rhs.z,
+                    lhs.ca * rhs.x + lhs.cb * rhs.y + lhs.cc * rhs.z};
   }
   template <typename _T>
   inline Mat3<_T> operator/(const Mat3<_T>& lhs, const _T& rhs) {
@@ -740,6 +757,27 @@ namespace math {
     };
   }
   template <typename _T>
+  inline Vec4<_T> operator*(const Mat4<_T>& lhs, const Vec2<_T>& rhs) {
+    return Vec4<_T>{
+        lhs.aa * rhs.x + lhs.ab * rhs.y, lhs.ba * rhs.x + lhs.bb * rhs.y,
+        lhs.ca * rhs.x + lhs.cb * rhs.y, lhs.da * rhs.x + lhs.db * rhs.y};
+  }
+  template <typename _T>
+  inline Vec4<_T> operator*(const Mat4<_T>& lhs, const Vec3<_T>& rhs) {
+    return Vec4<_T>{lhs.aa * rhs.x + lhs.ab * rhs.y + lhs.ac * rhs.z,
+                    lhs.ba * rhs.x + lhs.bb * rhs.y + lhs.bc * rhs.z,
+                    lhs.ca * rhs.x + lhs.cb * rhs.y + lhs.cc * rhs.z,
+                    lhs.da * rhs.x + lhs.db * rhs.y + lhs.dc * rhs.z};
+  }
+  template <typename _T>
+  inline Vec4<_T> operator*(const Mat4<_T>& lhs, const Vec4<_T>& rhs) {
+    return Vec4<_T>{
+        lhs.aa * rhs.x + lhs.ab * rhs.y + lhs.ac * rhs.z + lhs.ad * rhs.w,
+        lhs.ba * rhs.x + lhs.bb * rhs.y + lhs.bc * rhs.z + lhs.bd * rhs.w,
+        lhs.ca * rhs.x + lhs.cb * rhs.y + lhs.cc * rhs.z + lhs.cd * rhs.w,
+        lhs.da * rhs.x + lhs.db * rhs.y + lhs.dc * rhs.z + lhs.dd * rhs.w};
+  }
+  template <typename _T>
   inline Mat4<_T> operator/(const Mat4<_T>& lhs, const _T& rhs) {
     return Mat4{lhs.aa / rhs, lhs.ab / rhs, lhs.ac / rhs, lhs.ad / rhs,
                 lhs.ba / rhs, lhs.bb / rhs, lhs.bc / rhs, lhs.bd / rhs,
@@ -754,6 +792,19 @@ namespace math {
         lhs.ca / rhs.ca, lhs.cb / rhs.cb, lhs.cc / rhs.cc, lhs.cd / rhs.cd,
         lhs.da / rhs.da, lhs.db / rhs.db, lhs.dc / rhs.dc, lhs.dd / rhs.dd};
   }
+
+  typedef Mat2<bool> Mat2b;
+  typedef Mat2<int> Mat2i;
+  typedef Mat2<float> Mat2f;
+  typedef Mat2<double> Mat2d;
+  typedef Mat3<bool> Mat3b;
+  typedef Mat3<int> Mat3i;
+  typedef Mat3<float> Mat3f;
+  typedef Mat3<double> Mat3d;
+  typedef Mat4<bool> Mat4b;
+  typedef Mat4<int> Mat4i;
+  typedef Mat4<float> Mat4f;
+  typedef Mat4<double> Mat4d;
 }  // namespace math
 }  // namespace specula
 
