@@ -1,28 +1,26 @@
 #ifndef SPECULA_OBJECT_OBJECT_HPP_
 #define SPECULA_OBJECT_OBJECT_HPP_
 
-#include <limits>
-#include <memory>
+#include <functional>
 
 #include "../math/math.hpp"
 #include "material.hpp"
+#include "distance_estimator.hpp"
 
 namespace specula {
 namespace object {
   class Object {
    public:
     Object();
-    explicit Object(Material mat);
-    virtual ~Object();
-    void Translate(const math::Vec3d& pos);
 
-    virtual double DE(const math::Vec3d& p);
+    double DE(const math::Vec3d& p) const;
 
-    Material material_;
-    math::Mat4d mat_, mat_inv_;
+    Material mat;
+
+   protected:
+    math::Mat4d trans_, trans_inv_;
+    std::function<double(const math::Vec3d&)> de_;
   };
-
-  std::unique_ptr<Object> GenerateObject(Material mat = Material());
 }  // namespace object
 }  // namespace specula
 

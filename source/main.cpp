@@ -5,17 +5,17 @@
 
 float MinDist(
     const specula::math::Vec3d& p,
-    const std::vector<std::unique_ptr<specula::object::Object>>& objs) {
+    const std::vector<specula::object::Object>& objs) {
   double dist = std::numeric_limits<double>::infinity();
   for (auto& it : objs) {
-    dist = std::min(dist, it->DE(p));
+    // dist = std::min(dist, it.DE(p));
   }
   return dist;
 }
 
 specula::Color RayCast(
     const specula::math::Vec3d& origin, const specula::math::Vec3d& dir,
-    const std::vector<std::unique_ptr<specula::object::Object>>& objs) {
+    const std::vector<specula::object::Object>& objs) {
   double depth = 0;
   for (unsigned i = 0; i < MAX_STEPS; ++i) {
     double dist = MinDist(origin + (dir * depth), objs);
@@ -32,20 +32,19 @@ specula::Color RayCast(
 }
 
 int main(int argc, char* argv[]) {
-  std::vector<std::unique_ptr<specula::object::Object>> objs;
-  objs.push_back(specula::object::GenerateSphere({0.0, 0.0, 10.0}, 1.0));
-  // objs.back()->Translate({0.0, 0.0, 2.0});
-  objs.push_back(
-      specula::object::GeneratePlane({0.0, -1.0, 0.0}, {0.0, 1.0, 0.0}));
-  objs.push_back(
-      specula::object::GeneratePlane({0.0, 5.0, 0.0}, {0.0, -1.0, 0.0}));
-  objs.push_back(
-      specula::object::GeneratePlane({-5.0, 0.0, 0.0}, {1.0, 0.0, 0.0}));
-  objs.push_back(
-      specula::object::GeneratePlane({5.0, 0.0, 0.0}, {-1.0, 0.0, 0.0}));
-  objs.push_back(
-      specula::object::GeneratePlane({0.0, 0.0, 20.0}, {0.0, 0.0, -1.0}));
-
+  std::vector<specula::object::Object> objs;
+  // objs.push_back(specula::object::Sphere(1.0, {0.0, 0.0, 10.0}));
+  // objs.push_back(
+  //     specula::object::Plane({0.0, -1.0, 0.0}, {0.0, 1.0, 0.0}));
+  // objs.push_back(
+  //     specula::object::Plane({0.0, 5.0, 0.0}, {0.0, -1.0, 0.0}));
+  // objs.push_back(
+  //     specula::object::Plane({-5.0, 0.0, 0.0}, {1.0, 0.0, 0.0}));
+  // objs.push_back(
+  //     specula::object::Plane({5.0, 0.0, 0.0}, {-1.0, 0.0, 0.0}));
+  // objs.push_back(
+  //     specula::object::Plane({0.0, 0.0, 20.0}, {0.0, 0.0, -1.0}));
+  //
   specula::image::Image img(std::size_t(500), std::size_t(500));
   double invwidth = 1.0 / img.Width();
   double invheight = 1.0 / img.Height();

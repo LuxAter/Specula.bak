@@ -3,6 +3,7 @@
 
 #include <cmath>
 
+#include "matrix.hpp"
 #include "vector.hpp"
 
 namespace specula {
@@ -76,8 +77,7 @@ namespace math {
                     x.x * y.y - x.y * y.x};
   }
   template <typename _T>
-  Vec4<_T> cross(const Vec4<_T>& x, const Vec4<_T>& y,
-                        const Vec4<_T>& z) {
+  Vec4<_T> cross(const Vec4<_T>& x, const Vec4<_T>& y, const Vec4<_T>& z) {
     _T a = y.z * z.w - y.w * z.z;
     _T b = y.y * z.w - y.w * z.y;
     _T c = y.y * z.z - y.z * z.y;
@@ -113,17 +113,17 @@ namespace math {
   }
   template <typename _T>
   inline Vec2<_T> faceforward(const Vec2<_T>& N, const Vec2<_T>& I,
-                       const Vec2<_T>& Nref) {
+                              const Vec2<_T>& Nref) {
     (dot(Nref, I) < 0) ? N : -N;
   }
   template <typename _T>
   inline Vec3<_T> faceforward(const Vec3<_T>& N, const Vec3<_T>& I,
-                       const Vec3<_T>& Nref) {
+                              const Vec3<_T>& Nref) {
     (dot(Nref, I) < 0) ? N : -N;
   }
   template <typename _T>
   inline Vec4<_T> faceforward(const Vec4<_T>& N, const Vec4<_T>& I,
-                       const Vec4<_T>& Nref) {
+                              const Vec4<_T>& Nref) {
     (dot(Nref, I) < 0) ? N : -N;
   }
 
@@ -179,6 +179,95 @@ namespace math {
     } else {
       return eta * I - (eta * dot(N, I) + sqrt(k)) * N;
     }
+  }
+
+  template <typename _T>
+  std::pair<Mat4<_T>, Mat4<_T>> translate(const Mat4<_T>& mat,
+                                          const Mat4<_T>& inv,
+                                          const Vec3<_T>& d) {
+    std::pair<Mat4<_T>, Mat4<_T>> ret;
+    Mat4<_T> t(_T(1));
+    t(0, 3) = d.x;
+    t(1, 3) = d.y;
+    t(2, 3) = d.z;
+    ret.first = t * mat;
+    t(0, 3) = -d.x;
+    t(1, 3) = -d.y;
+    t(2, 3) = -d.z;
+    ret.second = inv * t;
+    return ret;
+  }
+  template <typename _T>
+  std::pair<Mat4<_T>, Mat4<_T>> scale(const Mat4<_T>& mat, const Mat4<_T>& inv,
+                                      const Vec3<_T>& s) {
+    std::pair<Mat4<_T>, Mat4<_T>> ret;
+    Mat4<_T> t(_T(1));
+    t(0, 0) = s.x;
+    t(1, 1) = s.y;
+    t(2, 2) = s.z;
+    ret.first = t * mat;
+    t(0, 0) = _T(1) / s.x;
+    t(1, 1) = _T(1) / s.y;
+    t(2, 2) = _T(1) / s.z;
+    ret.second = inv * t;
+    return ret;
+  }
+  template <typename _T>
+  std::pair<Mat4<_T>, Mat4<_T>> rotateX(const Mat4<_T>& mat,
+                                        const Mat4<_T>& inv,
+                                        const _T& radians) {
+    std::pair<Mat4<_T>, Mat4<_T>> ret;
+    Mat4<_T> t(_T(1));
+    _T cs = cos(radians), sn = sin(radians);
+    t(1, 1) = cs;
+    t(1, 2) = -sn;
+    t(2, 1) = sn;
+    t(2, 2) = cs;
+    ret.first = t * mat;
+    t(1, 1) = cs;
+    t(1, 2) = sn;
+    t(2, 1) = -sn;
+    t(2, 2) = cs;
+    ret.second = inv * t;
+    return ret;
+  }
+  template <typename _T>
+  std::pair<Mat4<_T>, Mat4<_T>> rotateY(const Mat4<_T>& mat,
+                                        const Mat4<_T>& inv,
+                                        const _T& radians) {
+    std::pair<Mat4<_T>, Mat4<_T>> ret;
+    Mat4<_T> t(_T(1));
+    _T cs = cos(radians), sn = sin(radians);
+    t(0, 0) = cs;
+    t(0, 2) = sn;
+    t(2, 0) = -sn;
+    t(2, 2) = cs;
+    ret.first = t * mat;
+    t(0, 0) = cs;
+    t(0, 2) = -sn;
+    t(2, 0) = sn;
+    t(2, 2) = cs;
+    ret.second = inv * t;
+    return ret;
+  }
+  template <typename _T>
+  std::pair<Mat4<_T>, Mat4<_T>> rotateZ(const Mat4<_T>& mat,
+                                        const Mat4<_T>& inv,
+                                        const _T& radians) {
+    std::pair<Mat4<_T>, Mat4<_T>> ret;
+    Mat4<_T> t(_T(1));
+    _T cs = cos(radians), sn = sin(radians);
+    t(0, 0) = cs;
+    t(0, 1) = -sn;
+    t(1, 0) = sn;
+    t(1, 1) = cs;
+    ret.first = t * mat;
+    t(0, 0) = cs;
+    t(0, 1) = sn;
+    t(1, 0) = -sn;
+    t(1, 1) = cs;
+    ret.second = inv * t;
+    return ret;
   }
 
 }  // namespace math

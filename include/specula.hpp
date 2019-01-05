@@ -5,7 +5,7 @@
 #include "math/math.hpp"
 #include "color.hpp"
 #include "util/util.hpp"
-#include "object/objects.hpp"
+#include "object/object.hpp"
 
 namespace specula {
 } // namespace specula
