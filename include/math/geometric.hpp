@@ -19,12 +19,12 @@ namespace math {
   template <typename _T>
   inline _T length(const Vec3<_T>& x) {
     return std::sqrt(std::pow(x.x, _T(2)) + std::pow(x.y, _T(2)) +
-                     std::pow(x.y, _T(2)));
+                     std::pow(x.z, _T(2)));
   }
   template <typename _T>
   inline _T length(const Vec4<_T>& x) {
     return std::sqrt(std::pow(x.x, _T(2)) + std::pow(x.y, _T(2)) +
-                     std::pow(x.y, _T(2)) + std::pow(x.w, _T(2)));
+                     std::pow(x.z, _T(2)) + std::pow(x.w, _T(2)));
   }
 
   template <typename _T>
@@ -40,13 +40,13 @@ namespace math {
   inline _T distance(const Vec3<_T>& p0, const Vec3<_T>& p1) {
     return std::sqrt(std::pow(p0.x - p1.x, _T(2)) +
                      std::pow(p0.y - p1.y, _T(2)) +
-                     std::pow(p0.y - p1.y, _T(2)));
+                     std::pow(p0.z - p1.z, _T(2)));
   }
   template <typename _T>
   inline _T distance(const Vec4<_T>& p0, const Vec4<_T>& p1) {
     return std::sqrt(
         std::pow(p0.x - p1.x, _T(2)) + std::pow(p0.y - p1.y, _T(2)) +
-        std::pow(p0.y - p1.y, _T(2)) + std::pow(p0.w - p1.w, _T(2)));
+        std::pow(p0.z - p1.z, _T(2)) + std::pow(p0.w - p1.w, _T(2)));
   }
 
   template <typename _T>
@@ -93,18 +93,18 @@ namespace math {
     return _T(1);
   }
   template <typename _T>
-  inline _T normalize(const Vec2<_T>& x) {
+  inline Vec2<_T> normalize(const Vec2<_T>& x) {
     return x / (std::sqrt(std::pow(x.x, _T(2)) + std::pow(x.y, _T(2))));
   }
   template <typename _T>
-  inline _T normalize(const Vec3<_T>& x) {
+  inline Vec3<_T> normalize(const Vec3<_T>& x) {
     return x / (std::sqrt(std::pow(x.x, _T(2)) + std::pow(x.y, _T(2)) +
-                          std::pow(x.y, _T(2))));
+                          std::pow(x.z, _T(2))));
   }
   template <typename _T>
-  inline _T normalize(const Vec4<_T>& x) {
+  inline Vec4<_T> normalize(const Vec4<_T>& x) {
     return x / (std::sqrt(std::pow(x.x, _T(2)) + std::pow(x.y, _T(2)) +
-                          std::pow(x.y, _T(2)) + std::pow(x.w, _T(2))));
+                          std::pow(x.z, _T(2)) + std::pow(x.w, _T(2))));
   }
 
   template <typename _T>
