@@ -58,6 +58,20 @@ namespace math {
             __N("operator() (which is %zu, %zu) >= __Nr (which is 2)"), r, c);
       }
     }
+    inline _T operator()(const std::size_t& r, const std::size_t& c) const {
+      if (r == 0 && c == 0)
+        return aa;
+      else if (r == 0 && c == 1)
+        return ab;
+      else if (r == 1 && c == 0)
+        return ba;
+      else if (r == 1 && c == 1)
+        return bb;
+      else {
+        std::__throw_out_of_range_fmt(
+            __N("operator() (which is %zu, %zu) >= __Nr (which is 2)"), r, c);
+      }
+    }
 
     Vec2<_T> column(const std::size_t& c) {
       if (c == 0) {
@@ -195,6 +209,30 @@ namespace math {
       }
     }
     inline _T& operator()(const std::size_t& r, const std::size_t& c) {
+      if (r == 0 && c == 0)
+        return aa;
+      else if (r == 0 && c == 1)
+        return ab;
+      else if (r == 0 && c == 2)
+        return ac;
+      else if (r == 1 && c == 0)
+        return ba;
+      else if (r == 1 && c == 1)
+        return bb;
+      else if (r == 1 && c == 2)
+        return bc;
+      else if (r == 2 && c == 0)
+        return ca;
+      else if (r == 2 && c == 1)
+        return cb;
+      else if (r == 2 && c == 2)
+        return cc;
+      else {
+        std::__throw_out_of_range_fmt(
+            __N("operator() (which is %zu, %zu) >= __Nr (which is 3)"), r, c);
+      }
+    }
+    inline _T operator()(const std::size_t& r, const std::size_t& c) const {
       if (r == 0 && c == 0)
         return aa;
       else if (r == 0 && c == 1)
@@ -412,6 +450,44 @@ namespace math {
       }
     }
     inline _T& operator()(const std::size_t& r, const std::size_t& c) {
+      if (r == 0 && c == 0)
+        return aa;
+      else if (r == 0 && c == 1)
+        return ab;
+      else if (r == 0 && c == 2)
+        return ac;
+      else if (r == 0 && c == 3)
+        return ad;
+      else if (r == 1 && c == 0)
+        return ba;
+      else if (r == 1 && c == 1)
+        return bb;
+      else if (r == 1 && c == 2)
+        return bc;
+      else if (r == 1 && c == 3)
+        return bd;
+      else if (r == 2 && c == 0)
+        return ca;
+      else if (r == 2 && c == 1)
+        return cb;
+      else if (r == 2 && c == 2)
+        return cc;
+      else if (r == 2 && c == 3)
+        return cd;
+      else if (r == 3 && c == 0)
+        return da;
+      else if (r == 3 && c == 1)
+        return db;
+      else if (r == 3 && c == 2)
+        return dc;
+      else if (r == 3 && c == 3)
+        return dd;
+      else {
+        std::__throw_out_of_range_fmt(
+            __N("operator() (which is %zu, %zu) >= __Nr (which is 4)"), r, c);
+      }
+    }
+    inline _T operator()(const std::size_t& r, const std::size_t& c) const {
       if (r == 0 && c == 0)
         return aa;
       else if (r == 0 && c == 1)
@@ -675,9 +751,9 @@ namespace math {
   }
   template <typename _T>
   inline Vec3<_T> operator*(const Mat3<_T>& lhs, const Vec2<_T>& rhs) {
-    return Vec3<_T>{lhs.aa * rhs.x + lhs.ab * rhs.y,
-                    lhs.ba * rhs.x + lhs.bb * rhs.y,
-                    lhs.ca * rhs.x + lhs.cb * rhs.y};
+    return Vec3<_T>{lhs.aa * rhs.x + lhs.ab * rhs.y + lhs.ac,
+                    lhs.ba * rhs.x + lhs.bb * rhs.y + lhs.bc,
+                    lhs.ca * rhs.x + lhs.cb * rhs.y + lhs.cc};
   }
   template <typename _T>
   inline Vec3<_T> operator*(const Mat3<_T>& lhs, const Vec3<_T>& rhs) {
@@ -758,16 +834,17 @@ namespace math {
   }
   template <typename _T>
   inline Vec4<_T> operator*(const Mat4<_T>& lhs, const Vec2<_T>& rhs) {
-    return Vec4<_T>{
-        lhs.aa * rhs.x + lhs.ab * rhs.y, lhs.ba * rhs.x + lhs.bb * rhs.y,
-        lhs.ca * rhs.x + lhs.cb * rhs.y, lhs.da * rhs.x + lhs.db * rhs.y};
+    return Vec4<_T>{lhs.aa * rhs.x + lhs.ab * rhs.y + lhs.ac + lhs.ad,
+                    lhs.ba * rhs.x + lhs.bb * rhs.y + lhs.bc + lhs.bd,
+                    lhs.ca * rhs.x + lhs.cb * rhs.y + lhs.cc + lhs.cd,
+                    lhs.da * rhs.x + lhs.db * rhs.y + lhs.dc + lhs.dd};
   }
   template <typename _T>
   inline Vec4<_T> operator*(const Mat4<_T>& lhs, const Vec3<_T>& rhs) {
-    return Vec4<_T>{lhs.aa * rhs.x + lhs.ab * rhs.y + lhs.ac * rhs.z,
-                    lhs.ba * rhs.x + lhs.bb * rhs.y + lhs.bc * rhs.z,
-                    lhs.ca * rhs.x + lhs.cb * rhs.y + lhs.cc * rhs.z,
-                    lhs.da * rhs.x + lhs.db * rhs.y + lhs.dc * rhs.z};
+    return Vec4<_T>{lhs.aa * rhs.x + lhs.ab * rhs.y + lhs.ac * rhs.z + lhs.ad,
+                    lhs.ba * rhs.x + lhs.bb * rhs.y + lhs.bc * rhs.z + lhs.bd,
+                    lhs.ca * rhs.x + lhs.cb * rhs.y + lhs.cc * rhs.z + lhs.cd,
+                    lhs.da * rhs.x + lhs.db * rhs.y + lhs.dc * rhs.z + lhs.dd};
   }
   template <typename _T>
   inline Vec4<_T> operator*(const Mat4<_T>& lhs, const Vec4<_T>& rhs) {

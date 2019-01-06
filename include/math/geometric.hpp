@@ -68,6 +68,23 @@ namespace math {
   }
 
   template <typename _T>
+  inline _T dot2(const _T& x) {
+    return x * x;
+  }
+  template <typename _T>
+  inline _T dot2(const Vec2<_T>& x) {
+    return x.x * x.x + x.y * x.y;
+  }
+  template <typename _T>
+  inline _T dot2(const Vec3<_T>& x) {
+    return x.x * x.x + x.y * x.y + x.z * x.z;
+  }
+  template <typename _T>
+  inline _T dot2(const Vec4<_T>& x) {
+    return x.x * x.x + x.y * x.y + x.z * x.z + x.w * x.w;
+  }
+
+  template <typename _T>
   inline Vec2<_T> cross(const Vec2<_T>& x) {
     return Vec2<_T>{x.y, -x.x};
   }

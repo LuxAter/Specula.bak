@@ -25,6 +25,7 @@ namespace object {
              math::min(math::max(d.x, math::max(d.y, d.z)), 0.0);
     };
   }
+  // {ring radius, radius of torus}
   inline std::function<double(const math::Vec3d&)> Torus(math::Vec2d torus) {
     return [torus](const math::Vec3d& p) {
       math::Vec2d q(math::length(p.xz()) - torus.x, p.y);
@@ -122,6 +123,204 @@ namespace object {
                               1.0));
       double s = (cb.x < 0.0 && ca.y < 0.0) ? -1.0 : 1.0;
       return s * math::sqrt(math::min(math::dot(ca, ca), math::dot(cb, cb)));
+    };
+  }
+  inline std::function<double(const math::Vec3d&)> RoundedCone(double h,
+                                                               double r1,
+                                                               double r2) {
+    return [h, r1, r2](const math::Vec3d& p) {
+      math::Vec2d q(math::length(p.xz()), p.y);
+      double b = (r1 - r2) / h;
+      double a = math::sqrt(1.0 - b * b);
+      double k = math::dot(q, math::Vec2d(-b, a));
+      if (k < 0.0) return math::length(q) - r1;
+      if (k > a * h) return math::length(q - math::Vec2d(0.0, h)) - r2;
+      return math::dot(q, math::Vec2d(a, b)) - r1;
+    };
+  }
+  inline std::function<double(const math::Vec3d&)> Ellipsoid(math::Vec3d r) {
+    return [r](const math::Vec3d& p) {
+      double k0 = math::length(p / r);
+      double k1 = math::length(p / (r * r));
+      return k0 * (k0 - 1.0) / k1;
+    };
+  }
+  inline std::function<double(const math::Vec3d&)> Triangle(math::Vec3d a,
+                                                            math::Vec3d b,
+                                                            math::Vec3d c) {
+    return [a, b, c](const math::Vec3d& p) {
+      math::Vec3d ba = b - a, pa = p - a, cb = c - b, pb = p - b, ac = a - c,
+                  pc = p - c;
+      math::Vec3d nor = math::cross(ba, ac);
+      return math::sqrt(
+          (math::sign(math::dot(math::cross(ba, nor), pa)) +
+               math::sign(math::dot(math::cross(cb, nor), pb)) +
+               math::sign(math::dot(math::cross(ac, nor), pc)) <
+           2.0)
+              ? math::min(
+                    math::min(math::dot2(ba * math::clamp(math::dot(ba, pa) /
+                                                              math::dot2(ba),
+                                                          0.0, 1.0) -
+                                         pa),
+                              math::dot2(cb * math::clamp(math::dot(cb, pb) /
+                                                              math::dot2(cb),
+                                                          0.0, 1.0) -
+                                         pb)),
+                    math::dot2(
+                        ac * math::clamp(math::dot(ac, pc) / math::dot2(ac),
+                                         0.0, 1.0) -
+                        pc))
+              : math::dot(nor, pa) * math::dot(nor, pa) / math::dot2(nor));
+    };
+  }
+  inline std::function<double(const math::Vec3d&)> Quad(math::Vec3d a,
+                                                        math::Vec3d b,
+                                                        math::Vec3d c,
+                                                        math::Vec3d d) {
+    return [a, b, c, d](const math::Vec3d& p) {
+      math::Vec3d ba = b - a, pa = p - a, cb = c - b, pb = p - b, dc = d - c,
+                  pc = p - c, ad = a - d, pd = p - d;
+      math::Vec3d nor = math::cross(ba, ad);
+      return math::sqrt(
+          (math::sign(math::dot(math::cross(ba, nor), pa)) +
+               math::sign(math::dot(math::cross(cb, nor), pb)) +
+               math::sign(math::dot(math::cross(dc, nor), pc)) +
+               math::sign(math::dot(math::cross(ad, nor), pd)) <
+           2.0)
+              ? math::min(
+                    math::min(
+                        math::min(
+                            math::dot2(ba * math::clamp(math::dot(ba, pa) /
+                                                            math::dot2(ba),
+                                                        0.0, 1.0) -
+                                       pa),
+                            math::dot2(cb * math::clamp(math::dot(cb, pb) /
+                                                            math::dot2(cb),
+                                                        0.0, 1.0) -
+                                       pb)),
+                        math::dot2(
+                            dc * math::clamp(math::dot(dc, pc) / math::dot2(dc),
+                                             0.0, 1.0) -
+                            pc)),
+                    math::dot2(
+                        ad * math::clamp(math::dot(ad, pd) / math::dot2(ad),
+                                         0.0, 1.0) -
+                        pd))
+              : math::dot(nor, pa) * math::dot(nor, pa) / math::dot2(nor));
+    };
+  }
+
+  inline std::function<double(const math::Vec3d&)> Streach(
+      std::function<double(const math::Vec3d&)> obj, math::Vec3d h) {
+    return [obj, h](const math::Vec3d& p) {
+      math::Vec3d q = math::abs(p) - h;
+      return obj(math::max(q, 0.0)) +
+             math::min(math::max(q.x, math::max(q.y, q.z)), 0.0);
+    };
+  }
+  inline std::function<double(const math::Vec3d&)> Round(
+      std::function<double(const math::Vec3d&)> obj, double radius) {
+    return [obj, radius](const math::Vec3d& p) { return obj(p) - radius; };
+  }
+  inline std::function<double(const math::Vec3d&)> Onion(
+      std::function<double(const math::Vec3d&)> obj, double thickness) {
+    return [obj, thickness](const math::Vec3d& p) {
+      return math::abs(obj(p)) - thickness;
+    };
+  }
+
+  inline std::function<double(const math::Vec3d&)> Union(
+      std::function<double(const math::Vec3d&)> obj1,
+      std::function<double(const math::Vec3d&)> obj2) {
+    return [obj1, obj2](const math::Vec3d& p) {
+      return math::min(obj1(p), obj2(p));
+    };
+  }
+  inline std::function<double(const math::Vec3d&)> Subtraction(
+      std::function<double(const math::Vec3d&)> obj1,
+      std::function<double(const math::Vec3d&)> obj2) {
+    return [obj1, obj2](const math::Vec3d& p) {
+      return math::max(-obj1(p), obj2(p));
+    };
+  }
+  inline std::function<double(const math::Vec3d&)> Intersection(
+      std::function<double(const math::Vec3d&)> obj1,
+      std::function<double(const math::Vec3d&)> obj2) {
+    return [obj1, obj2](const math::Vec3d& p) {
+      return math::max(obj1(p), obj2(p));
+    };
+  }
+
+  inline std::function<double(const math::Vec3d&)> SmoothUnion(
+      std::function<double(const math::Vec3d&)> obj1,
+      std::function<double(const math::Vec3d&)> obj2, double k) {
+    return [obj1, obj2, k](const math::Vec3d& p) {
+      double d1 = obj1(p), d2 = obj2(p);
+      double h = math::clamp(0.5 + 0.5 * (d2 - d1) / k, 0.0, 1.0);
+      return math::mix(d2, d1, h) - k * h * (1.0 - h);
+    };
+  }
+  inline std::function<double(const math::Vec3d&)> SmoothSubtraction(
+      std::function<double(const math::Vec3d&)> obj1,
+      std::function<double(const math::Vec3d&)> obj2, double k) {
+    return [obj1, obj2, k](const math::Vec3d& p) {
+      double d1 = obj1(p), d2 = obj2(p);
+      double h = math::clamp(0.5 - 0.5 * (d2 + d1) / k, 0.0, 1.0);
+      return math::mix(d2, -d1, h) + k * h * (1.0 - h);
+    };
+  }
+  inline std::function<double(const math::Vec3d&)> SmoothIntersection(
+      std::function<double(const math::Vec3d&)> obj1,
+      std::function<double(const math::Vec3d&)> obj2, double k) {
+    return [obj1, obj2, k](const math::Vec3d& p) {
+      double d1 = obj1(p), d2 = obj2(p);
+      double h = math::clamp(0.5 - 0.5 * (d2 - d1) / k, 0.0, 1.0);
+      return math::mix(d2, d1, h) + k * h * (1.0 - h);
+    };
+  }
+  inline std::function<double(const math::Vec3d&)> Translate(
+      std::function<double(const math::Vec3d&)> obj, math::Vec3d pos) {
+    math::Mat4d t(1), it(1);
+    auto res = math::translate(t, it, pos);
+    it = res.second;
+    return [obj, it](const math::Vec3d& p) { return obj(it * p); };
+  }
+  inline std::function<double(const math::Vec3d&)> Rotate(
+      std::function<double(const math::Vec3d&)> obj, math::Vec3d pos) {
+    math::Mat4d t(1), it(1);
+    auto res = rotateX(t, it, pos.x);
+    res = rotateY(res.first, res.second, pos.y);
+    res = rotateZ(res.first, res.second, pos.z);
+    it = res.second;
+    return [obj, it](const math::Vec3d& p) { return obj(it * p); };
+  }
+  inline std::function<double(const math::Vec3d&)> Scale(
+      std::function<double(const math::Vec3d&)> obj, double s) {
+    return [obj, s](const math::Vec3d& p) { return obj(p / s) * s; };
+  }
+  inline std::function<double(const math::Vec3d&)> Repeate(
+      std::function<double(const math::Vec3d&)> obj, math::Vec3d c) {
+    return [obj, c](const math::Vec3d& p) {
+      math::Vec3d q(math::mod(p, c) - c * 0.5);
+      return obj(q);
+    };
+  }
+  inline std::function<double(const math::Vec3d&)> Displacement(
+      std::function<double(const math::Vec3d&)> obj,
+      std::function<double(const math::Vec3d&)> disp) {
+    return [obj, disp](const math::Vec3d& p) {
+      double d1 = obj(p);
+      double d2 = disp(p);
+      return d1 + d2;
+    };
+  }
+  inline std::function<double(const math::Vec3d&)> Twist(
+      std::function<double(const math::Vec3d&)> obj, double twist) {
+    return [obj, twist](const math::Vec3d& p) {
+      math::Vec2d cs(std::cos(twist * p.y), std::sin(twist * p.y));
+      math::Mat2d m(cs.x, -cs.y, cs.y, cs.x);
+      math::Vec3d q(m * p.xz(), p.y);
+      return obj(q);
     };
   }
 
