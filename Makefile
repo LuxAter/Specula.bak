@@ -4,9 +4,10 @@ ifndef .VERBOSE
     .SILENT:
 endif
 ROOT=$(shell pwd)
+ROOT=/home/arden/Programming/cpp/specula
 CXX=clang++
 CXXIGNORE=
-CXXFLAGS=-std=c++17 -fPIC -Wall -Wpedantic --static
+CXXFLAGS=-std=c++17 -fPIC -Wall -Wpedantic --static -O3
 LINK=-lpthread -lz
 SOURCE=source
 INCLUDE_DIR=include
