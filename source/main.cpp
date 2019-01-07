@@ -1,6 +1,6 @@
 // #include "specula.hpp"
-#include "math/new_vector.hpp"
 #include <iostream>
+#include "math/new_vector.hpp"
 
 #define MAX_STEPS 500
 #define EPSILON 0.01
@@ -25,8 +25,8 @@
 //                        const std::vector<specula::object::Object>& objs) {
 //   double depth = 0;
 //   for (unsigned i = 0; i < MAX_STEPS; ++i) {
-//     std::pair<std::size_t, double> dist = MinDist(origin + (dir * depth), objs);
-//     if (dist.second < EPSILON) {
+//     std::pair<std::size_t, double> dist = MinDist(origin + (dir * depth),
+//     objs); if (dist.second < EPSILON) {
 //       return objs[dist.first].mat.base_color;
 //     }
 //     depth += dist.second;
@@ -39,14 +39,6 @@
 using namespace specula::math;
 
 int main(int argc, char* argv[]) {
-  vec2 a(1.0, 2.0);
-  vec3 b(a);
-  // vec4 c{1.0, 2.0, 4.0, 3.0};
-  auto c = b.swizzel(1, 0);
-  std::cout << a << '\n';
-  std::cout << -b << '\n';
-  std::cout << c << '\n';
-  std::cout << -b << '\n';
 
   // std::vector<specula::object::Object> objs;
   // objs.push_back(specula::object::Object(specula::object::Sphere(1.0),
