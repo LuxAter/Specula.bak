@@ -3,7 +3,7 @@
 
 #include <cmath>
 
-#include "matrix.hpp"
+// #include "matrix.hpp"
 #include "vector.hpp"
 
 namespace specula {
@@ -13,134 +13,93 @@ namespace math {
   inline _T length(const _T& x) {
     return x;
   }
-  template <typename _T>
-  inline _T length(const Vec2<_T>& x) {
-    return std::sqrt(std::pow(x.x, _T(2)) + std::pow(x.y, _T(2)));
-  }
-  template <typename _T>
-  inline _T length(const Vec3<_T>& x) {
-    return std::sqrt(std::pow(x.x, _T(2)) + std::pow(x.y, _T(2)) +
-                     std::pow(x.z, _T(2)));
-  }
-  template <typename _T>
-  inline _T length(const Vec4<_T>& x) {
-    return std::sqrt(std::pow(x.x, _T(2)) + std::pow(x.y, _T(2)) +
-                     std::pow(x.z, _T(2)) + std::pow(x.w, _T(2)));
+  template <typename _T, std::size_t _N>
+  inline _T length(const vec<_T, _N>& x) {
+    _T sum = _T();
+    for (std::size_t i = 0; i < _N; ++i) {
+      sum += std::pow(x[i], _T(2));
+    }
+    return std::sqrt(sum);
   }
 
   template <typename _T>
   inline _T distance(const _T& p0, const _T& p1) {
     return p0 - p1;
   }
-  template <typename _T>
-  inline _T distance(const Vec2<_T>& p0, const Vec2<_T>& p1) {
-    return std::sqrt(std::pow(p0.x - p1.x, _T(2)) +
-                     std::pow(p0.y - p1.y, _T(2)));
-  }
-  template <typename _T>
-  inline _T distance(const Vec3<_T>& p0, const Vec3<_T>& p1) {
-    return std::sqrt(std::pow(p0.x - p1.x, _T(2)) +
-                     std::pow(p0.y - p1.y, _T(2)) +
-                     std::pow(p0.z - p1.z, _T(2)));
-  }
-  template <typename _T>
-  inline _T distance(const Vec4<_T>& p0, const Vec4<_T>& p1) {
-    return std::sqrt(
-        std::pow(p0.x - p1.x, _T(2)) + std::pow(p0.y - p1.y, _T(2)) +
-        std::pow(p0.z - p1.z, _T(2)) + std::pow(p0.w - p1.w, _T(2)));
+  template <typename _T, std::size_t _N>
+  inline _T distance(const vec<_T, _N>& p0, const vec<_T, _N>& p1) {
+    _T sum = _T();
+    for (std::size_t i = 0; i < _N; ++i) {
+      sum += std::pow(p0[i] - p1[i], _T(2));
+    }
+    return std::sqrt(sum);
   }
 
   template <typename _T>
   inline _T dot(const _T& x, const _T& y) {
     return x * y;
   }
-  template <typename _T>
-  inline _T dot(const Vec2<_T>& x, const Vec2<_T>& y) {
-    return x.x * y.x + x.y * y.y;
-  }
-  template <typename _T>
-  inline _T dot(const Vec3<_T>& x, const Vec3<_T>& y) {
-    return x.x * y.x + x.y * y.y + x.z * y.z;
-  }
-  template <typename _T>
-  inline _T dot(const Vec4<_T>& x, const Vec4<_T>& y) {
-    return x.x * y.x + x.y * y.y + x.z * y.z + x.w * y.w;
+  template <typename _T, std::size_t _N>
+  inline _T dot(const vec<_T, _N>& x, const vec<_T, _N>& y) {
+    _T sum = _T();
+    for (std::size_t i = 0; i < _N; ++i) {
+      sum += x[i] * y[i];
+    }
+    return sum;
   }
 
   template <typename _T>
   inline _T dot2(const _T& x) {
     return x * x;
   }
-  template <typename _T>
-  inline _T dot2(const Vec2<_T>& x) {
-    return x.x * x.x + x.y * x.y;
-  }
-  template <typename _T>
-  inline _T dot2(const Vec3<_T>& x) {
-    return x.x * x.x + x.y * x.y + x.z * x.z;
-  }
-  template <typename _T>
-  inline _T dot2(const Vec4<_T>& x) {
-    return x.x * x.x + x.y * x.y + x.z * x.z + x.w * x.w;
+  template <typename _T, std::size_t _N>
+  inline _T dot2(const vec<_T, _N>& x) {
+    _T sum = _T();
+    for (std::size_t i = 0; i < _N; ++i) {
+      sum += x[i] * x[i];
+    }
+    return sum;
   }
 
   template <typename _T>
-  inline Vec2<_T> cross(const Vec2<_T>& x) {
-    return Vec2<_T>{x.y, -x.x};
+  inline vec<_T, 2> cross(const vec<_T, 2>& x) {
+    return vec<_T, 2>{x[1], -x[0]};
   }
   template <typename _T>
-  inline Vec3<_T> cross(const Vec3<_T>& x, const Vec3<_T>& y) {
-    return Vec3<_T>{x.y * y.z - x.z * y.y, x.z * y.x - x.x * y.z,
-                    x.x * y.y - x.y * y.x};
+  inline vec<_T, 3> cross(const vec<_T, 3>& x, const vec<_T, 3>& y) {
+    return vec<_T, 3>{x[1] * y[2] - x[2] * y[1], x[2] * y[0] - x[0] * y[2],
+                      x[0] * y[1] - x[1] * y[0]};
   }
   template <typename _T>
-  Vec4<_T> cross(const Vec4<_T>& x, const Vec4<_T>& y, const Vec4<_T>& z) {
-    _T a = y.z * z.w - y.w * z.z;
-    _T b = y.y * z.w - y.w * z.y;
-    _T c = y.y * z.z - y.z * z.y;
-    _T d = y.x * z.w - y.w * z.x;
-    _T e = y.x * z.z - y.z * z.x;
-    _T f = y.x * z.y - y.y * z.x;
-    return Vec4<_T>(x.y * a - x.z * b + x.w * c, x.x * a - x.z * d + x.w * e,
-                    x.x * b - x.y * d + x.w * f, x.x * c - x.y * e + x.z * f);
+  vec<_T, 4> cross(const vec<_T, 4>& x, const vec<_T, 4>& y,
+                   const vec<_T, 4>& z) {
+    _T a = y[2] * z[3] - y[3] * z[2];
+    _T b = y[1] * z[3] - y[3] * z[1];
+    _T c = y[1] * z[2] - y[2] * z[1];
+    _T d = y[0] * z[3] - y[3] * z[0];
+    _T e = y[0] * z[2] - y[2] * z[0];
+    _T f = y[0] * z[1] - y[1] * z[0];
+    return vec<_T, 4>(
+        x[1] * a - x[2] * b + x[3] * c, x[0] * a - x[2] * d + x[3] * e,
+        x[0] * b - x[1] * d + x[3] * f, x[0] * c - x[1] * e + x[2] * f);
   }
 
   template <typename _T>
   inline _T normalize(const _T& x) {
     return _T(1);
   }
-  template <typename _T>
-  inline Vec2<_T> normalize(const Vec2<_T>& x) {
-    return x / (std::sqrt(std::pow(x.x, _T(2)) + std::pow(x.y, _T(2))));
-  }
-  template <typename _T>
-  inline Vec3<_T> normalize(const Vec3<_T>& x) {
-    return x / (std::sqrt(std::pow(x.x, _T(2)) + std::pow(x.y, _T(2)) +
-                          std::pow(x.z, _T(2))));
-  }
-  template <typename _T>
-  inline Vec4<_T> normalize(const Vec4<_T>& x) {
-    return x / (std::sqrt(std::pow(x.x, _T(2)) + std::pow(x.y, _T(2)) +
-                          std::pow(x.z, _T(2)) + std::pow(x.w, _T(2))));
+  template <typename _T, std::size_t _N>
+  inline vec<_T, _N> normalize(const vec<_T, _N>& x) {
+    return x / length(x);
   }
 
   template <typename _T>
   inline _T faceforward(const _T& N, const _T& I, const _T& Nref) {
     (dot(Nref, I) < 0) ? N : -N;
   }
-  template <typename _T>
-  inline Vec2<_T> faceforward(const Vec2<_T>& N, const Vec2<_T>& I,
-                              const Vec2<_T>& Nref) {
-    (dot(Nref, I) < 0) ? N : -N;
-  }
-  template <typename _T>
-  inline Vec3<_T> faceforward(const Vec3<_T>& N, const Vec3<_T>& I,
-                              const Vec3<_T>& Nref) {
-    (dot(Nref, I) < 0) ? N : -N;
-  }
-  template <typename _T>
-  inline Vec4<_T> faceforward(const Vec4<_T>& N, const Vec4<_T>& I,
-                              const Vec4<_T>& Nref) {
+  template <typename _T, std::size_t _N>
+  inline vec<_T, _N> faceforward(const vec<_T, _N>& N, const vec<_T, _N>& I,
+                                 const vec<_T, _N>& Nref) {
     (dot(Nref, I) < 0) ? N : -N;
   }
 
@@ -148,16 +107,8 @@ namespace math {
   inline _T reflect(const _T& I, const _T& N) {
     return I - _T(2) * dot(N, I) * N;
   }
-  template <typename _T>
-  inline Vec2<_T> reflect(const Vec2<_T>& I, const Vec2<_T>& N) {
-    return I - _T(2) * dot(N, I) * N;
-  }
-  template <typename _T>
-  inline Vec3<_T> reflect(const Vec3<_T>& I, const Vec3<_T>& N) {
-    return I - _T(2) * dot(N, I) * N;
-  }
-  template <typename _T>
-  inline Vec4<_T> reflect(const Vec4<_T>& I, const Vec4<_T>& N) {
+  template <typename _T, std::size_t _N>
+  inline vec<_T, _N> reflect(const vec<_T, _N>& I, const vec<_T, _N>& N) {
     return I - _T(2) * dot(N, I) * N;
   }
 
@@ -170,121 +121,121 @@ namespace math {
       return eta * I - (eta * dot(N, I) + sqrt(k)) * N;
     }
   }
-  template <typename _T>
-  Vec2<_T> refract(const Vec2<_T>& I, const Vec2<_T>& N, const _T& eta) {
+  template <typename _T, std::size_t _N>
+  vec<_T, _N> refract(const vec<_T, _N>& I, const vec<_T, _N>& N,
+                      const _T& eta) {
     _T k = _T(1) - eta * eta * (_T(1) - dot(N, I) * dot(N, I));
     if (k < _T(0)) {
-      return Vec2<_T>(0);
-    } else {
-      return eta * I - (eta * dot(N, I) + sqrt(k)) * N;
-    }
-  }
-  template <typename _T>
-  Vec3<_T> refract(const Vec3<_T>& I, const Vec3<_T>& N, const _T& eta) {
-    _T k = _T(1) - eta * eta * (_T(1) - dot(N, I) * dot(N, I));
-    if (k < _T(0)) {
-      return Vec3<_T>(0);
-    } else {
-      return eta * I - (eta * dot(N, I) + sqrt(k)) * N;
-    }
-  }
-  template <typename _T>
-  Vec4<_T> refract(const Vec4<_T>& I, const Vec4<_T>& N, const _T& eta) {
-    _T k = _T(1) - eta * eta * (_T(1) - dot(N, I) * dot(N, I));
-    if (k < _T(0)) {
-      return Vec4<_T>(0);
+      return vec<_T, _N>(0);
     } else {
       return eta * I - (eta * dot(N, I) + sqrt(k)) * N;
     }
   }
 
   template <typename _T>
-  std::pair<Mat4<_T>, Mat4<_T>> translate(const Mat4<_T>& mat,
-                                          const Mat4<_T>& inv,
-                                          const Vec3<_T>& d) {
-    std::pair<Mat4<_T>, Mat4<_T>> ret;
-    Mat4<_T> t(_T(1));
-    t(0, 3) = d.x;
-    t(1, 3) = d.y;
-    t(2, 3) = d.z;
-    ret.first = t * mat;
-    t(0, 3) = -d.x;
-    t(1, 3) = -d.y;
-    t(2, 3) = -d.z;
-    ret.second = inv * t;
-    return ret;
+  void translate(mat<_T, 4, 4>& tran, mat<_T, 4, 4>& inv, const vec<_T, 3>& d) {
+    mat<_T, 4, 4> t(_T(1));
+    t(0, 3) = d[0];
+    t(1, 3) = d[1];
+    t(2, 3) = d[2];
+    tran = t * tran;
+    t(0, 3) = -d[0];
+    t(1, 3) = -d[1];
+    t(2, 3) = -d[2];
+    inv = inv * t;
   }
   template <typename _T>
-  std::pair<Mat4<_T>, Mat4<_T>> scale(const Mat4<_T>& mat, const Mat4<_T>& inv,
-                                      const Vec3<_T>& s) {
-    std::pair<Mat4<_T>, Mat4<_T>> ret;
-    Mat4<_T> t(_T(1));
-    t(0, 0) = s.x;
-    t(1, 1) = s.y;
-    t(2, 2) = s.z;
-    ret.first = t * mat;
-    t(0, 0) = _T(1) / s.x;
-    t(1, 1) = _T(1) / s.y;
-    t(2, 2) = _T(1) / s.z;
-    ret.second = inv * t;
-    return ret;
+  void scale(mat<_T, 4, 4>& tran, mat<_T, 4, 4>& inv, const vec<_T, 3>& s) {
+    mat<_T, 4, 4> t(_T(1));
+    t(0, 0) = s[0];
+    t(1, 1) = s[1];
+    t(2, 2) = s[2];
+    tran = t * tran;
+    t(0, 0) = _T(1) / s[0];
+    t(1, 1) = _T(1) / s[1];
+    t(2, 2) = _T(1) / s[2];
+    inv = inv * t;
   }
   template <typename _T>
-  std::pair<Mat4<_T>, Mat4<_T>> rotateX(const Mat4<_T>& mat,
-                                        const Mat4<_T>& inv,
-                                        const _T& radians) {
-    std::pair<Mat4<_T>, Mat4<_T>> ret;
-    Mat4<_T> t(_T(1));
+  void rotateX(mat<_T, 4, 4>& tran, mat<_T, 4, 4>& inv, const _T& radians) {
+    mat<_T, 4, 4> t(_T(1));
     _T cs = cos(radians), sn = sin(radians);
     t(1, 1) = cs;
     t(1, 2) = -sn;
     t(2, 1) = sn;
     t(2, 2) = cs;
-    ret.first = t * mat;
+    tran = t * tran;
     t(1, 1) = cs;
     t(1, 2) = sn;
     t(2, 1) = -sn;
     t(2, 2) = cs;
-    ret.second = inv * t;
-    return ret;
+    inv = inv * t;
   }
   template <typename _T>
-  std::pair<Mat4<_T>, Mat4<_T>> rotateY(const Mat4<_T>& mat,
-                                        const Mat4<_T>& inv,
-                                        const _T& radians) {
-    std::pair<Mat4<_T>, Mat4<_T>> ret;
-    Mat4<_T> t(_T(1));
+  void rotateY(mat<_T, 4, 4>& tran, mat<_T, 4, 4>& inv, const _T& radians) {
+    mat<_T, 4, 4> t(_T(1));
     _T cs = cos(radians), sn = sin(radians);
     t(0, 0) = cs;
     t(0, 2) = sn;
     t(2, 0) = -sn;
     t(2, 2) = cs;
-    ret.first = t * mat;
+    tran = t * tran;
     t(0, 0) = cs;
     t(0, 2) = -sn;
     t(2, 0) = sn;
     t(2, 2) = cs;
-    ret.second = inv * t;
-    return ret;
+    inv = inv * t;
   }
   template <typename _T>
-  std::pair<Mat4<_T>, Mat4<_T>> rotateZ(const Mat4<_T>& mat,
-                                        const Mat4<_T>& inv,
-                                        const _T& radians) {
-    std::pair<Mat4<_T>, Mat4<_T>> ret;
-    Mat4<_T> t(_T(1));
+  void rotateZ(mat<_T, 4, 4>& tran, mat<_T, 4, 4>& inv, const _T& radians) {
+    mat<_T, 4, 4> t(_T(1));
     _T cs = cos(radians), sn = sin(radians);
     t(0, 0) = cs;
     t(0, 1) = -sn;
     t(1, 0) = sn;
     t(1, 1) = cs;
-    ret.first = t * mat;
+    tran = t * tran;
     t(0, 0) = cs;
     t(0, 1) = sn;
     t(1, 0) = -sn;
     t(1, 1) = cs;
-    ret.second = inv * t;
-    return ret;
+    inv = inv * t;
+  }
+  template <typename _T>
+  void rotateXYZ(mat<_T, 4, 4>& tran, mat<_T, 4, 4>& inv, const vec<_T, 3>& r) {
+    rotateX(tran, inv, r[0]);
+    rotateY(tran, inv, r[1]);
+    rotateZ(tran, inv, r[2]);
+  }
+  template <typename _T>
+  void rotateXZY(mat<_T, 4, 4>& tran, mat<_T, 4, 4>& inv, const vec<_T, 3>& r) {
+    rotateX(tran, inv, r[0]);
+    rotateZ(tran, inv, r[2]);
+    rotateY(tran, inv, r[1]);
+  }
+  template <typename _T>
+  void rotateYXZ(mat<_T, 4, 4>& tran, mat<_T, 4, 4>& inv, const vec<_T, 3>& r) {
+    rotateY(tran, inv, r[1]);
+    rotateX(tran, inv, r[0]);
+    rotateZ(tran, inv, r[2]);
+  }
+  template <typename _T>
+  void rotateYZX(mat<_T, 4, 4>& tran, mat<_T, 4, 4>& inv, const vec<_T, 3>& r) {
+    rotateY(tran, inv, r[1]);
+    rotateZ(tran, inv, r[2]);
+    rotateX(tran, inv, r[0]);
+  }
+  template <typename _T>
+  void rotateZXY(mat<_T, 4, 4>& tran, mat<_T, 4, 4>& inv, const vec<_T, 3>& r) {
+    rotateZ(tran, inv, r[2]);
+    rotateX(tran, inv, r[0]);
+    rotateY(tran, inv, r[1]);
+  }
+  template <typename _T>
+  void rotateZYX(mat<_T, 4, 4>& tran, mat<_T, 4, 4>& inv, const vec<_T, 3>& r) {
+    rotateZ(tran, inv, r[2]);
+    rotateY(tran, inv, r[1]);
+    rotateX(tran, inv, r[0]);
   }
 
 }  // namespace math

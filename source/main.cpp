@@ -1,6 +1,5 @@
-// #include "specula.hpp"
+#include "specula.hpp"
 #include <iostream>
-#include "math/new_vector.hpp"
 
 #define MAX_STEPS 500
 #define EPSILON 0.01
@@ -39,7 +38,6 @@
 using namespace specula::math;
 
 int main(int argc, char* argv[]) {
-
   // std::vector<specula::object::Object> objs;
   // objs.push_back(specula::object::Object(specula::object::Sphere(1.0),
   //                                        specula::Color(0.0, 1.0, 0.0)));

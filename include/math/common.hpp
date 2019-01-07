@@ -97,6 +97,7 @@ namespace math {
                            const vec<_T, _N>& z) {
     return component_op(x, y, z, math::clamp);
   }
+  template <typename _T, std::size_t _N>
   inline vec<_T, _N> clamp(const vec<_T, _N>& x, const _T& y, const _T& z) {
     return component_op(x, y, z, math::clamp);
   }
@@ -108,8 +109,9 @@ namespace math {
   template <typename _T, std::size_t _N>
   inline vec<_T, _N> mix(const vec<_T, _N>& x, const vec<_T, _N>& y,
                          const vec<_T, _N>& a) {
-    return component_op(x, y, z, math::mix);
+    return component_op(x, y, a, math::mix);
   }
+  template <typename _T, std::size_t _N>
   inline vec<_T, _N> mix(const vec<_T, _N>& x, const vec<_T, _N>& y,
                          const _T& a) {
     return component_op(x, y, a, math::mix);

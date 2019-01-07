@@ -1117,6 +1117,12 @@ namespace math {
         *this->data_[i] = init[i];
       }
     }
+    explicit swizzel(const std::array<std::shared_ptr<_T>, _N>& arr)
+        : vec_base<_T, _N>() {
+      for (std::size_t i = 0; i < _N; ++i) {
+        this->data_[i] = arr[i];
+      }
+    }
     inline swizzel<_T, _N>& operator=(const std::initializer_list<_T>& init) {
       std::size_t i = 0;
       for (auto it = init.begin(); it != init.end() && i < _N; ++it, ++i) {
@@ -1212,7 +1218,7 @@ namespace math {
     }
     template <std::size_t _I, typename... _ARGS>
     typename std::enable_if<_I == 0, void>::type constructor(const _T& t) {
-      for (uint32_t i = 0; i < _N; ++i) {
+      for (std::size_t i = 0; i < _N; ++i) {
         *this->data_[i] = t;
       }
     }
@@ -1228,85 +1234,96 @@ namespace math {
     return out;
   }
   template <typename _T, std::size_t _N>
-  inline bool operator==(const vec<_T, _N>& lhs, const vec<_T, _N>& rhs) {
+  inline bool operator==(const vec_base<_T, _N>& lhs,
+                         const vec_base<_T, _N>& rhs) {
     for (std::size_t i = 0; i < _N; ++i) {
       if (lhs[i] != rhs[i]) return false;
     }
     return true;
   }
   template <typename _T, std::size_t _N>
-  inline bool operator!=(const vec<_T, _N>& lhs, const vec<_T, _N>& rhs) {
+  inline bool operator!=(const vec_base<_T, _N>& lhs,
+                         const vec_base<_T, _N>& rhs) {
     return !(lhs == rhs);
   }
 
   template <typename _T, std::size_t _N>
-  inline vec<_T, _N> operator+(const vec<_T, _N>& lhs, const _T& rhs) {
-    vec<_T, _N> res;
-    for (std:; size_t i = 0; i < _N; ++i) {
+  inline vec_base<_T, _N> operator+(const vec_base<_T, _N>& lhs,
+                                    const _T& rhs) {
+    vec_base<_T, _N> res;
+    for (std::size_t i = 0; i < _N; ++i) {
       res[i] = lhs[i] + rhs;
     }
     return res;
   }
   template <typename _T, std::size_t _N>
-  inline vec<_T, _N> operator+(const vec<_T, _N>& lhs, const vec<_T, _N>& rhs) {
-    vec<_T, _N> res;
-    for (std:; size_t i = 0; i < _N; ++i) {
+  inline vec_base<_T, _N> operator+(const vec_base<_T, _N>& lhs,
+                                    const vec_base<_T, _N>& rhs) {
+    vec_base<_T, _N> res;
+    for (std::size_t i = 0; i < _N; ++i) {
       res[i] = lhs[i] + rhs[i];
     }
     return res;
   }
   template <typename _T, std::size_t _N>
-  inline vec<_T, _N> operator-(const vec<_T, _N>& lhs, const _T& rhs) {
-    vec<_T, _N> res;
-    for (std:; size_t i = 0; i < _N; ++i) {
+  inline vec_base<_T, _N> operator-(const vec_base<_T, _N>& lhs,
+                                    const _T& rhs) {
+    vec_base<_T, _N> res;
+    for (std::size_t i = 0; i < _N; ++i) {
       res[i] = lhs[i] - rhs;
     }
     return res;
   }
   template <typename _T, std::size_t _N>
-  inline vec<_T, _N> operator-(const vec<_T, _N>& lhs, const vec<_T, _N>& rhs) {
-    vec<_T, _N> res;
-    for (std:; size_t i = 0; i < _N; ++i) {
+  inline vec_base<_T, _N> operator-(const vec_base<_T, _N>& lhs,
+                                    const vec_base<_T, _N>& rhs) {
+    vec_base<_T, _N> res;
+    for (std::size_t i = 0; i < _N; ++i) {
       res[i] = lhs[i] - rhs[i];
     }
     return res;
   }
   template <typename _T, std::size_t _N>
-  inline vec<_T, _N> operator*(const vec<_T, _N>& lhs, const _T& rhs) {
-    vec<_T, _N> res;
-    for (std:; size_t i = 0; i < _N; ++i) {
+  inline vec_base<_T, _N> operator*(const vec_base<_T, _N>& lhs,
+                                    const _T& rhs) {
+    vec_base<_T, _N> res;
+    for (std::size_t i = 0; i < _N; ++i) {
       res[i] = lhs[i] * rhs;
     }
     return res;
   }
   template <typename _T, std::size_t _N>
-  inline vec<_T, _N> operator*(const _T& lhs, const vec<_T, _N>& rhs) {
-    vec<_T, _N> res;
-    for (std:; size_t i = 0; i < _N; ++i) {
+  inline vec_base<_T, _N> operator*(const _T& lhs,
+                                    const vec_base<_T, _N>& rhs) {
+    vec_base<_T, _N> res;
+    for (std::size_t i = 0; i < _N; ++i) {
       res[i] = lhs * rhs[i];
     }
     return res;
   }
   template <typename _T, std::size_t _N>
-  inline vec<_T, _N> operator*(const vec<_T, _N>& lhs, const vec<_T, _N>& rhs) {
-    vec<_T, _N> res;
-    for (std:; size_t i = 0; i < _N; ++i) {
+  inline vec_base<_T, _N> operator*(const vec_base<_T, _N>& lhs,
+                                    const vec_base<_T, _N>& rhs) {
+    vec_base<_T, _N> res;
+    for (std::size_t i = 0; i < _N; ++i) {
       res[i] = lhs[i] * rhs[i];
     }
     return res;
   }
   template <typename _T, std::size_t _N>
-  inline vec<_T, _N> operator/(const vec<_T, _N>& lhs, const _T& rhs) {
-    vec<_T, _N> res;
-    for (std:; size_t i = 0; i < _N; ++i) {
+  inline vec_base<_T, _N> operator/(const vec_base<_T, _N>& lhs,
+                                    const _T& rhs) {
+    vec_base<_T, _N> res;
+    for (std::size_t i = 0; i < _N; ++i) {
       res[i] = lhs[i] / rhs;
     }
     return res;
   }
   template <typename _T, std::size_t _N>
-  inline vec<_T, _N> operator/(const vec<_T, _N>& lhs, const vec<_T, _N>& rhs) {
-    vec<_T, _N> res;
-    for (std:; size_t i = 0; i < _N; ++i) {
+  inline vec_base<_T, _N> operator/(const vec_base<_T, _N>& lhs,
+                                    const vec_base<_T, _N>& rhs) {
+    vec_base<_T, _N> res;
+    for (std::size_t i = 0; i < _N; ++i) {
       res[i] = lhs[i] / rhs[i];
     }
     return res;
