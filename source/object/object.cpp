@@ -8,49 +8,35 @@
 #include "object/material.hpp"
 
 specula::object::Object::Object()
-    : mat(Material()), trans_(1), trans_inv_(1), de_([](const math::Vec3d& p) {
+    : mat(Material()),
+      scale_(1),
+      trans_(1),
+      trans_inv_(1),
+      de_([](const math::vec3& p) {
         return std::numeric_limits<double>::infinity();
       }) {}
 
-specula::object::Object::Object(std::function<double(const math::Vec3d&)> de,
+specula::object::Object::Object(std::function<double(const math::vec3&)> de,
                                 Material mat)
-    : mat(mat), trans_(1), trans_inv_(1), de_(de) {}
+    : mat(mat), scale_(1), trans_(1), trans_inv_(1), de_(de) {}
 
-void specula::object::Object::Translate(const math::Vec3d& t) {
-  auto res = math::translate(trans_, trans_inv_, t);
-  trans_ = res.first;
-  trans_inv_ = res.second;
+void specula::object::Object::Translate(const math::vec3& t) {
+  math::translate(trans_, trans_inv_, t);
 }
-void specula::object::Object::Scale(const math::Vec3d& s) {
-  auto res = math::scale(trans_, trans_inv_, s);
-  trans_ = res.first;
-  trans_inv_ = res.second;
+void specula::object::Object::Scale(const math::vec3& s) {
+  // de_ = Streach(de, s);
 }
-void specula::object::Object::Scale(const double& s) {
-  auto res = math::scale(trans_, trans_inv_, {s, s, s});
-  trans_ = res.first;
-  trans_inv_ = res.second;
-}
+void specula::object::Object::Scale(const double& s) { scale_ *= s; }
 void specula::object::Object::RotateX(const double& radians) {
-  auto res = math::rotateX(trans_, trans_inv_, radians);
-  trans_ = res.first;
-  trans_inv_ = res.second;
+  math::rotateX(trans_, trans_inv_, radians);
 }
 void specula::object::Object::RotateY(const double& radians) {
-  auto res = math::rotateY(trans_, trans_inv_, radians);
-  trans_ = res.first;
-  trans_inv_ = res.second;
+  math::rotateY(trans_, trans_inv_, radians);
 }
 void specula::object::Object::RotateZ(const double& radians) {
-  auto res = math::rotateZ(trans_, trans_inv_, radians);
-  trans_ = res.first;
-  trans_inv_ = res.second;
+  math::rotateZ(trans_, trans_inv_, radians);
 }
 
-double specula::object::Object::DE(const math::Vec3d& p) const {
-  // std::cout << p << "->" << trans_inv_ * p << "->";
-  double d = de_(trans_inv_ * p) *
-         std::max(std::max(trans_(0, 0), trans_(1, 1)), trans_(2, 2));
-  // std::cout << d << "\n";
-  return d;
+double specula::object::Object::DE(const math::vec3& p) const {
+  return de_(trans_inv_ * (1.0 / scale_) * p) * scale_;
 }
