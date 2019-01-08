@@ -2,6 +2,9 @@
 #define SPECULA_LIGHT_LIGHT_HPP_
 
 #include <limits>
+#include <vector>
+#include <random>
+#include <cmath>
 
 #include "../color.hpp"
 #include "../math/math.hpp"
@@ -31,6 +34,8 @@ namespace light {
 
     void Illuminate(const math::vec3<double>& p, math::vec3<double>& dir,
                     math::vec3<double>& val, double& dist);
+
+    std::vector<math::vec3<double>> Sample();
 
     Color color;
     double intensity;

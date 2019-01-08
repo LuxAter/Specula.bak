@@ -1,6 +1,9 @@
 #include "light/light.hpp"
 
+#include <cmath>
 #include <limits>
+#include <random>
+#include <vector>
 
 #include "color.hpp"
 #include "math/math.hpp"
@@ -26,8 +29,8 @@ specula::light::Light::Light(LightType type, Color c, double i)
       radius_(0.0),
       w_(0.0),
       h_(0.0) {}
-specula::light::Light::Light(LightType type, const math::vec3<double>& va, Color c,
-                             double i)
+specula::light::Light::Light(LightType type, const math::vec3<double>& va,
+                             Color c, double i)
     : color(c),
       intensity(i),
       type_(type),
@@ -114,4 +117,31 @@ void specula::light::Light::Illuminate(const math::vec3<double>& p,
       dist = std::numeric_limits<double>::infinity();
       break;
   }
+}
+
+std::vector<specula::math::vec3<double>> specula::light::Light::Sample() {
+  std::vector<math::vec3<double>> samples;
+  std::default_random_engine generator;
+  math::vec3<double> uv = math::normalize(
+                         math::vec3<double>(direction_.y, -direction_.x, 0.0)),
+                     vv = math::cross(direction_, uv);
+  if (type_ == CIRCLE_LIGHT) {
+    std::normal_distribution<double> dr(0.0, radius_);
+    std::normal_distribution<double> dt(0.0, 2 * M_PI);
+    for (std::size_t i = 0; i < samples_; ++i) {
+      double r = dr(generator);
+      double theta = dt(generator);
+      samples.push_back(position_ + (uv * r * std::cos(theta)) +
+                        (vv * r * std::sin(theta)));
+    }
+  } else if (type_ == RECT_LIGHT) {
+    std::normal_distribution<double> dw(-w_, w_);
+    std::normal_distribution<double> dh(-h_, h_);
+    for (std::size_t i = 0; i < samples_; ++i) {
+      double x = dw(generator);
+      double y = dh(generator);
+      samples.push_back(position_ + (uv * x) + (vv * y));
+    }
+  }
+  return samples;
 }
