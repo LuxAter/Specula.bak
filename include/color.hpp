@@ -1,7 +1,7 @@
 #ifndef SPECULA_COLOR_HPP_
 #define SPECULA_COLOR_HPP_
 
-#include "math/common.hpp"
+#include "math/math.hpp"
 
 namespace specula {
 class Color {
@@ -21,6 +21,8 @@ class Color {
       : r(static_cast<double>((rgb >> 16) & 0xFF) / 255.0),
         g(static_cast<double>((rgb >> 8) & 0xFF) / 255.0),
         b(static_cast<double>(rgb & 0xFF) / 255.0) {}
+
+  operator math::vec3<double>() { return math::vec3<double>(dr(), dg(), db()); }
 
   inline double dr() const noexcept { return r; }
   inline double dg() const noexcept { return g; }
