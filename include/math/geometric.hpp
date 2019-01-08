@@ -3,7 +3,7 @@
 
 #include <cmath>
 
-// #include "matrix.hpp"
+#include "matrix.hpp"
 #include "vector.hpp"
 
 namespace specula {
@@ -142,6 +142,18 @@ namespace math {
     t(0, 3) = -d[0];
     t(1, 3) = -d[1];
     t(2, 3) = -d[2];
+    inv = inv * t;
+  }
+  template <typename _T>
+  void scale(mat<_T, 4, 4>& tran, mat<_T, 4, 4>& inv, const _T& s) {
+    mat<_T, 4, 4> t(_T(1));
+    t(0, 0) = s;
+    t(1, 1) = s;
+    t(2, 2) = s;
+    tran = t * tran;
+    t(0, 0) = _T(1) / s;
+    t(1, 1) = _T(1) / s;
+    t(2, 2) = _T(1) / s;
     inv = inv * t;
   }
   template <typename _T>

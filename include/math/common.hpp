@@ -58,8 +58,8 @@ namespace math {
     return std::fmod(x, y);
   }
   template <typename _T, std::size_t _N>
-  inline vec<_T, _N> mod(const vec<_T, _N>& x) {
-    return component_op(x, math::mod);
+  inline vec<_T, _N> mod(const vec<_T, _N>& x, const vec<_T, _N>& y) {
+    return component_op(x, y, math::mod);
   }
 
   template <typename _T>

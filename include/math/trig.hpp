@@ -85,7 +85,8 @@ namespace math {
     return std::atan2(x, y);
   }
   template <typename _T, std::size_t _N>
-  inline vec<_T, _N> atan(const vec<_T, _N>& x, const vec<_T, _N>& y) {
+  inline vec<_T, _N> atan(const vec<_T, _N>& x,
+                               const vec<_T, _N>& y) {
     return component_op(x, y, math::atan);
   }
 }  // namespace math

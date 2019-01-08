@@ -63,14 +63,14 @@ namespace math {
 
     inline _T& operator[](std::size_t i) { return *data_[i]; }
     inline const _T& operator[](std::size_t i) const { return *data_[i]; }
-    inline _T operator()(std::size_t r, std::size_t c) {
+    inline _T& operator()(std::size_t r, std::size_t c) {
       return *data_[r * _M + c];
     }
-    inline const _T operator()(std::size_t r, std::size_t c) const {
+    inline const _T& operator()(std::size_t r, std::size_t c) const {
       return *data_[r * _M + c];
     }
-    inline _T at(std::size_t r, std::size_t c) { return *data_[r * _M + c]; }
-    inline const _T at(std::size_t r, std::size_t c) const {
+    inline _T& at(std::size_t r, std::size_t c) { return *data_[r * _M + c]; }
+    inline const _T& at(std::size_t r, std::size_t c) const {
       return *data_[r * _M + c];
     }
     inline swizzel<_T, _N> c(std::size_t col) {
@@ -293,7 +293,7 @@ namespace math {
   inline mat<_T, _N, _M> operator*(const mat<_T, _N, _M>& lhs, const _U& rhs) {
     mat<_T, _N, _M> res;
     for (std::size_t i = 0; i < _N * _M; ++i) {
-      res[i] = lhs[i] * rhs;
+      res[i] = lhs[i] * _T(rhs);
     }
     return res;
   }
@@ -316,6 +316,29 @@ namespace math {
           res[i * _C + j] += (lhs[i * _S + k] * rhs[k * _C + j]);
         }
       }
+    }
+    return res;
+  }
+  template <typename _T, typename _U, std::size_t _R, std::size_t _C>
+  inline vec<_T, _R> operator*(const mat<_T, _R, _C>& lhs,
+                               const vec<_U, _C>& rhs) {
+    vec<_T, _R> res;
+    for (std::size_t i = 0; i < _R; ++i) {
+      for (std::size_t j = 0; j < _C; ++j) {
+        res[i] += (lhs[i * _C + j] * rhs[j]);
+      }
+    }
+    return res;
+  }
+  template <typename _T, typename _U, std::size_t _R, std::size_t _C>
+  inline vec<_T, _R> operator*(const mat<_T, _R, _C>& lhs,
+                               const vec<_U, _C - 1>& rhs) {
+    vec<_T, _R> res;
+    for (std::size_t i = 0; i < _R; ++i) {
+      for (std::size_t j = 0; j < _C - 1; ++j) {
+        res[i] += (lhs[i * _C + j] * rhs[j]);
+      }
+      res[i] += lhs[i * _C + _C - 1];
     }
     return res;
   }
@@ -413,36 +436,36 @@ namespace math {
   typedef mat<int, 16, 4> imat16x4;
   typedef mat<int, 16, 8> imat16x8;
   typedef mat<int, 16, 8> imat16x16;
-  typedef mat<float, 2, 2> mat2;
-  typedef mat<float, 3, 3> mat3;
-  typedef mat<float, 4, 4> mat4;
-  typedef mat<float, 8, 8> mat8;
-  typedef mat<float, 16, 16> mat16;
-  typedef mat<float, 2, 2> mat2x2;
-  typedef mat<float, 2, 3> mat2x3;
-  typedef mat<float, 2, 4> mat2x4;
-  typedef mat<float, 2, 8> mat2x8;
-  typedef mat<float, 2, 8> mat2x16;
-  typedef mat<float, 3, 2> mat3x2;
-  typedef mat<float, 3, 3> mat3x3;
-  typedef mat<float, 3, 4> mat3x4;
-  typedef mat<float, 3, 8> mat3x8;
-  typedef mat<float, 3, 8> mat3x16;
-  typedef mat<float, 4, 2> mat4x2;
-  typedef mat<float, 4, 3> mat4x3;
-  typedef mat<float, 4, 4> mat4x4;
-  typedef mat<float, 4, 8> mat4x8;
-  typedef mat<float, 4, 8> mat4x16;
-  typedef mat<float, 8, 2> mat8x2;
-  typedef mat<float, 8, 3> mat8x3;
-  typedef mat<float, 8, 4> mat8x4;
-  typedef mat<float, 8, 8> mat8x8;
-  typedef mat<float, 8, 8> mat8x16;
-  typedef mat<float, 16, 2> mat16x2;
-  typedef mat<float, 16, 3> mat16x3;
-  typedef mat<float, 16, 4> mat16x4;
-  typedef mat<float, 16, 8> mat16x8;
-  typedef mat<float, 16, 8> mat16x16;
+  typedef mat<double, 2, 2> mat2;
+  typedef mat<double, 3, 3> mat3;
+  typedef mat<double, 4, 4> mat4;
+  typedef mat<double, 8, 8> mat8;
+  typedef mat<double, 16, 16> mat16;
+  typedef mat<double, 2, 2> mat2x2;
+  typedef mat<double, 2, 3> mat2x3;
+  typedef mat<double, 2, 4> mat2x4;
+  typedef mat<double, 2, 8> mat2x8;
+  typedef mat<double, 2, 8> mat2x16;
+  typedef mat<double, 3, 2> mat3x2;
+  typedef mat<double, 3, 3> mat3x3;
+  typedef mat<double, 3, 4> mat3x4;
+  typedef mat<double, 3, 8> mat3x8;
+  typedef mat<double, 3, 8> mat3x16;
+  typedef mat<double, 4, 2> mat4x2;
+  typedef mat<double, 4, 3> mat4x3;
+  typedef mat<double, 4, 4> mat4x4;
+  typedef mat<double, 4, 8> mat4x8;
+  typedef mat<double, 4, 8> mat4x16;
+  typedef mat<double, 8, 2> mat8x2;
+  typedef mat<double, 8, 3> mat8x3;
+  typedef mat<double, 8, 4> mat8x4;
+  typedef mat<double, 8, 8> mat8x8;
+  typedef mat<double, 8, 8> mat8x16;
+  typedef mat<double, 16, 2> mat16x2;
+  typedef mat<double, 16, 3> mat16x3;
+  typedef mat<double, 16, 4> mat16x4;
+  typedef mat<double, 16, 8> mat16x8;
+  typedef mat<double, 16, 8> mat16x16;
 
 }  // namespace math
 }  // namespace specula
