@@ -8,6 +8,8 @@
 #include <string>
 #include <vector>
 
+#include <iostream>
+
 static std::chrono::high_resolution_clock::time_point t0_, t1_, t2_, t3_, t4_,
     t5_, t6_, t7_;
 
@@ -98,6 +100,7 @@ std::string specula::util::timer::FmtTime(double sec, uint8_t start,
                                           uint8_t stop, bool trim, bool chars) {
   std::array<unsigned, 6> t = SplitTime(sec);
   std::stringstream ss;
+  ss << ' ';
   bool active = false;
   if (!chars) {
     ss << std::setfill('0');

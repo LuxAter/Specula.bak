@@ -15,8 +15,8 @@ namespace util {
     void Start(uint8_t timer = 0);
     double Stop(uint8_t timer = 0);
     std::array<unsigned, 6> SplitTime(double sec);
-    std::string FmtTime(double sec, uint8_t start = 0, uint8_t stop = 4,
-                        bool trim = true, bool chars = true);
+    std::string FmtTime(double sec, uint8_t start = 1, uint8_t stop = 5,
+                        bool trim = false, bool chars = true);
     double ETC(double avg, const unsigned long& remaining);
     double ETT(double avg, const unsigned long& total);
     std::string FmtETC(double avg, const unsigned long& remaining,
