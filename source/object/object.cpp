@@ -16,8 +16,8 @@ specula::object::Object::Object()
         return std::numeric_limits<double>::infinity();
       }) {}
 
-specula::object::Object::Object(std::function<double(const math::vec3<double>&)> de,
-                                Material mat)
+specula::object::Object::Object(
+    std::function<double(const math::vec3<double>&)> de, Material mat)
     : mat(mat), scale_(1), trans_(1), trans_inv_(1), de_(de) {}
 
 void specula::object::Object::Translate(const math::vec3<double>& t) {

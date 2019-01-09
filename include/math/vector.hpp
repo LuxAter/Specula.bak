@@ -133,15 +133,15 @@ namespace math {
     vec3(const vec3<_T>& v) : x(v.x), y(v.y), z(v.z) {}
     vec3(const vec4<_T>& v) : x(v.x), y(v.y), z(v.z) {}
 
-    inline vec2<_T> xx() const {return vec2<_T>(x, x);}
-    inline vec2<_T> xy() const {return vec2<_T>(x, y);}
-    inline vec2<_T> xz() const {return vec2<_T>(x, z);}
-    inline vec2<_T> yx() const {return vec2<_T>(y, x);}
-    inline vec2<_T> yy() const {return vec2<_T>(y, y);}
-    inline vec2<_T> yz() const {return vec2<_T>(y, z);}
-    inline vec2<_T> zx() const {return vec2<_T>(z, x);}
-    inline vec2<_T> zy() const {return vec2<_T>(z, y);}
-    inline vec2<_T> zz() const {return vec2<_T>(z, z);}
+    inline vec2<_T> xx() const { return vec2<_T>(x, x); }
+    inline vec2<_T> xy() const { return vec2<_T>(x, y); }
+    inline vec2<_T> xz() const { return vec2<_T>(x, z); }
+    inline vec2<_T> yx() const { return vec2<_T>(y, x); }
+    inline vec2<_T> yy() const { return vec2<_T>(y, y); }
+    inline vec2<_T> yz() const { return vec2<_T>(y, z); }
+    inline vec2<_T> zx() const { return vec2<_T>(z, x); }
+    inline vec2<_T> zy() const { return vec2<_T>(z, y); }
+    inline vec2<_T> zz() const { return vec2<_T>(z, z); }
 
     template <typename _U>
     inline vec3<_T>& operator+=(const _U& rhs) {
@@ -243,73 +243,73 @@ namespace math {
     vec4(const vec3<_T>& v) : x(v.x), y(v.y), z(v.z), w(_T()) {}
     vec4(const vec4<_T>& v) : x(v.x), y(v.y), z(v.z), w(v.w) {}
 
-    inline vec3<_T> xxx() const {return vec3<_T>(x,x,x);}
-    inline vec3<_T> xxy() const {return vec3<_T>(x,x,y);}
-    inline vec3<_T> xxz() const {return vec3<_T>(x,x,z);}
-    inline vec3<_T> xxw() const {return vec3<_T>(x,x,w);}
-    inline vec3<_T> xyx() const {return vec3<_T>(x,y,x);}
-    inline vec3<_T> xyy() const {return vec3<_T>(x,y,y);}
-    inline vec3<_T> xyz() const {return vec3<_T>(x,y,z);}
-    inline vec3<_T> xyw() const {return vec3<_T>(x,y,w);}
-    inline vec3<_T> xzx() const {return vec3<_T>(x,z,x);}
-    inline vec3<_T> xzy() const {return vec3<_T>(x,z,y);}
-    inline vec3<_T> xzz() const {return vec3<_T>(x,z,z);}
-    inline vec3<_T> xzw() const {return vec3<_T>(x,z,w);}
-    inline vec3<_T> xwx() const {return vec3<_T>(x,w,x);}
-    inline vec3<_T> xwy() const {return vec3<_T>(x,w,y);}
-    inline vec3<_T> xwz() const {return vec3<_T>(x,w,z);}
-    inline vec3<_T> xww() const {return vec3<_T>(x,w,w);}
+    inline vec3<_T> xxx() const { return vec3<_T>(x, x, x); }
+    inline vec3<_T> xxy() const { return vec3<_T>(x, x, y); }
+    inline vec3<_T> xxz() const { return vec3<_T>(x, x, z); }
+    inline vec3<_T> xxw() const { return vec3<_T>(x, x, w); }
+    inline vec3<_T> xyx() const { return vec3<_T>(x, y, x); }
+    inline vec3<_T> xyy() const { return vec3<_T>(x, y, y); }
+    inline vec3<_T> xyz() const { return vec3<_T>(x, y, z); }
+    inline vec3<_T> xyw() const { return vec3<_T>(x, y, w); }
+    inline vec3<_T> xzx() const { return vec3<_T>(x, z, x); }
+    inline vec3<_T> xzy() const { return vec3<_T>(x, z, y); }
+    inline vec3<_T> xzz() const { return vec3<_T>(x, z, z); }
+    inline vec3<_T> xzw() const { return vec3<_T>(x, z, w); }
+    inline vec3<_T> xwx() const { return vec3<_T>(x, w, x); }
+    inline vec3<_T> xwy() const { return vec3<_T>(x, w, y); }
+    inline vec3<_T> xwz() const { return vec3<_T>(x, w, z); }
+    inline vec3<_T> xww() const { return vec3<_T>(x, w, w); }
 
-    inline vec3<_T> yxx() const {return vec3<_T>(y,x,x);}
-    inline vec3<_T> yxy() const {return vec3<_T>(y,x,y);}
-    inline vec3<_T> yxz() const {return vec3<_T>(y,x,z);}
-    inline vec3<_T> yxw() const {return vec3<_T>(y,x,w);}
-    inline vec3<_T> yyx() const {return vec3<_T>(y,y,x);}
-    inline vec3<_T> yyy() const {return vec3<_T>(y,y,y);}
-    inline vec3<_T> yyz() const {return vec3<_T>(y,y,z);}
-    inline vec3<_T> yyw() const {return vec3<_T>(y,y,w);}
-    inline vec3<_T> yzx() const {return vec3<_T>(y,z,x);}
-    inline vec3<_T> yzy() const {return vec3<_T>(y,z,y);}
-    inline vec3<_T> yzz() const {return vec3<_T>(y,z,z);}
-    inline vec3<_T> yzw() const {return vec3<_T>(y,z,w);}
-    inline vec3<_T> ywx() const {return vec3<_T>(y,w,x);}
-    inline vec3<_T> ywy() const {return vec3<_T>(y,w,y);}
-    inline vec3<_T> ywz() const {return vec3<_T>(y,w,z);}
-    inline vec3<_T> yww() const {return vec3<_T>(y,w,w);}
+    inline vec3<_T> yxx() const { return vec3<_T>(y, x, x); }
+    inline vec3<_T> yxy() const { return vec3<_T>(y, x, y); }
+    inline vec3<_T> yxz() const { return vec3<_T>(y, x, z); }
+    inline vec3<_T> yxw() const { return vec3<_T>(y, x, w); }
+    inline vec3<_T> yyx() const { return vec3<_T>(y, y, x); }
+    inline vec3<_T> yyy() const { return vec3<_T>(y, y, y); }
+    inline vec3<_T> yyz() const { return vec3<_T>(y, y, z); }
+    inline vec3<_T> yyw() const { return vec3<_T>(y, y, w); }
+    inline vec3<_T> yzx() const { return vec3<_T>(y, z, x); }
+    inline vec3<_T> yzy() const { return vec3<_T>(y, z, y); }
+    inline vec3<_T> yzz() const { return vec3<_T>(y, z, z); }
+    inline vec3<_T> yzw() const { return vec3<_T>(y, z, w); }
+    inline vec3<_T> ywx() const { return vec3<_T>(y, w, x); }
+    inline vec3<_T> ywy() const { return vec3<_T>(y, w, y); }
+    inline vec3<_T> ywz() const { return vec3<_T>(y, w, z); }
+    inline vec3<_T> yww() const { return vec3<_T>(y, w, w); }
 
-    inline vec3<_T> zxx() const {return vec3<_T>(z,x,x);}
-    inline vec3<_T> zxy() const {return vec3<_T>(z,x,y);}
-    inline vec3<_T> zxz() const {return vec3<_T>(z,x,z);}
-    inline vec3<_T> zxw() const {return vec3<_T>(z,x,w);}
-    inline vec3<_T> zyx() const {return vec3<_T>(z,y,x);}
-    inline vec3<_T> zyy() const {return vec3<_T>(z,y,y);}
-    inline vec3<_T> zyz() const {return vec3<_T>(z,y,z);}
-    inline vec3<_T> zyw() const {return vec3<_T>(z,y,w);}
-    inline vec3<_T> zzx() const {return vec3<_T>(z,z,x);}
-    inline vec3<_T> zzy() const {return vec3<_T>(z,z,y);}
-    inline vec3<_T> zzz() const {return vec3<_T>(z,z,z);}
-    inline vec3<_T> zzw() const {return vec3<_T>(z,z,w);}
-    inline vec3<_T> zwx() const {return vec3<_T>(z,w,x);}
-    inline vec3<_T> zwy() const {return vec3<_T>(z,w,y);}
-    inline vec3<_T> zwz() const {return vec3<_T>(z,w,z);}
-    inline vec3<_T> zww() const {return vec3<_T>(z,w,w);}
+    inline vec3<_T> zxx() const { return vec3<_T>(z, x, x); }
+    inline vec3<_T> zxy() const { return vec3<_T>(z, x, y); }
+    inline vec3<_T> zxz() const { return vec3<_T>(z, x, z); }
+    inline vec3<_T> zxw() const { return vec3<_T>(z, x, w); }
+    inline vec3<_T> zyx() const { return vec3<_T>(z, y, x); }
+    inline vec3<_T> zyy() const { return vec3<_T>(z, y, y); }
+    inline vec3<_T> zyz() const { return vec3<_T>(z, y, z); }
+    inline vec3<_T> zyw() const { return vec3<_T>(z, y, w); }
+    inline vec3<_T> zzx() const { return vec3<_T>(z, z, x); }
+    inline vec3<_T> zzy() const { return vec3<_T>(z, z, y); }
+    inline vec3<_T> zzz() const { return vec3<_T>(z, z, z); }
+    inline vec3<_T> zzw() const { return vec3<_T>(z, z, w); }
+    inline vec3<_T> zwx() const { return vec3<_T>(z, w, x); }
+    inline vec3<_T> zwy() const { return vec3<_T>(z, w, y); }
+    inline vec3<_T> zwz() const { return vec3<_T>(z, w, z); }
+    inline vec3<_T> zww() const { return vec3<_T>(z, w, w); }
 
-    inline vec3<_T> wxx() const {return vec3<_T>(w,x,x);}
-    inline vec3<_T> wxy() const {return vec3<_T>(w,x,y);}
-    inline vec3<_T> wxz() const {return vec3<_T>(w,x,z);}
-    inline vec3<_T> wxw() const {return vec3<_T>(w,x,w);}
-    inline vec3<_T> wyx() const {return vec3<_T>(w,y,x);}
-    inline vec3<_T> wyy() const {return vec3<_T>(w,y,y);}
-    inline vec3<_T> wyz() const {return vec3<_T>(w,y,z);}
-    inline vec3<_T> wyw() const {return vec3<_T>(w,y,w);}
-    inline vec3<_T> wzx() const {return vec3<_T>(w,z,x);}
-    inline vec3<_T> wzy() const {return vec3<_T>(w,z,y);}
-    inline vec3<_T> wzz() const {return vec3<_T>(w,z,z);}
-    inline vec3<_T> wzw() const {return vec3<_T>(w,z,w);}
-    inline vec3<_T> wwx() const {return vec3<_T>(w,w,x);}
-    inline vec3<_T> wwy() const {return vec3<_T>(w,w,y);}
-    inline vec3<_T> wwz() const {return vec3<_T>(w,w,z);}
-    inline vec3<_T> www() const {return vec3<_T>(w,w,w);}
+    inline vec3<_T> wxx() const { return vec3<_T>(w, x, x); }
+    inline vec3<_T> wxy() const { return vec3<_T>(w, x, y); }
+    inline vec3<_T> wxz() const { return vec3<_T>(w, x, z); }
+    inline vec3<_T> wxw() const { return vec3<_T>(w, x, w); }
+    inline vec3<_T> wyx() const { return vec3<_T>(w, y, x); }
+    inline vec3<_T> wyy() const { return vec3<_T>(w, y, y); }
+    inline vec3<_T> wyz() const { return vec3<_T>(w, y, z); }
+    inline vec3<_T> wyw() const { return vec3<_T>(w, y, w); }
+    inline vec3<_T> wzx() const { return vec3<_T>(w, z, x); }
+    inline vec3<_T> wzy() const { return vec3<_T>(w, z, y); }
+    inline vec3<_T> wzz() const { return vec3<_T>(w, z, z); }
+    inline vec3<_T> wzw() const { return vec3<_T>(w, z, w); }
+    inline vec3<_T> wwx() const { return vec3<_T>(w, w, x); }
+    inline vec3<_T> wwy() const { return vec3<_T>(w, w, y); }
+    inline vec3<_T> wwz() const { return vec3<_T>(w, w, z); }
+    inline vec3<_T> www() const { return vec3<_T>(w, w, w); }
 
     template <typename _U>
     inline vec3<_T>& operator+=(const _U& rhs) {
@@ -530,6 +530,19 @@ namespace math {
   template <typename _T, typename _U>
   inline vec4<_T> operator/(const vec4<_T>& lhs, const vec4<_U>& rhs) {
     return vec4<_T>(lhs.x / rhs.x, lhs.y / rhs.y, lhs.z / rhs.z, lhs.w / rhs.w);
+  }
+
+  template <typename _T>
+  inline vec2<_T> operator-(const vec2<_T>& lhs) {
+    return vec2<_T>{-lhs.x, -lhs.y};
+  }
+  template <typename _T>
+  inline vec3<_T> operator-(const vec3<_T>& lhs) {
+    return vec3<_T>{-lhs.x, -lhs.y, -lhs.z};
+  }
+  template <typename _T>
+  inline vec4<_T> operator-(const vec4<_T>& lhs) {
+    return vec4<_T>{-lhs.x, -lhs.y, -lhs.z, -lhs.w};
   }
 
   template <typename _T>

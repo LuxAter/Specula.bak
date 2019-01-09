@@ -17,6 +17,7 @@ namespace object {
            Material mat = Material());
 
     void Translate(const math::vec3<double>& t);
+    void SetPosition(const math::vec3<double>& t);
     void Scale(const math::vec3<double>& s);
     void Scale(const double& s);
     void RotateX(const double& radians);

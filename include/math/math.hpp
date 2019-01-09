@@ -5,3 +5,5 @@
 #include "expo.hpp"
 #include "geometric.hpp"
 #include "trig.hpp"
+
+#include "spline.hpp"
