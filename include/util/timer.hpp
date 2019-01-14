@@ -21,8 +21,11 @@ namespace util {
     double ETT(double avg, const unsigned long& total);
     std::string FmtETC(double avg, const unsigned long& remaining,
                        bool up_line = true);
-    std::string FmtProc(double avg, const unsigned long& remaining,
-                        const unsigned long& total, bool up_line = true);
+    // std::string FmtProc(double avg, const unsigned long& remaining,
+    //                     const unsigned long& total, bool up_line = true);
+    std::string FmtProc(double total_time, const unsigned long& i,
+                        const unsigned long& total, bool bar = true,
+                        bool perc = true, bool up_line = true);
   }  // namespace timer
 }  // namespace util
 }  // namespace specula

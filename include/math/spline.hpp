@@ -10,35 +10,54 @@ namespace math {
   class Spline {
    public:
     enum InterpolationMethod { LINEAR_INTERPOLATION, CUBIC_INTERPOLATION };
+    Spline()
+        : method_(LINEAR_INTERPOLATION), scale_factor_(1.0), loop_(false) {}
     Spline(const InterpolationMethod& method, const double& scale = 1.0)
-        : method_(method), scale_factor_(scale) {}
+        : method_(method), scale_factor_(scale), loop_(false) {}
 
-    std::size_t Frames() const { return (points_.size() - 1) * scale_factor_; }
+    void ToggleLoop() { loop_ = !loop_; }
+
+    std::size_t Frames() const {
+      return (loop_ ? points_.size() : points_.size() - 1) * scale_factor_;
+    }
+    std::size_t Offset(std::size_t n) const { return n * scale_factor_; }
 
     math::vec3<double> operator()(const double& t) {
       double it;
       double mu = std::modf(t / scale_factor_, &it);
       std::size_t i = static_cast<std::size_t>(it);
       math::vec3<double> pos;
-      if (i >= points_.size() - 1) {
-        // BUG
-        return pos;
+      if (!loop_ && i >= points_.size() - 1) {
+        return points_.size() - 1;
+      }else if(loop_){
+        i = i % points_.size();
       }
       switch (method_) {
         case LINEAR_INTERPOLATION: {
-          pos =
-              points_[i] * (1 - mu) +
-              points_[(i + 1 >= points_.size()) ? points_.size() - 1 : i + 1] *
-                  mu;
+          if (loop_) {
+            pos =
+                points_[i] * (1 - mu) + points_[(i + 1) % points_.size()] * mu;
+          } else {
+            pos = points_[i] * (1 - mu) +
+                  points_[(i + 1 >= points_.size()) ? points_.size() - 1
+                                                    : i + 1] *
+                      mu;
+          }
           break;
         }
         case CUBIC_INTERPOLATION: {
-          std::size_t y0 = (i == 0) ? i : i - 1;
-          std::size_t y1 = i;
-          std::size_t y2 =
-              (i + 1 >= points_.size()) ? points_.size() - 1 : i + 1;
-          std::size_t y3 =
-              (i + 2 >= points_.size()) ? points_.size() - 1 : i + 2;
+          std::size_t y0, y1, y2, y3;
+          if (loop_) {
+            y0 = (i == 0) ? points_.size() - 1 : i - 1;
+            y1 = i;
+            y2 = (i + 1) % points_.size();
+            y3 = (i + 2) % points_.size();
+          } else {
+            y0 = (i == 0) ? i : i - 1;
+            y1 = i;
+            y2 = (i + 1 >= points_.size()) ? points_.size() - 1 : i + 1;
+            y3 = (i + 2 >= points_.size()) ? points_.size() - 1 : i + 2;
+          }
           double mu2 = mu * mu;
           math::vec3<double> a0 =
               points_[y3] - points_[y2] - points_[y0] + points_[y1];
@@ -69,6 +88,7 @@ namespace math {
    private:
     InterpolationMethod method_;
     double scale_factor_;
+    bool loop_;
     std::vector<math::vec3<double>> points_;
   };
 }  // namespace math

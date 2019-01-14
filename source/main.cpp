@@ -32,30 +32,38 @@ int main(int argc, char* argv[]) {
   std::vector<light::Light> lights;
   Scene scene;
 
+  scene.append(object::Object(object::Sphere(1.0), Color(1.0, 0.0, 0.0)));
+  scene.SplineObject(0, math::Spline(math::Spline::CUBIC_INTERPOLATION, 40));
+  scene.os(0).append({-3.0, 0.0, 10.0});
+  scene.os(0).append({0.0, -3.0, 10.0});
+  scene.os(0).append({3.0, 0.0, 10.0});
+  scene.os(0).append({0.0, 3.0, 10.0});
+  scene.os(0).ToggleLoop();
   scene.append(object::Object(object::Sphere(1.0), Color(0.0, 1.0, 0.0)));
-  // scene.lo().Translate({-2.0, 0.0, 10.0});
-  scene.append(
-      object::Object(object::Torus({1.0, 0.25}), Color(1.0, 0.0, 0.0)));
-  scene.lo().RotateX(M_PI / 2.0);
-  scene.lo().RotateY(M_PI / 4.0);
-  scene.lo().Translate({2.0, 0.0, 10.0});
-
-  scene.append(light::Light(light::POINT_LIGHT, math::vec3{0.0, 4.0, 10.0}));
+  scene.SplineObject(1, math::Spline(math::Spline::CUBIC_INTERPOLATION, 20));
+  scene.os(1).append({-3.0, 0.0, 15.0});
+  scene.os(1).append({0.0, -3.0, 15.0});
+  scene.os(1).append({3.0, 0.0, 15.0});
+  scene.os(1).append({0.0, 3.0, 15.0});
+  scene.os(1).ToggleLoop();
+  scene.append(object::Object(object::Sphere(1.0), Color(0.0, 0.0, 1.0)));
+  scene.SplineObject(2, math::Spline(math::Spline::CUBIC_INTERPOLATION, 10));
+  scene.os(2).append({-3.0, 0.0, 20.0});
+  scene.os(2).append({0.0, -3.0, 20.0});
+  scene.os(2).append({3.0, 0.0, 20.0});
+  scene.os(2).append({0.0, 3.0, 20.0});
+  scene.os(2).ToggleLoop();
 
   image::Image img(std::size_t(RES), std::size_t(RES));
   double invwidth = 1.0 / img.Width();
   double invheight = 1.0 / img.Height();
   double fov = 45.0, aspectratio = img.Width() / (double)img.Height();
   double angle = std::tan(M_PI * 0.5 * fov / 180.0);
-  math::Spline sp(math::Spline::LINEAR_INTERPOLATION, 50);
-  sp.append({-2.0, 0.0, 10.0});
-  sp.append({-2.0, -2.0, 10.0});
-  sp.append({2.0, -2.0, 15.0});
-  sp.append({2.0, 2.0, 15.0});
-  sp.append({-2.0, 0.0, 10.0});
-  for (std::size_t i = 0; i < sp.Frames(); ++i) {
+  double avg = 0.0;
+  std::cout << "\n\n";
+  for (std::size_t i = 0; i < scene.Frames(); ++i) {
     util::timer::Start();
-    scene.o(0).Translate(sp(i));
+    scene.SetFrame(i);
     for (std::size_t y = 0; y < img.Height(); ++y) {
       for (std::size_t x = 0; x < img.Width(); ++x) {
         double xx =
@@ -66,10 +74,10 @@ int main(int argc, char* argv[]) {
         img.Pixel(x, y, RayCast({0, 0, 0}, ray, scene).rgb());
       }
     }
-    scene.o(0).Translate(-sp(i));
-    double stop = util::timer::Stop();
-    std::cout << "TIME: " << util::timer::FmtTime(stop) << '\n';
-    img.WritePng("lin/" + std::to_string(i) + ".png");
+    scene.ResetFrame(i);
+    avg += util::timer::Stop();
+    std::cout << util::timer::FmtProc(avg, i, scene.Frames());
+    img.WritePng("images/" + std::to_string(i) + ".png");
   }
 
   return 0;
