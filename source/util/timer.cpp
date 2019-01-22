@@ -8,6 +8,13 @@
 #include <string>
 #include <vector>
 
+#include <sys/ioctl.h>
+#include <unistd.h>
+
+#include <iostream>
+
+static unsigned width_ = 0;
+
 static std::chrono::high_resolution_clock::time_point t0_, t1_, t2_, t3_, t4_,
     t5_, t6_, t7_;
 
@@ -98,6 +105,7 @@ std::string specula::util::timer::FmtTime(double sec, uint8_t start,
                                           uint8_t stop, bool trim, bool chars) {
   std::array<unsigned, 6> t = SplitTime(sec);
   std::stringstream ss;
+  ss << ' ';
   bool active = false;
   if (!chars) {
     ss << std::setfill('0');
@@ -149,11 +157,35 @@ std::string specula::util::timer::FmtETC(double avg,
   return ((up_line) ? "\033[F\033[2K" : "") +
          FmtTime(avg * remaining, 0, 3, false, false);
 }
-std::string specula::util::timer::FmtProc(double avg,
-                                          const unsigned long& remaining,
-                                          const unsigned long& total,
-                                          bool up_line) {
-  return ((up_line) ? "\033[F\033[2K" : "") +
+// std::string specula::util::timer::FmtProc(double avg,
+//                                           const unsigned long& remaining,
+//                                           const unsigned long& total,
+//                                           bool up_line) {
+//   return ((up_line) ? "\033[F\033[2K" : "") +
+//          FmtTime(avg * remaining, 0, 3, false, false) + " / " +
+//          FmtTime(avg * total, 0, 3, false, false) + '\n';
+// }
+
+std::string specula::util::timer::FmtProc(double total_time,
+                                          const unsigned long& i,
+                                          const unsigned long& total, bool bar,
+                                          bool perc, bool up_line) {
+  if (width_ == 0) {
+    struct winsize w;
+    ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
+    width_ = w.ws_col - 2;
+  }
+  double avg = total_time / i;
+  unsigned long remaining = total - i;
+  std::stringstream ss;
+  double perc_val = ((100.0 * i) / total) + 1.0;
+  ss << std::fixed << std::setprecision(1) << std::setw(5)<< perc_val << '%';
+  std::string perc_str = ss.str();
+  std::string bar_str = '[' + std::string(std::ceil(width_ * perc_val / 100.0), '#') + std::string(std::max(0.0, std::floor(width_ * (1.0 - perc_val / 100.0))), ' ') + ']';
+  return (up_line ? (bar ? "\033[F\033[2K\033[F\033[2K" : "\033[F\033[2K")
+                  : "") +
          FmtTime(avg * remaining, 0, 3, false, false) + " / " +
-         FmtTime(avg * total, 0, 3, false, false) + '\n';
+         FmtTime(avg * total, 0, 3, false, false) +
+         (perc ? " [" + perc_str + "]" : "") + '\n' + 
+         (bar ? bar_str + "\n" : "");
 }

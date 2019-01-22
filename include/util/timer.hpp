@@ -15,14 +15,17 @@ namespace util {
     void Start(uint8_t timer = 0);
     double Stop(uint8_t timer = 0);
     std::array<unsigned, 6> SplitTime(double sec);
-    std::string FmtTime(double sec, uint8_t start = 0, uint8_t stop = 4,
-                        bool trim = true, bool chars = true);
+    std::string FmtTime(double sec, uint8_t start = 1, uint8_t stop = 5,
+                        bool trim = false, bool chars = true);
     double ETC(double avg, const unsigned long& remaining);
     double ETT(double avg, const unsigned long& total);
     std::string FmtETC(double avg, const unsigned long& remaining,
                        bool up_line = true);
-    std::string FmtProc(double avg, const unsigned long& remaining,
-                        const unsigned long& total, bool up_line = true);
+    // std::string FmtProc(double avg, const unsigned long& remaining,
+    //                     const unsigned long& total, bool up_line = true);
+    std::string FmtProc(double total_time, const unsigned long& i,
+                        const unsigned long& total, bool bar = true,
+                        bool perc = true, bool up_line = true);
   }  // namespace timer
 }  // namespace util
 }  // namespace specula

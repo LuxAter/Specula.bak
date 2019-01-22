@@ -20,6 +20,16 @@ namespace object {
           ks(0.3),
           hardness(50.0),
           ior(4.0) {}
+    Material(Color c)
+        : base_color(c),
+          specular_color(c),
+          diffuse_shader(LAMBERT_DIFFUSE),
+          specular_shader(PHONG_SPECULAR),
+          ka(0.2),
+          kd(0.4),
+          ks(0.3),
+          hardness(50.0),
+          ior(4.0) {}
 
     Color base_color;
     Color specular_color;
