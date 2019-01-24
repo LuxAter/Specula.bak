@@ -30,11 +30,11 @@ namespace object {
     };
   }
   // {ring radius, radius of torus}
-  inline std::function<double(const math::vec3<double>&)> Torus(
-      math::vec2<double> torus) {
-    return [torus](const math::vec3<double>& p) -> double {
-      math::vec2<double> q(math::length(p.xz()) - torus.x, p.y);
-      return math::length(q) - torus.y;
+  inline std::function<double(const math::vec3<double>&)> Torus(double radius,
+                                                                double width) {
+    return [radius, width](const math::vec3<double>& p) -> double {
+      math::vec2<double> q(math::length(p.xz()) - radius, p.y);
+      return math::length(q) - width;
     };
   }
   inline std::function<double(const math::vec3<double>&)> Cylinder(

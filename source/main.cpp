@@ -32,7 +32,8 @@ int main(int argc, char* argv[]) {
   std::vector<light::Light> lights;
   Scene scene;
 
-  scene.append(object::Object(object::Sphere(1.0), Color(1.0, 0.0, 0.0)));
+  // scene.append(object::Object(object::Sphere(1.0), Color(1.0, 0.0, 0.0)));
+  scene.append(object::Object(object::Torus(2.0, 0.5), Color(1.0, 0.0, 0.0)));
   scene.SplineObject(0, math::Spline(math::Spline::CUBIC_INTERPOLATION, 40));
   scene.os(0).append({-3.0, 0.0, 10.0});
   scene.os(0).append({0.0, -3.0, 10.0});
