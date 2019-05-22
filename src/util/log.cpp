@@ -13,11 +13,7 @@ static const char* type_color[5] = {"\033[1;31m", "\033[1;31m", "\033[1;33m",
 
 namespace specula::log {
 FILE* file_ = NULL;
-#ifdef DEBUG
-bool verbose_ = true;
-#else
 bool verbose_ = false;
-#endif
 bool color_ = true;
 }  // namespace specula::log
 
@@ -50,10 +46,12 @@ void specula::log::log(const LogType& type, const char* msg, const char* file,
            current_tm->tm_hour, current_tm->tm_min, current_tm->tm_sec, func,
            line, body);
 #endif
-  if (color_ == true) {
-    printf("%s%s\033[0m", type_color[type], message);
-  } else {
-    printf("%s", message);
+  if (verbose_ == true || type == FATAL || type == ERROR) {
+    if (color_ == true) {
+      printf("%s%s\033[0m", type_color[type], message);
+    } else {
+      printf("%s", message);
+    }
   }
   fprintf(file_, "%s", message);
   if (type == FATAL || type == ERROR) {
