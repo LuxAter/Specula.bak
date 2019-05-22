@@ -17,7 +17,9 @@ int main(int argc, char* argv[]) {
 #endif
   specula::argparse::add_argument('o', "output", "out/", "output directory");
   specula::argparse::add_argument('\0', "tol", 1e-5, "ray tolerance");
+  specula::time::start(0);
   auto args = specula::argparse::parse(argc, argv);
+  std::cout << specula::time::stop(0) << "<<\n";
   for (auto& arg : args) {
     std::cout << arg.first << "::" << arg.second.type << "::";
     if (arg.second.type == specula::argparse::BOOL) {
