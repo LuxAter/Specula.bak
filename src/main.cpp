@@ -19,13 +19,21 @@
 #include <cstdlib>
 #include <iostream>
 
+#include <chrono>
+#include <thread>
+
 #include "specula.hpp"
 #include "version.hpp"
 
-int main() {
-  std::cout << "C++ Boiler Plate v" << SPECULA_VERSION_MAJOR << "."
-            << SPECULA_VERSION_MINOR << "." << SPECULA_VERSION_PATCH << "."
-            << std::endl;
+using namespace specula;
 
+int main() {
+  init();
+  time::time_point start = time::now();
+  time::sleep(1.2);
+  time::time_point stop = time::now();
+  time::duration diff = stop - start;
+  log(log::TIMER, "Slept for %lfs", diff.count());
+  term();
   return 0;
 }

@@ -8,7 +8,6 @@ option(ENABLE_DOCTESTS "Enable tests in library" ON)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 set(CMAKE_CXX_CLANG_TIDY "clang-tidy")
 set(CMAKE_CXX_CPPCHECK "cppcheck")
-set(CMAKE_CXX_CPPLINT "cpplint")
 set(CMAKE_CXX_INCLUDE_WHAT_YOU_USE "iwyu-tool")
 include(ConfigSafeGuards)
 include(Colors)
@@ -20,7 +19,7 @@ include(Misc)
 include(Warnings)
 find_lto(CXX)
 
-set(SOURCES src/specula.cpp)
+set(SOURCES src/specula.cpp src/util/log.cpp)
 
 set(TESTFILES tests/main.cpp)
 set(LIBRARY_NAME specula)
@@ -57,4 +56,6 @@ set_target_properties(${LIBRARY_NAME} main
                                  CXX_EXTENSIONS
                                  NO)
 
+string(TOUPPER ${CMAKE_BUILD_TYPE} CMAKE_BUILD_TYPE_DEFINE)
+set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} -D${CMAKE_BUILD_TYPE_DEFINE})
 add_subdirectory(tests)
