@@ -27,13 +27,30 @@
 
 using namespace specula;
 
+bool test_save(unsigned i) {
+  image::Image img(500, 5000);
+  return img.save(fmt::fmt("img/{}.{}", i, "png"));
+}
+
 int main() {
+  unsigned frames = 50;
   init();
+  info("Maximum number of threads for a thread pool: {}",
+       std::thread::hardware_concurrency());
   time::time_point start = time::now();
-  time::sleep(1.2);
-  time::time_point stop = time::now();
-  time::duration diff = stop - start;
-  log(log::TIMER, "Slept for %lfs", diff.count());
+  for (unsigned i = 0; i < frames; ++i) {
+    test_save(i);
+  }
+  log(log::TIMER, "Took {}s to render {} frames",
+      time::duration(time::now() - start).count(), frames);
+  start = time::now();
+  thread::Queue pool(test_save);
+  for (unsigned i = 0; i < frames; ++i) {
+    pool.push(i);
+  }
+  pool.wait();
+  log(log::TIMER, "Took {}s to render {} frames",
+      time::duration(time::now() - start).count(), frames);
   term();
   return 0;
 }
