@@ -32,9 +32,22 @@ bool test_save(unsigned i) {
   return img.save(fmt::fmt("img/{}.{}", i, "png"));
 }
 
-int main() {
-  unsigned frames = 50;
+int main(int argc, char *argv[]) {
+  cli::ArgumentParser parser;
+  parser.add_option("h,help", "Displays this help message");
+  parser.add_option("f,frames", "Number of frames to render", cli::Value(50));
+  cli::ParseResult args = parser.parse(argc, argv);
+
+  if (args["help"].count > 0) {
+    parser.display_usage();
+    parser.display_help();
+    return 0;
+  }
+
   init();
+
+  unsigned frames = args["frames"].as<unsigned>();
+
   info("Maximum number of threads for a thread pool: {}",
        std::thread::hardware_concurrency());
   time::time_point start = time::now();

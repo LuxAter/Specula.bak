@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.8.2)
 
 # List all files containing tests. (Change as needed)
 set(TESTFILES # All .cpp files in tests/
-    main.cpp)
+    main.cpp util/fmt.cpp)
 
 set(TEST_MAIN unit_tests) # Default name for test executable (change if you
                           # wish).

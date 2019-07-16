@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8.2)
-project(Specula VERSION 2.0.2 LANGUAGES CXX)
+project(Specula VERSION 2.0.3 LANGUAGES CXX)
 
 set(ENABLE_WARNINGS_SETTINGS ON)
 option(ENABLE_LTO "Enable link time optimization" ON)
@@ -25,6 +25,7 @@ add_definitions(-DCOLOR_DEPTH=8 ${PNG_DEFINITIONS})
 set(SOURCES
     src/specula.cpp
     src/util/log.cpp
+    src/cli/argparse.cpp
     src/image/img.cpp
     src/image/png.cpp)
 

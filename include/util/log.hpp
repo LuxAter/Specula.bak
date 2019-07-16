@@ -63,6 +63,27 @@ void __log(const LogType &type, const char *msg, const char *file,
   }
 }
 template <typename... _ARGS>
+void __log(const LogType &type, const std::string &msg, const char *file,
+           const char *func, size_t line, const _ARGS &... args) {
+  std::time_t raw_time = time(NULL);
+  std::tm *current_tm = std::localtime(&raw_time);
+  std::string message =
+      fmt::fmt("[{}] <{}:{}:{}> ({}:{}:{}) {}\n", type_string[type],
+               current_tm->tm_hour, current_tm->tm_min, current_tm->tm_sec,
+               file, func, line, fmt::fmt(msg, args...));
+  if (verbose_ >= static_cast<unsigned>(type)) {
+    if (color_ == true) {
+      printf("%s%s\033[0m", type_color[type], message.c_str());
+    } else {
+      printf("%s", message.c_str());
+    }
+  }
+  fprintf(file_, "%s", message.c_str());
+  if (type == FATAL || type == ERROR) {
+    fflush(file_);
+  }
+}
+template <typename... _ARGS>
 void __log(const char *type, const char *color, const char *msg,
            const char *file, const char *func, size_t line,
            const _ARGS &... args) {
