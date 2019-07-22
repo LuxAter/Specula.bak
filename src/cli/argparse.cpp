@@ -2,6 +2,8 @@
 
 #include <cstring>
 #include <iostream>
+#include <map>
+#include <string>
 #include <vector>
 
 #include "cli/color.hpp"
@@ -43,7 +45,7 @@ specula::cli::ArgumentParser::parse(int argc, char *argv[]) {
   // PARSE OPTIONS
   std::vector<std::string> remaining;
   exe_ = argv[0];
-  for (int i = 1; i < argc; ++i) {
+  for (std::size_t i = 1; i < static_cast<std::size_t>(argc); ++i) {
     if (strlen(argv[i]) <= 1) {
       continue;
     } else if (argv[i][0] == '-' && argv[i][1] == '-') {
@@ -65,7 +67,8 @@ specula::cli::ArgumentParser::parse(int argc, char *argv[]) {
           // }
           if (value != std::string()) {
             it->second.value = value;
-          } else if (i + 1 < argc && argv[i + 1][0] != '-') {
+          } else if (i + 1 < static_cast<std::size_t>(argc) &&
+                     argv[i + 1][0] != '-') {
             it->second.value = std::string(argv[i + 1]);
             i += 1;
           } else if (it->second.value == std::string()) {
@@ -80,7 +83,7 @@ specula::cli::ArgumentParser::parse(int argc, char *argv[]) {
       }
       // LONG NAME
     } else if (argv[i][0] == '-') {
-      for (int j = 1; j < strlen(argv[i]); ++j) {
+      for (std::size_t j = 1; j < strlen(argv[i]); ++j) {
         std::map<char, std::string>::const_iterator it;
         if ((it = name_map_.find(argv[i][j])) != name_map_.end()) {
           options_[it->second].count++;
@@ -91,8 +94,8 @@ specula::cli::ArgumentParser::parse(int argc, char *argv[]) {
             // if (options_[it->second].implicit_value != std::string()) {
             options_[it->second].value = options_[it->second].implicit_value;
             // }
-            if (i + 1 < argc && j == strlen(argv[i]) - 1 &&
-                argv[i + 1][0] != '-') {
+            if (i + 1 < static_cast<std::size_t>(argc) &&
+                j == strlen(argv[i]) - 1 && argv[i + 1][0] != '-') {
               options_[it->second].value = std::string(argv[i + 1]);
               i += 1;
               break;
