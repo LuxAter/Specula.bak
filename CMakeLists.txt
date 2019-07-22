@@ -80,7 +80,7 @@ include_directories("${PROJECT_BINARY_DIR}")
 # Targets
 # ##############################################################################
 
-add_library(${LIBRARY_NAME} OBJECT ${SOURCES})
+add_library(${LIBRARY_NAME} ${SOURCES})
 target_include_directories(${LIBRARY_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/include)
 if(CMAKE_BUILD_TYPE STREQUAL "Release")
   target_compile_options(${LIBRARY_NAME} PUBLIC -Wall -Wfloat-conversion -O3)

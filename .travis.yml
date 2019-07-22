@@ -1,7 +1,7 @@
 language: cpp
 sudo: true
 os: linux
-dist: trusty 
+dist: bionic 
 compiler: clang++
 
 addons:
