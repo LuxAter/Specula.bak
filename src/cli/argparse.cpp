@@ -1,5 +1,6 @@
 #include "cli/argparse.hpp"
 
+#include <algorithm>
 #include <cstring>
 #include <iostream>
 #include <map>
