@@ -98,11 +98,14 @@ std::string __fmt(const std::string &fmt_str, const _T &arg) {
         if (alignment == 0) {
           arg_str = arg_str + std::string(padding - arg_str.size(), fill_char);
         } else if (alignment == 1) {
-          arg_str = std::string(std::ceil((padding - arg_str.size()) / 2.0),
-                                fill_char) +
-                    arg_str +
-                    std::string(std::floor((padding - arg_str.size()) / 2.0),
-                                fill_char);
+          arg_str =
+              std::string(static_cast<std::size_t>(
+                              std::ceil((padding - arg_str.size()) / 2.0)),
+                          fill_char) +
+              arg_str +
+              std::string(static_cast<std::size_t>(
+                              std::floor((padding - arg_str.size()) / 2.0)),
+                          fill_char);
         } else {
           arg_str = std::string(padding - arg_str.size(), fill_char) + arg_str;
         }

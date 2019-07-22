@@ -82,7 +82,11 @@ include_directories("${PROJECT_BINARY_DIR}")
 
 add_library(${LIBRARY_NAME} OBJECT ${SOURCES})
 target_include_directories(${LIBRARY_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/include)
-target_compile_options(${LIBRARY_NAME} PUBLIC -Wall -Wfloat-conversion)
+if(CMAKE_BUILD_TYPE STREQUAL "Release")
+  target_compile_options(${LIBRARY_NAME} PUBLIC -Wall -Wfloat-conversion -O3)
+else()
+  target_compile_options(${LIBRARY_NAME} PUBLIC -Wall -Wfloat-conversion -O0)
+endif()
 set_target_properties(${LIBRARY_NAME}
                       PROPERTIES CXX_STANDARD
                                  17
@@ -93,7 +97,11 @@ set_target_properties(${LIBRARY_NAME}
 
 add_executable(${EXECUTABLE_NAME} src/main.cpp)
 target_link_libraries(${EXECUTABLE_NAME} PRIVATE ${LIBRARY_NAME})
-target_compile_options(${EXECUTABLE_NAME} PUBLIC -Wall -Wfloat-conversion)
+if(CMAKE_BUILD_TYPE STREQUAL "Release")
+  target_compile_options(${EXECUTABLE_NAME} PUBLIC -Wall -Wfloat-conversion -O3)
+else()
+  target_compile_options(${EXECUTABLE_NAME} PUBLIC -Wall -Wfloat-conversion -O0)
+endif()
 set_target_properties(${EXECUTABLE_NAME}
                       PROPERTIES CXX_STANDARD
                                  17
@@ -162,66 +170,69 @@ add_test(NAME ${LIBRARY_NAME}.${TEST_NAME}
 # Coverage
 # ##############################################################################
 
-find_program(GCOV_PATH gcov)
-find_program(LCOV_PATH lcov)
-find_program(GENHTML_PATH genhtml)
-find_program(GCOVR_PATH gcovr PATHS ${CMAKE_SOURCE_DIR}/tests)
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+  find_program(GCOV_PATH gcov)
+  find_program(LCOV_PATH lcov)
+  find_program(GENHTML_PATH genhtml)
+  find_program(GCOVR_PATH gcovr PATHS ${CMAKE_SOURCE_DIR}/tests)
 
-if(NOT GCOV_PATH)
-  message(FATAL_ERROR "gcov not found!")
-endif()
-if(NOT LCOV_PATH)
-  message(FATAL_ERROR "lcov not found!")
-endif()
-if(NOT GENHTML_PATH)
-  message(FATAL_ERROR "genhtml not found!")
-endif()
+  if(NOT GCOV_PATH)
+    message(FATAL_ERROR "gcov not found!")
+  endif()
+  if(NOT LCOV_PATH)
+    message(FATAL_ERROR "lcov not found!")
+  endif()
+  if(NOT GENHTML_PATH)
+    message(FATAL_ERROR "genhtml not found!")
+  endif()
 
-set(CMAKE_CXX_FLAGS_COVERAGE
-    "-g -O0 -fprofile-arcs -ftest-coverage"
-    CACHE STRING "Flags used by the C++ compiler during coverage builds." FORCE)
-set(CMAKE_C_FLAGS_COVERAGE
-    "-g -O0 -fprofile-arcs -ftest-coverage"
-    CACHE STRING "Flags used by the C compiler during coverage builds." FORCE)
-set(
-  CMAKE_EXE_LINKER_FLAGS_COVERAGE
-  ""
-  CACHE STRING "Flags used for linking binaries during coverage builds." FORCE)
-set(CMAKE_SHARED_LINKER_FLAGS_COVERAGE
-    ""
-    CACHE STRING
-          "Flags used by the shared libraries linker during coverage builds."
-          FORCE)
-mark_as_advanced(CMAKE_CXX_FLAGS_COVERAGE
-                 CMAKE_C_FLAGS_COVERAGE
-                 CMAKE_EXE_LINKER_FLAGS_COVERAGE
-                 CMAKE_SHARED_LINKER_FLAGS_COVERAGE)
+  set(CMAKE_CXX_FLAGS_COVERAGE
+      "-g -O0 -fprofile-arcs -ftest-coverage"
+      CACHE STRING "Flags used by the C++ compiler during coverage builds."
+            FORCE)
+  set(CMAKE_C_FLAGS_COVERAGE
+      "-g -O0 -fprofile-arcs -ftest-coverage"
+      CACHE STRING "Flags used by the C compiler during coverage builds." FORCE)
+  set(CMAKE_EXE_LINKER_FLAGS_COVERAGE
+      ""
+      CACHE STRING "Flags used for linking binaries during coverage builds."
+            FORCE)
+  set(CMAKE_SHARED_LINKER_FLAGS_COVERAGE
+      ""
+      CACHE STRING
+            "Flags used by the shared libraries linker during coverage builds."
+            FORCE)
+  mark_as_advanced(CMAKE_CXX_FLAGS_COVERAGE
+                   CMAKE_C_FLAGS_COVERAGE
+                   CMAKE_EXE_LINKER_FLAGS_COVERAGE
+                   CMAKE_SHARED_LINKER_FLAGS_COVERAGE)
 
-add_custom_target(coverage
-                  ${LCOV_PATH}
-                  --directory
-                  .
-                  --zerocounters
-                  COMMAND ${TEST_NAME} ${ARGV3}
-                  COMMAND ${LCOV_PATH}
-                          --directory
-                          .
-                          --capture
-                          --output-file
-                          coverage.info
-                  COMMAND ${LCOV_PATH}
-                          --remove
-                          coverage.info
-                          '*/tests/*'
-                          '*/external/*'
-                          --output-file
-                          coverage.info.cleaned
-                  COMMAND ${GENHTML_PATH}
-                          -o
-                          coverage
-                          coverage.info.cleaned
-                  COMMAND ${LCOV_PATH} --list coverage.info.cleaned
-                  WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+  add_custom_target(coverage
+                    ${LCOV_PATH}
+                    --directory
+                    .
+                    --zerocounters
+                    COMMAND ${TEST_NAME} ${ARGV3}
+                    COMMAND ${LCOV_PATH}
+                            --directory
+                            .
+                            --capture
+                            --output-file
+                            coverage.info
+                    COMMAND ${LCOV_PATH}
+                            --remove
+                            coverage.info
+                            '*/tests/*'
+                            '*/external/*'
+                            --output-file
+                            coverage.info.cleaned
+                    COMMAND ${GENHTML_PATH}
+                            -o
+                            coverage
+                            coverage.info.cleaned
+                    COMMAND ${LCOV_PATH} --list coverage.info.cleaned
+                    WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+endif()
 
 # ##############################################################################
 # Packaging
