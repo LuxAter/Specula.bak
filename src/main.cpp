@@ -54,16 +54,16 @@ int main(int argc, char *argv[]) {
   for (unsigned i = 0; i < frames; ++i) {
     test_save(i);
   }
-  log(log::TIMER, "Took {}s to render {} frames",
-      time::duration(time::now() - start).count(), frames);
+  log_misc(log::TIMER, "Took {}s to render {} frames",
+           time::duration(time::now() - start).count(), frames);
   start = time::now();
   thread::Queue pool(test_save);
   for (unsigned i = 0; i < frames; ++i) {
     pool.push(i);
   }
   pool.wait();
-  log(log::TIMER, "Took {}s to render {} frames",
-      time::duration(time::now() - start).count(), frames);
+  log_misc(log::TIMER, "Took {}s to render {} frames",
+           time::duration(time::now() - start).count(), frames);
   term();
   return 0;
 }

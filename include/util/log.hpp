@@ -24,7 +24,7 @@
 #define version(msg, ...)                                                      \
   specula::log::__log(specula::log::VERSION, msg, __FILE__, __func__,          \
                       __LINE__, ##__VA_ARGS__)
-#define log(type, msg, ...)                                                    \
+#define log_misc(type, msg, ...)                                               \
   specula::log::__log(type, msg, __FILE__, __func__, __LINE__, ##__VA_ARGS__)
 
 namespace specula {

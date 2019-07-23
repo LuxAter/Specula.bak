@@ -9,6 +9,7 @@ set(EXECUTABLE_NAME main)
 set(LIBRARY_NAME specula)
 set(TEST_NAME unit_tests)
 set(TEST_RUNNER_PARAMS "")
+set(CMAKE_CXX_COMPILER clang++)
 
 # ##############################################################################
 # Settings
@@ -69,7 +70,7 @@ set(SOURCES
     src/image/img.cpp
     src/image/png.cpp)
 
-set(TEST_SOURCES tests/main.cpp tests/util/fmt.cpp)
+set(TEST_SOURCES tests/main.cpp tests/util/fmt.cpp tests/util/log.cpp)
 file(GLOB_RECURSE data resources/*)
 
 configure_file("${PROJECT_SOURCE_DIR}/include/version.hpp.in"
@@ -170,7 +171,7 @@ add_test(NAME ${LIBRARY_NAME}.${TEST_NAME}
 # Coverage
 # ##############################################################################
 
-if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+if(CMAKE_BUILD_TYPE STREQUAL "Coverage")
   find_program(GCOV_PATH gcov)
   find_program(LCOV_PATH lcov)
   find_program(GENHTML_PATH genhtml)
@@ -187,14 +188,14 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
   endif()
 
   set(CMAKE_CXX_FLAGS_COVERAGE
-      "-g -O0 -fprofile-arcs -ftest-coverage"
+      "-g -O0 --coverage"
       CACHE STRING "Flags used by the C++ compiler during coverage builds."
             FORCE)
   set(CMAKE_C_FLAGS_COVERAGE
       "-g -O0 -fprofile-arcs -ftest-coverage"
       CACHE STRING "Flags used by the C compiler during coverage builds." FORCE)
   set(CMAKE_EXE_LINKER_FLAGS_COVERAGE
-      ""
+      "--coverage"
       CACHE STRING "Flags used for linking binaries during coverage builds."
             FORCE)
   set(CMAKE_SHARED_LINKER_FLAGS_COVERAGE
@@ -214,9 +215,13 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
                     --zerocounters
                     COMMAND ${TEST_NAME} ${ARGV3}
                     COMMAND ${LCOV_PATH}
+                            --base-directory
+                            .
                             --directory
                             .
                             --capture
+                            --gcov-tool
+                            llvm-gcov
                             --output-file
                             coverage.info
                     COMMAND ${LCOV_PATH}
@@ -224,6 +229,7 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
                             coverage.info
                             '*/tests/*'
                             '*/external/*'
+                            '/include/c++/*'
                             --output-file
                             coverage.info.cleaned
                     COMMAND ${GENHTML_PATH}
