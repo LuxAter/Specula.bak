@@ -9,7 +9,9 @@ set(EXECUTABLE_NAME main)
 set(LIBRARY_NAME specula)
 set(TEST_NAME unit_tests)
 set(TEST_RUNNER_PARAMS "")
-set(CMAKE_CXX_COMPILER clang++)
+if(NOT CMAKE_CXX_COMPILER)
+  set(CMAKE_CXX_COMPILER clang++)
+endif()
 
 # ##############################################################################
 # Settings
@@ -188,14 +190,14 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
   endif()
 
   set(CMAKE_CXX_FLAGS_DEBUG
-      "-g -O0 --coverage"
+      "-g -O0 --std=c++17 --coverage"
       CACHE STRING "Flags used by the C++ compiler during coverage builds."
             FORCE)
   set(CMAKE_C_FLAGS_DEBUG
       "-g -O0 -fprofile-arcs -ftest-coverage"
       CACHE STRING "Flags used by the C compiler during coverage builds." FORCE)
   set(CMAKE_EXE_LINKER_FLAGS_DEBUG
-      "--coverage"
+      "--std=c++17 --coverage"
       CACHE STRING "Flags used for linking binaries during coverage builds."
             FORCE)
   set(CMAKE_SHARED_LINKER_FLAGS_DEBUG
