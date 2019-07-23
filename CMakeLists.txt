@@ -171,7 +171,7 @@ add_test(NAME ${LIBRARY_NAME}.${TEST_NAME}
 # Coverage
 # ##############################################################################
 
-if(CMAKE_BUILD_TYPE STREQUAL "Coverage")
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
   find_program(GCOV_PATH gcov)
   find_program(LCOV_PATH lcov)
   find_program(GENHTML_PATH genhtml)
@@ -187,26 +187,26 @@ if(CMAKE_BUILD_TYPE STREQUAL "Coverage")
     message(FATAL_ERROR "genhtml not found!")
   endif()
 
-  set(CMAKE_CXX_FLAGS_COVERAGE
+  set(CMAKE_CXX_FLAGS_DEBUG
       "-g -O0 --coverage"
       CACHE STRING "Flags used by the C++ compiler during coverage builds."
             FORCE)
-  set(CMAKE_C_FLAGS_COVERAGE
+  set(CMAKE_C_FLAGS_DEBUG
       "-g -O0 -fprofile-arcs -ftest-coverage"
       CACHE STRING "Flags used by the C compiler during coverage builds." FORCE)
-  set(CMAKE_EXE_LINKER_FLAGS_COVERAGE
+  set(CMAKE_EXE_LINKER_FLAGS_DEBUG
       "--coverage"
       CACHE STRING "Flags used for linking binaries during coverage builds."
             FORCE)
-  set(CMAKE_SHARED_LINKER_FLAGS_COVERAGE
+  set(CMAKE_SHARED_LINKER_FLAGS_DEBUG
       ""
       CACHE STRING
             "Flags used by the shared libraries linker during coverage builds."
             FORCE)
-  mark_as_advanced(CMAKE_CXX_FLAGS_COVERAGE
-                   CMAKE_C_FLAGS_COVERAGE
-                   CMAKE_EXE_LINKER_FLAGS_COVERAGE
-                   CMAKE_SHARED_LINKER_FLAGS_COVERAGE)
+  mark_as_advanced(CMAKE_CXX_FLAGS_DEBUG
+                   CMAKE_C_FLAGS_DEBUG
+                   CMAKE_EXE_LINKER_FLAGS_DEBUG
+                   CMAKE_SHARED_LINKER_FLAGS_DEBUG)
 
   add_custom_target(coverage
                     ${LCOV_PATH}
