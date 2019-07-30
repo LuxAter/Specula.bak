@@ -186,6 +186,8 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     find_program(LCOV_PATH llvm-cov)
     if(NOT LCOV_PATH)
       message(FATAL_ERROR "lcov/llvm-cov not found!")
+    else()
+      set(LCOV_PATH "${LCOV_PATH} gcov")
     endif()
   endif()
   if(NOT GENHTML_PATH)
@@ -226,7 +228,7 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
                             .
                             --capture
                             --gcov-tool
-                            "${LCOV_PATH} gcov"
+                            "${LCOV_PATH}"
                             --output-file
                             coverage.info
                     COMMAND ${LCOV_PATH}
