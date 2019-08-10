@@ -9,9 +9,7 @@ set(EXECUTABLE_NAME main)
 set(LIBRARY_NAME specula)
 set(TEST_NAME unit_tests)
 set(TEST_RUNNER_PARAMS "")
-if(NOT CMAKE_CXX_COMPILER)
-  set(CMAKE_CXX_COMPILER clang++)
-endif()
+set(CMAKE_CXX_COMPILER clang++)
 
 # ##############################################################################
 # Settings
@@ -174,21 +172,19 @@ add_test(NAME ${LIBRARY_NAME}.${TEST_NAME}
 # ##############################################################################
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-  find_program(GCOV_PATH gcov)
+  # if("${CMAKE_C_COMPILER_ID}" MATCHES "(Apple)?[Cc]lang" OR
+  # "${CMAKE_CXX_COMPILER_ID}" MATCHES "(Apple)?[Cc]lang")
+  find_program(GCOV_TOOL "llvm-gcov")
+  # elseif(CMAKE_COMPILER_IS_GNUCXX) find_program(GCOV_TOOL "gcov") endif()
   find_program(LCOV_PATH lcov)
   find_program(GENHTML_PATH genhtml)
   find_program(GCOVR_PATH gcovr PATHS ${CMAKE_SOURCE_DIR}/tests)
 
-  if(NOT GCOV_PATH)
-    message(FATAL_ERROR "gcov not found!")
+  if(NOT GCOV_TOOL)
+    message(FATAL_ERROR "gcov/llvm-cov not found!")
   endif()
   if(NOT LCOV_PATH)
-    find_program(LCOV_PATH llvm-cov)
-    if(NOT LCOV_PATH)
-      message(FATAL_ERROR "lcov/llvm-cov not found!")
-    else()
-      set(LCOV_PATH "${LCOV_PATH} gcov")
-    endif()
+    message(FATAL_ERROR "lcov not found!")
   endif()
   if(NOT GENHTML_PATH)
     message(FATAL_ERROR "genhtml not found!")
@@ -228,7 +224,7 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
                             .
                             --capture
                             --gcov-tool
-                            "${LCOV_PATH}"
+                            "${GCOV_TOOL}"
                             --output-file
                             coverage.info
                     COMMAND ${LCOV_PATH}
