@@ -11,9 +11,6 @@ addons:
     packages:
       - doxygen
 
-before_install:
-  - pip install --upgrade pip
-
 install:
   - pip install gcovr --user
 
@@ -34,6 +31,5 @@ deploy:
     github_token: $GITHUB_TOKEN
     keep_history: true
     local_dir: docs/
-    on:
-      condition: branch IN (master, development)
+    condition: branch IN (master, development)
 
