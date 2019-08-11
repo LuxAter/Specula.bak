@@ -3,24 +3,26 @@ os: linux
 dist: bionic
 sudo: true
 
+compiler:
+  - gcc
+  - clang
+addons:
+  apt:
+    packages:
+      - doxygen
+      - llvm
+install:
+  - pip install gcovr --user
+before_script:
+  - mkdir build/ && cd build/
+script:
+  - cmake ../ -DCMAKE_BUILD_TYPE=Debug
+  - make coverage
+after_success:
+  - bash <(curl -s https://codecov.io/bash) || echo "CodeCov Error"
+
 jobs:
   include:
-    - stage: build
-      compiler:
-        - gcc
-        - clang
-      addons:
-        apt:
-          packages:
-            - doxygen
-            - llvm
-      before_script:
-        - mkdir build/ && cd build/
-      script:
-        - cmake ../ -DCMAKE_BUILD_TYPE=Debug
-        - make coverage
-      after_success:
-        - bash <(curl -s https://codecov.io/bash) || echo "CodeCov Error"
     - stage: deploy
       addons:
         apt:
