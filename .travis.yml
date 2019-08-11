@@ -8,7 +8,8 @@ compiler:
 
 addons:
   apt:
-    - doxygen
+    packages:
+      - doxygen
 
 install:
   - pip install gcovr
@@ -31,5 +32,5 @@ deploy:
     keep_history: true
     local_dir: docs/
     on:
-      if: branch IN (master, development)
+      condition: branch IN (master, development)
 
