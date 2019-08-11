@@ -5,12 +5,14 @@ sudo: true
 
 compiler:
   - gcc
-  - clang
 addons:
   apt:
     packages:
       - doxygen
       - llvm
+before_install:
+  - apt-get update
+  - apt-get upgrade
 install:
   - pip install gcovr --user
 before_script:
