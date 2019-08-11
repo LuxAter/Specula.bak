@@ -10,6 +10,7 @@ addons:
   apt:
     packages:
       - doxygen
+      - llvm
 
 install:
   - pip install gcovr --user
@@ -20,16 +21,23 @@ before_script:
 script:
   - cmake ../ -DCMAKE_BUILD_TYPE=Debug
   - make coverage
-  - make docs
 
 after_success:
   - bash <(curl -s https://codecov.io/bash) || echo "CodeCov Error"
 
-deploy:
-  - provider: pages
-    skip_cleanup: true
-    github_token: $GITHUB_TOKEN
-    keep_history: true
-    local_dir: docs/
-    condition: branch IN (master, development)
-
+jobs:
+  include:
+    - stage: deploy
+      script:
+        - mkdir build/ && cd build/
+        - cmake ../ -DCMAKE_BUILD_TYPE=Release
+        - make package
+        - make docs
+      deploy:
+        - provider: pages
+          skip_cleanup: true
+          github_token: $GITHUB_TOKEN
+          local_dir: docs/
+          on:
+            all_branches: true
+            condition: $TRAVIS_BRANCH =~ ^(master|development)$

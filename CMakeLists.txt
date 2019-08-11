@@ -3,7 +3,7 @@
 # ##############################################################################
 
 cmake_minimum_required(VERSION 3.8.2)
-project(Scribo VERSION 0.0.0 LANGUAGES CXX)
+project(Specula VERSION 0.0.3 LANGUAGES CXX)
 
 set(EXECUTABLE_NAME main)
 set(LIBRARY_NAME specula)
