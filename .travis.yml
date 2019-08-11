@@ -11,8 +11,11 @@ addons:
     packages:
       - doxygen
 
+before_install:
+  - pip3 install --upgrade pip
+
 install:
-  - pip install gcovr
+  - pip3 install gcovr --user
 
 before_script:
   - mkdir build/ && cd build/
