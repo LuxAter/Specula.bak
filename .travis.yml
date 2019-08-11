@@ -12,10 +12,10 @@ addons:
       - doxygen
 
 before_install:
-  - pip3 install --upgrade pip
+  - pip install --upgrade pip
 
 install:
-  - pip3 install gcovr --user
+  - pip install gcovr --user
 
 before_script:
   - mkdir build/ && cd build/
