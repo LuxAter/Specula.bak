@@ -44,6 +44,8 @@ endif()
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 
+find_package(Git QUIET)
+
 # ##############################################################################
 # Static Analysis
 # ##############################################################################
@@ -116,7 +118,43 @@ file(COPY ${data} DESTINATION resources)
 # Dependencies
 # ##############################################################################
 
-file(COPY ${data} DESTINATION resources)
+if(NOT EXISTS ${PROJECT_SOURCE_DIR}/external/doctest AND GIT_FOUND)
+  execute_process(COMMAND git
+                          submodule
+                          update
+                          --init
+                          --
+                          external/doctest
+                  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+  set(DOCTEST_FOUND TRUE)
+elseif(NOT GIT_FOUND)
+  message("Git is required for getting dependencies" FATAL_ERROR)
+else()
+  set(DOCTEST_FOUND TRUE)
+endif()
+if(NOT EXISTS ${PROJECT_SOURCE_DIR}/external/libpng AND GIT_FOUND)
+  execute_process(COMMAND git
+                          submodule
+                          update
+                          --init
+                          --
+                          external/libpng
+                  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+  set(LIBPNG_FOUND TRUE)
+elseif(NOT GIT_FOUND)
+  message("Git is required for getting dependencies" FATAL_ERROR)
+else()
+  set(LIBPNG_FOUND TRUE)
+endif()
+
+if(LIBPNG_FOUND)
+  set(PNG_TESTS OFF CACHE BOOL "Build libpng tests")
+  set(PNG_SHARED OFF CACHE BOOL "Build shared lib")
+  add_subdirectory(${PROJECT_SOURCE_DIR}/external/libpng)
+  target_include_directories(${LIBRARY_NAME}
+                             PUBLIC ${PROJECT_SOURCE_DIR}/external/libpng)
+  target_link_libraries(${LIBRARY_NAME} png_static)
+endif()
 
 # ##############################################################################
 # Definitions
