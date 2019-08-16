@@ -118,7 +118,7 @@ file(COPY ${data} DESTINATION resources)
 # Dependencies
 # ##############################################################################
 
-if(NOT EXISTS ${PROJECT_SOURCE_DIR}/external/doctest AND GIT_FOUND)
+if(NOT EXISTS ${PROJECT_SOURCE_DIR}/external/doctest/README.md AND GIT_FOUND)
   execute_process(COMMAND git
                           submodule
                           update
@@ -132,7 +132,7 @@ elseif(NOT GIT_FOUND)
 else()
   set(DOCTEST_FOUND TRUE)
 endif()
-if(NOT EXISTS ${PROJECT_SOURCE_DIR}/external/libpng AND GIT_FOUND)
+if(NOT EXISTS ${PROJECT_SOURCE_DIR}/external/libpng/README.md AND GIT_FOUND)
   execute_process(COMMAND git
                           submodule
                           update
@@ -219,7 +219,7 @@ endif()
 if(COVERAGE AND CMAKE_BUILD_TYPE STREQUAL "Debug")
   if("${CMAKE_C_COMPILER_ID}" MATCHES "(Apple)?[Cc]lang"
      OR "${CMAKE_CXX_COMPILER_ID}" MATCHES "(Apple)?[Cc]lang")
-    find_program(GCOV_TOOL "llvm-gcov")
+    find_program(GCOV_TOOL "llvm-cov")
   elseif(CMAKE_COMPILER_IS_GNUCXX)
     find_program(GCOV_TOOL "gcov")
   endif()
