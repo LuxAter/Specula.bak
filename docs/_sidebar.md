@@ -1,6 +1,8 @@
+* [](/)
+
 ---
 
-* [](/)
+* [Theory](theory/theory.md)
 
 ---
 
