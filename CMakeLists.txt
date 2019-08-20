@@ -3,7 +3,7 @@
 # ##############################################################################
 
 cmake_minimum_required(VERSION 3.8.2)
-project(Specula VERSION 0.0.3 LANGUAGES CXX)
+project(Specula VERSION 0.0.4 LANGUAGES CXX)
 
 set(EXECUTABLE_NAME main)
 set(LIBRARY_NAME specula)
@@ -45,6 +45,7 @@ endif()
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 
 find_package(Git QUIET)
+include(ExternalProject)
 
 # ##############################################################################
 # Static Analysis
@@ -132,6 +133,7 @@ elseif(NOT GIT_FOUND)
 else()
   set(DOCTEST_FOUND TRUE)
 endif()
+
 if(NOT EXISTS ${PROJECT_SOURCE_DIR}/external/libpng/README.md AND GIT_FOUND)
   execute_process(COMMAND git
                           submodule
@@ -154,6 +156,69 @@ if(LIBPNG_FOUND)
   target_include_directories(${LIBRARY_NAME}
                              PUBLIC ${PROJECT_SOURCE_DIR}/external/libpng)
   target_link_libraries(${LIBRARY_NAME} png_static)
+endif()
+
+if(NOT EXISTS ${PROJECT_SOURCE_DIR}/external/luajit/README AND GIT_FOUND)
+  execute_process(COMMAND git
+                          submodule
+                          update
+                          --init
+                          --
+                          external/luajit
+                  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+  set(LUAJIT_FOUND TRUE)
+elseif(NOT GIT_FOUND)
+  message("Git is required for getting dependencies" FATAL_ERROR)
+else()
+  set(LUAJIT_FOUND TRUE)
+endif()
+
+if(LUAJIT_FOUND)
+  add_custom_target(luajit
+                    COMMAND ${CMAKE_COMMAND}
+                            -E
+                            copy_directory
+                            ${CMAKE_CURRENT_SOURCE_DIR}/external/luajit
+                            ${CMAKE_CURRENT_BINARY_DIR}/external/luajit
+                    COMMAND cd
+                            ${CMAKE_CURRENT_BINARY_DIR}/external/luajit
+                            &&
+                            make
+                            install
+                            PREFIX=${CMAKE_CURRENT_BINARY_DIR}/external/luajit)
+  add_library(luajit_static STATIC IMPORTED)
+  set_property(
+    TARGET luajit_static
+    PROPERTY IMPORTED_LOCATION
+             ${CMAKE_CURRENT_BINARY_DIR}/external/luajit/lib/libluajit-5.1.a)
+  add_dependencies(luajit_static luajit)
+  target_include_directories(
+    ${LIBRARY_NAME}
+    PUBLIC ${PROJECT_BINARY_DIR}/external/luajit/include/luajit-2.0)
+  target_link_libraries(${LIBRARY_NAME}
+                        luajit_static
+                        m
+                        dl)
+endif()
+
+if(NOT EXISTS ${PROJECT_SOURCE_DIR}/external/sol2/README.md AND GIT_FOUND)
+  execute_process(COMMAND git
+                          submodule
+                          update
+                          --init
+                          --
+                          external/sol2
+                  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+  set(SOL_FOUND TRUE)
+elseif(NOT GIT_FOUND)
+  message("Git is required for getting dependencies" FATAL_ERROR)
+else()
+  set(SOL_FOUND TRUE)
+endif()
+
+if(SOL_FOUND)
+  target_include_directories(${LIBRARY_NAME}
+                             PUBLIC ${CMAKE_SOURCE_DIR}/external/sol2/include)
 endif()
 
 # ##############################################################################
