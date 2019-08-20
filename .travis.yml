@@ -3,6 +3,10 @@ os: linux
 dist: bionic
 sudo: true
 
+branches:
+  except:
+    - documentation
+
 compiler:
   - gcc
   - clang
