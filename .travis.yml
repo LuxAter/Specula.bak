@@ -37,11 +37,12 @@ jobs:
         - cmake ../ -DCMAKE_BUILD_TYPE=Release
         - make package
         - make docs
+        - ./scripts/website.sh
       deploy:
         - provider: pages
           skip_cleanup: true
           github_token: $GITHUB_TOKEN
-          local_dir: docs/
+          local_dir: pages/
           on:
             all_branches: true
             condition: $TRAVIS_BRANCH =~ ^(master|development)$
