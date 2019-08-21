@@ -1,0 +1,43 @@
+language: cpp
+os: linux
+dist: bionic
+sudo: true
+
+compiler:
+  - gcc
+  - clang
+addons:
+  apt:
+    packages:
+      - doxygen
+install:
+  - pip install gcovr --user
+before_script:
+  - mkdir build/ && cd build/
+script:
+  - cmake ../ -DCMAKE_BUILD_TYPE=Debug
+  - make coverage
+after_success:
+  - bash <(curl -s https://codecov.io/bash) || echo "CodeCov Error"
+
+jobs:
+  include:
+    - stage: deploy
+      addons:
+        apt:
+          packages:
+            - doxygen
+      before_script:
+        - mkdir release/ && cd release/
+      script:
+        - cmake ../ -DCMAKE_BUILD_TYPE=Release
+        - make package
+        - make docs
+      deploy:
+        - provider: pages
+          skip_cleanup: true
+          github_token: $GITHUB_TOKEN
+          local_dir: docs/
+          on:
+            all_branches: true
+            condition: $TRAVIS_BRANCH =~ ^(master|development)$

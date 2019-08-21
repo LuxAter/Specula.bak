@@ -1,0 +1,68 @@
+image: gcc
+variables:
+  GIT_SUBMODULE_STRATEGY: recursive
+
+stages:
+  - build
+  - test
+  - docs
+  - deploy
+
+build:
+  stage: build
+  before_script:
+    - apt-get update --yes
+    - apt-get install --yes cmake doxygen python-dev python-pip
+    - pip install gcovr
+    - mkdir build/
+  script:
+    - cd build/
+    - cmake ../ -DCMAKE_BUILD_TYPE=Debug
+    - make
+  artifacts:
+    paths:
+      - build/
+
+test:
+  stage: test 
+  before_script:
+    - apt-get update --yes
+    - apt-get install --yes cmake doxygen python-dev python-pip
+    - pip install gcovr
+  script:
+    - cd build/
+    - make coverage
+  dependencies:
+    - build
+  artifacts:
+    paths:
+      - build/
+
+docs:
+  stage: docs
+  before_script:
+    - apt-get update --yes
+    - apt-get install --yes cmake doxygen
+  script:
+    - cd build/
+    - doxygen
+  dependencies:
+    - test 
+  artifacts:
+    paths:
+      - build/
+
+pages:
+  stage: deploy
+  dependencies:
+    - docs
+  script:
+    - mv docs/ public/
+    - mv build/coverage public/coverage
+  artifacts:
+    paths:
+      - public
+    expire_in: 30 days
+  only:
+    - master
+    - development
