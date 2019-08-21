@@ -71,13 +71,27 @@ endif()
 # ##############################################################################
 
 set(SOURCES src/specula.cpp)
-
 set(TEST_SOURCES tests/main.cpp)
-file(GLOB_RECURSE data resources/*)
 
 configure_file("${PROJECT_SOURCE_DIR}/include/version.hpp.in"
                "${PROJECT_BINARY_DIR}/version.hpp")
 include_directories("${PROJECT_BINARY_DIR}")
+
+file(GLOB template_files
+     RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}/resources
+     ${CMAKE_CURRENT_SOURCE_DIR}/resources/*)
+foreach(file ${template_files})
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/resources/${file}
+                 ${CMAKE_CURRENT_BINARY_DIR}/resources/${file} @ONLY)
+endforeach()
+
+file(GLOB template_files
+     RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}/scripts
+     ${CMAKE_CURRENT_SOURCE_DIR}/scripts/*)
+foreach(file ${template_files})
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/scripts/${file}
+                 ${CMAKE_CURRENT_BINARY_DIR}/scripts/${file} @ONLY)
+endforeach()
 
 # ##############################################################################
 # Targets
@@ -112,8 +126,6 @@ set_target_properties(${EXECUTABLE_NAME}
                                  YES
                                  CXX_EXTENSIONS
                                  NO)
-
-file(COPY ${data} DESTINATION resources)
 
 # ##############################################################################
 # Dependencies
