@@ -40,7 +40,7 @@ jobs:
         - provider: pages
           skip_cleanup: true
           github_token: $GITHUB_TOKEN
-          local_dir: pages/
+          local_dir: docs/
           on:
             all_branches: true
             condition: $TRAVIS_BRANCH =~ ^(master|development)$
