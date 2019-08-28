@@ -36,8 +36,6 @@ jobs:
       script:
         - cmake ../ -DCMAKE_BUILD_TYPE=Release
         - make package
-        - make docs
-        - ./scripts/website.sh
       deploy:
         - provider: pages
           skip_cleanup: true
