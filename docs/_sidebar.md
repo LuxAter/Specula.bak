@@ -11,5 +11,3 @@
   * [Dependencies](contributing.md#dependencies)
   * [Compiling](contributing.md#compiling)
   * [Testing](contributing.md#testing)
-
-* [API](api/index.html ":ignore")
