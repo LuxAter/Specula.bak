@@ -308,6 +308,11 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
       "--std=c++17"
       CACHE STRING "Flags used for linking binaries during coverage builds."
             FORCE)
+  if(FILESYSTEM_FOUND)
+    target_include_directories(
+      ${TEST_NAME}
+      PUBLIC ${CMAKE_SOURCE_DIR}/external/filesystem/include)
+  endif()
 endif()
 
 # ##############################################################################

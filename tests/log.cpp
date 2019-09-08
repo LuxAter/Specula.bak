@@ -22,7 +22,7 @@ TEST_CASE("file logging") {
   time_t now = time(nullptr);
   struct tm tstruct = *localtime(&now);
 
-  CHECK(std::filesystem::exists(specula::fmt::format(
+  CHECK(specula::fs::exists(specula::fmt::format(
       "test_logs/%04d.%02d.%02d.log", tstruct.tm_year + 1900,
       tstruct.tm_mon + 1, tstruct.tm_mday)));
 
