@@ -1,17 +1,17 @@
 #include "doctest.h"
 
 #include "specula/fmt.hpp"
+#include "specula/fs.hpp"
 #include "specula/log.hpp"
 
 #include <ctime>
-#include <filesystem>
 #include <fstream>
 #include <string>
 
 TEST_CASE("file logging") {
 
-  if (std::filesystem::exists("test_logs/")) {
-    std::filesystem::remove_all("test_logs/");
+  if (specula::fs::exists("test_logs/")) {
+    specula::fs::remove_all("test_logs/");
   }
 
   specula::log::Logger::set_prefix("test_logs/");

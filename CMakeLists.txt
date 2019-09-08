@@ -233,6 +233,27 @@ if(SOL_FOUND)
                              PUBLIC ${CMAKE_SOURCE_DIR}/external/sol2/include)
 endif()
 
+if(NOT EXISTS ${PROJECT_SOURCE_DIR}/external/filesystem/README.md AND GIT_FOUND)
+  execute_process(COMMAND git
+                          submodule
+                          update
+                          --init
+                          --
+                          external/filesystem
+                  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+  set(FILESYSTEM_FOUND TRUE)
+elseif(NOT GIT_FOUND)
+  message("Git is required for getting dependencies" FATAL_ERROR)
+else()
+  set(FILESYSTEM_FOUND TRUE)
+endif()
+
+if(FILESYSTEM_FOUND)
+  target_include_directories(
+    ${LIBRARY_NAME}
+    PUBLIC ${CMAKE_SOURCE_DIR}/external/filesystem/include)
+endif()
+
 # ##############################################################################
 # Definitions
 # ##############################################################################

@@ -10,3 +10,6 @@
 [submodule "external/sol2"]
 	path = external/sol2
 	url = https://github.com/ThePhD/sol2
+[submodule "external/filesystem"]
+	path = external/filesystem
+	url = https://github.com/gulrak/filesystem

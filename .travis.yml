@@ -12,13 +12,8 @@ compiler:
   - clang
 addons:
   apt:
-    sources:
-      - ubuntu-toolchain-r-test
-      - llvm-toolchain-bionic-8.0
     packages:
       - doxygen
-      - g++-9.0
-      - clang-8.0
 install:
   - pip install gcovr --user
 before_script:

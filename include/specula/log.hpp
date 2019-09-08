@@ -6,11 +6,11 @@
 
 #include <array>
 #include <ctime>
-#include <filesystem>
 #include <string>
 #include <string_view>
 
 #include "specula/fmt.hpp"
+#include "specula/fs.hpp"
 
 #define lfatal(msg, ...)                                                       \
   log::Logger::get()->_log(specula::log::FATAL, msg, __FILE__, __func__,       \
@@ -75,8 +75,8 @@ public:
 
   inline void file_log(const LogType &type, const std::string_view &msg) {
     if (log_daily_file_ == nullptr) {
-      if (!std::filesystem::exists(file_prefix_)) {
-        std::filesystem::create_directory(file_prefix_);
+      if (!fs::exists(file_prefix_)) {
+        fs::create_directory(file_prefix_);
       }
       time_t now = time(nullptr);
       struct tm tstruct = *localtime(&now);
