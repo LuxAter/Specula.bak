@@ -71,7 +71,7 @@ endif()
 # ##############################################################################
 
 set(SOURCES src/specula.cpp)
-set(TEST_SOURCES tests/main.cpp)
+set(TEST_SOURCES tests/main.cpp tests/log.cpp)
 
 configure_file("${PROJECT_SOURCE_DIR}/include/version.hpp.in"
                "${PROJECT_BINARY_DIR}/version.hpp")

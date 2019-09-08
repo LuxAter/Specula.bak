@@ -1,10 +1,12 @@
 #ifndef SPECULA_LOG_HPP_
 #define SPECULA_LOG_HPP_
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wgnu-zero-variadic-macro-arguments"
+// #pragma clang diagnostic push
+// #pragma clang diagnostic ignored "-Wgnu-zero-variadic-macro-arguments"
 
 #include <array>
+#include <ctime>
+#include <filesystem>
 #include <string>
 #include <string_view>
 
@@ -58,7 +60,43 @@ public:
     return &instance;
   }
 
+  inline static void set_prefix(const std::string &prefix) {
+    Logger::get()->file_prefix_ = prefix;
+  }
+  inline static void console(const bool &setting) {
+    Logger::get()->console_default_ = setting;
+  }
+  inline static void file(const bool &setting) {
+    Logger::get()->file_default_ = setting;
+  }
+  inline static void verbosity(const unsigned &setting) {
+    Logger::get()->verbosity_ = setting;
+  }
+
+  inline void file_log(const LogType &type, const std::string_view &msg) {
+    if (log_daily_file_ == nullptr) {
+      if (!std::filesystem::exists(file_prefix_)) {
+        std::filesystem::create_directory(file_prefix_);
+      }
+      time_t now = time(nullptr);
+      struct tm tstruct = *localtime(&now);
+      log_daily_file_ =
+          std::fopen(fmt::format("%s/%04d.%02d.%02d.log", file_prefix_.c_str(),
+                                 tstruct.tm_year + 1900, tstruct.tm_mon + 1,
+                                 tstruct.tm_mday)
+                         .c_str(),
+                     "a");
+      if (log_daily_file_ == nullptr)
+        throw std::logic_error("Failed to create log file");
+    }
+    std::fprintf(log_daily_file_, "%s\n", msg.data());
+    if (type < verbosity_)
+      std::fflush(log_daily_file_);
+  }
+
   inline void console_log(const LogType &type, const std::string_view &msg) {
+    if (type >= verbosity_)
+      return;
     switch (type) {
     case FATAL:
     case ERROR:
@@ -98,14 +136,28 @@ public:
     const std::string log_msg =
         fmt::format("[%s] (%s) %s", log_type_str_[type].c_str(),
                     location.c_str(), body.c_str());
-    console_log(type, log_msg);
+    if (console_default_) {
+      console_log(type, log_msg);
+    }
+    if (file_default_) {
+      file_log(type, log_msg);
+    }
   }
 
-private:
+#ifdef DEBUG
+  bool console_default_ = true;
+  unsigned verbosity_ = 10;
+#else
+  bool console_default_ = false;
+  unsigned verbosity_ = 3;
+#endif
+  bool file_default_ = true;
+  std::string file_prefix_ = "logs/";
+  FILE *log_daily_file_ = nullptr;
 };
 } // namespace log
 } // namespace specula
 
-#pragma clang diagnostic pop
+// #pragma clang diagnostic pop
 
 #endif // SPECULA_LOG_HPP_
