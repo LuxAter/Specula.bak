@@ -16,13 +16,15 @@ jobs:
       run: cmake --build .
   test:
     runs-on: ubuntu-latest
+    needs: build
+    steps:
     - name: configure
       run: cmake .
     - name: test 
       run: cmake --build . coverage
   publish:
     runs-on: ubuntu-latest
-    needs: build
+    needs: test 
     steps:
       - uses: actions/checkout@v1
       - uses: JamesIves/github-pages-deploy-action@master
