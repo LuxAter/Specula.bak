@@ -1,4 +1,4 @@
-#include "specula/terminal/progress_bar.hpp"
+#include "specula/cli/progress_bar.hpp"
 
 #include <sys/ioctl.h>
 #include <unistd.h>

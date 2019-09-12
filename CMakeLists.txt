@@ -254,6 +254,26 @@ if(FILESYSTEM_FOUND)
     PUBLIC ${CMAKE_SOURCE_DIR}/external/filesystem/include)
 endif()
 
+if(NOT EXISTS ${PROJECT_SOURCE_DIR}/external/CLI11/README.md AND GIT_FOUND)
+  execute_process(COMMAND git
+                          submodule
+                          update
+                          --init
+                          --
+                          external/CLI11
+                  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+  set(CLI11_FOUND TRUE)
+elseif(NOT GIT_FOUND)
+  message("Git is required for getting dependencies" FATAL_ERROR)
+else()
+  set(CLI11_FOUND TRUE)
+endif()
+
+if(CLI11_FOUND)
+  target_include_directories(${EXECUTABLE_NAME}
+                             PUBLIC ${CMAKE_SOURCE_DIR}/external/CLI11/include)
+endif()
+
 # ##############################################################################
 # Definitions
 # ##############################################################################
