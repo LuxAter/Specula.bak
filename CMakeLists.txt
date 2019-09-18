@@ -70,7 +70,7 @@ endif()
 # Files
 # ##############################################################################
 
-set(SOURCES src/specula.cpp src/terminal/progress_bar.cpp)
+set(SOURCES src/specula.cpp src/cli/progress_bar.cpp)
 set(TEST_SOURCES tests/main.cpp tests/log.cpp)
 
 configure_file("${PROJECT_SOURCE_DIR}/include/version.hpp.in"
