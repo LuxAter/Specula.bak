@@ -14,8 +14,8 @@ TEST_CASE("file logging") {
     specula::fs::remove_all("test_logs/");
   }
 
-  specula::log::Logger::set_prefix("test_logs/");
-  specula::log::Logger::console(false);
+  specula::log::set_prefix("test_logs/");
+  specula::log::console(false);
 
   specula::lfatal("msg \"%s\", Year: %d", "Hello, World", 2019);
 
