@@ -36,6 +36,9 @@
 #define lversion(msg, ...)                                                     \
   log::Logger::get()->_log(specula::log::VERSION, msg, __FILE__, __func__,     \
                            __LINE__, ##__VA_ARGS__)
+#define ldatetime(msg, ...)                                                    \
+  log::Logger::get()->_log_timestamp(__FILE__, __func__, __LINE__,             \
+                                     ##__VA_ARGS__)
 
 namespace specula {
 namespace log {
@@ -47,30 +50,18 @@ enum LogType {
   SUCCESS,
   LOG_DEBUG,
   INFO,
-  VERSION
+  VERSION,
+  TIMESTAMP
 };
-static const std::array<std::string, 8> log_type_str_ = {
-    "FATAL",   "ERROR", "WARNING", "STATUS",
-    "SUCCESS", "DEBUG", "INFO",    "VERSION"};
+static const std::array<std::string, 9> log_type_str_ = {
+    "FATAL", "ERROR", "WARNING", "STATUS",   "SUCCESS",
+    "DEBUG", "INFO",  "VERSION", "TIMESTAMP"};
 
 class Logger {
 public:
   inline static Logger *get() {
     static Logger instance;
     return &instance;
-  }
-
-  inline static void set_prefix(const std::string &prefix) {
-    Logger::get()->file_prefix_ = prefix;
-  }
-  inline static void console(const bool &setting) {
-    Logger::get()->console_default_ = setting;
-  }
-  inline static void file(const bool &setting) {
-    Logger::get()->file_default_ = setting;
-  }
-  inline static void verbosity(const unsigned &setting) {
-    Logger::get()->verbosity_ = setting;
   }
 
   inline void file_log(const LogType &type, const std::string_view &msg) {
@@ -116,6 +107,7 @@ public:
       printf("\033[1;35m%s\033[0m\n", msg.data());
       break;
     case INFO:
+    case TIMESTAMP:
       printf("\033[1;37m%s\033[0m\n", msg.data());
       break;
     default:
@@ -145,6 +137,14 @@ public:
     }
   }
 
+  inline void _log_timestamp(const std::string &file, const std::string &func,
+                             const unsigned long line) {
+    time_t current = std::time(nullptr);
+    char buff[255];
+    std::strftime(buff, 255, "%c", localtime(&current));
+    _log(specula::log::TIMESTAMP, "%s (%lu)", file, func, line, buff, current);
+  }
+
 #ifdef DEBUG
   bool console_default_ = true;
   unsigned verbosity_ = 10;
@@ -156,6 +156,20 @@ public:
   std::string file_prefix_ = "logs/";
   FILE *log_daily_file_ = nullptr;
 };
+
+inline static void set_prefix(const std::string &prefix) {
+  Logger::get()->file_prefix_ = prefix;
+}
+inline static void console(const bool &setting) {
+  Logger::get()->console_default_ = setting;
+}
+inline static void file(const bool &setting) {
+  Logger::get()->file_default_ = setting;
+}
+inline static void verbosity(const unsigned &setting) {
+  Logger::get()->verbosity_ = setting;
+}
+
 } // namespace log
 } // namespace specula
 
