@@ -9,7 +9,7 @@ set(EXECUTABLE_NAME main)
 set(LIBRARY_NAME specula)
 set(TEST_NAME unit_tests)
 set(TEST_RUNNER_PARAMS "")
-option(STATIC_ANALYSIS "Enables static analysis for code" ON)
+option(STATIC_ANALYSIS "Enables static analysis for code" OFF)
 option(COVERAGE "Enables unit test coverage" ON)
 option(DOCUMENTATION "Enables documentation" ON)
 
@@ -70,7 +70,12 @@ endif()
 # Files
 # ##############################################################################
 
-set(SOURCES src/specula.cpp src/cli/progress_bar.cpp src/image/image.cpp)
+set(SOURCES
+    src/specula.cpp
+    src/cli/progress_bar.cpp
+    src/image/image.cpp
+    src/primatives/primative.cpp
+    src/primatives/sphere.cpp)
 set(TEST_SOURCES tests/main.cpp tests/log.cpp)
 
 configure_file("${PROJECT_SOURCE_DIR}/include/version.hpp.in"
@@ -254,6 +259,26 @@ if(FILESYSTEM_FOUND)
     PUBLIC ${CMAKE_SOURCE_DIR}/external/filesystem/include)
 endif()
 
+if(NOT EXISTS ${PROJECT_SOURCE_DIR}/external/glm/readme.md AND GIT_FOUND)
+  execute_process(COMMAND git
+                          submodule
+                          update
+                          --init
+                          --
+                          external/glm
+                  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+  set(GLM_FOUND TRUE)
+elseif(NOT GIT_FOUND)
+  message("Git is required for getting dependencies" FATAL_ERROR)
+else()
+  set(GLM_FOUND TRUE)
+endif()
+
+if(GLM_FOUND)
+  target_include_directories(${LIBRARY_NAME}
+                             PUBLIC ${CMAKE_SOURCE_DIR}/external/glm)
+endif()
+
 if(NOT EXISTS ${PROJECT_SOURCE_DIR}/external/CLI11/README.md AND GIT_FOUND)
   execute_process(COMMAND git
                           submodule
@@ -332,6 +357,10 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     target_include_directories(
       ${TEST_NAME}
       PUBLIC ${CMAKE_SOURCE_DIR}/external/filesystem/include)
+  endif()
+  if(GLM_FOUND)
+    target_include_directories(${TEST_NAME}
+                               PUBLIC ${CMAKE_SOURCE_DIR}/external/glm)
   endif()
 endif()
 

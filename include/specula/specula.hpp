@@ -2,6 +2,11 @@
 #define SPECULA_HPP_
 
 #include "version.hpp"
+#include "log.hpp"
+#include "fs.hpp"
+#include "fmt.hpp"
+#include "image/image.hpp"
+#include "primatives/primatives.hpp"
 
 namespace specula {
 inline void version(unsigned &major, unsigned &minor, unsigned &patch) {
