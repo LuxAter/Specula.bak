@@ -384,7 +384,7 @@ if(COVERAGE AND CMAKE_BUILD_TYPE STREQUAL "Debug")
     message(WARNING "gcovr not found!")
   endif()
 
-  if(NOT GCOV_TOOL or NOT GCOVR_PATH)
+  if(NOT GCOV_TOOL OR NOT GCOVR_PATH)
     add_custom_target(coverage ${TEST_NAME} ${ARGV3} WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
   else()
     set(CMAKE_CXX_FLAGS_DEBUG
