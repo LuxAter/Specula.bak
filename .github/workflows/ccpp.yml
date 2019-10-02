@@ -1,0 +1,27 @@
+name: C++ CI
+one: [push]
+
+jobs: 
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: dependencies
+        run: pip install gocvr --user
+      - name: configue
+        run: cmake . -DCMAKE_BUILD_TYPE=Debug
+      - name: compile
+        run: cmake --build .
+      - name: execute
+        run: cmake --build . coverage
+  build:
+    runs-on: ${{ matrix.os }}
+    needs: test
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macOS-latest]
+    steps:
+      - uses: actions/checkout@v1
+      - name: configue
+        run: cmake . -DCMAKE_BUILD_TYPE=Release
+      - name: compile
+        run: cmake --build .
