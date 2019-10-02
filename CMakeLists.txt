@@ -378,53 +378,56 @@ if(COVERAGE AND CMAKE_BUILD_TYPE STREQUAL "Debug")
   find_program(GCOVR_PATH gcovr)
 
   if(NOT GCOV_TOOL)
-    message(FATAL_ERROR "gcov/llvm-cov not found!")
+    message(WARNING "gcov/llvm-cov not found!")
   endif()
   if(NOT GCOVR_PATH)
-    message(FATAL_ERROR "gcovr not found!")
+    message(WARNING "gcovr not found!")
   endif()
 
-  set(CMAKE_CXX_FLAGS_DEBUG
-      "-g -O0 --std=c++17 --coverage"
-      CACHE STRING "Flags used by the C++ compiler during coverage builds."
-            FORCE)
-  set(CMAKE_C_FLAGS_DEBUG
-      "-g -O0 -fprofile-arcs -ftest-coverage"
-      CACHE STRING "Flags used by the C compiler during coverage builds." FORCE)
-  set(CMAKE_EXE_LINKER_FLAGS_DEBUG
-      "--std=c++17 --coverage"
-      CACHE STRING "Flags used for linking binaries during coverage builds."
-            FORCE)
-  set(CMAKE_SHARED_LINKER_FLAGS_DEBUG
-      ""
-      CACHE STRING
-            "Flags used by the shared libraries linker during coverage builds."
-            FORCE)
-  mark_as_advanced(CMAKE_CXX_FLAGS_DEBUG
-                   CMAKE_C_FLAGS_DEBUG
-                   CMAKE_EXE_LINKER_FLAGS_DEBUG
-                   CMAKE_SHARED_LINKER_FLAGS_DEBUG)
-
-  add_custom_target(coverage ${TEST_NAME} ${ARGV3}
-                    COMMAND mkdir -p coverage
-                    COMMAND cd
-                            coverage
-                            &&
-                            ${GCOVR_PATH}
-                            --gcov-executable
-                            ${GCOV_TOOL}
-                            -r
-                            ${PROJECT_SOURCE_DIR}
-                            -e
-                            '.*/tests/.*'
-                            -e
-                            '.*/external/.*'
-                            -s
-                            --html
-                            --html-details
-                            -o
-                            index.html
-                    WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+  if(NOT GCOV_TOOL or NOT GCOVR_PATH)
+    add_custom_target(coverage ${TEST_NAME} ${ARGV3} WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+  else()
+    set(CMAKE_CXX_FLAGS_DEBUG
+        "-g -O0 --std=c++17 --coverage"
+        CACHE STRING "Flags used by the C++ compiler during coverage builds."
+              FORCE)
+    set(CMAKE_C_FLAGS_DEBUG
+        "-g -O0 -fprofile-arcs -ftest-coverage"
+        CACHE STRING "Flags used by the C compiler during coverage builds." FORCE)
+    set(CMAKE_EXE_LINKER_FLAGS_DEBUG
+        "--std=c++17 --coverage"
+        CACHE STRING "Flags used for linking binaries during coverage builds."
+              FORCE)
+    set(CMAKE_SHARED_LINKER_FLAGS_DEBUG
+        ""
+        CACHE STRING
+              "Flags used by the shared libraries linker during coverage builds."
+              FORCE)
+    mark_as_advanced(CMAKE_CXX_FLAGS_DEBUG
+                     CMAKE_C_FLAGS_DEBUG
+                     CMAKE_EXE_LINKER_FLAGS_DEBUG
+                     CMAKE_SHARED_LINKER_FLAGS_DEBUG)
+    add_custom_target(coverage ${TEST_NAME} ${ARGV3}
+                      COMMAND mkdir -p coverage
+                      COMMAND cd
+                              coverage
+                              &&
+                              ${GCOVR_PATH}
+                              --gcov-executable
+                              ${GCOV_TOOL}
+                              -r
+                              ${PROJECT_SOURCE_DIR}
+                              -e
+                              '.*/tests/.*'
+                              -e
+                              '.*/external/.*'
+                              -s
+                              --html
+                              --html-details
+                              -o
+                              index.html
+                      WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+  endif()
 endif()
 
 # ##############################################################################
