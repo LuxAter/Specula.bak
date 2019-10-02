@@ -21,16 +21,8 @@ public:
   }
 };
 
-struct LuaSphere {
-  public:
-    void translate(double x, double y, double z) {
-      pos_ = {pos_.x + x, pos_.y + y, pos_.z + z};
-    }
-    glm::vec3 pos_;
-  private:
-};
-
 int main(int argc, char *argv[]) {
+  srand(time(NULL));
   CLI::App app{"Lua controled graphics rendering engine"};
   std::string lua_source;
   std::string render_method = "pathTrace";
@@ -68,11 +60,34 @@ int main(int argc, char *argv[]) {
   double film_z = (res_width / 2.0) / std::tan(half);
 
   std::vector<std::shared_ptr<specula::Primative>> objs;
+  std::vector<std::shared_ptr<specula::Primative>>* objs_ptr = &objs;
 
   sol::state lua;
   lua.open_libraries();
   auto obj = lua["obj"].get_or_create<sol::table>();
-  obj.new_usertype<LuaSphere>("Sphere", "translate", &LuaSphere::translate);
+  obj.new_usertype<specula::LuaPrimative>(
+      "Object", "rotate_x", &specula::LuaPrimative::rotate_x, "rotate_y",
+      &specula::LuaPrimative::rotate_y, "rotate_z",
+      &specula::LuaPrimative::rotate_z, "rotate_xy",
+      &specula::LuaPrimative::rotate_xy, "rotate_xz",
+      &specula::LuaPrimative::rotate_xz, "rotate_yx",
+      &specula::LuaPrimative::rotate_yx, "rotate_yz",
+      &specula::LuaPrimative::rotate_yz, "rotate_zx",
+      &specula::LuaPrimative::rotate_zx, "rotate_zy",
+      &specula::LuaPrimative::rotate_zy, "rotate_xyz",
+      &specula::LuaPrimative::rotate_xyz, "rotate_xzy",
+      &specula::LuaPrimative::rotate_xzy, "rotate_yxz",
+      &specula::LuaPrimative::rotate_yxz, "rotate_yzx",
+      &specula::LuaPrimative::rotate_yzx, "rotate_zxy",
+      &specula::LuaPrimative::rotate_zxy, "rotate_zyx",
+      &specula::LuaPrimative::rotate_zyx, "scale",
+      &specula::LuaPrimative::scale, "translate",
+      &specula::LuaPrimative::translate);
+  lua.set_function("Sphere", [objs_ptr](const float &r) mutable {
+    return specula::LuaSphere(r, objs_ptr);
+  });
+
+  lua.script_file(lua_source);
 
   // objs.push_back(std::make_shared<specula::Sphere>(
   //     specula::Sphere(1.0, {+1.0, -1.0, 3.0}, {1.0, 0.0, 0.0})));
@@ -80,6 +95,7 @@ int main(int argc, char *argv[]) {
   //     specula::Sphere(1.0, {-1.0, -1.0, 3.0}, {0.0, 1.0, 0.0})));
   // objs.push_back(std::make_shared<specula::Sphere>(
   //     specula::Sphere(1.0, {0.0, 1.0, 3.0}, {0.0, 0.0, 1.0})));
+  specula::linfo("N objs: %lu", objs.size());
 
   specula::Image img({res_width, res_height});
 
