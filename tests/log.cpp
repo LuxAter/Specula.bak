@@ -31,8 +31,11 @@ TEST_CASE("file logging") {
                                           tstruct.tm_mon + 1, tstruct.tm_mday));
   CHECK(file.is_open());
   std::string line;
+  std::string file_str =
+      std::string(__FILE__).substr(std::string(__FILE__).find("Specula"));
   std::getline(file, line);
-  CHECK(line == "[FATAL] (Specula/tests/log.cpp:_DOCTEST_ANON_FUNC_2:20) msg "
-                "\"Hello, World\", Year: 2019");
+  CHECK(line == "[FATAL] (" + file_str +
+                    ":_DOCTEST_ANON_FUNC_2:20) msg "
+                    "\"Hello, World\", Year: 2019");
   file.close();
 }
