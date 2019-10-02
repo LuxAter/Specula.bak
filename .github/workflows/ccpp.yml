@@ -1,5 +1,5 @@
 name: C++ CI
-one: [push]
+on: [push]
 
 jobs: 
   test:
