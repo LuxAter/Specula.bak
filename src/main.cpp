@@ -4,6 +4,7 @@
 #include <string>
 
 #include <CLI/CLI.hpp>
+#include <sol/sol.hpp>
 
 #include "specula/specula.hpp"
 
@@ -20,6 +21,15 @@ public:
   }
 };
 
+struct LuaSphere {
+  public:
+    void translate(double x, double y, double z) {
+      pos_ = {pos_.x + x, pos_.y + y, pos_.z + z};
+    }
+    glm::vec3 pos_;
+  private:
+};
+
 int main(int argc, char *argv[]) {
   CLI::App app{"Lua controled graphics rendering engine"};
   std::string lua_source;
@@ -29,9 +39,9 @@ int main(int argc, char *argv[]) {
   std::string aspect_ratio = "1:1";
   unsigned verbosity;
 
-  // app.add_option("source", lua_source, "Lua source code")
-  //     ->required()
-  //     ->check(CLI::ExistingFile);
+  app.add_option("source", lua_source, "Lua source code")
+      ->required()
+      ->check(CLI::ExistingFile);
 
   app.add_option_group("Output");
   app.add_option("-o,--output", output, "Output file/directory")
@@ -58,12 +68,18 @@ int main(int argc, char *argv[]) {
   double film_z = (res_width / 2.0) / std::tan(half);
 
   std::vector<std::shared_ptr<specula::Primative>> objs;
-  objs.push_back(std::make_shared<specula::Sphere>(
-      specula::Sphere(1.0, {+1.0, -1.0, 3.0}, {1.0, 0.0, 0.0})));
-  objs.push_back(std::make_shared<specula::Sphere>(
-      specula::Sphere(1.0, {-1.0, -1.0, 3.0}, {0.0, 1.0, 0.0})));
-  objs.push_back(std::make_shared<specula::Sphere>(
-      specula::Sphere(1.0, {0.0, 1.0, 3.0}, {0.0, 0.0, 1.0})));
+
+  sol::state lua;
+  lua.open_libraries();
+  auto obj = lua["obj"].get_or_create<sol::table>();
+  obj.new_usertype<LuaSphere>("Sphere", "translate", &LuaSphere::translate);
+
+  // objs.push_back(std::make_shared<specula::Sphere>(
+  //     specula::Sphere(1.0, {+1.0, -1.0, 3.0}, {1.0, 0.0, 0.0})));
+  // objs.push_back(std::make_shared<specula::Sphere>(
+  //     specula::Sphere(1.0, {-1.0, -1.0, 3.0}, {0.0, 1.0, 0.0})));
+  // objs.push_back(std::make_shared<specula::Sphere>(
+  //     specula::Sphere(1.0, {0.0, 1.0, 3.0}, {0.0, 0.0, 1.0})));
 
   specula::Image img({res_width, res_height});
 
