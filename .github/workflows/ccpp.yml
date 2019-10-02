@@ -11,7 +11,7 @@ jobs:
       - name: compile
         run: cmake --build .
       - name: execute
-        run: ./unit-tests
+        run: ./unit_tests
   build:
     runs-on: ${{ matrix.os }}
     needs: test
