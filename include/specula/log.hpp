@@ -124,11 +124,11 @@ public:
     const std::string body = fmt::format(message, args);
     va_end(args);
     const std::string location =
-        fmt::format("%s:%s:%lu", file.substr(file.find("Specula")).c_str(),
-                    func.c_str(), line);
+        fmt::format<512>("%s:%s:%lu", file.substr(file.find("Specula")).c_str(),
+                         func.c_str(), line);
     const std::string log_msg =
-        fmt::format("[%s] (%s) %s", log_type_str_[type].c_str(),
-                    location.c_str(), body.c_str());
+        fmt::format<512>("[%s] (%s) %s", log_type_str_[type].c_str(),
+                         location.c_str(), body.c_str());
     if (console_default_) {
       console_log(type, log_msg);
     }

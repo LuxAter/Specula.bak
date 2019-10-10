@@ -1,20 +1,79 @@
 #include "specula/primatives/primative.hpp"
 
+#include <functional>
+#include <variant>
+
 #include <glm/ext/matrix_transform.hpp>
 #include <glm/glm.hpp>
 
 #include "specula/log.hpp"
+#include "specula/uuid.hpp"
 
 specula::Primative::Primative()
-    : color_({0.0, 0.0, 0.0}), obj_(1.0), inv_(1.0) {}
-specula::Primative::Primative(const std::array<double, 3> &c)
-    : color_(c), obj_(1.0), inv_(1.0) {}
+    : distance_([](const glm::vec3 &) {
+        return std::numeric_limits<float>::infinity();
+      }),
+      obj_(1.0), inv_(1.0), id_(uuid::uuid()), source_("return INFINITY;") {}
+specula::Primative::Primative(const std::function<float(const glm::vec3 &)> &de)
+    : distance_(de), obj_(1.0), inv_(1.0), id_(uuid::uuid()),
+      source_("return INFINITY;") {}
 specula::Primative::Primative(const glm::mat4 &obj, const glm::mat4 &inv)
-    : color_({0.0, 0.0, 0.0}), obj_(obj), inv_(inv) {}
-float specula::Primative::intersect(const glm::vec3 &o,
-                                    const glm::vec3 &d) const {
-  return std::numeric_limits<double>::infinity();
+    : distance_([](const glm::vec3 &) {
+        return std::numeric_limits<float>::infinity();
+      }),
+      obj_(obj), inv_(inv), id_(uuid::uuid()), source_("return INFINITY;") {}
+
+std::string specula::Primative::gen_function() const {
+  std::string source = fmt::format(
+      "__kernel float distance_estimator(__constant float3 p) { %s }",
+      source_.c_str());
+  std::string res;
+  for (std::size_t i = 0; i < source.size(); ++i) {
+    if (i < source.size() - 5 && source[i] == '{' && source[i + 1] == '{') {
+      std::string param;
+      i += 2;
+      while (i < source.size()) {
+        if (i < source.size() - 2 && source[i] == '}' && source[i + 1] == '}')
+          break;
+        else
+          param += source[i];
+        i++;
+      }
+      i++;
+      typename std::map<std::string,
+                        std::variant<float *, glm::vec2 *, glm::vec3 *,
+                                     glm::vec4 *>>::const_iterator it;
+      if ((it = params_.find(param)) != params_.end()) {
+        res += std::visit(
+            [](auto &&arg) -> std::string {
+              using _T = std::decay_t<decltype(arg)>;
+              if constexpr (std::is_same<_T, float *>::value)
+                return std::to_string(*arg);
+              else if constexpr (std::is_same<_T, glm::vec2 *>::value)
+                return "(float2)(" + std::to_string(arg->x) + ',' +
+                       std::to_string(arg->y) + ')';
+              else if constexpr (std::is_same<_T, glm::vec3 *>::value)
+                return "(float3)(" + std::to_string(arg->x) + ',' +
+                       std::to_string(arg->y) + ',' + std::to_string(arg->z) +
+                       ')';
+              else if constexpr (std::is_same<_T, glm::vec4 *>::value)
+                return "(float4)(" + std::to_string(arg->x) + ',' +
+                       std::to_string(arg->y) + ',' + std::to_string(arg->z) +
+                       ',' + std::to_string(arg->w) + ')';
+              else
+                return "";
+            },
+            it->second);
+      } else {
+        lerror("Corrupt source string, %s", source.c_str());
+      }
+    } else {
+      res += source[i];
+    }
+  }
+  return res;
 }
+
 void specula::Primative::rotate_x(const float &angle) {
   obj_ = glm::rotate(obj_, angle, glm::vec3(1.0, 0.0, 0.0));
   inv_ = glm::rotate(inv_, -angle, glm::vec3(1.0, 0.0, 0.0));
@@ -142,11 +201,16 @@ void specula::Primative::rotate_zyx(const glm::vec3 &a) {
   rotate_x(a.z);
 }
 
+void specula::Primative::rotate(const float &angle, const glm::vec3 &axis) {
+  obj_ = glm::rotate(obj_, angle, axis);
+  inv_ = glm::rotate(inv_, -angle, axis);
+}
+
 void specula::Primative::scale(const float &x, const float &y, const float &z) {
   obj_ = glm::scale(obj_, glm::vec3(x, y, z));
   inv_ = glm::scale(inv_, glm::vec3(1.0 / x, 1.0 / y, 1.0 / z));
 }
-void specula::Primative::scale(const glm::vec3 &s){
+void specula::Primative::scale(const glm::vec3 &s) {
   obj_ = glm::scale(obj_, s);
   inv_ = glm::scale(inv_, glm::vec3(1.0 / s.x, 1.0 / s.y, 1.0 / s.z));
 }

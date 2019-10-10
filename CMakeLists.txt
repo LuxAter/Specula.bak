@@ -75,7 +75,9 @@ set(SOURCES
     src/cli/progress_bar.cpp
     src/image/image.cpp
     src/primatives/primative.cpp
-    src/primatives/sphere.cpp)
+    src/primatives/sphere.cpp
+    src/primatives/torus.cpp
+    src/geometry/ray.cpp)
 set(TEST_SOURCES tests/main.cpp tests/log.cpp)
 
 configure_file("${PROJECT_SOURCE_DIR}/include/version.hpp.in"
