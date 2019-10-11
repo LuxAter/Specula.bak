@@ -382,6 +382,11 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
       ${TEST_NAME}
       PUBLIC ${CMAKE_SOURCE_DIR}/external/filesystem/include)
   endif()
+  if(VARIANT_FOUND)
+    target_include_directories(
+      ${TEST_NAME}
+      PUBLIC ${CMAKE_SOURCE_DIR}/external/variant/include)
+  endif()
   if(GLM_FOUND)
     target_include_directories(${TEST_NAME}
                                PUBLIC ${CMAKE_SOURCE_DIR}/external/glm)

@@ -43,7 +43,7 @@ std::string specula::Primative::gen_function() const {
       typename std::map<std::string, variant<float *, glm::vec2 *, glm::vec3 *,
                                              glm::vec4 *>>::const_iterator it;
       if ((it = params_.find(param)) != params_.end()) {
-        res += std::visit(
+        res += visit(
             [](auto &&arg) -> std::string {
               using _T = std::decay_t<decltype(arg)>;
               if constexpr (std::is_same<_T, float *>::value)
