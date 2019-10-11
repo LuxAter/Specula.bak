@@ -147,6 +147,11 @@ public:
     return *this;
   }
 
+  inline LuaPrimative &rotate(const float &angle, const float &x,
+                              const float &y, const float &z) {
+    base_->rotate(angle, glm::vec3(x, y, z));
+    return *this;
+  }
   inline LuaPrimative &scale(const float &x, const float &y, const float &z) {
     base_->scale(x, y, z);
     return *this;

@@ -1,4 +1,21 @@
 math.randomseed(os.time())
-Sphere(1):translate(2.0, 0.0, -5.0)
-Torus(1.0, 0.05):rotate_xy(math.pi / 2.0, math.pi / 4.0):translate(0.0, 2.0, -5.0)
-Box(1.0, 1.0, 1.0):rotate_xz(math.pi / 5.0, math.pi/7.0):translate(-2.0, 0.0, -5.0)
+Sphere(1):translate(15, 15, 20)
+Box(1.0, 1.0, 1.0):rotate(
+  2.0 * math.random() * math.pi,
+  math.random(),
+  math.random(),
+  math.random()
+):translate(10, 15, 20)
+Torus(1.0, 0.5):rotate(
+  2.0 * math.random() * math.pi,
+  math.random(),
+  math.random(),
+  math.random()
+):translate(5, 15, 20)
+RoundBox(0.5, 0.5, 0.5, 0.5):rotate(
+  2.0 * math.random() * math.pi,
+  math.random(),
+  math.random(),
+  math.random()
+):translate(0, 15, 20)
+-- CappedTorus(0.866025,-0.5, 1.0, 0.5):rotate_x(math.pi/4):translate(0, 0, 10) (?,?,rBig,rSmall)

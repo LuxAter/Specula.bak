@@ -78,6 +78,8 @@ set(SOURCES
     src/primatives/sphere.cpp
     src/primatives/torus.cpp
     src/primatives/box.cpp
+    src/primatives/box_round.cpp
+    src/primatives/torus_capped.cpp
     src/geometry/ray.cpp)
 set(TEST_SOURCES tests/main.cpp tests/log.cpp)
 

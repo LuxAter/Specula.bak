@@ -15,7 +15,7 @@ specula::Box::Box(const float &w, const float &l, const float &h)
         return glm::length(glm::max(d, 0.0f)) +
                glm::min(glm::max(d.x, glm::max(d.y, d.z)), 0.0f);
       }),
-      box_(w, l, h) {
+      box_(w, h, l) {
   this->source_ =
       fmt::format("float3 d = abs(p) - {{%s-box}}; return length(max(d,0.0)) + "
                   "min(max(d.x,max(d,y,d.z)),0.0);",

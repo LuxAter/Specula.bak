@@ -28,7 +28,7 @@ int main(int argc, char *argv[]) {
   std::string lua_source;
   std::string render_method = "pathTrace";
   std::string output = "out.png";
-  std::size_t res_width = 100, res_height = 1080;
+  std::size_t res_width = 500, res_height = 1080;
   std::string aspect_ratio = "1:1";
   unsigned verbosity;
 
@@ -81,9 +81,11 @@ int main(int argc, char *argv[]) {
       &specula::LuaPrimative::rotate_yxz, "rotate_yzx",
       &specula::LuaPrimative::rotate_yzx, "rotate_zxy",
       &specula::LuaPrimative::rotate_zxy, "rotate_zyx",
+      &specula::LuaPrimative::rotate, "rotate",
       &specula::LuaPrimative::rotate_zyx, "scale",
       &specula::LuaPrimative::scale, "translate",
       &specula::LuaPrimative::translate);
+
   lua.set_function("Sphere", [objs_ptr](const float &r) mutable {
     return specula::LuaSphere(r, objs_ptr);
   });
@@ -91,10 +93,20 @@ int main(int argc, char *argv[]) {
       "Torus", [objs_ptr](const float &r_big, const float &r_small) mutable {
         return specula::LuaTorus(r_big, r_small, objs_ptr);
       });
+  lua.set_function(
+      "CappedTorus", [objs_ptr](const float &r_big, const float &r_small,
+                                const float &ra, const float &rb) mutable {
+        return specula::LuaCappedTorus(r_big, r_small, ra, rb, objs_ptr);
+      });
   lua.set_function("Box", [objs_ptr](const float &w, const float &l,
                                      const float &h) mutable {
     return specula::LuaBox(w, l, h, objs_ptr);
   });
+  lua.set_function("RoundBox",
+                   [objs_ptr](const float &r, const float &w, const float &l,
+                              const float &h) mutable {
+                     return specula::LuaRoundBox(r, w, l, h, objs_ptr);
+                   });
 
   lua.script_file(lua_source);
 
@@ -115,7 +127,7 @@ int main(int argc, char *argv[]) {
     for (std::size_t x = 0; x < res_width; ++x) {
 
       glm::vec3 dir(x - (res_width / 2.0), y - (res_height / 2.0), film_z);
-      dir = -glm::normalize(dir);
+      dir = glm::normalize(dir);
 
       int obj_index = -1;
       float t = 0;
