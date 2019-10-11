@@ -91,6 +91,10 @@ int main(int argc, char *argv[]) {
       "Torus", [objs_ptr](const float &r_big, const float &r_small) mutable {
         return specula::LuaTorus(r_big, r_small, objs_ptr);
       });
+  lua.set_function("Box", [objs_ptr](const float &w, const float &l,
+                                     const float &h) mutable {
+    return specula::LuaBox(w, l, h, objs_ptr);
+  });
 
   lua.script_file(lua_source);
 

@@ -77,6 +77,7 @@ set(SOURCES
     src/primatives/primative.cpp
     src/primatives/sphere.cpp
     src/primatives/torus.cpp
+    src/primatives/box.cpp
     src/geometry/ray.cpp)
 set(TEST_SOURCES tests/main.cpp tests/log.cpp)
 
@@ -261,6 +262,27 @@ if(FILESYSTEM_FOUND)
     PUBLIC ${CMAKE_SOURCE_DIR}/external/filesystem/include)
 endif()
 
+if(NOT EXISTS ${PROJECT_SOURCE_DIR}/external/variant/README.md AND GIT_FOUND)
+  execute_process(COMMAND git
+                          submodule
+                          update
+                          --init
+                          --
+                          external/variant
+                  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+  set(VARIANT_FOUND TRUE)
+elseif(NOT GIT_FOUND)
+  message("Git is required for getting dependencies" FATAL_ERROR)
+else()
+  set(VARIANT_FOUND TRUE)
+endif()
+
+if(VARIANT_FOUND)
+  target_include_directories(
+    ${LIBRARY_NAME}
+    PUBLIC ${CMAKE_SOURCE_DIR}/external/variant/include)
+endif()
+
 if(NOT EXISTS ${PROJECT_SOURCE_DIR}/external/glm/readme.md AND GIT_FOUND)
   execute_process(COMMAND git
                           submodule
@@ -387,7 +409,8 @@ if(COVERAGE AND CMAKE_BUILD_TYPE STREQUAL "Debug")
   endif()
 
   if(NOT GCOV_TOOL OR NOT GCOVR_PATH)
-    add_custom_target(coverage ${TEST_NAME} ${ARGV3} WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+    add_custom_target(coverage ${TEST_NAME} ${ARGV3}
+                      WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
   else()
     set(CMAKE_CXX_FLAGS_DEBUG
         "-g -O0 --std=c++17 --coverage"
@@ -395,16 +418,18 @@ if(COVERAGE AND CMAKE_BUILD_TYPE STREQUAL "Debug")
               FORCE)
     set(CMAKE_C_FLAGS_DEBUG
         "-g -O0 -fprofile-arcs -ftest-coverage"
-        CACHE STRING "Flags used by the C compiler during coverage builds." FORCE)
+        CACHE STRING "Flags used by the C compiler during coverage builds."
+              FORCE)
     set(CMAKE_EXE_LINKER_FLAGS_DEBUG
         "--std=c++17 --coverage"
         CACHE STRING "Flags used for linking binaries during coverage builds."
               FORCE)
-    set(CMAKE_SHARED_LINKER_FLAGS_DEBUG
-        ""
-        CACHE STRING
-              "Flags used by the shared libraries linker during coverage builds."
-              FORCE)
+    set(
+      CMAKE_SHARED_LINKER_FLAGS_DEBUG
+      ""
+      CACHE STRING
+            "Flags used by the shared libraries linker during coverage builds."
+            FORCE)
     mark_as_advanced(CMAKE_CXX_FLAGS_DEBUG
                      CMAKE_C_FLAGS_DEBUG
                      CMAKE_EXE_LINKER_FLAGS_DEBUG

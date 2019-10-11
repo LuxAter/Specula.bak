@@ -1,13 +1,13 @@
 #include "specula/primatives/primative.hpp"
 
 #include <functional>
-#include <variant>
 
 #include <glm/ext/matrix_transform.hpp>
 #include <glm/glm.hpp>
 
 #include "specula/log.hpp"
 #include "specula/uuid.hpp"
+#include "specula/variant.hpp"
 
 specula::Primative::Primative()
     : distance_([](const glm::vec3 &) {
@@ -40,9 +40,8 @@ std::string specula::Primative::gen_function() const {
         i++;
       }
       i++;
-      typename std::map<std::string,
-                        std::variant<float *, glm::vec2 *, glm::vec3 *,
-                                     glm::vec4 *>>::const_iterator it;
+      typename std::map<std::string, variant<float *, glm::vec2 *, glm::vec3 *,
+                                             glm::vec4 *>>::const_iterator it;
       if ((it = params_.find(param)) != params_.end()) {
         res += std::visit(
             [](auto &&arg) -> std::string {

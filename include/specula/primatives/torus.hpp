@@ -15,7 +15,6 @@ namespace specula {
 class Torus : public Primative {
 public:
   Torus(const float &r_big, const float &r_small);
-  Torus(const glm::vec2 &torus);
 
   glm::vec2 torus_;
 };

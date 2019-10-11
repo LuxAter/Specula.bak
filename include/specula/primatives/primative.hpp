@@ -5,11 +5,11 @@
 #include <functional>
 #include <map>
 #include <memory>
-#include <variant>
 
 #include <glm/glm.hpp>
 
 #include "../geometry/geometry.hpp"
+#include "../variant.hpp"
 
 namespace specula {
 class Primative {
@@ -66,8 +66,7 @@ public:
   void translate(const glm::vec3 &t);
 
   std::function<float(const glm::vec3 &)> distance_;
-  std::map<std::string,
-           std::variant<float *, glm::vec2 *, glm::vec3 *, glm::vec4 *>>
+  std::map<std::string, variant<float *, glm::vec2 *, glm::vec3 *, glm::vec4 *>>
       params_;
 
 protected:
