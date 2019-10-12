@@ -14,12 +14,14 @@
 namespace specula {
 class Cone : public Primative {
 public:
-  Cone(const float &x, const float &y);
+  Cone(const float &alpha);
+
+  glm::vec2 cone_;
 };
 
-inline LuaPrimative LuaCone(const float &x, const float &y,
+inline LuaPrimative LuaCone(const float &alpha,
                             std::vector<std::shared_ptr<Primative>> *objs) {
-  objs->push_back(std::make_shared<Cone>(x, y));
+  objs->push_back(std::make_shared<Cone>(alpha));
   return LuaPrimative{objs->back()};
 }
 } // namespace specula

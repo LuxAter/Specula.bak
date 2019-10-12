@@ -21,8 +21,6 @@ inline std::string format(const std::string fmt_str, va_list args) {
   vsnprintf(buff, _N, fmt_str.c_str(), args);
   return std::string(buff);
 }
-// inline std::string format(const std::string fmt_str,
-// std::map<std::variant<std::shared_ptr<)
 } // namespace fmt
 } // namespace specula
 

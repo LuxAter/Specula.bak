@@ -52,18 +52,18 @@ include(ExternalProject)
 # ##############################################################################
 
 if(STATIC_ANALYSIS OR CMAKE_BUILD_TYPE STREQUAL "Release")
-  find_program(CLANG_TIDY clang-tidy)
-  if(CLANG_TIDY)
-    set(CMAKE_CXX_CLANG_TIDY "${CLANG_TIDY}")
-  endif()
-  find_program(CPPCHECK cppcheck)
-  if(CPPCHECK)
-    set(CMAKE_CXX_CPPCHECK "${CPPCHECK}")
-  endif()
-  find_program(IWYU_TOOL iwyu-tool)
-  if(IWYU_TOOL)
-    set(CMAKE_CXX_INCLUDE_WHAT_YOU_USE "${IWYU_TOOL}")
-  endif()
+  # find_program(CLANG_TIDY clang-tidy)
+  # if(CLANG_TIDY)
+  #   set(CMAKE_CXX_CLANG_TIDY "${CLANG_TIDY}")
+  # endif()
+  # find_program(CPPCHECK cppcheck)
+  # if(CPPCHECK)
+  #   set(CMAKE_CXX_CPPCHECK "${CPPCHECK}")
+  # endif()
+  # find_program(IWYU_TOOL iwyu-tool)
+  # if(IWYU_TOOL)
+  #   set(CMAKE_CXX_INCLUDE_WHAT_YOU_USE "${IWYU_TOOL}")
+  # endif()
 endif()
 
 # ##############################################################################
@@ -80,6 +80,9 @@ set(SOURCES
     src/primatives/box.cpp
     src/primatives/box_round.cpp
     src/primatives/torus_capped.cpp
+    src/primatives/link.cpp
+    src/primatives/cylinder.cpp
+    src/primatives/cone.cpp
     src/geometry/ray.cpp)
 set(TEST_SOURCES tests/main.cpp tests/log.cpp)
 

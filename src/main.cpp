@@ -107,6 +107,16 @@ int main(int argc, char *argv[]) {
                               const float &h) mutable {
                      return specula::LuaRoundBox(r, w, l, h, objs_ptr);
                    });
+  lua.set_function("Link", [objs_ptr](const float &len, const float &r_outer,
+                                      const float &r_inner) mutable {
+    return specula::LuaLink(len, r_outer, r_inner, objs_ptr);
+  });
+  lua.set_function("Cylinder", [objs_ptr](const float &r) mutable {
+    return specula::LuaCylinder(r, objs_ptr);
+  });
+  lua.set_function("Cone", [objs_ptr](const float &x, const float &y) mutable {
+    return specula::LuaCone(x, y, objs_ptr);
+  });
 
   lua.script_file(lua_source);
 

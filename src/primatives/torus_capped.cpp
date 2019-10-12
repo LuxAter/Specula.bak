@@ -23,12 +23,12 @@ specula::CappedTorus::CappedTorus(const float &r_big, const float &r_small,
       }),
       torus_(r_big, r_small), ra_(ra), rb_(rb) {
   this->source_ = fmt::format(
-      "p.x = abs(p.x); float k = ({{%s-torus.y}}*p.x>{{%s-torus.x}}*p.y) ? "
-      "dot(p.xy, {{%s-torus}} : length(p.xy); return sqrt(dot(p,p) + "
-      "{{%s-torus.ra}}*{{%s-torus.ra}}-2.0*{{%s-torus.ra}}*k)-{{%s-torus.rb}};",
-      this->id_.c_str(), this->id_.c_str(), this->id_.c_str(),
-      this->id_.c_str(), this->id_.c_str(), this->id_.c_str(),
+      "p.x = abs(p.x); float k = ({{%1$s-torus.y}}*p.x>{{%1$s-torus.x}}*p.y) ? "
+      "dot(p.xy, {{%1$s-torus}} : length(p.xy); return sqrt(dot(p,p) + "
+      "{{%1$s-torus.ra}}*{{%1$s-torus.ra}}-2.0*{{%1$s-torus.ra}}*k)-{{%1$s-"
+      "torus.rb}};",
       this->id_.c_str());
+  this->params_[fmt::format("%s-torus", this->id_.c_str())] = &torus_;
   this->params_[fmt::format("%s-torus.x", this->id_.c_str())] = &torus_.x;
   this->params_[fmt::format("%s-torus.y", this->id_.c_str())] = &torus_.y;
   this->params_[fmt::format("%s-torus.ra", this->id_.c_str())] = &ra_;

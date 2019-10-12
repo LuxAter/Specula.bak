@@ -15,6 +15,8 @@ namespace specula {
 class Link : public Primative {
 public:
   Link(const float &len, const float &r_outer, const float &r_inner);
+
+  float length_, router_, rinner_;
 };
 
 inline LuaPrimative LuaLink(const float &len, const float &r_outer,

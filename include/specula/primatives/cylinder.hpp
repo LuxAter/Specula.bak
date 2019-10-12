@@ -14,12 +14,14 @@
 namespace specula {
 class Cylinder : public Primative {
 public:
-  Cylinder(const float &x, const float &y, const float &z);
+  Cylinder(const float &r);
+
+  float radius_;
 };
 
-inline LuaPrimative LuaCylinder(const float &x, const float &y, const float &z,
+inline LuaPrimative LuaCylinder(const float &r,
                                 std::vector<std::shared_ptr<Primative>> *objs) {
-  objs->push_back(std::make_shared<Cylinder>(x, y, z));
+  objs->push_back(std::make_shared<Cylinder>(r));
   return LuaPrimative{objs->back()};
 }
 } // namespace specula
