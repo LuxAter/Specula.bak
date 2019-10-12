@@ -15,6 +15,8 @@ namespace specula {
 class Plane : public Primative {
 public:
   Plane(const float &x, const float &y, const float &z, const float &w);
+
+  glm::vec4 normal_;
 };
 
 inline LuaPrimative LuaPlane(const float &x, const float &y, const float &z,

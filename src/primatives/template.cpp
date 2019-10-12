@@ -16,4 +16,5 @@ specula::tem::tem(const float &r)
       radius_(r) {
   this->source_ =
       fmt::format("", this->id_.c_str());
+  this->params_[fmt::format("%s-torus.x", this->id_.c_str())] = &torus_.x;
 }

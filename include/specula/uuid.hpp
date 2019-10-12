@@ -17,7 +17,7 @@ inline char convert(const uint8_t &ch) {
   else if (ch < 36)
     return static_cast<char>(ch + 55);
   else
-    return static_cast<char>(ch + 60);
+    return static_cast<char>(ch + 61);
 }
 
 template <std::size_t A = 8, std::size_t B = 4, std::size_t C = 4,

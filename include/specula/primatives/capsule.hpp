@@ -16,6 +16,9 @@ class Capsule : public Primative {
 public:
   Capsule(const float &x1, const float &y1, const float &z1, const float &x2,
           const float &y2, const float &z2, const float &r);
+
+  glm::vec3 a_, b_;
+  float radius_;
 };
 
 inline LuaPrimative LuaCapsule(const float &x1, const float &y1,

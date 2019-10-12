@@ -15,6 +15,7 @@ namespace specula {
 class TriangularPrism : public Primative {
 public:
   TriangularPrism(const float &a, const float &b);
+  float a_, b_;
 };
 
 inline LuaPrimative

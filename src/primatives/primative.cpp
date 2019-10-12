@@ -24,9 +24,9 @@ specula::Primative::Primative(const glm::mat4 &obj, const glm::mat4 &inv)
       obj_(obj), inv_(inv), id_(uuid::uuid()), source_("return INFINITY;") {}
 
 std::string specula::Primative::gen_function() const {
-  std::string source = fmt::format(
+  std::string source = fmt::format_len(
       "__kernel float distance_estimator(__constant float3 p) { %s }",
-      source_.c_str());
+      source_.size(), source_.c_str());
   std::string res;
   for (std::size_t i = 0; i < source.size(); ++i) {
     if (i < source.size() - 5 && source[i] == '{' && source[i + 1] == '{') {
@@ -65,6 +65,7 @@ std::string specula::Primative::gen_function() const {
             it->second);
       } else {
         lerror("Corrupt source string, %s", source.c_str());
+        lerror("\"%s\" not found in paramater map", param.c_str());
       }
     } else {
       res += source[i];

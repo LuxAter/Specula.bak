@@ -15,6 +15,7 @@ namespace specula {
 class HexagonalPrism : public Primative {
 public:
   HexagonalPrism(const float &a, const float &b);
+  float a_, b_;
 };
 
 inline LuaPrimative

@@ -15,6 +15,7 @@ namespace specula {
 class VerticalCapsule : public Primative {
 public:
   VerticalCapsule(const float &h, const float &r);
+   float height_, radius_;
 };
 
 inline LuaPrimative

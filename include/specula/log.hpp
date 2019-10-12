@@ -121,14 +121,15 @@ public:
                    const unsigned long line, ...) {
     va_list args;
     va_start(args, line);
-    const std::string body = fmt::format(message, args);
+    const std::string body = fmt::format<1024>(message, args);
     va_end(args);
     const std::string location =
-        fmt::format<512>("%s:%s:%lu", file.substr(file.find("Specula")).c_str(),
-                         func.c_str(), line);
-    const std::string log_msg =
-        fmt::format<512>("[%s] (%s) %s", log_type_str_[type].c_str(),
-                         location.c_str(), body.c_str());
+        fmt::format("%s:%s:%lu", file.substr(file.find("Specula")).c_str(),
+                    func.c_str(), line);
+    const std::string log_msg = fmt::format_len(
+        "[%s] (%s) %s",
+        log_type_str_[type].size() + location.size() + body.size(),
+        log_type_str_[type].c_str(), location.c_str(), body.c_str());
     if (console_default_) {
       console_log(type, log_msg);
     }

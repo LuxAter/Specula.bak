@@ -15,6 +15,8 @@ namespace specula {
 class CappedCylinder : public Primative {
 public:
   CappedCylinder(const float &h, const float &r);
+
+  float height_, radius_;
 };
 
 inline LuaPrimative

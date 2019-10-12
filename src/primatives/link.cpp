@@ -24,4 +24,7 @@ specula::Link::Link(const float &len, const float &r_outer,
                   "length((float2)(length(q.xy)-{{%1$s-link.router}},q.z))-{{%"
                   "1$s-link.rinner}}",
                   this->id_.c_str());
+  this->params_[fmt::format("%s-link.len", this->id_.c_str())] = &length_;
+  this->params_[fmt::format("%s-link.router", this->id_.c_str())] = &router_;
+  this->params_[fmt::format("%s-link.rinner", this->id_.c_str())] = &rinner_;
 }
