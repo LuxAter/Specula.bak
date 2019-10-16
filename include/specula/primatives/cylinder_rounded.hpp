@@ -15,6 +15,7 @@ namespace specula {
 class RoundedCylinder : public Primative {
 public:
   RoundedCylinder(const float &ra, const float &rb, const float &h);
+  float ra_, rb_, height_;
 };
 
 inline LuaPrimative

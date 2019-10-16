@@ -25,8 +25,8 @@ specula::Primative::Primative(const glm::mat4 &obj, const glm::mat4 &inv)
 
 std::string specula::Primative::gen_function() const {
   std::string source = fmt::format_len(
-      "__kernel float distance_estimator(__constant float3 p) { %s }",
-      source_.size(), source_.c_str());
+      "float %s(__constant float3 p) { %s }",
+      source_.size() + id_.size(), id_.c_str(), source_.c_str());
   std::string res;
   for (std::size_t i = 0; i < source.size(); ++i) {
     if (i < source.size() - 5 && source[i] == '{' && source[i + 1] == '{') {

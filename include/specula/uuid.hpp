@@ -23,7 +23,7 @@ inline char convert(const uint8_t &ch) {
 template <std::size_t A = 8, std::size_t B = 4, std::size_t C = 4,
           std::size_t D = 4, std::size_t E = 12>
 inline std::string uuid() {
-  std::uniform_int_distribution<uint8_t> dist(0, 62);
+  std::uniform_int_distribution<uint8_t> dist(0, 61);
   if constexpr (A == 0 && B == 0 && C == 0 && D == 0 && E == 0)
     return std::string();
   else if constexpr (A != 0 && B == 0 && C == 0 && D == 0 && E == 0) {
@@ -37,7 +37,7 @@ inline std::string uuid() {
     for (std::size_t a = 0; a < A; ++a) {
       res += convert(dist(uuid_gen));
     }
-    res += '-';
+    res += '_';
     for (std::size_t b = 0; b < B; ++b) {
       res += convert(dist(uuid_gen));
     }
@@ -47,11 +47,11 @@ inline std::string uuid() {
     for (std::size_t a = 0; a < A; ++a) {
       res += convert(dist(uuid_gen));
     }
-    res += '-';
+    res += '_';
     for (std::size_t b = 0; b < B; ++b) {
       res += convert(dist(uuid_gen));
     }
-    res += '-';
+    res += '_';
     for (std::size_t c = 0; c < C; ++c) {
       res += convert(dist(uuid_gen));
     }
@@ -61,15 +61,15 @@ inline std::string uuid() {
     for (std::size_t a = 0; a < A; ++a) {
       res += convert(dist(uuid_gen));
     }
-    res += '-';
+    res += '_';
     for (std::size_t b = 0; b < B; ++b) {
       res += convert(dist(uuid_gen));
     }
-    res += '-';
+    res += '_';
     for (std::size_t c = 0; c < C; ++c) {
       res += convert(dist(uuid_gen));
     }
-    res += '-';
+    res += '_';
     for (std::size_t d = 0; d < D; ++d) {
       res += convert(dist(uuid_gen));
     }
@@ -79,19 +79,19 @@ inline std::string uuid() {
     for (std::size_t a = 0; a < A; ++a) {
       res += convert(dist(uuid_gen));
     }
-    res += '-';
+    res += '_';
     for (std::size_t b = 0; b < B; ++b) {
       res += convert(dist(uuid_gen));
     }
-    res += '-';
+    res += '_';
     for (std::size_t c = 0; c < C; ++c) {
       res += convert(dist(uuid_gen));
     }
-    res += '-';
+    res += '_';
     for (std::size_t d = 0; d < D; ++d) {
       res += convert(dist(uuid_gen));
     }
-    res += '-';
+    res += '_';
     for (std::size_t e = 0; e < E; ++e) {
       res += convert(dist(uuid_gen));
     }

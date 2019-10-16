@@ -3,7 +3,7 @@
 # ##############################################################################
 
 cmake_minimum_required(VERSION 3.8.2)
-project(Specula VERSION 0.0.4 LANGUAGES CXX)
+project(Specula VERSION 0.1.2 LANGUAGES CXX)
 
 set(EXECUTABLE_NAME main)
 set(LIBRARY_NAME specula)
@@ -72,6 +72,7 @@ endif()
 
 set(SOURCES
   src/specula.cpp
+  src/cl.cpp
   src/cli/progress_bar.cpp
   src/image/image.cpp
   src/primatives/primative.cpp
@@ -89,6 +90,9 @@ set(SOURCES
   src/primatives/capsule.cpp
   src/primatives/capsule_vertical.cpp
   src/primatives/cylinder_capped.cpp
+  src/primatives/cylinder_rounded.cpp
+  src/primatives/cone_capped.cpp
+  src/primatives/angle_solid.cpp
   src/geometry/ray.cpp)
 set(TEST_SOURCES tests/main.cpp tests/log.cpp)
 
@@ -334,9 +338,21 @@ if(CLI11_FOUND)
     PUBLIC ${CMAKE_SOURCE_DIR}/external/CLI11/include)
 endif()
 
+find_package(OpenCL)
+if(OpenCL_FOUND)
+  target_link_libraries(${LIBRARY_NAME} OpenCL::OpenCL)
+  target_compile_definitions(${LIBRARY_NAME} PUBLIC -D__HAS_OPENCL__)
+else()
+  message("OpenCL was not found" WARNING)
+endif()
+
 # ##############################################################################
 # Definitions
 # ##############################################################################
+
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+  target_compile_definitions(${LIBRARY_NAME} PUBLIC -DDebug)
+endif()
 
 # ##############################################################################
 # Documentation

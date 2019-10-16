@@ -21,7 +21,6 @@ public:
     };
   }
 };
-
 int main(int argc, char *argv[]) {
   srand(time(NULL));
   CLI::App app{"Lua controled graphics rendering engine"};
@@ -52,6 +51,11 @@ int main(int argc, char *argv[]) {
     specula::log::verbosity(verbosity + 3);
 
   specula::ldatetime();
+  specula::lversion("Specula v.%lu.%lu.%lu", SPECULA_VERSION_MAJOR,
+                    SPECULA_VERSION_MINOR, SPECULA_VERSION_PATCH);
+
+  specula::opencl::log_info();
+  // return 1;
 
   std::size_t ax, ay;
   sscanf(aspect_ratio.c_str(), "%lu:%lu", &ax, &ay);
@@ -143,6 +147,19 @@ int main(int argc, char *argv[]) {
                    [objs_ptr](const float &h, const float &r) mutable {
                      return specula::LuaCappedCylinder(h, r, objs_ptr);
                    });
+  lua.set_function(
+      "RoundedCylinder",
+      [objs_ptr](const float &ra, const float &rb, const float &h) mutable {
+        return specula::LuaRoundedCylinder(ra, rb, h, objs_ptr);
+      });
+  lua.set_function("CappedCone", [objs_ptr](const float &r1, const float &r2,
+                                            const float &h) mutable {
+    return specula::LuaCappedCone(r1, r2, h, objs_ptr);
+  });
+  lua.set_function("SolidAngle", [objs_ptr](const float &a, const float &b,
+                                            const float &ra) mutable {
+    return specula::LuaSolidAngle(a, b, ra, objs_ptr);
+  });
 
   lua.script_file(lua_source);
 

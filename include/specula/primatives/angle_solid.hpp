@@ -15,6 +15,9 @@ namespace specula {
 class SolidAngle : public Primative {
 public:
   SolidAngle(const float &a, const float &b, const float &ra);
+
+  glm::vec2 c_;
+  float ra_;
 };
 
 inline LuaPrimative

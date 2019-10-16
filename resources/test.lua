@@ -53,3 +53,21 @@ CappedCylinder(1.0, 0.5):rotate(
   math.random(),
   math.random()
 ):translate(-15, 10, 20) -- (height, radius)
+RoundedCylinder(0.5, 0.5, 1.0):rotate(
+  2.0 * math.random() * math.pi,
+  math.random(),
+  math.random(),
+  math.random()
+):translate(15, 5, 20) -- (radius, round_radius, height)
+CappedCone(1.0, 0.5, 1.0):rotate(
+  2.0 * math.random() * math.pi,
+  math.random(),
+  math.random(),
+  math.random()
+):translate(10, 5, 20) -- (height, top_radius, bottom_radius)
+SolidAngle(4 / 5, 4 / 5, 1.0):rotate(
+  2.0 * math.random() * math.pi,
+  math.random(),
+  math.random(),
+  math.random()
+):translate(0, 0, 10)

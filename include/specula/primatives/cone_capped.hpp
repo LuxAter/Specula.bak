@@ -15,6 +15,8 @@ namespace specula {
 class CappedCone : public Primative {
 public:
   CappedCone(const float &h, const float &r1, const float &r2);
+
+  float height_, r1_, r2_;
 };
 
 inline LuaPrimative
