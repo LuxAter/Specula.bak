@@ -20,9 +20,9 @@ specula::SolidAngle::SolidAngle(const float &a, const float &b, const float &ra)
       }),
       c_(a, b), ra_(ra) {
   this->source_ = fmt::format(
-      "float2 q(length(p.xz), p.y); float l = length(q) - "
+      "float2 q = (float2)(length(p.xz), p.y); float l = length(q) - "
       "{{%1$s-solid-angle.ra}}; float m = "
-      "length(q-{{%1$s-solid-angle.c}}*clamp(dot(q,{{%1$s-solid-angle.c}}),0.0,"
+      "length(q-{{%1$s-solid-angle.c}}*clamp(dot(q,{{%1$s-solid-angle.c}}),0.0f,"
       "{{%1$s-solid-angle.ra}})); return "
       "max(l,m*sign({{%1$s-solid-angle.b}}*q.x-{{%1$s-solid-angle.a}}*q.y));",
       this->id_.c_str());

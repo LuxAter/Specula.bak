@@ -69,10 +69,10 @@ public:
   std::map<std::string, variant<float *, glm::vec2 *, glm::vec3 *, glm::vec4 *>>
       params_;
 
+  std::string id_;
+
 protected:
   glm::mat4 obj_, inv_;
-
-  std::string id_;
   std::string source_;
 
 private:

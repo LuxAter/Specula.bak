@@ -15,7 +15,7 @@ specula::VerticalCapsule::VerticalCapsule(const float &h, const float &r)
         return length(pt) - this->radius_;
       }),
       height_(h), radius_(r) {
-  this->source_ = fmt::format("float3 pt = (float3)(p.x, p.y - clamp(p.y, 0.0, "
+  this->source_ = fmt::format("float3 pt = (float3)(p.x, p.y - clamp(p.y, 0.0f, "
                               "{{%1$s-vertical-capsule.height}}), p.z); return "
                               "length(pt) - {{%1$s-vertical-capsule.radius}};",
                               this->id_.c_str());

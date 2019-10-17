@@ -1,6 +1,7 @@
 #include "specula/primatives/primative.hpp"
 
 #include <functional>
+#include <iostream>
 
 #include <glm/ext/matrix_transform.hpp>
 #include <glm/glm.hpp>
@@ -25,7 +26,7 @@ specula::Primative::Primative(const glm::mat4 &obj, const glm::mat4 &inv)
 
 std::string specula::Primative::gen_function() const {
   std::string source = fmt::format_len(
-      "float %s(__constant float3 p) { %s }",
+      "float de_%s(const float3 p) { %s }",
       source_.size() + id_.size(), id_.c_str(), source_.c_str());
   std::string res;
   for (std::size_t i = 0; i < source.size(); ++i) {
@@ -47,7 +48,7 @@ std::string specula::Primative::gen_function() const {
             [](auto &&arg) -> std::string {
               using _T = std::decay_t<decltype(arg)>;
               if constexpr (std::is_same<_T, float *>::value)
-                return std::to_string(*arg);
+                return std::to_string(*arg) + 'f';
               else if constexpr (std::is_same<_T, glm::vec2 *>::value)
                 return "(float2)(" + std::to_string(arg->x) + ',' +
                        std::to_string(arg->y) + ')';

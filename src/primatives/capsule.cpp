@@ -21,7 +21,7 @@ specula::Capsule::Capsule(const float &x1, const float &y1, const float &z1,
   this->source_ =
       fmt::format("float3 pa = p - {{%1$s-capsule.a}}, ba = "
                   "{{%1$s-capsule.b}}-{{%1$s-capsule.a}}; float h = "
-                  "clamp(dot(pa, ba) / dot(ba, ba), 0.0, 1.0); return "
+                  "clamp(dot(pa, ba) / dot(ba, ba), 0.0f, 1.0f); return "
                   "length(pa - ba * h) - {{%1$s-capsule.radius}};",
                   this->id_.c_str());
   this->params_[fmt::format("%s-capsule.a", this->id_.c_str())] = &a_;

@@ -12,7 +12,7 @@
 namespace specula {
 inline void version(unsigned &major, unsigned &minor, unsigned &patch) {
   major = SPECULA_VERSION_MAJOR;
-  patch = SPECULA_VERSION_MINOR;
+  minor = SPECULA_VERSION_MINOR;
   patch = SPECULA_VERSION_PATCH;
 }
 } // namespace specula

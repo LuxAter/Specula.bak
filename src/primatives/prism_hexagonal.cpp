@@ -27,13 +27,13 @@ specula::HexagonalPrism::HexagonalPrism(const float &a, const float &b)
       }),
       a_(a), b_(b) {
   this->source_ = fmt::format(
-      "const float3 k = (float3)(-0.8660254,0.5,0.57735); float3 pt = abs(p); "
-      "pt.xy -= 2.0*min(dot(k.xy,p.xy),0.0)*k.xy; float2 d = "
+      "const float3 k = (float3)(-0.8660254f,0.5f,0.57735f); float3 pt = fabs(p); "
+      "pt.xy -= 2.0f*min(dot(k.xy,p.xy),0.0f)*k.xy; float2 d = "
       "(float2)(length(p.xy-(float2)(clamp(p.x,-k.z*{{%1$s-hexagonal-prism.a}},"
       "k.z*{{%1$s-hexagonal-prism.a}}), "
-      "{{%1$s-hexagonal-prism.a}})*sign(p.y-{{%1$s-hexagonal-prism.a}}),p.z-{{%"
-      "1$s-hexagonal-prism.b}}); return min(max(d.x, d.y),0.0) + "
-      "length(max(d,0.0));",
+      "{{%1$s-hexagonal-prism.a}})*sign(p.y-{{%1$s-hexagonal-prism.a}})),p.z-{{%"
+      "1$s-hexagonal-prism.b}}); return min(max(d.x, d.y),0.0f) + "
+      "length(max(d,0.0f));",
       this->id_.c_str());
   this->params_[fmt::format("%s-hexagonal-prism.a", this->id_.c_str())] = &a_;
   this->params_[fmt::format("%s-hexagonal-prism.b", this->id_.c_str())] = &b_;

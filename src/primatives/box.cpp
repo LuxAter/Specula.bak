@@ -17,8 +17,8 @@ specula::Box::Box(const float &w, const float &l, const float &h)
       }),
       box_(w, h, l) {
   this->source_ =
-      fmt::format("float3 d = abs(p) - {{%s-box}}; return length(max(d,0.0)) + "
-                  "min(max(d.x,max(d,y,d.z)),0.0);",
+      fmt::format("float3 d = fabs(p) - {{%s-box}}; return length(max(d,0.0f)) + "
+                  "min(max(d.x,max(d.y,d.z)),0.0f);",
                   this->id_.c_str());
   this->params_[fmt::format("%s-box", this->id_.c_str())] = &box_;
 }

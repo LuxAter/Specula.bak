@@ -175,40 +175,24 @@ int main(int argc, char *argv[]) {
 
   specula::linfo("FILM: %f", film_z);
 
+  specula::linfo("Compiling scene distance estimator");
+  auto func = specula::opencl::generate_function(objs);
+
   glm::vec3 origin(0.0, 0.0, 0.0);
+  std::vector<specula::ray> rays;
+  specula::linfo("Computing distances");
   for (std::size_t y = 0; y < res_height; ++y) {
     for (std::size_t x = 0; x < res_width; ++x) {
-
       glm::vec3 dir(x - (res_width / 2.0), y - (res_height / 2.0), film_z);
       dir = glm::normalize(dir);
-
-      int obj_index = -1;
-      float t = 0;
-
-      while (t < T_MAX) {
-
-        glm::vec3 p = origin + dir * t;
-        float dt = std::numeric_limits<float>::infinity();
-
-        for (std::size_t i = 0; i < objs.size(); ++i) {
-
-          float odt = objs[i]->distance(p);
-
-          if (odt < dt) {
-            dt = odt;
-            if (odt < EPSILON) {
-              obj_index = i;
-            }
-          }
-        }
-
-        if (dt < EPSILON)
-          break;
-        else
-          t += dt;
-      }
-
-      if (obj_index != -1) {
+      rays.push_back({origin, glm::normalize(dir)});
+    }
+  }
+  specula::linfo("Rendering image");
+  std::vector<specula::intersect> intersections = func(rays);
+  for (std::size_t y = 0; y < res_height; ++y) {
+    for (std::size_t x = 0; x < res_width; ++x) {
+      if (intersections[x + res_width * y].obj_index != -1) {
         img(x, y) = std::array<double, 3>{1.0, 1.0, 1.0};
       } else {
         img(x, y) = std::array<double, 3>{0.5, 0.5, 0.6};
