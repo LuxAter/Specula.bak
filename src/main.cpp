@@ -106,7 +106,7 @@ int main(int argc, char *argv[]) {
   lua.set_function("RoundBox",
                    [objs_ptr](const float &r, const float &w, const float &l,
                               const float &h) mutable {
-                     return specula::LuaRoundBox(r, w, l, h, objs_ptr);
+                     return specula::LuaRoundBox(w, l, h, r, objs_ptr);
                    });
   lua.set_function("Link", [objs_ptr](const float &len, const float &r_outer,
                                       const float &r_inner) mutable {
@@ -115,8 +115,8 @@ int main(int argc, char *argv[]) {
   lua.set_function("InfiniteCylinder", [objs_ptr](const float &r) mutable {
     return specula::LuaInfiniteCylinder(r, objs_ptr);
   });
-  lua.set_function("Cone", [objs_ptr](const float &alpha) mutable {
-    return specula::LuaCone(alpha, objs_ptr);
+  lua.set_function("InfiniteCone", [objs_ptr](const float &alpha) mutable {
+    return specula::LuaInfiniteCone(alpha, objs_ptr);
   });
   lua.set_function("Plane", [objs_ptr](const float &x, const float &y,
                                        const float &z, const float &w) mutable {
@@ -140,18 +140,18 @@ int main(int argc, char *argv[]) {
                    [objs_ptr](const float &h, const float &r) mutable {
                      return specula::LuaVerticalCapsule(h, r, objs_ptr);
                    });
-  lua.set_function("CappedCylinder",
+  lua.set_function("Cylinder",
                    [objs_ptr](const float &h, const float &r) mutable {
-                     return specula::LuaCappedCylinder(h, r, objs_ptr);
+                     return specula::LuaCylinder(h, r, objs_ptr);
                    });
   lua.set_function(
       "RoundedCylinder",
       [objs_ptr](const float &ra, const float &rb, const float &h) mutable {
         return specula::LuaRoundedCylinder(ra, rb, h, objs_ptr);
       });
-  lua.set_function("CappedCone", [objs_ptr](const float &r1, const float &r2,
+  lua.set_function("Cone", [objs_ptr](const float &r1, const float &r2,
                                             const float &h) mutable {
-    return specula::LuaCappedCone(h, r1, r2, objs_ptr);
+    return specula::LuaCone(h, r1, r2, objs_ptr);
   });
   lua.set_function("SolidAngle", [objs_ptr](const float &a, const float &b,
                                             const float &ra) mutable {

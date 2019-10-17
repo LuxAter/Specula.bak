@@ -10,8 +10,8 @@
 #include "specula/fmt.hpp"
 #include "specula/log.hpp"
 
-specula::CappedCone::CappedCone(const float &h, const float &r1,
-                                const float &r2)
+specula::Cone::Cone(const float &h, const float &r1,
+                    const float &r2)
     : Primative([this](const glm::vec3 &p) {
         glm::vec2 q(glm::length(p.xz()), p.y);
         glm::vec2 k1(this->r2_, this->height_);

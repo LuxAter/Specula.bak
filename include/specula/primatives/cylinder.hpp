@@ -1,5 +1,5 @@
-#ifndef SPECULA_PRIMATIVES_CYLINDER_CAPPED_HPP_
-#define SPECULA_PRIMATIVES_CYLINDER_CAPPED_HPP_
+#ifndef SPECULA_PRIMATIVES_CYLINDER_HPP_
+#define SPECULA_PRIMATIVES_CYLINDER_HPP_
 
 #include "primative.hpp"
 
@@ -20,11 +20,11 @@ public:
 };
 
 inline LuaPrimative
-LuaCappedCylinder(const float &h, const float &r,
-                  std::vector<std::shared_ptr<Primative>> *objs) {
+LuaCylinder(const float &h, const float &r,
+            std::vector<std::shared_ptr<Primative>> *objs) {
   objs->push_back(std::make_shared<CappedCylinder>(h, r));
   return LuaPrimative{objs->back()};
 }
 } // namespace specula
 
-#endif // SPECULA_PRIMATIVES_CYLINDER_CAPPED_HPP_
+#endif // SPECULA_PRIMATIVES_CYLINDER_HPP_

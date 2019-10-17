@@ -82,13 +82,13 @@ set(SOURCES
   src/primatives/torus_capped.cpp
   src/primatives/link.cpp
   src/primatives/cylinder_infinite.cpp
-  src/primatives/cone.cpp
+        src/primatives/cone_infinite.cpp
   src/primatives/plane.cpp
   src/primatives/prism_hexagonal.cpp
   src/primatives/prism_triangular.cpp
   src/primatives/capsule.cpp
   src/primatives/capsule_vertical.cpp
-  src/primatives/cylinder_capped.cpp
+        src/primatives/cylinder.cpp
   src/primatives/cylinder_rounded.cpp
   src/primatives/cone_capped.cpp
   src/primatives/angle_solid.cpp

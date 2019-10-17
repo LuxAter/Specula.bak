@@ -1,5 +1,5 @@
-#ifndef SPECULA_PRIMATIVES_CONE_CAPPED_HPP_
-#define SPECULA_PRIMATIVES_CONE_CAPPED_HPP_
+#ifndef SPECULA_PRIMATIVES_CONE_HPP_
+#define SPECULA_PRIMATIVES_CONE_HPP_
 
 #include "primative.hpp"
 
@@ -12,19 +12,19 @@
 #include "../log.hpp"
 
 namespace specula {
-class CappedCone : public Primative {
+class Cone : public Primative {
 public:
-  CappedCone(const float &h, const float &r1, const float &r2);
+  Cone(const float &h, const float &r1, const float &r2);
 
   float height_, r1_, r2_;
 };
 
 inline LuaPrimative
-LuaCappedCone(const float &h, const float &r1, const float &r2,
-              std::vector<std::shared_ptr<Primative>> *objs) {
-  objs->push_back(std::make_shared<CappedCone>(h, r1, r2));
+LuaCone(const float &h, const float &r1, const float &r2,
+        std::vector<std::shared_ptr<Primative>> *objs) {
+  objs->push_back(std::make_shared<Cone>(h, r1, r2));
   return LuaPrimative{objs->back()};
 }
 } // namespace specula
 
-#endif // SPECULA_PRIMATIVES_CONE_CAPPED_HPP_
+#endif // SPECULA_PRIMATIVES_CONE_PP_

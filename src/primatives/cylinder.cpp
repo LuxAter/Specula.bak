@@ -1,5 +1,5 @@
 #define GLM_FORCE_SWIZZLE
-#include "specula/primatives/cylinder_capped.hpp"
+#include "specula/primatives/cylinder.hpp"
 
 #include "specula/primatives/primative.hpp"
 

@@ -1,5 +1,5 @@
-#ifndef SPECULA_PRIMATIVES_CYLINDER_HPP_
-#define SPECULA_PRIMATIVES_CYLINDER_HPP_
+#ifndef SPECULA_PRIMATIVES_CYLINDER_INFINITE_HPP_
+#define SPECULA_PRIMATIVES_CYLINDER_INFINITE_HPP_
 
 #include "primative.hpp"
 
@@ -26,4 +26,4 @@ inline LuaPrimative LuaInfiniteCylinder(const float &r,
 }
 } // namespace specula
 
-#endif // SPECULA_PRIMATIVES_CYLINDER_HPP_
+#endif // SPECULA_PRIMATIVES_CYLINDER_INFINITE_HPP_

@@ -1,5 +1,5 @@
 #define GLM_FORCE_SWIZZLE
-#include "specula/primatives/cone.hpp"
+#include "specula/primatives/cone_infinite.hpp"
 
 #include "specula/primatives/primative.hpp"
 
@@ -10,7 +10,7 @@
 #include "specula/fmt.hpp"
 #include "specula/log.hpp"
 
-specula::Cone::Cone(const float &alpha)
+specula::InfiniteCone::InfiniteCone(const float &alpha)
     : Primative([this](const glm::vec3 &p) {
         float q = glm::length(p.xy());
         return glm::dot(this->cone_, glm::vec2(q, p.z));

@@ -26,7 +26,7 @@ Link(1.0, 1.0, 0.5):rotate(
   math.random()
 ):translate(-10, 15, 20) -- (length, rBig, rSmall)
 -- InfiniteCylinder(1.0):translate(0,0, 10) -- (radius) -- INFINITE
--- Cone(math.pi / 4):rotate_x(math.pi/2):translate(0, 0, 10) -- (angle) -- INFINITE
+-- InfiniteCone(math.pi / 4):rotate_x(math.pi/2):translate(0, 0, 10) -- (angle) -- INFINITE
 -- Plane(1,1,1,0):rotate_x(math.pi/2):translate(0,-50,0) -- (??,??,??,??) -- INFINITE
 HexagonalPrism(1.0, 1.0):rotate(
   2.0 * math.random() * math.pi,
@@ -47,7 +47,7 @@ VerticalCapsule(1.0, 0.5):rotate(
   math.random(),
   math.random()
 ):translate(-10, 10, 20) -- (height, radius)
-CappedCylinder(1.0, 0.5):rotate(
+Cylinder(1.0, 0.5):rotate(
   2.0 * math.random() * math.pi,
   math.random(),
   math.random(),
