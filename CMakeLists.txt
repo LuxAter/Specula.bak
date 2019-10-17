@@ -52,18 +52,18 @@ include(ExternalProject)
 # ##############################################################################
 
 if(STATIC_ANALYSIS OR CMAKE_BUILD_TYPE STREQUAL "Release")
-  # find_program(CLANG_TIDY clang-tidy)
-  # if(CLANG_TIDY)
-  #   set(CMAKE_CXX_CLANG_TIDY "${CLANG_TIDY}")
-  # endif()
-  # find_program(CPPCHECK cppcheck)
-  # if(CPPCHECK)
-  #   set(CMAKE_CXX_CPPCHECK "${CPPCHECK}")
-  # endif()
-  # find_program(IWYU_TOOL iwyu-tool)
-  # if(IWYU_TOOL)
-  #   set(CMAKE_CXX_INCLUDE_WHAT_YOU_USE "${IWYU_TOOL}")
-  # endif()
+  find_program(CLANG_TIDY clang-tidy)
+  if(CLANG_TIDY)
+    set(CMAKE_CXX_CLANG_TIDY "${CLANG_TIDY}")
+  endif()
+  find_program(CPPCHECK cppcheck)
+  if(CPPCHECK)
+    set(CMAKE_CXX_CPPCHECK "${CPPCHECK}")
+  endif()
+  find_program(IWYU_TOOL iwyu-tool)
+  if(IWYU_TOOL)
+    set(CMAKE_CXX_INCLUDE_WHAT_YOU_USE "${IWYU_TOOL}")
+  endif()
 endif()
 
 # ##############################################################################
@@ -72,7 +72,6 @@ endif()
 
 set(SOURCES
   src/specula.cpp
-  src/cl.cpp
   src/cli/progress_bar.cpp
   src/image/image.cpp
   src/primatives/primative.cpp
@@ -82,7 +81,7 @@ set(SOURCES
   src/primatives/box_round.cpp
   src/primatives/torus_capped.cpp
   src/primatives/link.cpp
-        src/primatives/cylinder_infinite.cpp
+  src/primatives/cylinder_infinite.cpp
   src/primatives/cone.cpp
   src/primatives/plane.cpp
   src/primatives/prism_hexagonal.cpp
@@ -338,13 +337,6 @@ if(CLI11_FOUND)
     PUBLIC ${CMAKE_SOURCE_DIR}/external/CLI11/include)
 endif()
 
-find_package(OpenCL)
-if(OpenCL_FOUND)
-  target_link_libraries(${LIBRARY_NAME} OpenCL::OpenCL)
-  target_compile_definitions(${LIBRARY_NAME} PUBLIC -D__HAS_OPENCL__)
-else()
-  message("OpenCL was not found" WARNING)
-endif()
 
 # ##############################################################################
 # Definitions

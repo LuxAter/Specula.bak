@@ -5,7 +5,6 @@
 #include "log.hpp"
 #include "fs.hpp"
 #include "fmt.hpp"
-#include "cl.hpp"
 #include "image/image.hpp"
 #include "primatives/primatives.hpp"
 
