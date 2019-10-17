@@ -12,16 +12,16 @@
 #include "../log.hpp"
 
 namespace specula {
-class Cylinder : public Primative {
+class InfiniteCylinder : public Primative {
 public:
-  Cylinder(const float &r);
+  InfiniteCylinder(const float &r);
 
   float radius_;
 };
 
-inline LuaPrimative LuaCylinder(const float &r,
-                                std::vector<std::shared_ptr<Primative>> *objs) {
-  objs->push_back(std::make_shared<Cylinder>(r));
+inline LuaPrimative LuaInfiniteCylinder(const float &r,
+                                        std::vector<std::shared_ptr<Primative>> *objs) {
+  objs->push_back(std::make_shared<InfiniteCylinder>(r));
   return LuaPrimative{objs->back()};
 }
 } // namespace specula

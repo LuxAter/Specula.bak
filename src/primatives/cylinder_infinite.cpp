@@ -1,5 +1,5 @@
 #define GLM_FORCE_SWIZZLE
-#include "specula/primatives/cylinder.hpp"
+#include "specula/primatives/cylinder_infinite.hpp"
 
 #include "specula/primatives/primative.hpp"
 
@@ -10,7 +10,7 @@
 #include "specula/fmt.hpp"
 #include "specula/log.hpp"
 
-specula::Cylinder::Cylinder(const float &r)
+specula::InfiniteCylinder::InfiniteCylinder(const float &r)
     : Primative([this](const glm::vec3 &p) {
         return glm::length(p.xz()) - this->radius_;
       }),

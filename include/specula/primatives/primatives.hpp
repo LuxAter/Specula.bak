@@ -9,7 +9,7 @@
 #include "cone.hpp"
 #include "cone_capped.hpp"
 #include "cone_round.hpp"
-#include "cylinder.hpp"
+#include "cylinder_infinite.hpp"
 #include "cylinder_capped.hpp"
 #include "cylinder_rounded.hpp"
 #include "ellipsoid.hpp"

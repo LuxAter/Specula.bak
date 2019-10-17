@@ -82,7 +82,7 @@ set(SOURCES
   src/primatives/box_round.cpp
   src/primatives/torus_capped.cpp
   src/primatives/link.cpp
-  src/primatives/cylinder.cpp
+        src/primatives/cylinder_infinite.cpp
   src/primatives/cone.cpp
   src/primatives/plane.cpp
   src/primatives/prism_hexagonal.cpp

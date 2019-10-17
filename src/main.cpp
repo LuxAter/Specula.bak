@@ -115,8 +115,8 @@ int main(int argc, char *argv[]) {
                                       const float &r_inner) mutable {
     return specula::LuaLink(len, r_outer, r_inner, objs_ptr);
   });
-  lua.set_function("Cylinder", [objs_ptr](const float &r) mutable {
-    return specula::LuaCylinder(r, objs_ptr);
+  lua.set_function("InfiniteCylinder", [objs_ptr](const float &r) mutable {
+    return specula::LuaInfiniteCylinder(r, objs_ptr);
   });
   lua.set_function("Cone", [objs_ptr](const float &alpha) mutable {
     return specula::LuaCone(alpha, objs_ptr);
@@ -154,7 +154,7 @@ int main(int argc, char *argv[]) {
       });
   lua.set_function("CappedCone", [objs_ptr](const float &r1, const float &r2,
                                             const float &h) mutable {
-    return specula::LuaCappedCone(r1, r2, h, objs_ptr);
+    return specula::LuaCappedCone(h, r1, r2, objs_ptr);
   });
   lua.set_function("SolidAngle", [objs_ptr](const float &a, const float &b,
                                             const float &ra) mutable {
@@ -163,10 +163,10 @@ int main(int argc, char *argv[]) {
 
   lua.script_file(lua_source);
 
-  specula::linfo("N objs: %lu", objs.size());
-  for (std::size_t i = 0; i < objs.size(); ++i) {
-    std::cout << "DE:\n" << objs[i]->gen_function() << "\n";
-  }
+  // specula::linfo("N objs: %lu", objs.size());
+  // for (std::size_t i = 0; i < objs.size(); ++i) {
+  //   std::cout << "DE:\n" << objs[i]->gen_function() << "\n";
+  // }
 
   specula::Image img({res_width, res_height});
 

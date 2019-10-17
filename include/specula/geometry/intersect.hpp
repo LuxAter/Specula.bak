@@ -1,6 +1,8 @@
 #ifndef SPECULA_GEOMETRY_INTERSECT_HPP_
 #define SPECULA_GEOMETRY_INTERSECT_HPP_
 
+#include <glm/glm.hpp>
+
 namespace specula {
   class intersect {
     public:
