@@ -153,6 +153,8 @@ set_target_properties(${EXECUTABLE_NAME}
 # Dependencies
 # ##############################################################################
 
+find_package (Threads REQUIRED)
+target_link_libraries (${LIBRARY_NAME} ${CMAKE_THREAD_LIBS_INIT})
 if(NOT EXISTS ${PROJECT_SOURCE_DIR}/external/doctest/README.md AND GIT_FOUND)
   execute_process(COMMAND git
     submodule

@@ -14,7 +14,7 @@ public:
 
   inline std::array<double, 3> &operator()(const std::size_t &x,
                                            const std::size_t &y) {
-    return pixels_[y * resolution_[1] + x];
+    return pixels_[(y * resolution_[0]) + x];
   }
   bool write(const std::string &filename) const;
 
