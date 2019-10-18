@@ -9,6 +9,7 @@
 #include <glm/glm.hpp>
 
 #include "../geometry/geometry.hpp"
+#include "../material/material.hpp"
 #include "../variant.hpp"
 
 namespace specula {
@@ -64,6 +65,7 @@ public:
   void translate(const glm::vec3 &t);
 
   std::function<float(const glm::vec3 &)> distance_;
+  std::shared_ptr<Material> material_;
 
   std::string id_;
 

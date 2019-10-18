@@ -32,6 +32,14 @@ void specula::render(const std::vector<std::shared_ptr<Primative>> &objs,
                     output_path.length() - output_path.find_last_of('.'))
             .c_str());
   }
+
+  std::vector<std::shared_ptr<Primative>> visible_objs;
+  for (auto &it : objs) {
+    if (it->material_ != nullptr) {
+      visible_objs.push_back(it);
+    }
+  }
+
   std::size_t block_size = static_cast<std::size_t>(std::sqrt(
       img_width * img_height / (16 * std::thread::hardware_concurrency())));
   std::size_t hblocks = static_cast<std::size_t>(
@@ -56,7 +64,8 @@ void specula::render(const std::vector<std::shared_ptr<Primative>> &objs,
       std::tuple<std::size_t, std::vector<std::vector<std::array<double, 3>>>>>>
       pool_results;
   for (std::size_t i = 0; i < blocks; ++i) {
-    pool_results.push_back(pool.enqueue(render_block, i, block_size_data));
+    pool_results.push_back(
+        pool.enqueue(render_block, i, block_size_data, visible_objs, spp));
   }
   while (pool_results.size() != 0) {
     for (std::size_t i = 0; i < pool_results.size(); ++i) {
@@ -88,7 +97,9 @@ void specula::render(const std::vector<std::shared_ptr<Primative>> &objs,
 
 std::tuple<std::size_t, std::vector<std::vector<std::array<double, 3>>>>
 specula::render_block(const std::size_t &i,
-                      const std::array<std::size_t, 5> &block_size) {
+                      const std::array<std::size_t, 5> &block_size,
+                      std::vector<std::shared_ptr<Primative>> &objs,
+                      const std::size_t &spp) {
   std::vector<std::vector<std::array<double, 3>>> block(
       std::min(((i % block_size[0]) + 1) * block_size[2], block_size[3]) -
           (i % block_size[0]) * block_size[2],
@@ -105,4 +116,29 @@ specula::render_block(const std::size_t &i,
     }
   }
   return std::make_tuple(i, block);
+}
+
+std::tuple<float, std::shared_ptr<Primative>, float>
+specula::ray_march(const glm::vec3 &origin, const glm::vec3 &direction,
+                   const std::vector<std::shared_ptr<Primative>> &objs,
+                   const float &epslion, const float &t_max) {
+  float t = 0.0f, near_t = 0.0f;
+  std::shared_ptr<Primative> hit_obj = nullptr;
+  while (t < t_max) {
+    glm::vec3 p = origin + direction * t;
+    float dt = std::numeric_limits<float>::infinity();
+    for (auto &obj : objs) {
+      float odt = obj->distance(p);
+      if (odt < dt) {
+        dt = odt;
+        if (odt < epslion)
+          hit_obj = obj;
+      }
+    }
+    if (dt < epslion)
+      break;
+    else
+      t += dt;
+  }
+  return std::make_tuple(t, hit_obj, near_t);
 }

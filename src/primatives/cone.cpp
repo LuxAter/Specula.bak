@@ -1,5 +1,5 @@
 #define GLM_FORCE_SWIZZLE
-#include "specula/primatives/cone_capped.hpp"
+#include "specula/primatives/cone.hpp"
 
 #include "specula/primatives/primative.hpp"
 
