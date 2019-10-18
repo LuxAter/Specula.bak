@@ -15,6 +15,7 @@ namespace specula {
 class RoundCone : public Primative {
 public:
   RoundCone(const float &r1, const float &r2, const float &h);
+  float height_, r1_, r2_;
 };
 
 inline LuaPrimative

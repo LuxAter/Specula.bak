@@ -7,7 +7,7 @@
 #include "capsule.hpp"
 #include "capsule_vertical.hpp"
 #include "cone_infinite.hpp"
-#include "cone_capped.hpp"
+#include "cone.hpp"
 #include "cone_round.hpp"
 #include "cylinder_infinite.hpp"
 #include "cylinder.hpp"

@@ -14,14 +14,14 @@ specula::Primative::Primative()
     : distance_([](const glm::vec3 &) {
         return std::numeric_limits<float>::infinity();
       }),
-      obj_(1.0), inv_(1.0), id_(uuid::uuid()) {}
+      id_(uuid::uuid()), obj_(1.0), inv_(1.0) {}
 specula::Primative::Primative(const std::function<float(const glm::vec3 &)> &de)
-    : distance_(de), obj_(1.0), inv_(1.0), id_(uuid::uuid()) {}
+    : distance_(de), id_(uuid::uuid()), obj_(1.0), inv_(1.0) {}
 specula::Primative::Primative(const glm::mat4 &obj, const glm::mat4 &inv)
     : distance_([](const glm::vec3 &) {
         return std::numeric_limits<float>::infinity();
       }),
-      obj_(obj), inv_(inv), id_(uuid::uuid()) {}
+      id_(uuid::uuid()), obj_(obj), inv_(inv) {}
 
 void specula::Primative::rotate_x(const float &angle) {
   obj_ = glm::rotate(obj_, angle, glm::vec3(1.0, 0.0, 0.0));

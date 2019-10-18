@@ -104,6 +104,5 @@ specula::render_block(const std::size_t &i,
       block[x][y] = c;
     }
   }
-  std::this_thread::sleep_for(std::chrono::seconds(rand() % 120));
   return std::make_tuple(i, block);
 }

@@ -15,6 +15,8 @@ namespace specula {
 class Octahedron : public Primative {
 public:
   Octahedron(const float &r);
+
+  float radius_;
 };
 
 inline LuaPrimative

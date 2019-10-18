@@ -82,16 +82,21 @@ set(SOURCES
   src/primatives/torus_capped.cpp
   src/primatives/link.cpp
   src/primatives/cylinder_infinite.cpp
-        src/primatives/cone_infinite.cpp
+  src/primatives/cone_infinite.cpp
   src/primatives/plane.cpp
   src/primatives/prism_hexagonal.cpp
   src/primatives/prism_triangular.cpp
   src/primatives/capsule.cpp
   src/primatives/capsule_vertical.cpp
-        src/primatives/cylinder.cpp
+  src/primatives/cylinder.cpp
   src/primatives/cylinder_rounded.cpp
-  src/primatives/cone_capped.cpp
+  src/primatives/cone.cpp
+  src/primatives/cone_round.cpp
   src/primatives/angle_solid.cpp
+  src/primatives/ellipsoid.cpp
+  src/primatives/octahedron.cpp
+  src/primatives/quad.cpp
+  src/primatives/triangle.cpp
   src/geometry/ray.cpp)
 set(TEST_SOURCES tests/main.cpp tests/log.cpp)
 
@@ -378,7 +383,7 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     ${PROJECT_SOURCE_DIR}/include)
   add_executable(${TEST_NAME} ${TEST_SOURCES})
   target_link_libraries(${TEST_NAME} PRIVATE doctest)
-  target_include_directories(${TEST_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/include)
+  target_link_libraries(${TEST_NAME} PRIVATE ${LIBRARY_NAME})
   set_target_properties(${TEST_MAIN}
     PROPERTIES CXX_STANDARD
     17

@@ -64,7 +64,7 @@ int main(int argc, char *argv[]) {
   std::vector<std::shared_ptr<specula::Primative>> objs;
   std::vector<std::shared_ptr<specula::Primative>> *objs_ptr = &objs;
   std::vector<std::shared_ptr<specula::Material>> mats;
-  std::vector<std::shared_ptr<specula::Material>> *mats_ptr= &mats;
+  std::vector<std::shared_ptr<specula::Material>> *mats_ptr = &mats;
 
   sol::state lua;
   lua.open_libraries();
@@ -84,81 +84,27 @@ int main(int argc, char *argv[]) {
       &specula::LuaPrimative::rotate_yxz, "rotate_yzx",
       &specula::LuaPrimative::rotate_yzx, "rotate_zxy",
       &specula::LuaPrimative::rotate_zxy, "rotate_zyx",
-      &specula::LuaPrimative::rotate, "rotate",
-      &specula::LuaPrimative::rotate_zyx, "scale",
-      &specula::LuaPrimative::scale, "translate",
-      &specula::LuaPrimative::translate);
+      &specula::LuaPrimative::rotate_zyx, "rotate",
+      &specula::LuaPrimative::rotate, "scale", &specula::LuaPrimative::scale,
+      "translate", &specula::LuaPrimative::translate);
 
-  lua.set_function("Sphere", [objs_ptr](const float &r) mutable {
-    return specula::LuaSphere(r, objs_ptr);
-  });
-  lua.set_function(
-      "Torus", [objs_ptr](const float &r_big, const float &r_small) mutable {
-        return specula::LuaTorus(r_big, r_small, objs_ptr);
-      });
-  lua.set_function(
-      "CappedTorus", [objs_ptr](const float &r_big, const float &r_small,
-                                const float &ra, const float &rb) mutable {
-        return specula::LuaCappedTorus(r_big, r_small, ra, rb, objs_ptr);
-      });
-  lua.set_function("Box", [objs_ptr](const float &w, const float &l,
-                                     const float &h) mutable {
-    return specula::LuaBox(w, l, h, objs_ptr);
-  });
-  lua.set_function("RoundBox",
-                   [objs_ptr](const float &r, const float &w, const float &l,
-                              const float &h) mutable {
-                     return specula::LuaRoundBox(w, l, h, r, objs_ptr);
-                   });
-  lua.set_function("Link", [objs_ptr](const float &len, const float &r_outer,
-                                      const float &r_inner) mutable {
-    return specula::LuaLink(len, r_outer, r_inner, objs_ptr);
-  });
-  lua.set_function("InfiniteCylinder", [objs_ptr](const float &r) mutable {
-    return specula::LuaInfiniteCylinder(r, objs_ptr);
-  });
-  lua.set_function("InfiniteCone", [objs_ptr](const float &alpha) mutable {
-    return specula::LuaInfiniteCone(alpha, objs_ptr);
-  });
-  lua.set_function("Plane", [objs_ptr](const float &x, const float &y,
-                                       const float &z, const float &w) mutable {
-    return specula::LuaPlane(x, y, z, w, objs_ptr);
-  });
-  lua.set_function("HexagonalPrism",
-                   [objs_ptr](const float &a, const float &b) mutable {
-                     return specula::LuaHexagonalPrism(a, b, objs_ptr);
-                   });
-  lua.set_function("TriangularPrism",
-                   [objs_ptr](const float &a, const float &b) mutable {
-                     return specula::LuaTriangularPrism(a, b, objs_ptr);
-                   });
-  lua.set_function("Capsule", [objs_ptr](const float &x1, const float &y1,
-                                         const float &z1, const float &x2,
-                                         const float &y2, const float &z2,
-                                         const float &r) {
-    return specula::LuaCapsule(x1, y1, z1, x2, y2, z2, r, objs_ptr);
-  });
-  lua.set_function("VerticalCapsule",
-                   [objs_ptr](const float &h, const float &r) mutable {
-                     return specula::LuaVerticalCapsule(h, r, objs_ptr);
-                   });
-  lua.set_function("Cylinder",
-                   [objs_ptr](const float &h, const float &r) mutable {
-                     return specula::LuaCylinder(h, r, objs_ptr);
-                   });
-  lua.set_function(
-      "RoundedCylinder",
-      [objs_ptr](const float &ra, const float &rb, const float &h) mutable {
-        return specula::LuaRoundedCylinder(ra, rb, h, objs_ptr);
-      });
-  lua.set_function("Cone", [objs_ptr](const float &r1, const float &r2,
-                                            const float &h) mutable {
-    return specula::LuaCone(h, r1, r2, objs_ptr);
-  });
-  lua.set_function("SolidAngle", [objs_ptr](const float &a, const float &b,
-                                            const float &ra) mutable {
-    return specula::LuaSolidAngle(a, b, ra, objs_ptr);
-  });
+  lua.set_function("SolidAngle", [objs_ptr](const float &a, const float &b, const float &ra) mutable { return specula::LuaSolidAngle(a, b, ra, objs_ptr); });
+  lua.set_function("Box", [objs_ptr](const float &w, const float &l, const float &h) mutable { return specula::LuaBox(w, l, h, objs_ptr); });
+  lua.set_function("RoundBox", [objs_ptr](const float &r, const float &w, const float &l, const float &h) mutable { return specula::LuaRoundBox(w, l, h, r, objs_ptr); });
+  lua.set_function("Capsule", [objs_ptr](const float &x1, const float &y1, const float &z1, const float &x2, const float &y2, const float &z2, const float &r) { return specula::LuaCapsule(x1, y1, z1, x2, y2, z2, r, objs_ptr); });
+  lua.set_function("VerticalCapsule", [objs_ptr](const float &h, const float &r) mutable { return specula::LuaVerticalCapsule(h, r, objs_ptr); });
+  lua.set_function("Cone", [objs_ptr](const float &r1, const float &r2, const float &h) mutable { return specula::LuaCone(h, r1, r2, objs_ptr); });
+  lua.set_function("InfiniteCone", [objs_ptr](const float &alpha) mutable { return specula::LuaInfiniteCone(alpha, objs_ptr); });
+  lua.set_function("Cylinder", [objs_ptr](const float &h, const float &r) mutable { return specula::LuaCylinder(h, r, objs_ptr); });
+  lua.set_function("RoundedCylinder", [objs_ptr](const float &ra, const float &rb, const float &h) mutable { return specula::LuaRoundedCylinder(ra, rb, h, objs_ptr); });
+  lua.set_function("InfiniteCylinder", [objs_ptr](const float &r) mutable { return specula::LuaInfiniteCylinder(r, objs_ptr); });
+  lua.set_function("Link", [objs_ptr](const float &len, const float &r_outer, const float &r_inner) mutable { return specula::LuaLink(len, r_outer, r_inner, objs_ptr); });
+  lua.set_function("Plane", [objs_ptr](const float &x, const float &y, const float &z, const float &w) mutable { return specula::LuaPlane(x, y, z, w, objs_ptr); });
+  lua.set_function("HexagonalPrism", [objs_ptr](const float &a, const float &b) mutable { return specula::LuaHexagonalPrism(a, b, objs_ptr); });
+  lua.set_function("TriangularPrism", [objs_ptr](const float &a, const float &b) mutable { return specula::LuaTriangularPrism(a, b, objs_ptr); });
+  lua.set_function("Sphere", [objs_ptr](const float &r) mutable { return specula::LuaSphere(r, objs_ptr); });
+  lua.set_function("Torus", [objs_ptr](const float &r_big, const float &r_small) mutable { return specula::LuaTorus(r_big, r_small, objs_ptr); });
+  lua.set_function("CappedTorus", [objs_ptr](const float &r_big, const float &r_small, const float &ra, const float &rb) mutable { return specula::LuaCappedTorus(r_big, r_small, ra, rb, objs_ptr); });
 
   lua.script_file(lua_source);
 
@@ -174,7 +120,8 @@ int main(int argc, char *argv[]) {
   // specula::linfo("Compiling scene distance estimator");
   // auto func =
   //     [objs, T_MAX, EPSILON](
-  //         std::vector<specula::ray> rays) -> std::vector<specula::intersect> {
+  //         std::vector<specula::ray> rays) -> std::vector<specula::intersect>
+  //         {
   //   std::vector<specula::intersect> intersects;
   //   for (auto &ray : rays) {
   //     int obj_index = -1;

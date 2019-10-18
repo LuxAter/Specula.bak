@@ -141,7 +141,6 @@ public:
     base_->rotate_zyx(a, b, c);
     return *this;
   }
-
   inline LuaPrimative &rotate(const float &angle, const float &x,
                               const float &y, const float &z) {
     base_->rotate(angle, glm::vec3(x, y, z));

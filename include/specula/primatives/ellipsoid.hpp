@@ -15,6 +15,7 @@ namespace specula {
 class Ellipsoid : public Primative {
 public:
   Ellipsoid(const float &rx, const float &ry, const float &rz);
+  glm::vec3 radius_;
 };
 
 inline LuaPrimative
