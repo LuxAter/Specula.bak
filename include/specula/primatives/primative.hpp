@@ -20,8 +20,6 @@ public:
 
   virtual ~Primative() {}
 
-  std::string gen_function() const;
-
   inline float distance(const glm::vec3 &o, const glm::vec3 &d,
                         const float &t) const {
     return this->distance_(glm::vec3(this->inv_ * glm::vec4(o + d * t, 1.0f)));
@@ -66,14 +64,11 @@ public:
   void translate(const glm::vec3 &t);
 
   std::function<float(const glm::vec3 &)> distance_;
-  std::map<std::string, variant<float *, glm::vec2 *, glm::vec3 *, glm::vec4 *>>
-      params_;
 
   std::string id_;
 
 protected:
   glm::mat4 obj_, inv_;
-  std::string source_;
 
 private:
 };

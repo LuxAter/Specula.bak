@@ -18,13 +18,4 @@ specula::CappedCylinder::CappedCylinder(const float &h, const float &r)
                glm::length(glm::max(d, 0.0f));
       }),
       height_(h), radius_(r) {
-  this->source_ = fmt::format(
-      "float2 d = fabs((float2)(length(p.xz), p.y)) - "
-      "(float2)({{%1$s-capped-cylinder.height}},{{%1$s-capped-cylinder.radius}}"
-      "); return min(max(d.x,d.y),0.0f) + length(max(d,0.0f));",
-      this->id_.c_str());
-  this->params_[fmt::format("%s-capped-cylinder.height", this->id_.c_str())] =
-      &height_;
-  this->params_[fmt::format("%s-capped-cylinder.radius", this->id_.c_str())] =
-      &radius_;
 }

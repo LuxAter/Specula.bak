@@ -63,6 +63,8 @@ int main(int argc, char *argv[]) {
 
   std::vector<std::shared_ptr<specula::Primative>> objs;
   std::vector<std::shared_ptr<specula::Primative>> *objs_ptr = &objs;
+  std::vector<std::shared_ptr<specula::Material>> mats;
+  std::vector<std::shared_ptr<specula::Material>> *mats_ptr= &mats;
 
   sol::state lua;
   lua.open_libraries();
@@ -160,75 +162,72 @@ int main(int argc, char *argv[]) {
 
   lua.script_file(lua_source);
 
-  // specula::linfo("N objs: %lu", objs.size());
-  // for (std::size_t i = 0; i < objs.size(); ++i) {
-  //   std::cout << "DE:\n" << objs[i]->gen_function() << "\n";
+  specula::render(objs, mats, 256, res_width, res_height, output, 0, false);
+
+  // specula::Image img({res_width, res_height});
+  //
+  // float T_MAX = 1e5f;
+  // float EPSILON = 1e-5f;
+  //
+  // specula::linfo("FILM: %f", film_z);
+  //
+  // specula::linfo("Compiling scene distance estimator");
+  // auto func =
+  //     [objs, T_MAX, EPSILON](
+  //         std::vector<specula::ray> rays) -> std::vector<specula::intersect> {
+  //   std::vector<specula::intersect> intersects;
+  //   for (auto &ray : rays) {
+  //     int obj_index = -1;
+  //     float t = 0;
+  //     while (t < T_MAX) {
+  //       glm::vec3 p = ray(t);
+  //       float dt = std::numeric_limits<float>::infinity();
+  //       for (std::size_t i = 0; i < objs.size(); ++i) {
+  //         float odt = objs[i]->distance(p);
+  //         if (odt < dt) {
+  //           dt = odt;
+  //           if (odt < EPSILON) {
+  //             obj_index = i;
+  //           }
+  //         }
+  //       }
+  //       if (dt < EPSILON)
+  //         break;
+  //       else
+  //         t += dt;
+  //     }
+  //     if (obj_index != -1) {
+  //       intersects.push_back({obj_index, t, {0.0f, 0.0f, 0.0f}});
+  //     } else {
+  //       intersects.push_back({-1, 5, {0.0f, 0.0f, 0.0f}});
+  //     }
+  //   }
+  //   return intersects;
+  // };
+  //
+  // glm::vec3 origin(0.0, 0.0, 0.0);
+  // std::vector<specula::ray> rays;
+  // specula::linfo("Computing distances");
+  // for (std::size_t y = 0; y < res_height; ++y) {
+  //   for (std::size_t x = 0; x < res_width; ++x) {
+  //     glm::vec3 dir(x - (res_width / 2.0), y - (res_height / 2.0), film_z);
+  //     dir = glm::normalize(dir);
+  //     rays.push_back({origin, glm::normalize(dir)});
+  //   }
   // }
-
-  specula::Image img({res_width, res_height});
-
-  float T_MAX = 1e5f;
-  float EPSILON = 1e-5f;
-
-  specula::linfo("FILM: %f", film_z);
-
-  specula::linfo("Compiling scene distance estimator");
-  auto func =
-      [objs, T_MAX, EPSILON](
-          std::vector<specula::ray> rays) -> std::vector<specula::intersect> {
-    std::vector<specula::intersect> intersects;
-    for (auto &ray : rays) {
-      int obj_index = -1;
-      float t = 0;
-      while (t < T_MAX) {
-        glm::vec3 p = ray(t);
-        float dt = std::numeric_limits<float>::infinity();
-        for (std::size_t i = 0; i < objs.size(); ++i) {
-          float odt = objs[i]->distance(p);
-          if (odt < dt) {
-            dt = odt;
-            if (odt < EPSILON) {
-              obj_index = i;
-            }
-          }
-        }
-        if (dt < EPSILON)
-          break;
-        else
-          t += dt;
-      }
-      if (obj_index != -1) {
-        intersects.push_back({obj_index, t, {0.0f, 0.0f, 0.0f}});
-      } else {
-        intersects.push_back({-1, 5, {0.0f, 0.0f, 0.0f}});
-      }
-    }
-    return intersects;
-  };
-
-  glm::vec3 origin(0.0, 0.0, 0.0);
-  std::vector<specula::ray> rays;
-  specula::linfo("Computing distances");
-  for (std::size_t y = 0; y < res_height; ++y) {
-    for (std::size_t x = 0; x < res_width; ++x) {
-      glm::vec3 dir(x - (res_width / 2.0), y - (res_height / 2.0), film_z);
-      dir = glm::normalize(dir);
-      rays.push_back({origin, glm::normalize(dir)});
-    }
-  }
-  std::vector<specula::intersect> intersections = func(rays);
-  specula::linfo("Rendering image");
-  for (std::size_t y = 0; y < res_height; ++y) {
-    for (std::size_t x = 0; x < res_width; ++x) {
-      if (intersections[x + res_width * y].obj_index != -1) {
-        img(x, y) = std::array<double, 3>{1.0, 1.0, 1.0};
-      } else {
-        img(x, y) = std::array<double, 3>{0.5, 0.5, 0.6};
-      }
-    }
-  }
-
-  img.write(output);
+  // std::vector<specula::intersect> intersections = func(rays);
+  // specula::linfo("Rendering image");
+  // for (std::size_t y = 0; y < res_height; ++y) {
+  //   for (std::size_t x = 0; x < res_width; ++x) {
+  //     if (intersections[x + res_width * y].obj_index != -1) {
+  //       img(x, y) = std::array<double, 3>{1.0, 1.0, 1.0};
+  //     } else {
+  //       img(x, y) = std::array<double, 3>{0.5, 0.5, 0.6};
+  //     }
+  //   }
+  // }
+  //
+  // img.write(output);
 
   return 0;
 }

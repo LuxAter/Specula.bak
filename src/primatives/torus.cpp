@@ -16,10 +16,4 @@ specula::Torus::Torus(const float &r_big, const float &r_small)
         return glm::length(q) - this->torus_.y;
       }),
       torus_(r_big, r_small) {
-  this->source_ =
-      fmt::format("float2 q = (float2)(length(p.xz) - {{%1$s-torus.x}}, p.y); "
-                  "return length(q) - {{%1$s-torus.y}};",
-                  this->id_.c_str());
-  this->params_[fmt::format("%s-torus.x", this->id_.c_str())] = &torus_.x;
-  this->params_[fmt::format("%s-torus.y", this->id_.c_str())] = &torus_.y;
 }

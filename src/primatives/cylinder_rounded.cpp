@@ -19,16 +19,4 @@ specula::RoundedCylinder::RoundedCylinder(const float &ra, const float &rb,
                glm::length(glm::max(d, 0.0f)) - this->rb_;
       }),
       ra_(ra), rb_(rb), height_(h) {
-  this->source_ = fmt::format(
-      "float2 d = (float2)(length(p.xz) - 2.0f * {{%1$s-rounded-cylinder.ra}} + "
-      "{{%1$s-rounded-cylinder.rb}}, fabs(p.y) - "
-      "{{%1$s-rounded-cylinder.height}}); return min(max(d.x,d.y), 0.0f) + "
-      "length(max(d,0.0f)) - {{%1$s-rounded-cylinder.rb}};",
-      this->id_.c_str());
-  this->params_[fmt::format("%s-rounded-cylinder.height", this->id_.c_str())] =
-      &height_;
-  this->params_[fmt::format("%s-rounded-cylinder.ra", this->id_.c_str())] =
-      &ra_;
-  this->params_[fmt::format("%s-rounded-cylinder.rb", this->id_.c_str())] =
-      &rb_;
 }

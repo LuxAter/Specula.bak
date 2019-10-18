@@ -18,13 +18,4 @@ specula::Capsule::Capsule(const float &x1, const float &y1, const float &z1,
         return glm::length(pa - ba * h) - this->radius_;
       }),
       a_(x1, y1, z1), b_(x2, y2, z2), radius_(r) {
-  this->source_ =
-      fmt::format("float3 pa = p - {{%1$s-capsule.a}}, ba = "
-                  "{{%1$s-capsule.b}}-{{%1$s-capsule.a}}; float h = "
-                  "clamp(dot(pa, ba) / dot(ba, ba), 0.0f, 1.0f); return "
-                  "length(pa - ba * h) - {{%1$s-capsule.radius}};",
-                  this->id_.c_str());
-  this->params_[fmt::format("%s-capsule.a", this->id_.c_str())] = &a_;
-  this->params_[fmt::format("%s-capsule.b", this->id_.c_str())] = &b_;
-  this->params_[fmt::format("%s-capsule.radius", this->id_.c_str())] = &radius_;
 }

@@ -18,13 +18,4 @@ specula::Link::Link(const float &len, const float &r_outer,
                this->rinner_;
       }),
       length_(len), router_(r_outer), rinner_(r_inner) {
-  this->source_ =
-      fmt::format("float3 q = (float3)(p.x, "
-                  "max(fabs(p.y)-{{%1$s-link.len}},0.0f),p.z); return "
-                  "length((float2)(length(q.xy)-{{%1$s-link.router}},q.z))-{{%"
-                  "1$s-link.rinner}};",
-                  this->id_.c_str());
-  this->params_[fmt::format("%s-link.len", this->id_.c_str())] = &length_;
-  this->params_[fmt::format("%s-link.router", this->id_.c_str())] = &router_;
-  this->params_[fmt::format("%s-link.rinner", this->id_.c_str())] = &rinner_;
 }

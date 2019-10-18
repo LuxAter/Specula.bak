@@ -15,8 +15,4 @@ specula::InfiniteCylinder::InfiniteCylinder(const float &r)
         return glm::length(p.xz()) - this->radius_;
       }),
       radius_(r) {
-  this->source_ = fmt::format("return length(p.xz)-{{%1$s-cylinder.radius}};",
-                              this->id_.c_str());
-  this->params_[fmt::format("%s-cylinder.radius", this->id_.c_str())] =
-      &radius_;
 }

@@ -59,7 +59,7 @@ RoundedCylinder(0.5, 0.5, 1.0):rotate(
   math.random(),
   math.random()
 ):translate(15, 5, 20) -- (radius, round_radius, height)
-CappedCone(1.0, 0.5, 1.0):rotate(
+Cone(1.0, 0.5, 1.0):rotate(
   2.0 * math.random() * math.pi,
   math.random(),
   math.random(),

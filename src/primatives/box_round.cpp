@@ -17,10 +17,4 @@ specula::RoundBox::RoundBox(const float &w, const float &l, const float &h,
                glm::min(glm::max(d.x, glm::max(d.y, d.z)), 0.0f);
       }),
       box_(w, l, h), radius_(r) {
-  this->source_ = fmt::format("float3 d = fabs(p) - {{%1$s-box}}; return "
-                              "length(max(d,0.0f)) - {{%1$s-radius}} + "
-                              "min(max(d.x,max(d.y,d.z)),0.0f);",
-                              this->id_.c_str());
-  this->params_[fmt::format("%s-box", this->id_.c_str())] = &box_;
-  this->params_[fmt::format("%s-radius", this->id_.c_str())] = &radius_;
 }

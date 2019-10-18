@@ -17,8 +17,4 @@ specula::InfiniteCone::InfiniteCone(const float &alpha)
       }),
       // cone_(std::sin(alpha), std::cos(alpha)) {
       cone_(std::cos(alpha), std::sin(alpha)) {
-  this->source_ = fmt::format(
-      "float q = length(p.xy); return dot({{%1$s-cone}},(float2)(q,p.z));",
-      this->id_.c_str());
-  this->params_[fmt::format("%s-cone", this->id_.c_str())] = &cone_;
 }

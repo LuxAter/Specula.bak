@@ -14,71 +14,14 @@ specula::Primative::Primative()
     : distance_([](const glm::vec3 &) {
         return std::numeric_limits<float>::infinity();
       }),
-      obj_(1.0), inv_(1.0), id_(uuid::uuid()), source_("return INFINITY;") {}
+      obj_(1.0), inv_(1.0), id_(uuid::uuid()) {}
 specula::Primative::Primative(const std::function<float(const glm::vec3 &)> &de)
-    : distance_(de), obj_(1.0), inv_(1.0), id_(uuid::uuid()),
-      source_("return INFINITY;") {}
+    : distance_(de), obj_(1.0), inv_(1.0), id_(uuid::uuid()) {}
 specula::Primative::Primative(const glm::mat4 &obj, const glm::mat4 &inv)
     : distance_([](const glm::vec3 &) {
         return std::numeric_limits<float>::infinity();
       }),
-      obj_(obj), inv_(inv), id_(uuid::uuid()), source_("return INFINITY;") {}
-
-std::string specula::Primative::gen_function() const {
-  std::string source = fmt::format_len(
-      "float de_%s(const float3 point) { float3 p = "
-      "(float3)(%ff*point.x+%ff*point.y+%ff*point.z+%ff, "
-      "%ff*point.x+%ff*point.y+%ff*point.z+%ff,%ff*point.x+%ff*point.y+%ff*"
-      "point.z+%ff);\n %s }",
-      source_.size() + id_.size() + 120, id_.c_str(), inv_[0][0], inv_[0][1],
-      inv_[0][2], inv_[0][3], inv_[1][0], inv_[1][1], inv_[1][2], inv_[1][3],
-      inv_[2][0], inv_[2][1], inv_[2][2], inv_[2][3], source_.c_str());
-  std::string res;
-  for (std::size_t i = 0; i < source.size(); ++i) {
-    if (i < source.size() - 5 && source[i] == '{' && source[i + 1] == '{') {
-      std::string param;
-      i += 2;
-      while (i < source.size()) {
-        if (i < source.size() - 2 && source[i] == '}' && source[i + 1] == '}')
-          break;
-        else
-          param += source[i];
-        i++;
-      }
-      i++;
-      typename std::map<std::string, variant<float *, glm::vec2 *, glm::vec3 *,
-                                             glm::vec4 *>>::const_iterator it;
-      if ((it = params_.find(param)) != params_.end()) {
-        res += visit(
-            [](auto &&arg) -> std::string {
-              using _T = std::decay_t<decltype(arg)>;
-              if constexpr (std::is_same<_T, float *>::value)
-                return std::to_string(*arg) + 'f';
-              else if constexpr (std::is_same<_T, glm::vec2 *>::value)
-                return "(float2)(" + std::to_string(arg->x) + ',' +
-                       std::to_string(arg->y) + ')';
-              else if constexpr (std::is_same<_T, glm::vec3 *>::value)
-                return "(float3)(" + std::to_string(arg->x) + ',' +
-                       std::to_string(arg->y) + ',' + std::to_string(arg->z) +
-                       ')';
-              else if constexpr (std::is_same<_T, glm::vec4 *>::value)
-                return "(float4)(" + std::to_string(arg->x) + ',' +
-                       std::to_string(arg->y) + ',' + std::to_string(arg->z) +
-                       ',' + std::to_string(arg->w) + ')';
-              else
-                return "";
-            },
-            it->second);
-      } else {
-        lerror("Corrupt source string, %s", source.c_str());
-        lerror("\"%s\" not found in paramater map", param.c_str());
-      }
-    } else {
-      res += source[i];
-    }
-  }
-  return res;
-}
+      obj_(obj), inv_(inv), id_(uuid::uuid()) {}
 
 void specula::Primative::rotate_x(const float &angle) {
   obj_ = glm::rotate(obj_, angle, glm::vec3(1.0, 0.0, 0.0));
