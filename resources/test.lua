@@ -1,11 +1,11 @@
 math.randomseed(os.time())
 -- h2o = Sphere(2.0) + Sphere(1.0) + Sphere(1.0)
--- Torus(2.0, 1.0):rotate(
---   2.0 * math.random() * math.pi,
---   math.random(),
---   math.random(),
---   math.random()
--- ):translate(0, 0, 5) -- (radius)
+Torus(2.0, 1.0):rotate(
+  2.0 * math.random() * math.pi,
+  math.random(),
+  math.random(),
+  math.random()
+):translate(0, 0, 5) -- (radius)
 -- Box(1.0, 1.0, 1.0):rotate(
 --   2.0 * math.random() * math.pi,
 --   math.random(),
