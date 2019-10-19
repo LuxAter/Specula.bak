@@ -24,11 +24,55 @@ public:
   };
   DerivedPrimative(const std::shared_ptr<Primative> &a,
                    const std::shared_ptr<Primative> &b,
-                   const DerivedTypes &type, float r = 0.0);
+                   const DeriviedTypes &type, float r = 0.0);
 
   std::shared_ptr<Primative> a_, b_;
   float radius_;
 };
+
+inline LuaPrimative LuaUnion(const LuaPrimative &lhs, const LuaPrimative &rhs,
+                             std::vector<std::shared_ptr<Primative>> *objs) {
+  objs->push_back(std::make_shared<DerivedPrimative>(
+      lhs.base_, rhs.base_, DerivedPrimative::DeriviedTypes::UNION));
+  return LuaPrimative{objs->back()};
+}
+inline LuaPrimative
+LuaSubtraction(const LuaPrimative &lhs, const LuaPrimative &rhs,
+               std::vector<std::shared_ptr<Primative>> *objs) {
+  objs->push_back(std::make_shared<DerivedPrimative>(
+      lhs.base_, rhs.base_, DerivedPrimative::DeriviedTypes::SUBTRACTION));
+  return LuaPrimative{objs->back()};
+}
+inline LuaPrimative
+LuaIntersection(const LuaPrimative &lhs, const LuaPrimative &rhs,
+                std::vector<std::shared_ptr<Primative>> *objs) {
+  objs->push_back(std::make_shared<DerivedPrimative>(
+      lhs.base_, rhs.base_, DerivedPrimative::DeriviedTypes::INTERSECTION));
+  return LuaPrimative{objs->back()};
+}
+inline LuaPrimative
+LuaSmoothUnion(const LuaPrimative &lhs, const LuaPrimative &rhs,
+               std::vector<std::shared_ptr<Primative>> *objs) {
+  objs->push_back(std::make_shared<DerivedPrimative>(
+      lhs.base_, rhs.base_, DerivedPrimative::DeriviedTypes::SMOOTH_UNION));
+  return LuaPrimative{objs->back()};
+}
+inline LuaPrimative
+LuaSmoothSubtraction(const LuaPrimative &lhs, const LuaPrimative &rhs,
+                     std::vector<std::shared_ptr<Primative>> *objs) {
+  objs->push_back(std::make_shared<DerivedPrimative>(
+      lhs.base_, rhs.base_,
+      DerivedPrimative::DeriviedTypes::SMOOTH_SUBTRACTION));
+  return LuaPrimative{objs->back()};
+}
+inline LuaPrimative
+LuaSmoothIntersection(const LuaPrimative &lhs, const LuaPrimative &rhs,
+                      std::vector<std::shared_ptr<Primative>> *objs) {
+  objs->push_back(std::make_shared<DerivedPrimative>(
+      lhs.base_, rhs.base_,
+      DerivedPrimative::DeriviedTypes::SMOOTH_INTERSECTION));
+  return LuaPrimative{objs->back()};
+}
 
 } // namespace specula
 

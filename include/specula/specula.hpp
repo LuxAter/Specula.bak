@@ -25,14 +25,15 @@ inline void version(unsigned &major, unsigned &minor, unsigned &patch) {
 
 void render(const std::vector<std::shared_ptr<Primative>> &objs,
             const std::vector<std::shared_ptr<Material>> &mats,
-            const std::size_t &spp, const std::size_t &img_width,
-            const std::size_t &img_height, const std::string &output_path,
-            std::size_t index = 0, bool sequence = true);
+            const std::size_t &spp, const float &fov,
+            const std::size_t &img_width, const std::size_t &img_height,
+            const std::string &output_path, std::size_t index = 0,
+            bool sequence = true);
 
 std::tuple<std::size_t, std::vector<std::vector<std::array<double, 3>>>>
 render_block(const std::size_t &i, const std::array<std::size_t, 5> &block_size,
              const std::vector<std::shared_ptr<Primative>> &objs,
-             const std::size_t &spp);
+             const std::size_t &spp, const float &fov);
 
 std::tuple<float, std::shared_ptr<Primative>, float>
 ray_march(const glm::vec3 &origin, const glm::vec3 &direction,

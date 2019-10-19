@@ -75,6 +75,9 @@ set(SOURCES
   src/cli/progress_bar.cpp
   src/image/image.cpp
   src/primatives/primative.cpp
+  src/primatives/rounded.cpp
+  src/primatives/derived.cpp
+  src/primatives/onioned.cpp
   src/primatives/sphere.cpp
   src/primatives/torus.cpp
   src/primatives/box.cpp

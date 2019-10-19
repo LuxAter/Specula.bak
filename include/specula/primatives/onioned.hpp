@@ -20,9 +20,9 @@ public:
   std::shared_ptr<Primative> base_;
 };
 
-inline LuaPrimative LuaRound(const LuaPrimative &base, const float &r,
+inline LuaPrimative LuaOnion(const LuaPrimative &base, const float &t,
                              std::vector<std::shared_ptr<Primative>> *objs) {
-  objs->push_back(std::make_shared<RoundedPrimative>(base->base_, r));
+  objs->push_back(std::make_shared<OnionedPrimative>(base.base_, t));
   return LuaPrimative{objs->back()};
 }
 } // namespace specula

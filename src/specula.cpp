@@ -13,7 +13,8 @@
 
 void specula::render(const std::vector<std::shared_ptr<Primative>> &objs,
                      const std::vector<std::shared_ptr<Material>> &mats,
-                     const std::size_t &spp, const std::size_t &img_width,
+                     const std::size_t &spp, const float &fov,
+                     const std::size_t &img_width,
                      const std::size_t &img_height,
                      const std::string &output_path, std::size_t index,
                      bool sequence) {
@@ -41,7 +42,7 @@ void specula::render(const std::vector<std::shared_ptr<Primative>> &objs,
   }
 
   std::size_t block_size = static_cast<std::size_t>(std::sqrt(
-      img_width * img_height / (16 * std::thread::hardware_concurrency())));
+      img_width * img_height / (4 * std::thread::hardware_concurrency())));
   std::size_t hblocks = static_cast<std::size_t>(
       std::ceil(img_width / static_cast<double>(block_size)));
   std::size_t vblocks = static_cast<std::size_t>(
@@ -65,7 +66,7 @@ void specula::render(const std::vector<std::shared_ptr<Primative>> &objs,
       pool_results;
   for (std::size_t i = 0; i < blocks; ++i) {
     pool_results.push_back(
-        pool.enqueue(render_block, i, block_size_data, visible_objs, spp));
+        pool.enqueue(render_block, i, block_size_data, visible_objs, spp, fov));
   }
   while (pool_results.size() != 0) {
     for (std::size_t i = 0; i < pool_results.size(); ++i) {
@@ -98,8 +99,8 @@ void specula::render(const std::vector<std::shared_ptr<Primative>> &objs,
 std::tuple<std::size_t, std::vector<std::vector<std::array<double, 3>>>>
 specula::render_block(const std::size_t &i,
                       const std::array<std::size_t, 5> &block_size,
-                      std::vector<std::shared_ptr<Primative>> &objs,
-                      const std::size_t &spp) {
+                      const std::vector<std::shared_ptr<Primative>> &objs,
+                      const std::size_t &spp, const float &fov) {
   std::vector<std::vector<std::array<double, 3>>> block(
       std::min(((i % block_size[0]) + 1) * block_size[2], block_size[3]) -
           (i % block_size[0]) * block_size[2],
@@ -107,18 +108,26 @@ specula::render_block(const std::size_t &i,
           std::min(((i / block_size[0]) + 1) * block_size[2], block_size[4]) -
               (i / block_size[0]) * block_size[2],
           std::array<double, 3>{0.0, 0.0, 0.0}));
+  float film_z = (block_size[3] / 2.0) / std::tan(fov / 2.0);
+  std::size_t x_offset = (i % block_size[0]) * block_size[2];
+  std::size_t y_offset = (i / block_size[0]) * block_size[2];
   std::array<double, 3> c = {{rand() / (double)RAND_MAX,
                               rand() / (double)RAND_MAX,
                               rand() / (double)RAND_MAX}};
   for (std::size_t x = 0; x < block.size(); ++x) {
     for (std::size_t y = 0; y < block[x].size(); ++y) {
-      block[x][y] = c;
+      glm::vec3 dir(x + x_offset - (block_size[3] / 2.0),
+                    y + y_offset - (block_size[4] / 2.0), film_z);
+      auto [t, obj, near_t] = ray_march(glm::vec3(0.0, 0.0, 0.0),
+                                        glm::normalize(dir), objs, 1e-5f, 1e5f);
+      if (obj != nullptr)
+        block[x][y] = c;
     }
   }
   return std::make_tuple(i, block);
 }
 
-std::tuple<float, std::shared_ptr<Primative>, float>
+std::tuple<float, std::shared_ptr<specula::Primative>, float>
 specula::ray_march(const glm::vec3 &origin, const glm::vec3 &direction,
                    const std::vector<std::shared_ptr<Primative>> &objs,
                    const float &epslion, const float &t_max) {

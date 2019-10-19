@@ -10,8 +10,8 @@
 #include "specula/log.hpp"
 
 specula::OnionedPrimative::OnionedPrimative(
-    const std::shared_ptr<Primative> &base, const float &r)
+    const std::shared_ptr<Primative> &base, const float &t)
     : Primative([this](const glm::vec3 &p) {
-        return glm::abs(this->base_->distance_(p)) - this->radius_;
+        return glm::abs(this->base_->distance_(p)) - this->thickness_;
       }),
-      radius_(r), base_(base) {}
+      thickness_(t), base_(base) {}

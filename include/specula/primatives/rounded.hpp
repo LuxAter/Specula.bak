@@ -22,7 +22,7 @@ public:
 
 inline LuaPrimative LuaRound(const LuaPrimative &base, const float &r,
                              std::vector<std::shared_ptr<Primative>> *objs) {
-  objs->push_back(std::make_shared<RoundedPrimative>(base->base_, r));
+  objs->push_back(std::make_shared<RoundedPrimative>(base.base_, r));
   return LuaPrimative{objs->back()};
 }
 } // namespace specula
