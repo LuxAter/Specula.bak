@@ -35,10 +35,15 @@ render_block(const std::size_t &i, const std::array<std::size_t, 5> &block_size,
              const std::vector<std::shared_ptr<Primative>> &objs,
              const std::size_t &spp, const float &fov);
 
-std::tuple<float, std::shared_ptr<Primative>, float>
+std::tuple<glm::vec3, float>
 ray_march(const glm::vec3 &origin, const glm::vec3 &direction,
           const std::vector<std::shared_ptr<Primative>> &objs,
-          const float &epslion, const float &t_max);
+          const float &epslion, const float &t_max, std::size_t depth = 0);
+
+std::tuple<float, std::shared_ptr<Primative>, float>
+ray_intersect(const glm::vec3 &origin, const glm::vec3 &direction,
+              const std::vector<std::shared_ptr<Primative>> &objs,
+              const float &epslion, const float &t_max);
 
 } // namespace specula
 

@@ -58,7 +58,7 @@ int main(int argc, char *argv[]) {
   sscanf(aspect_ratio.c_str(), "%lu:%lu", &ax, &ay);
   res_height = res_width * ay / ax;
 
-  double fov = M_PI / 2.0;
+  float fov = M_PI / 2.0;
 
   std::vector<std::shared_ptr<specula::Primative>> objs;
   std::vector<std::shared_ptr<specula::Primative>> *objs_ptr = &objs;

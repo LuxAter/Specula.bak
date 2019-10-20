@@ -29,6 +29,17 @@ public:
     return this->distance_(glm::vec3(this->inv_ * glm::vec4(p, 1.0f)));
   }
 
+  inline glm::vec3 normal(const glm::vec3 &p, const float &epsilon) const {
+    glm::vec3 obj_p = this->inv_ * glm::vec4(p, 1.0f);
+    return glm::vec3(
+        this->distance_(glm::vec3(obj_p.x + epsilon, obj_p.y, obj_p.z)) -
+            this->distance_(glm::vec3(obj_p.x - epsilon, obj_p.y, obj_p.z)),
+        this->distance_(glm::vec3(obj_p.x, obj_p.y + epsilon, obj_p.z)) -
+            this->distance_(glm::vec3(obj_p.x, obj_p.y - epsilon, obj_p.z)),
+        this->distance_(glm::vec3(obj_p.x, obj_p.y, obj_p.z + epsilon)) -
+            this->distance_(glm::vec3(obj_p.x, obj_p.y, obj_p.z - epsilon)));
+  }
+
   void rotate_x(const float &x);
   void rotate_y(const float &y);
   void rotate_z(const float &z);

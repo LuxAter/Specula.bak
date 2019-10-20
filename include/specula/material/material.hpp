@@ -11,11 +11,11 @@ public:
   Material() {}
   virtual ~Material() {}
 
-  std::array<double, 3> base_color;
+  glm::vec3 base_color;
 
   float subsurface;
   glm::vec3 subsurface_radius;
-  std::array<double, 3> subsurface_color;
+  glm::vec3 subsurface_color;
 
   float metallic;
   float specular;
