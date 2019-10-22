@@ -123,7 +123,7 @@ specula::render_block(const std::size_t &i,
   //                             rand() / (double)RAND_MAX}};
   for (std::size_t x = 0; x < block.size(); ++x) {
     for (std::size_t y = 0; y < block[x].size(); ++y) {
-      for (std::size_t s = 0; s < spp; ++s) {
+      for (std::size_t s = 0; s < spp && objs.size() != 0; ++s) {
         glm::vec3 dir(
             x + x_offset - (block_size[3] / 2.0 + rand_dist_(rand_gen_)),
             y + y_offset - (block_size[4] / 2.0) + rand_dist_(rand_gen_),

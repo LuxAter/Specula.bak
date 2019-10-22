@@ -23,6 +23,22 @@ inline void version(unsigned &major, unsigned &minor, unsigned &patch) {
   patch = SPECULA_VERSION_PATCH;
 }
 
+/**
+ * @brief Core rendering function
+ *
+ * This function takes the parameters that are defined by the user, and
+ * produces and saves the output image.
+ *
+ * @param objs Vector of object pointers.
+ * @param mats Vector of material pointers.
+ * @param spp Samples per pixel to use. More produces a better image.
+ * @param fov Field of View for the camera.
+ * @param img_width Width of the ouput image in pixels.
+ * @param img_height Height of the output image in pixels.
+ * @param output_path Output path/directory.
+ * @param index Image number in a sequence or 0.
+ * @param sequence Boolean if the image is part of a sequence.
+ */
 void render(const std::vector<std::shared_ptr<Primative>> &objs,
             const std::vector<std::shared_ptr<Material>> &mats,
             const std::size_t &spp, const float &fov,
