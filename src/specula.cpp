@@ -10,6 +10,7 @@
 #include "specula/cli/progress_bar.hpp"
 #include "specula/fs.hpp"
 #include "specula/image/image.hpp"
+#include "specula/sample.hpp"
 #include "specula/thread.hpp"
 
 static std::mt19937 rand_gen_;
@@ -47,8 +48,9 @@ void specula::render(const std::vector<std::shared_ptr<Primative>> &objs,
     }
   }
 
+  // std::size_t block_size = 32;
   std::size_t block_size = static_cast<std::size_t>(std::sqrt(
-      img_width * img_height / (4 * std::thread::hardware_concurrency())));
+      img_width * img_height / (8 * std::thread::hardware_concurrency())));
   std::size_t hblocks = static_cast<std::size_t>(
       std::ceil(img_width / static_cast<double>(block_size)));
   std::size_t vblocks = static_cast<std::size_t>(
@@ -118,9 +120,6 @@ specula::render_block(const std::size_t &i,
       (block_size[3] / 2.0f) / static_cast<float>(std::tan(fov / 2.0));
   std::size_t x_offset = (i % block_size[0]) * block_size[2];
   std::size_t y_offset = (i / block_size[0]) * block_size[2];
-  // std::array<double, 3> c = {{rand() / (double)RAND_MAX,
-  //                             rand() / (double)RAND_MAX,
-  //                             rand() / (double)RAND_MAX}};
   for (std::size_t x = 0; x < block.size(); ++x) {
     for (std::size_t y = 0; y < block[x].size(); ++y) {
       for (std::size_t s = 0; s < spp && objs.size() != 0; ++s) {
@@ -128,8 +127,9 @@ specula::render_block(const std::size_t &i,
             x + x_offset - (block_size[3] / 2.0 + rand_dist_(rand_gen_)),
             y + y_offset - (block_size[4] / 2.0) + rand_dist_(rand_gen_),
             film_z);
-        auto [c, near_t] = ray_march(glm::vec3(0.0, 0.0, 0.0),
-                                     glm::normalize(dir), objs, 1e-5f, 1e5f);
+        auto [c, near_t] =
+            ray_march(ray(glm::vec3(0.0, 0.0, 0.0), glm::normalize(dir)), objs,
+                      1e-5f, 1e5f);
         block[x][y][0] += c.x / static_cast<double>(spp);
         block[x][y][1] += c.y / static_cast<double>(spp);
         block[x][y][2] += c.z / static_cast<double>(spp);
@@ -139,11 +139,9 @@ specula::render_block(const std::size_t &i,
   return std::make_tuple(i, block);
 }
 
-std::tuple<glm::vec3, float>
-specula::ray_march(const glm::vec3 &origin, const glm::vec3 &direction,
-                   const std::vector<std::shared_ptr<Primative>> &objs,
-                   const float &epslion, const float &t_max,
-                   std::size_t depth) {
+std::tuple<glm::vec3, float> specula::ray_march(
+    const ray &r, const std::vector<std::shared_ptr<Primative>> &objs,
+    const float &epslion, const float &t_max, std::size_t depth) {
 
   float rr_factor = 1.0f;
   if (depth >= 5) {
@@ -153,29 +151,41 @@ specula::ray_march(const glm::vec3 &origin, const glm::vec3 &direction,
     }
     rr_factor = 1.0f / (1.0f - rr_stop_prob);
   }
-  auto [t, obj, near_t] =
-      ray_intersect(origin, direction, objs, epslion, t_max);
+  auto [t, obj, near_t] = ray_intersect(r, objs, epslion, t_max);
   if (obj == nullptr)
     return std::make_tuple(glm::vec3(0.0, 0.0, 0.0), near_t);
-  glm::vec3 hp = origin + direction * t;
+  glm::vec3 hp = r(t);
   glm::vec3 normal = obj->normal(hp, epslion);
 
   glm::vec3 clr(0.0, 0.0, 0.0);
   clr += obj->material_->base_color * obj->material_->emission * rr_factor;
 
+  std::vector<glm::vec3> samples = sample::UniformHemisphere(32, normal);
+  samples.push_back(glm::reflect(-r.d, normal));
+  if (obj->material_->transmission != 0.0f) {
+    samples.push_back(glm::refract(
+        -r.d, normal,
+        (r.medium != nullptr ? r.medium->ior : 1.0f) / obj->material_->ior));
+    std::vector<glm::vec3> refraction_samples = sample::UniformHemisphere(32, -normal);
+    samples.insert(samples.end(), refraction_samples.begin(), refraction_samples.end());
+  }
+  for(auto& sample : samples){
+    auto [c, near_t] = ray_march(ray(hp, sample, obj->material_), objs, epslion, t_max, depth + 1);
+    clr += obj->material_->bsdf(sample, -r.d, normal) * c * glm::dot(normal, sample);
+  }
   // Recursive ray march??? Doing both BRDF and BTDF?
 
   return std::make_tuple(clr, near_t);
 }
 
 std::tuple<float, std::shared_ptr<specula::Primative>, float>
-specula::ray_intersect(const glm::vec3 &origin, const glm::vec3 &direction,
+specula::ray_intersect(const ray &r,
                        const std::vector<std::shared_ptr<Primative>> &objs,
                        const float &epslion, const float &t_max) {
   float t = 0.0f, near_t = 0.0f;
   std::shared_ptr<Primative> hit_obj = nullptr;
   while (t < t_max) {
-    glm::vec3 p = origin + direction * t;
+    glm::vec3 p = r(t);
     float dt = std::numeric_limits<float>::infinity();
     for (auto &obj : objs) {
       float odt = obj->distance(p);

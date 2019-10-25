@@ -69,7 +69,9 @@ int main(int argc, char *argv[]) {
   lua.open_libraries();
   auto obj = lua["obj"].get_or_create<sol::table>();
   obj.new_usertype<specula::LuaPrimative>(
-      "Object", "rotate_x", &specula::LuaPrimative::rotate_x, "rotate_y",
+      "Object", "set_material", &specula::LuaPrimative::set_material,
+      "material", &specula::LuaPrimative::set_material, "rotate_x",
+      &specula::LuaPrimative::rotate_x, "rotate_y",
       &specula::LuaPrimative::rotate_y, "rotate_z",
       &specula::LuaPrimative::rotate_z, "rotate_xy",
       &specula::LuaPrimative::rotate_xy, "rotate_xz",
@@ -91,6 +93,34 @@ int main(int argc, char *argv[]) {
                  const specula::LuaPrimative &rhs) {
         return specula::LuaUnion(lhs, rhs, objs_ptr);
       });
+  auto mat = lua["mat"].get_or_create<sol::table>();
+  mat.new_usertype<specula::LuaMaterial>("Material");
+  lua.set_function(
+      "Material", sol::overload([mats_ptr](const sol::table &table) {
+        glm::vec3 color(0.0, 0.0, 0.0);
+        auto color_table = table.get<sol::optional<sol::table>>("color");
+        if (color_table) {
+          color = glm::vec3(color_table.value()[1], color_table.value()[2],
+                            color_table.value()[3]);
+        } else if (table.size() == 3) {
+          color = glm::vec3(table[1], table[2], table[3]);
+        }
+        float metallic = table.get_or("metallic", 0.0f);
+        float specular = table.get_or("specular", 0.0f);
+        float specular_tint = table.get_or("specular_tint", 0.0f);
+        float roughness = table.get_or("roughness", 0.0f);
+        float sheen = table.get_or("sheen", 0.0f);
+        float sheen_tint = table.get_or("sheen_tint", 0.0f);
+        float ior = table.get_or("ior", 0.0f);
+        float transmission = table.get_or("transmission", 0.0f);
+        float transmission_roughness =
+            table.get_or("transmission_roughness", 0.0f);
+        float emission = table.get_or("emission", 0.0f);
+        return specula::gen_LuaMaterial(
+            color, metallic, specular, specular_tint, roughness, sheen,
+            sheen_tint, ior, transmission, transmission_roughness, emission,
+            mats_ptr);
+      }));
 
   lua.set_function("SolidAngle", [objs_ptr](const float &a, const float &b,
                                             const float &ra) mutable {
@@ -165,7 +195,7 @@ int main(int argc, char *argv[]) {
 
   lua.script_file(lua_source);
 
-  specula::render(objs, mats, 256, fov, res_width, res_height, output, 0,
+  specula::render(objs, mats, 1, fov, res_width, res_height, output, 0,
                   false);
   return 0;
 }

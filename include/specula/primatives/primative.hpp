@@ -40,6 +40,10 @@ public:
             this->distance_(glm::vec3(obj_p.x, obj_p.y, obj_p.z - epsilon)));
   }
 
+  inline void set_material(const std::shared_ptr<Material> &mat) {
+    this->material_ = mat;
+  }
+
   void rotate_x(const float &x);
   void rotate_y(const float &y);
   void rotate_z(const float &z);
@@ -88,6 +92,10 @@ private:
 
 class LuaPrimative {
 public:
+  inline LuaPrimative &set_material(const LuaMaterial &mat) {
+    base_->set_material(mat.base_);
+    return *this;
+  }
   inline LuaPrimative &rotate_x(const float &a) {
     base_->rotate_x(a);
     return *this;

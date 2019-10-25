@@ -5,12 +5,14 @@
 
 #include <glm/glm.hpp>
 
+#include "../material/material.hpp"
+
 namespace specula {
 class ray {
 public:
   ray();
   ray(const glm::vec3 &origin, const glm::vec3 &direction,
-      float t_max = std::numeric_limits<float>::infinity());
+      const std::shared_ptr<Material> &mat = nullptr);
 
   inline glm::vec3 operator()(const float &t) const { return o + d * t; }
 
@@ -21,11 +23,11 @@ public:
   }
   inline ray operator*(const glm::mat4 &tran) const {
     return ray(glm::vec3(tran * glm::vec4(o, 1.0)),
-               glm::vec3(tran * glm::vec4(d, 0.0)), t_max);
+               glm::vec3(tran * glm::vec4(d, 0.0)));
   }
 
   glm::vec3 o, d;
-  mutable float t_max;
+  std::shared_ptr<Material> medium;
 };
 } // namespace specula
 
