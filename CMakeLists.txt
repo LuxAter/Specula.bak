@@ -59,7 +59,7 @@ endif()
 # Files
 # ##############################################################################
 
-set(SOURCES src/main.cpp)
+set(SOURCES src/main.cpp src/cli/argparse.cpp)
 
 configure_file("${PROJECT_SOURCE_DIR}/include/version.hpp.in"
                "${PROJECT_BINARY_DIR}/version.hpp")
@@ -130,25 +130,24 @@ target_link_libraries(${EXECUTABLE_NAME} ${CMAKE_THREAD_LIBS_INIT})
 
 load_external(libpng)
 if(LIBPNG_FOUND)
-  set(PNG_TESTS OFF CACHE BOOL "Build libpng tests")
-  set(PNG_SHARED OFF CACHE BOOL "Build shared lib")
-  add_subdirectory(${PROJECT_SOURCE_DIR}/external/libpng)
-  target_include_directories(${EXECUTABLE_NAME}
-                             PUBLIC ${PROJECT_SOURCE_DIR}/external/libpng)
-  target_link_libraries(${EXECUTABLE_NAME} png_static)
+  # set(PNG_TESTS OFF CACHE BOOL "Build libpng tests") set(PNG_SHARED OFF CACHE
+  # BOOL "Build shared lib")
+  # add_subdirectory(${PROJECT_SOURCE_DIR}/external/libpng)
+  # target_include_directories(${EXECUTABLE_NAME} PUBLIC
+  # ${PROJECT_SOURCE_DIR}/external/libpng)
+  # target_link_libraries(${EXECUTABLE_NAME} png_static)
 endif()
 
 load_external(libjpeg-turbo)
 if(LIBJPEG-TURBO_FOUND)
-  set(ENABLE_SHARED OFF CACHE BOOL "Build shared libraries")
-  add_subdirectory(${PROJECT_SOURCE_DIR}/external/libjpeg-turbo)
-  target_link_libraries(${EXECUTABLE_NAME} turbojpeg-static)
+  # set(ENABLE_SHARED OFF CACHE BOOL "Build shared libraries")
+  # add_subdirectory(${PROJECT_SOURCE_DIR}/external/libjpeg-turbo)
+  # target_link_libraries(${EXECUTABLE_NAME} turbojpeg-static)
 endif()
 
 load_external(luajit)
 if(LUAJIT_FOUND)
   add_subdirectory(${PROJECT_SOURCE_DIR}/external/luajit)
-  add_library(luajit_static STATIC IMPORTED)
   target_link_libraries(${EXECUTABLE_NAME} liblua)
 endif()
 
