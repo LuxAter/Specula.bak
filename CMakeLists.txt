@@ -3,14 +3,10 @@
 # ##############################################################################
 
 cmake_minimum_required(VERSION 3.8.2)
-project(Specula VERSION 0.1.2 LANGUAGES CXX)
+project(Specula VERSION 0.2.0 LANGUAGES CXX)
 
-set(EXECUTABLE_NAME main)
-set(LIBRARY_NAME specula)
-set(TEST_NAME unit_tests)
-set(TEST_RUNNER_PARAMS "")
-option(STATIC_ANALYSIS "Enables static analysis for code" OFF)
-option(COVERAGE "Enables unit test coverage" ON)
+set(EXECUTABLE_NAME specula)
+option(STATIC_ANALYSIS "Enables static analysis for code" ON)
 option(DOCUMENTATION "Enables documentation" ON)
 
 # ##############################################################################
@@ -45,64 +41,24 @@ endif()
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 
 find_package(Git QUIET)
-include(ExternalProject)
 
 # ##############################################################################
 # Static Analysis
 # ##############################################################################
 
 if(STATIC_ANALYSIS OR CMAKE_BUILD_TYPE STREQUAL "Release")
-  find_program(CLANG_TIDY clang-tidy)
-  if(CLANG_TIDY)
-    set(CMAKE_CXX_CLANG_TIDY "${CLANG_TIDY}")
-  endif()
-  find_program(CPPCHECK cppcheck)
-  if(CPPCHECK)
-    set(CMAKE_CXX_CPPCHECK "${CPPCHECK}")
-  endif()
-  find_program(IWYU_TOOL iwyu-tool)
-  if(IWYU_TOOL)
-    set(CMAKE_CXX_INCLUDE_WHAT_YOU_USE "${IWYU_TOOL}")
-  endif()
+  # find_program(CMAKE_CXX_CLANG_TIDY NAMES clang-tidy)
+  # find_program(CMAKE_CXX_CPPCHECK NAMES cppcheck)
+  # find_program(CMAKE_CXX_CPPLINT NAMES cpplint)
+  # find_program(CMAKE_CXX_INCLUDE_WHAT_YOU_USE NAMES iwyu-tidy)
+  # set(CMAKE_LINK_WHAT_YOU_USE TRUE)
 endif()
 
 # ##############################################################################
 # Files
 # ##############################################################################
 
-set(SOURCES
-    src/specula.cpp
-    src/cli/progress_bar.cpp
-    src/image/image.cpp
-    src/material/bsdf.cpp
-    src/primatives/primative.cpp
-    src/primatives/rounded.cpp
-    src/primatives/derived.cpp
-    src/primatives/onioned.cpp
-    src/primatives/sphere.cpp
-    src/primatives/torus.cpp
-    src/primatives/box.cpp
-    src/primatives/box_round.cpp
-    src/primatives/torus_capped.cpp
-    src/primatives/link.cpp
-    src/primatives/cylinder_infinite.cpp
-    src/primatives/cone_infinite.cpp
-    src/primatives/plane.cpp
-    src/primatives/prism_hexagonal.cpp
-    src/primatives/prism_triangular.cpp
-    src/primatives/capsule.cpp
-    src/primatives/capsule_vertical.cpp
-    src/primatives/cylinder.cpp
-    src/primatives/cylinder_rounded.cpp
-    src/primatives/cone.cpp
-    src/primatives/cone_round.cpp
-    src/primatives/angle_solid.cpp
-    src/primatives/ellipsoid.cpp
-    src/primatives/octahedron.cpp
-    src/primatives/quad.cpp
-    src/primatives/triangle.cpp
-    src/geometry/ray.cpp)
-set(TEST_SOURCES tests/main.cpp tests/log.cpp)
+set(SOURCES src/main.cpp)
 
 configure_file("${PROJECT_SOURCE_DIR}/include/version.hpp.in"
                "${PROJECT_BINARY_DIR}/version.hpp")
@@ -128,23 +84,9 @@ endforeach()
 # Targets
 # ##############################################################################
 
-add_library(${LIBRARY_NAME} ${SOURCES})
-target_include_directories(${LIBRARY_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/include)
-if(CMAKE_BUILD_TYPE STREQUAL "Release")
-  target_compile_options(${LIBRARY_NAME} PUBLIC -Wall -Wfloat-conversion -O3)
-else()
-  target_compile_options(${LIBRARY_NAME} PUBLIC -Wall -Wfloat-conversion -O0)
-endif()
-set_target_properties(${LIBRARY_NAME}
-                      PROPERTIES CXX_STANDARD
-                                 17
-                                 CXX_STANDARD_REQUIRED
-                                 YES
-                                 CXX_EXTENSIONS
-                                 NO)
-
-add_executable(${EXECUTABLE_NAME} src/main.cpp)
-target_link_libraries(${EXECUTABLE_NAME} PRIVATE ${LIBRARY_NAME})
+add_executable(${EXECUTABLE_NAME} ${SOURCES})
+target_include_directories(${EXECUTABLE_NAME}
+                           PUBLIC ${PROJECT_SOURCE_DIR}/include)
 if(CMAKE_BUILD_TYPE STREQUAL "Release")
   target_compile_options(${EXECUTABLE_NAME} PUBLIC -Wall -Wfloat-conversion -O3)
 else()
@@ -163,21 +105,7 @@ set_target_properties(${EXECUTABLE_NAME}
 # ##############################################################################
 
 find_package(Threads REQUIRED)
-target_link_libraries(${LIBRARY_NAME} ${CMAKE_THREAD_LIBS_INIT})
-if(NOT EXISTS ${PROJECT_SOURCE_DIR}/external/doctest/README.md AND GIT_FOUND)
-  execute_process(COMMAND git
-                          submodule
-                          update
-                          --init
-                          --
-                          external/doctest
-                  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
-  set(DOCTEST_FOUND TRUE)
-elseif(NOT GIT_FOUND)
-  message("Git is required for getting dependencies" FATAL_ERROR)
-else()
-  set(DOCTEST_FOUND TRUE)
-endif()
+target_link_libraries(${EXECUTABLE_NAME} ${CMAKE_THREAD_LIBS_INIT})
 
 if(NOT EXISTS ${PROJECT_SOURCE_DIR}/external/libpng/README.md AND GIT_FOUND)
   execute_process(COMMAND git
@@ -189,7 +117,7 @@ if(NOT EXISTS ${PROJECT_SOURCE_DIR}/external/libpng/README.md AND GIT_FOUND)
                   WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
   set(LIBPNG_FOUND TRUE)
 elseif(NOT GIT_FOUND)
-  message("Git is required for getting dependencies" FATAL_ERROR)
+  message(FATAL_ERROR "Git is required for getting dependencies")
 else()
   set(LIBPNG_FOUND TRUE)
 endif()
@@ -198,9 +126,9 @@ if(LIBPNG_FOUND)
   set(PNG_TESTS OFF CACHE BOOL "Build libpng tests")
   set(PNG_SHARED OFF CACHE BOOL "Build shared lib")
   add_subdirectory(${PROJECT_SOURCE_DIR}/external/libpng)
-  target_include_directories(${LIBRARY_NAME}
+  target_include_directories(${EXECUTABLE_NAME}
                              PUBLIC ${PROJECT_SOURCE_DIR}/external/libpng)
-  target_link_libraries(${LIBRARY_NAME} png_static)
+  target_link_libraries(${EXECUTABLE_NAME} png_static)
 endif()
 
 if(NOT EXISTS ${PROJECT_SOURCE_DIR}/external/luajit/README AND GIT_FOUND)
@@ -213,7 +141,7 @@ if(NOT EXISTS ${PROJECT_SOURCE_DIR}/external/luajit/README AND GIT_FOUND)
                   WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
   set(LUAJIT_FOUND TRUE)
 elseif(NOT GIT_FOUND)
-  message("Git is required for getting dependencies" FATAL_ERROR)
+  message(FATAL_ERROR "Git is required for getting dependencies")
 else()
   set(LUAJIT_FOUND TRUE)
 endif()
@@ -238,9 +166,9 @@ if(LUAJIT_FOUND)
              ${CMAKE_CURRENT_BINARY_DIR}/external/luajit/lib/libluajit-5.1.a)
   add_dependencies(luajit_static luajit)
   target_include_directories(
-    ${LIBRARY_NAME}
+    ${EXECUTABLE_NAME}
     PUBLIC ${PROJECT_BINARY_DIR}/external/luajit/include/luajit-2.0)
-  target_link_libraries(${LIBRARY_NAME}
+  target_link_libraries(${EXECUTABLE_NAME}
                         luajit_static
                         m
                         dl)
@@ -256,13 +184,13 @@ if(NOT EXISTS ${PROJECT_SOURCE_DIR}/external/sol2/README.md AND GIT_FOUND)
                   WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
   set(SOL_FOUND TRUE)
 elseif(NOT GIT_FOUND)
-  message("Git is required for getting dependencies" FATAL_ERROR)
+  message(FATAL_ERROR "Git is required for getting dependencies")
 else()
   set(SOL_FOUND TRUE)
 endif()
 
 if(SOL_FOUND)
-  target_include_directories(${LIBRARY_NAME}
+  target_include_directories(${EXECUTABLE_NAME}
                              PUBLIC ${CMAKE_SOURCE_DIR}/external/sol2/include)
 endif()
 
@@ -276,14 +204,14 @@ if(NOT EXISTS ${PROJECT_SOURCE_DIR}/external/filesystem/README.md AND GIT_FOUND)
                   WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
   set(FILESYSTEM_FOUND TRUE)
 elseif(NOT GIT_FOUND)
-  message("Git is required for getting dependencies" FATAL_ERROR)
+  message(FATAL_ERROR "Git is required for getting dependencies")
 else()
   set(FILESYSTEM_FOUND TRUE)
 endif()
 
 if(FILESYSTEM_FOUND)
   target_include_directories(
-    ${LIBRARY_NAME}
+    ${EXECUTABLE_NAME}
     PUBLIC ${CMAKE_SOURCE_DIR}/external/filesystem/include)
 endif()
 
@@ -297,14 +225,14 @@ if(NOT EXISTS ${PROJECT_SOURCE_DIR}/external/variant/README.md AND GIT_FOUND)
                   WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
   set(VARIANT_FOUND TRUE)
 elseif(NOT GIT_FOUND)
-  message("Git is required for getting dependencies" FATAL_ERROR)
+  message(FATAL_ERROR "Git is required for getting dependencies")
 else()
   set(VARIANT_FOUND TRUE)
 endif()
 
 if(VARIANT_FOUND)
   target_include_directories(
-    ${LIBRARY_NAME}
+    ${EXECUTABLE_NAME}
     PUBLIC ${CMAKE_SOURCE_DIR}/external/variant/include)
 endif()
 
@@ -318,13 +246,13 @@ if(NOT EXISTS ${PROJECT_SOURCE_DIR}/external/glm/readme.md AND GIT_FOUND)
                   WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
   set(GLM_FOUND TRUE)
 elseif(NOT GIT_FOUND)
-  message("Git is required for getting dependencies" FATAL_ERROR)
+  message(FATAL_ERROR "Git is required for getting dependencies")
 else()
   set(GLM_FOUND TRUE)
 endif()
 
 if(GLM_FOUND)
-  target_include_directories(${LIBRARY_NAME}
+  target_include_directories(${EXECUTABLE_NAME}
                              PUBLIC ${CMAKE_SOURCE_DIR}/external/glm)
 endif()
 
@@ -338,7 +266,7 @@ if(NOT EXISTS ${PROJECT_SOURCE_DIR}/external/CLI11/README.md AND GIT_FOUND)
                   WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
   set(CLI11_FOUND TRUE)
 elseif(NOT GIT_FOUND)
-  message("Git is required for getting dependencies" FATAL_ERROR)
+  message(FATAL_ERROR "Git is required for getting dependencies")
 else()
   set(CLI11_FOUND TRUE)
 endif()
@@ -348,12 +276,40 @@ if(CLI11_FOUND)
                              PUBLIC ${CMAKE_SOURCE_DIR}/external/CLI11/include)
 endif()
 
+if(NOT EXISTS ${PROJECT_SOURCE_DIR}/external/fmt/README.rst AND GIT_FOUND)
+  execute_process(COMMAND git
+                          submodule
+                          update
+                          --init
+                          --
+                          external/fmt
+                  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+  set(FMT_FOUND TRUE)
+elseif(NOT GIT_FOUND)
+  message(FATAL_ERROR "Git is required for getting dependencies")
+else()
+  set(FMT_FOUND TRUE)
+endif()
+
+if(FMT_FOUND)
+  add_subdirectory(external/fmt)
+  target_link_libraries(${EXECUTABLE_NAME} fmt::fmt)
+endif()
+
+find_package(OpenCL)
+if(OpenCL_FOUND)
+  target_link_libraries(${EXECUTABLE_NAME} OpenCL::OpenCL)
+  target_compile_definitions(${EXECUTABLE_NAME} PUBLIC -D__HAS_OPENCL__)
+else()
+  message(WARNING "OpenCL was not found")
+endif()
+
 # ##############################################################################
 # Definitions
 # ##############################################################################
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-  target_compile_definitions(${LIBRARY_NAME} PUBLIC -DDebug)
+  target_compile_definitions(${EXECUTABLE_NAME} PUBLIC -DDebug)
 endif()
 
 # ##############################################################################
@@ -378,127 +334,18 @@ endif()
 # Testing
 # ##############################################################################
 
-if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-  add_library(doctest INTERFACE)
-  target_include_directories(
-    doctest
-    INTERFACE ${PROJECT_SOURCE_DIR}/external/doctest/doctest
-              ${PROJECT_SOURCE_DIR}/include)
-  add_executable(${TEST_NAME} ${TEST_SOURCES})
-  target_link_libraries(${TEST_NAME} PRIVATE doctest)
-  target_link_libraries(${TEST_NAME} PRIVATE ${LIBRARY_NAME})
-  set_target_properties(${TEST_MAIN}
-                        PROPERTIES CXX_STANDARD
-                                   17
-                                   CXX_STANDARD_REQUIRED
-                                   YES
-                                   CXX_EXTENSIONS
-                                   NO
-                                   RUNTIME_OUTPUT_DIRECTORY
-                                   ${PROJECT_BINARY_DIR})
-  add_test(NAME ${LIBRARY_NAME}.${TEST_NAME}
-           COMMAND ${TEST_NAME} ${TEST_RUNNER_PARAMS})
-  set(CMAKE_CXX_FLAGS_DEBUG
-      "-g -O0 --std=c++17"
-      CACHE STRING "Flags used by the C++ compiler during coverage builds."
-            FORCE)
-  set(CMAKE_EXE_LINKER_FLAGS_DEBUG
-      "--std=c++17"
-      CACHE STRING "Flags used for linking binaries during coverage builds."
-            FORCE)
-  if(FILESYSTEM_FOUND)
-    target_include_directories(
-      ${TEST_NAME}
-      PUBLIC ${CMAKE_SOURCE_DIR}/external/filesystem/include)
-  endif()
-  if(VARIANT_FOUND)
-    target_include_directories(
-      ${TEST_NAME}
-      PUBLIC ${CMAKE_SOURCE_DIR}/external/variant/include)
-  endif()
-  if(GLM_FOUND)
-    target_include_directories(${TEST_NAME}
-                               PUBLIC ${CMAKE_SOURCE_DIR}/external/glm)
-  endif()
-endif()
-
 # ##############################################################################
 # Coverage
 # ##############################################################################
-
-if(COVERAGE AND CMAKE_BUILD_TYPE STREQUAL "Debug")
-  if("${CMAKE_C_COMPILER_ID}" MATCHES "(Apple)?[Cc]lang"
-     OR "${CMAKE_CXX_COMPILER_ID}" MATCHES "(Apple)?[Cc]lang")
-    find_program(GCOV_TOOL "llvm-cov")
-  elseif(CMAKE_COMPILER_IS_GNUCXX)
-    find_program(GCOV_TOOL "gcov")
-  endif()
-  find_program(GCOVR_PATH gcovr)
-
-  if(NOT GCOV_TOOL)
-    message(WARNING "gcov/llvm-cov not found!")
-  endif()
-  if(NOT GCOVR_PATH)
-    message(WARNING "gcovr not found!")
-  endif()
-
-  if(NOT GCOV_TOOL OR NOT GCOVR_PATH)
-    add_custom_target(coverage ${TEST_NAME} ${ARGV3}
-                      WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
-  else()
-    set(CMAKE_CXX_FLAGS_DEBUG
-        "-g -O0 --std=c++17 --coverage"
-        CACHE STRING "Flags used by the C++ compiler during coverage builds."
-              FORCE)
-    set(CMAKE_C_FLAGS_DEBUG
-        "-g -O0 -fprofile-arcs -ftest-coverage"
-        CACHE STRING "Flags used by the C compiler during coverage builds."
-              FORCE)
-    set(CMAKE_EXE_LINKER_FLAGS_DEBUG
-        "--std=c++17 --coverage"
-        CACHE STRING "Flags used for linking binaries during coverage builds."
-              FORCE)
-    set(
-      CMAKE_SHARED_LINKER_FLAGS_DEBUG
-      ""
-      CACHE STRING
-            "Flags used by the shared libraries linker during coverage builds."
-            FORCE)
-    mark_as_advanced(CMAKE_CXX_FLAGS_DEBUG
-                     CMAKE_C_FLAGS_DEBUG
-                     CMAKE_EXE_LINKER_FLAGS_DEBUG
-                     CMAKE_SHARED_LINKER_FLAGS_DEBUG)
-    add_custom_target(coverage ${TEST_NAME} ${ARGV3}
-                      COMMAND mkdir -p coverage
-                      COMMAND cd
-                              coverage
-                              &&
-                              ${GCOVR_PATH}
-                              --gcov-executable
-                              ${GCOV_TOOL}
-                              -r
-                              ${PROJECT_SOURCE_DIR}
-                              -e
-                              '.*/tests/.*'
-                              -e
-                              '.*/external/.*'
-                              -s
-                              --html
-                              --html-details
-                              -o
-                              index.html
-                      WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
-  endif()
-endif()
 
 # ##############################################################################
 # Packaging
 # ##############################################################################
 
 if(CMAKE_BUILD_TYPE STREQUAL "Release")
-  install(TARGETS ${LIBRARY_NAME} DESTINATION LIBRARY_INSTALL_DR)
-  install(DIRECTORY resources DESTINATION LIBRARY_INSTALL_DIR)
-  set(CPACK_PACKAGE_NAME "${LIBRARY_NAME}")
+  install(TARGETS ${EXECUTABLE_NAME} DESTINATION BIN_INSTALL_DIR)
+  install(DIRECTORY resources DESTINATION BIN_INSTALL_DIR)
+  set(CPACK_PACKAGE_NAME "${EXECUTABLE_NAME}")
   set(
     CPACK_PACKAGE_VERSION
 

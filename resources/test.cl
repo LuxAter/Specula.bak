@@ -1,1 +1,0 @@
-void kernel distance_estimator(global const float3 *origins, global const float3 *dirs, const float size, global int *obj_index, global float*times, global float3* normals){int ID = get_global_id(0); int step = get_local_size(0); for(int i = ID * step; i < (ID+1)*step; ++i){obj_index[i]=0;times[i]=0.0f,normals[i]=(float3)(0.0f,0.0f,0.0f);}}
