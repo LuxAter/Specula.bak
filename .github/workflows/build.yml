@@ -3,7 +3,10 @@ on: [push]
 
 jobs: 
   build:
-    runs-on: macOs-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ ubuntu-latest, macOs-latest, windows-latest ]
     steps:
       - uses: actions/checkout@v1
       - name: configue
