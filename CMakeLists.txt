@@ -39,6 +39,7 @@ if(EXISTS "${CMAKE_CURRENT_BINARY_DIR}/compile_commands.json")
 endif()
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
+set(CMAKE_INSTALL_DOCDIR "${CMAKE_BINARY_DIR}/docs")
 
 find_package(Git QUIET)
 
@@ -104,24 +105,30 @@ set_target_properties(${EXECUTABLE_NAME}
 # Dependencies
 # ##############################################################################
 
+macro(LOAD_EXTERNAL REPO_NAME)
+  string(TOUPPER ${REPO_NAME} MODULE_NAME)
+  if(NOT EXISTS ${PROJECT_SOURCE_DIR}/external/${REPO_NAME}/README*
+     AND GIT_FOUND)
+    execute_process(COMMAND git
+                            submodule
+                            update
+                            --init
+                            --
+                            external/${REPO_NAME}
+                    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+    set(${MODULE_NAME}_FOUND TRUE)
+  elseif(NOT GIT_FOUND)
+    message(FATAL_ERROR "Git is required for cloning
+  ${MODULE_NAME}")
+  else()
+    set(${MODULE_NAME}_FOUND TRUE)
+  endif()
+endmacro()
+
 find_package(Threads REQUIRED)
 target_link_libraries(${EXECUTABLE_NAME} ${CMAKE_THREAD_LIBS_INIT})
 
-if(NOT EXISTS ${PROJECT_SOURCE_DIR}/external/libpng/README.md AND GIT_FOUND)
-  execute_process(COMMAND git
-                          submodule
-                          update
-                          --init
-                          --
-                          external/libpng
-                  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
-  set(LIBPNG_FOUND TRUE)
-elseif(NOT GIT_FOUND)
-  message(FATAL_ERROR "Git is required for getting dependencies")
-else()
-  set(LIBPNG_FOUND TRUE)
-endif()
-
+load_external(libpng)
 if(LIBPNG_FOUND)
   set(PNG_TESTS OFF CACHE BOOL "Build libpng tests")
   set(PNG_SHARED OFF CACHE BOOL "Build shared lib")
@@ -131,166 +138,51 @@ if(LIBPNG_FOUND)
   target_link_libraries(${EXECUTABLE_NAME} png_static)
 endif()
 
-if(NOT EXISTS ${PROJECT_SOURCE_DIR}/external/luajit/README AND GIT_FOUND)
-  execute_process(COMMAND git
-                          submodule
-                          update
-                          --init
-                          --
-                          external/luajit
-                  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
-  set(LUAJIT_FOUND TRUE)
-elseif(NOT GIT_FOUND)
-  message(FATAL_ERROR "Git is required for getting dependencies")
-else()
-  set(LUAJIT_FOUND TRUE)
+load_external(libjpeg-turbo)
+if(LIBJPEG-TURBO_FOUND)
+  set(ENABLE_SHARED OFF CACHE BOOL "Build shared libraries")
+  add_subdirectory(${PROJECT_SOURCE_DIR}/external/libjpeg-turbo)
+  target_link_libraries(${EXECUTABLE_NAME} turbojpeg-static)
 endif()
 
+load_external(luajit)
 if(LUAJIT_FOUND)
-  add_custom_target(luajit
-                    COMMAND ${CMAKE_COMMAND}
-                            -E
-                            copy_directory
-                            ${CMAKE_CURRENT_SOURCE_DIR}/external/luajit
-                            ${CMAKE_CURRENT_BINARY_DIR}/external/luajit
-                    COMMAND cd
-                            ${CMAKE_CURRENT_BINARY_DIR}/external/luajit
-                            &&
-                            make
-                            install
-                            PREFIX=${CMAKE_CURRENT_BINARY_DIR}/external/luajit)
+  add_subdirectory(${PROJECT_SOURCE_DIR}/external/luajit)
   add_library(luajit_static STATIC IMPORTED)
-  set_property(
-    TARGET luajit_static
-    PROPERTY IMPORTED_LOCATION
-             ${CMAKE_CURRENT_BINARY_DIR}/external/luajit/lib/libluajit-5.1.a)
-  add_dependencies(luajit_static luajit)
-  target_include_directories(
-    ${EXECUTABLE_NAME}
-    PUBLIC ${PROJECT_BINARY_DIR}/external/luajit/include/luajit-2.0)
-  target_link_libraries(${EXECUTABLE_NAME}
-                        luajit_static
-                        m
-                        dl)
+  target_link_libraries(${EXECUTABLE_NAME} liblua)
 endif()
 
-if(NOT EXISTS ${PROJECT_SOURCE_DIR}/external/sol2/README.md AND GIT_FOUND)
-  execute_process(COMMAND git
-                          submodule
-                          update
-                          --init
-                          --
-                          external/sol2
-                  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
-  set(SOL_FOUND TRUE)
-elseif(NOT GIT_FOUND)
-  message(FATAL_ERROR "Git is required for getting dependencies")
-else()
-  set(SOL_FOUND TRUE)
+load_external(sol2)
+if(SOL2_FOUND)
+  add_subdirectory(${PROJECT_SOURCE_DIR}/external/sol2)
+  target_link_libraries(${EXECUTABLE_NAME} sol2::sol2)
 endif()
 
-if(SOL_FOUND)
-  target_include_directories(${EXECUTABLE_NAME}
-                             PUBLIC ${CMAKE_SOURCE_DIR}/external/sol2/include)
-endif()
-
-if(NOT EXISTS ${PROJECT_SOURCE_DIR}/external/filesystem/README.md AND GIT_FOUND)
-  execute_process(COMMAND git
-                          submodule
-                          update
-                          --init
-                          --
-                          external/filesystem
-                  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
-  set(FILESYSTEM_FOUND TRUE)
-elseif(NOT GIT_FOUND)
-  message(FATAL_ERROR "Git is required for getting dependencies")
-else()
-  set(FILESYSTEM_FOUND TRUE)
-endif()
-
+load_external(filesystem)
 if(FILESYSTEM_FOUND)
-  target_include_directories(
-    ${EXECUTABLE_NAME}
-    PUBLIC ${CMAKE_SOURCE_DIR}/external/filesystem/include)
+  add_subdirectory(${PROJECT_SOURCE_DIR}/external/filesystem)
+  target_link_libraries(${EXECUTABLE_NAME} ghc_filesystem)
 endif()
 
-if(NOT EXISTS ${PROJECT_SOURCE_DIR}/external/variant/README.md AND GIT_FOUND)
-  execute_process(COMMAND git
-                          submodule
-                          update
-                          --init
-                          --
-                          external/variant
-                  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
-  set(VARIANT_FOUND TRUE)
-elseif(NOT GIT_FOUND)
-  message(FATAL_ERROR "Git is required for getting dependencies")
-else()
-  set(VARIANT_FOUND TRUE)
-endif()
-
+load_external(variant)
 if(VARIANT_FOUND)
-  target_include_directories(
-    ${EXECUTABLE_NAME}
-    PUBLIC ${CMAKE_SOURCE_DIR}/external/variant/include)
+  add_subdirectory(${PROJECT_SOURCE_DIR}/external/variant)
+  target_link_libraries(${EXECUTABLE_NAME} mpark_variant)
 endif()
 
-if(NOT EXISTS ${PROJECT_SOURCE_DIR}/external/glm/readme.md AND GIT_FOUND)
-  execute_process(COMMAND git
-                          submodule
-                          update
-                          --init
-                          --
-                          external/glm
-                  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
-  set(GLM_FOUND TRUE)
-elseif(NOT GIT_FOUND)
-  message(FATAL_ERROR "Git is required for getting dependencies")
-else()
-  set(GLM_FOUND TRUE)
-endif()
-
+load_external(glm)
 if(GLM_FOUND)
-  target_include_directories(${EXECUTABLE_NAME}
-                             PUBLIC ${CMAKE_SOURCE_DIR}/external/glm)
+  add_subdirectory(${PROJECT_SOURCE_DIR}/external/glm)
+  target_link_libraries(${EXECUTABLE_NAME} glm::glm)
 endif()
 
-if(NOT EXISTS ${PROJECT_SOURCE_DIR}/external/CLI11/README.md AND GIT_FOUND)
-  execute_process(COMMAND git
-                          submodule
-                          update
-                          --init
-                          --
-                          external/CLI11
-                  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
-  set(CLI11_FOUND TRUE)
-elseif(NOT GIT_FOUND)
-  message(FATAL_ERROR "Git is required for getting dependencies")
-else()
-  set(CLI11_FOUND TRUE)
-endif()
-
+load_external(CLI11)
 if(CLI11_FOUND)
-  target_include_directories(${EXECUTABLE_NAME}
-                             PUBLIC ${CMAKE_SOURCE_DIR}/external/CLI11/include)
+  add_subdirectory(${PROJECT_SOURCE_DIR}/external/CLI11)
+  target_link_libraries(${EXECUTABLE_NAME} CLI11::CLI11)
 endif()
 
-if(NOT EXISTS ${PROJECT_SOURCE_DIR}/external/fmt/README.rst AND GIT_FOUND)
-  execute_process(COMMAND git
-                          submodule
-                          update
-                          --init
-                          --
-                          external/fmt
-                  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
-  set(FMT_FOUND TRUE)
-elseif(NOT GIT_FOUND)
-  message(FATAL_ERROR "Git is required for getting dependencies")
-else()
-  set(FMT_FOUND TRUE)
-endif()
-
+load_external(fmt)
 if(FMT_FOUND)
   add_subdirectory(external/fmt)
   target_link_libraries(${EXECUTABLE_NAME} fmt::fmt)
