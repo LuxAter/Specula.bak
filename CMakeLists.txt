@@ -105,6 +105,8 @@ set_target_properties(${EXECUTABLE_NAME}
 # Dependencies
 # ##############################################################################
 
+macro(install)
+endmacro()
 macro(LOAD_EXTERNAL REPO_NAME)
   string(TOUPPER ${REPO_NAME} MODULE_NAME)
   if(NOT EXISTS ${PROJECT_SOURCE_DIR}/external/${REPO_NAME}/README*
@@ -234,14 +236,14 @@ endif()
 # ##############################################################################
 
 if(CMAKE_BUILD_TYPE STREQUAL "Release")
-  include(CPack)
-  SET(CPACK_GENERATOR "TGZ;ZIP")
-  install(TARGETS ${EXECUTABLE_NAME} DESTINATION BIN_INSTALL_DIR)
-  install(DIRECTORY resources DESTINATION BIN_INSTALL_DIR)
+  set(CPACK_GENERATOR "STGZ;TGZ;ZIP")
+  _install(TARGETS ${EXECUTABLE_NAME})
   set(CPACK_PACKAGE_VENDOR "LuxAter")
   set(CPACK_PACKAGE_VERSION_MAJOR ${PROJECT_VERSION_MAJOR})
   set(CPACK_PACKAGE_VERSION_MINOR ${PROJECT_VERSION_MINOR})
   set(CPACK_PACKAGE_VERSION_PATCH ${PROJECT_VERSION_PATCH})
-  set(CPACK_PACKAGE_FILE_README "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
+  set(CPACK_RESOURCE_FILE_README "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
+  set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
   set(CPACK_MONOLITHIC_INSTALL TRUE)
+  include(CPack)
 endif()
