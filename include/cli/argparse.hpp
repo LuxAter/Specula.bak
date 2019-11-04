@@ -21,7 +21,11 @@
 #include <regex>
 #include <string>
 
+#ifdef __APPLE__
+#include <cli/cli.hpp>
+#else
 #include <CLI/CLI.hpp>
+#endif
 
 #include "../util/util.hpp"
 
