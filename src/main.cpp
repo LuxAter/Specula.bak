@@ -32,7 +32,7 @@ int main(int argc, char *argv[]) {
   LINFO("Specula v{}.{}.{}", SPECULA_VERSION_MAJOR, SPECULA_VERSION_MINOR,
         SPECULA_VERSION_PATCH);
 
-  specula::image::Image img(500, 500);
+  specula::image::Image img(specula::cli::resolution);
   img.write(specula::cli::output_path);
   return 0;
 }

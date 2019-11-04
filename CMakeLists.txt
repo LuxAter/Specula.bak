@@ -3,7 +3,7 @@
 # ##############################################################################
 
 cmake_minimum_required(VERSION 3.8.2)
-project(Specula VERSION 0.2.2 LANGUAGES CXX)
+project(Specula VERSION 0.2.3 LANGUAGES CXX)
 
 set(EXECUTABLE_NAME specula)
 option(STATIC_ANALYSIS "Enables static analysis for code" ON)
@@ -63,7 +63,10 @@ set(SOURCES
     src/main.cpp
     src/cli/argparse.cpp
     src/log.cpp
-    src/image/image_class.cpp)
+    src/image/image_class.cpp
+    src/image/png.cpp
+    src/image/jpeg.cpp
+    src/image/bmp.cpp)
 
 configure_file("${PROJECT_SOURCE_DIR}/include/version.hpp.in"
                "${PROJECT_BINARY_DIR}/version.hpp")
@@ -139,7 +142,7 @@ load_external(libpng)
 if(LIBPNG_FOUND)
   set(PNG_TESTS OFF CACHE BOOL "Build libpng tests")
   set(PNG_SHARED OFF CACHE BOOL "Build shared lib")
-  add_subdirectory(${PROJECT_SOURCE_DIR}/external/libpng)
+  add_subdirectory(${PROJECT_SOURCE_DIR}/external/libpng EXCLUDE_FROM_ALL)
   target_include_directories(${EXECUTABLE_NAME}
                              PUBLIC ${PROJECT_SOURCE_DIR}/external/libpng)
   target_link_libraries(${EXECUTABLE_NAME} png_static)
@@ -147,56 +150,64 @@ endif()
 
 load_external(libjpeg-turbo)
 if(LIBJPEG-TURBO_FOUND)
-  set(ENABLE_SHARED OFF CACHE BOOL "Build shared libraries")
-  add_subdirectory(${PROJECT_SOURCE_DIR}/external/libjpeg-turbo)
+  set(ENABLE_SHARED TRUE CACHE BOOL "Build shared libraries")
+  set(
+    WITH_JPEG8
+    TRUE
+    CACHE
+      BOOL
+      "Emulate libjpeg v8 API/ABI (this makes ${CMAKE_PROJECT_NAME} backward-incompatible with libjpeg v6b)"
+    )
+  add_subdirectory(${PROJECT_SOURCE_DIR}/external/libjpeg-turbo
+                   EXCLUDE_FROM_ALL)
   target_link_libraries(${EXECUTABLE_NAME} turbojpeg-static)
 endif()
 
 load_external(luajit)
 if(LUAJIT_FOUND)
-  add_subdirectory(${PROJECT_SOURCE_DIR}/external/luajit)
+  add_subdirectory(${PROJECT_SOURCE_DIR}/external/luajit EXCLUDE_FROM_ALL)
   target_link_libraries(${EXECUTABLE_NAME} liblua)
 endif()
 
 load_external(sol2)
 if(SOL2_FOUND)
-  add_subdirectory(${PROJECT_SOURCE_DIR}/external/sol2)
+  add_subdirectory(${PROJECT_SOURCE_DIR}/external/sol2 EXCLUDE_FROM_ALL)
   target_link_libraries(${EXECUTABLE_NAME} sol2::sol2)
 endif()
 
 load_external(filesystem)
 if(FILESYSTEM_FOUND)
-  add_subdirectory(${PROJECT_SOURCE_DIR}/external/filesystem)
+  add_subdirectory(${PROJECT_SOURCE_DIR}/external/filesystem EXCLUDE_FROM_ALL)
   target_link_libraries(${EXECUTABLE_NAME} ghc_filesystem)
 endif()
 
 load_external(variant)
 if(VARIANT_FOUND)
-  add_subdirectory(${PROJECT_SOURCE_DIR}/external/variant)
+  add_subdirectory(${PROJECT_SOURCE_DIR}/external/variant EXCLUDE_FROM_ALL)
   target_link_libraries(${EXECUTABLE_NAME} mpark_variant)
 endif()
 
 load_external(glm)
 if(GLM_FOUND)
-  add_subdirectory(${PROJECT_SOURCE_DIR}/external/glm)
+  add_subdirectory(${PROJECT_SOURCE_DIR}/external/glm EXCLUDE_FROM_ALL)
   target_link_libraries(${EXECUTABLE_NAME} glm::glm)
 endif()
 
 load_external(CLI11)
 if(CLI11_FOUND)
-  add_subdirectory(${PROJECT_SOURCE_DIR}/external/CLI11)
+  add_subdirectory(${PROJECT_SOURCE_DIR}/external/CLI11 EXCLUDE_FROM_ALL)
   target_link_libraries(${EXECUTABLE_NAME} CLI11::CLI11)
 endif()
 
 load_external(fmt)
 if(FMT_FOUND)
-  add_subdirectory(external/fmt)
+  add_subdirectory(external/fmt EXCLUDE_FROM_ALL)
   target_link_libraries(${EXECUTABLE_NAME} fmt::fmt)
 endif()
 
 load_external(spdlog)
 if(SPDLOG_FOUND)
-  add_subdirectory(external/spdlog)
+  add_subdirectory(external/spdlog EXCLUDE_FROM_ALL)
   target_link_libraries(${EXECUTABLE_NAME} spdlog::spdlog)
 endif()
 

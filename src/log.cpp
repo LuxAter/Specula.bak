@@ -1,6 +1,7 @@
 #include "log.hpp"
 
 #include <iostream>
+#include <memory>
 
 #include <spdlog/sinks/basic_file_sink.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
@@ -9,7 +10,6 @@
 bool specula::log::initalize_logger(const std::size_t &verbosity) {
   try {
     auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
-    std::cout << verbosity << "<<<?\n";
     switch (verbosity) {
       case 0:
         console_sink->set_level(spdlog::level::trace);

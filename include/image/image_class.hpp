@@ -5,6 +5,7 @@
 #include <cstdlib>
 #include <string_view>
 #include <vector>
+#include <array>
 
 #include "../util/util.hpp"
 
@@ -17,12 +18,8 @@ public:
   bool write(const std::string_view &file);
 
 private:
-  bool write_png(const std::string_view &file);
-  bool write_jpeg(const std::string_view &file);
-  bool write_bmp(const std::string_view &file);
-
   Size<std::size_t> resolution_;
-  std::vector<std::uint32_t> buffer_;
+  std::vector<std::array<double, 3>> buffer_;
 };
 } // namespace image
 } // namespace specula

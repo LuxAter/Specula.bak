@@ -58,7 +58,6 @@ int specula::cli::parse_args(int argc, char *argv[]) {
   app.add_flag("-v", verbosity, "Verbosity of the output");
   auto output = app.add_option_group("Output");
   output->add_option("-o,--output", output_path, "Output file/directory")
-      ->check(CLI::NonexistentPath)
       ->check(RegexValidator(".*\\.(png|jpeg|bmp)"));
   output
       ->add_option("-r,--res,--resolution", pix_width,
@@ -77,7 +76,10 @@ int specula::cli::parse_args(int argc, char *argv[]) {
   }
 
   Size<double> aspect{0.0, 0.0};
-  sscanf(aspect_ratio.c_str(), "%lf:%lf", &aspect.w, &aspect.h);
+  if (aspect_ratio.find(':') != std::string::npos)
+    sscanf(aspect_ratio.c_str(), "%lf:%lf", &aspect.w, &aspect.h);
+  else
+    sscanf(aspect_ratio.c_str(), "%lfx%lf", &aspect.w, &aspect.h);
   resolution = {pix_width,
                 static_cast<std::size_t>(static_cast<double>(pix_width) *
                                          aspect.h / aspect.w)};
