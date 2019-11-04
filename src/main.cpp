@@ -17,13 +17,22 @@
  */
 
 #include "cli/cli.hpp"
+#include "image/image.hpp"
+#include "log.hpp"
+#include "version.hpp"
 
 int main(int argc, char *argv[]) {
   int ret = 0;
-  if ((ret = specula::cli::parse_args(argc, argv)) != 0) {
+  if ((ret = specula::cli::parse_args(argc, argv)) > 0) {
     return ret;
+  } else if (ret == -1) {
+    return 0;
   }
-  printf(">>>%i<<<\n", ret);
-  printf("HELLOO WORLD!\n");
+  specula::log::initalize_logger(specula::cli::verbosity);
+  LINFO("Specula v{}.{}.{}", SPECULA_VERSION_MAJOR, SPECULA_VERSION_MINOR,
+        SPECULA_VERSION_PATCH);
+
+  specula::image::Image img(500, 500);
+  img.write(specula::cli::output_path);
   return 0;
 }

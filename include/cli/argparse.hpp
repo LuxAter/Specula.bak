@@ -33,6 +33,7 @@ namespace specula {
 namespace cli {
 extern std::string lua_source;
 extern std::string output_path;
+extern std::size_t verbosity;
 extern Size<std::size_t> resolution;
 
 int parse_args(int argc, char *argv[]);
