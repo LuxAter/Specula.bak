@@ -3,7 +3,7 @@
 # ##############################################################################
 
 cmake_minimum_required(VERSION 3.8.2)
-project(Specula VERSION 0.2.0 LANGUAGES CXX)
+project(Specula VERSION 0.2.1 LANGUAGES CXX)
 
 set(EXECUTABLE_NAME specula)
 option(STATIC_ANALYSIS "Enables static analysis for code" ON)
