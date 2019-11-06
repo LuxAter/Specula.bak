@@ -53,7 +53,7 @@ bool specula::image::write_bmp(
   out = fopen(file.data(), "wb");
   fwrite(bmpfileheader, 1, 14, out);
   fwrite(bmpinfoheader, 1, 40, out);
-  for (int i = 0; i < resolution.h; i++) {
+  for (std::size_t i = 0; i < resolution.h; i++) {
     fwrite(img + (resolution.w * (resolution.h - i - 1) * 3), 3, resolution.w,
            out);
     fwrite(bmppad, 1, (4 - (resolution.w * 3) % 4) % 4, out);

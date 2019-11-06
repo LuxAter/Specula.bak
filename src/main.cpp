@@ -19,6 +19,7 @@
 #include "cli/cli.hpp"
 #include "image/image.hpp"
 #include "log.hpp"
+#include "script/script.hpp"
 #include "version.hpp"
 
 int main(int argc, char *argv[]) {
@@ -31,6 +32,9 @@ int main(int argc, char *argv[]) {
   specula::log::initalize_logger(specula::cli::verbosity);
   LINFO("Specula v{}.{}.{}", SPECULA_VERSION_MAJOR, SPECULA_VERSION_MINOR,
         SPECULA_VERSION_PATCH);
+
+  std::shared_ptr<specula::script::Script> script =
+      specula::script::load_script(specula::cli::script_source);
 
   specula::image::Image img(specula::cli::resolution);
   img.write(specula::cli::output_path);

@@ -3,7 +3,7 @@
 # ##############################################################################
 
 cmake_minimum_required(VERSION 3.8.2)
-project(Specula VERSION 0.2.3 LANGUAGES CXX)
+project(Specula VERSION 0.2.4 LANGUAGES CXX)
 
 set(EXECUTABLE_NAME specula)
 option(STATIC_ANALYSIS "Enables static analysis for code" ON)
@@ -63,6 +63,8 @@ set(SOURCES
     src/main.cpp
     src/cli/argparse.cpp
     src/log.cpp
+    src/script/lua_script.cpp
+    src/script/chai_script.cpp
     src/image/image_class.cpp
     src/image/png.cpp
     src/image/jpeg.cpp
@@ -163,14 +165,25 @@ if(LIBJPEG-TURBO_FOUND)
   target_link_libraries(${EXECUTABLE_NAME} turbojpeg-static)
 endif()
 
+load_external(chaiscript)
+if(CHAISCRIPT_FOUND)
+  target_link_libraries(${EXECUTABLE_NAME} ${CMAKE_DL_LIBS})
+  target_include_directories(
+    ${EXECUTABLE_NAME}
+    PUBLIC ${PROJECT_SOURCE_DIR}/external/chaiscript/include)
+endif()
+
 load_external(luajit)
 if(LUAJIT_FOUND)
   add_subdirectory(${PROJECT_SOURCE_DIR}/external/luajit EXCLUDE_FROM_ALL)
   target_link_libraries(${EXECUTABLE_NAME} liblua)
+  target_include_directories(${EXECUTABLE_NAME}
+                             PUBLIC ${PROJECT_SOURCE_DIR}/external/luajit/src)
 endif()
 
 load_external(sol2)
 if(SOL2_FOUND)
+  set(SOL2_LUA_VERSION "LuaJIT" CACHE STRING "Lua Version")
   add_subdirectory(${PROJECT_SOURCE_DIR}/external/sol2 EXCLUDE_FROM_ALL)
   target_link_libraries(${EXECUTABLE_NAME} sol2::sol2)
 endif()

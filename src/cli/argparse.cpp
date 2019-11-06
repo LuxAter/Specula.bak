@@ -29,7 +29,7 @@
 #include "util/util.hpp"
 
 namespace specula::cli {
-std::string lua_source = "";
+std::string script_source = "";
 std::string output_path = "out.png";
 std::size_t verbosity = 0;
 Size<std::size_t> resolution = {100, 100};
@@ -52,9 +52,10 @@ int specula::cli::parse_args(int argc, char *argv[]) {
   std::size_t pix_width = 500;
   std::string aspect_ratio = "1:1";
   CLI::App app{"PBR"};
-  app.add_option("source", lua_source, "Lua source file")
+  app.add_option("source", script_source, "Script source file")
       ->required()
-      ->check(CLI::ExistingFile);
+      ->check(CLI::ExistingFile)
+      ->check(RegexValidator(".*\\.(lua|chai)"));
   app.add_flag("-v", verbosity, "Verbosity of the output");
   auto output = app.add_option_group("Output");
   output->add_option("-o,--output", output_path, "Output file/directory")

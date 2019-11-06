@@ -23,6 +23,7 @@ specula::image::Image::Image(const Size<std::size_t> &resolution)
 
 bool specula::image::Image::write(const std::string_view &file) {
   fs::path file_path(file);
+  file_path = fs::absolute(file_path);
   if (fs::exists(file_path)) {
     LWARN("File {} already exists, overwriting", file_path);
   } else if (!fs::exists(file_path.parent_path())) {
