@@ -9,10 +9,10 @@
 #include <jpeglib.h>
 
 #include "log.hpp"
-#include "util/util.hpp"
+#include "math/vec2.hpp"
 
 bool specula::image::write_jpeg(
-    const std::string_view &file, const Size<std::size_t> &resolution,
+    const std::string_view &file, const vec2<std::size_t> &resolution,
     const std::vector<std::array<double, 3>> &buffer) {
   struct jpeg_compress_struct cinfo;
   struct jpeg_error_mgr jerr;
@@ -26,13 +26,12 @@ bool specula::image::write_jpeg(
     return false;
   }
   jpeg_stdio_dest(&cinfo, out);
-  cinfo.image_width = resolution.w;
-  cinfo.image_height = resolution.h;
+  cinfo.image_width = resolution.x;
+  cinfo.image_height = resolution.y;
   cinfo.input_components = 3;
   cinfo.in_color_space = JCS_RGB;
 
   jpeg_set_defaults(&cinfo);
-  // jpeg_set_quality(&cinfo, 1, TRUE);
   jpeg_start_compress(&cinfo, TRUE);
   std::uint8_t *pix_buffer =
       (std::uint8_t *)std::malloc(cinfo.image_width * 3 * sizeof(std::uint8_t));

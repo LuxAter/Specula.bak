@@ -7,7 +7,7 @@
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/spdlog.h>
 
-bool specula::log::initalize_logger(const std::size_t &verbosity) {
+bool specula::logger::initalize_logger(const std::size_t &verbosity) {
   try {
     auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
     switch (verbosity) {

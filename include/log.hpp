@@ -26,7 +26,7 @@
 #define LCRITICAL(...) SPDLOG_CRITICAL(__VA_ARGS__)
 
 namespace specula {
-namespace log {
+namespace logger {
 bool initalize_logger(const std::size_t &verbosity);
 template <typename... _ARGS>
 inline void trace(std::string_view fmt, const _ARGS &... args) {
@@ -52,7 +52,7 @@ template <typename... _ARGS>
 inline void critical(std::string_view fmt, const _ARGS &... args) {
   spdlog::critical(fmt, args...);
 }
-} // namespace log
+} // namespace logger
 } // namespace specula
 
 #endif // SPECULA_LOG_HPP_

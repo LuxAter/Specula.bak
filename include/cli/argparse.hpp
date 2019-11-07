@@ -27,14 +27,14 @@
 #include <CLI/CLI.hpp>
 #endif
 
-#include "../util/util.hpp"
+#include "../math/vec2.hpp"
 
 namespace specula {
 namespace cli {
 extern std::string script_source;
 extern std::string output_path;
 extern std::size_t verbosity;
-extern Size<std::size_t> resolution;
+extern vec2<std::size_t> resolution;
 
 int parse_args(int argc, char *argv[]);
 } // namespace cli

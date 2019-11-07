@@ -31,7 +31,7 @@ int main(int argc, char *argv[]) {
   } else if (ret == -1) {
     return 0;
   }
-  specula::log::initalize_logger(specula::cli::verbosity);
+  specula::logger::initalize_logger(specula::cli::verbosity);
   LINFO("Specula v{}.{}.{}", SPECULA_VERSION_MAJOR, SPECULA_VERSION_MINOR,
         SPECULA_VERSION_PATCH);
 

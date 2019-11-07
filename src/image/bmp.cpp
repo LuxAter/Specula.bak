@@ -7,26 +7,26 @@
 #include <vector>
 
 #include "log.hpp"
-#include "util/util.hpp"
+#include "math/vec2.hpp"
 
 bool specula::image::write_bmp(
-    const std::string_view &file, const Size<std::size_t> &resolution,
+    const std::string_view &file, const vec2<std::size_t> &resolution,
     const std::vector<std::array<double, 3>> &buffer) {
   FILE *out;
-  int filesize = 54 + 3 * resolution.w * resolution.h;
+  int filesize = 54 + 3 * resolution.x * resolution.y;
   std::uint8_t *img =
-      (std::uint8_t *)std::malloc(3 * resolution.w * resolution.h);
-  std::memset(img, 0, 3 * resolution.w * resolution.h);
-  for (std::size_t i = 0; i < resolution.w; ++i) {
-    for (std::size_t j = 0; j < resolution.h; ++j) {
+      (std::uint8_t *)std::malloc(3 * resolution.x * resolution.y);
+  std::memset(img, 0, 3 * resolution.x * resolution.y);
+  for (std::size_t i = 0; i < resolution.x; ++i) {
+    for (std::size_t j = 0; j < resolution.y; ++j) {
       std::size_t x = i;
-      std::size_t y = (resolution.h - 1) - j;
-      img[(x + y * resolution.w) * 3 + 2] =
-          static_cast<uint8_t>(buffer[i + j * resolution.w][0] * 0xff);
-      img[(x + y * resolution.w) * 3 + 1] =
-          static_cast<uint8_t>(buffer[i + j * resolution.w][1] * 0xff);
-      img[(x + y * resolution.w) * 3 + 0] =
-          static_cast<uint8_t>(buffer[i + j * resolution.w][2] * 0xff);
+      std::size_t y = (resolution.y - 1) - j;
+      img[(x + y * resolution.x) * 3 + 2] =
+          static_cast<uint8_t>(buffer[i + j * resolution.x][0] * 0xff);
+      img[(x + y * resolution.x) * 3 + 1] =
+          static_cast<uint8_t>(buffer[i + j * resolution.x][1] * 0xff);
+      img[(x + y * resolution.x) * 3 + 0] =
+          static_cast<uint8_t>(buffer[i + j * resolution.x][2] * 0xff);
     }
   }
 
@@ -41,22 +41,22 @@ bool specula::image::write_bmp(
   bmpfileheader[4] = (unsigned char)(filesize >> 16);
   bmpfileheader[5] = (unsigned char)(filesize >> 24);
 
-  bmpinfoheader[4] = (unsigned char)(resolution.w);
-  bmpinfoheader[5] = (unsigned char)(resolution.w >> 8);
-  bmpinfoheader[6] = (unsigned char)(resolution.w >> 16);
-  bmpinfoheader[7] = (unsigned char)(resolution.w >> 24);
-  bmpinfoheader[8] = (unsigned char)(resolution.h);
-  bmpinfoheader[9] = (unsigned char)(resolution.h >> 8);
-  bmpinfoheader[10] = (unsigned char)(resolution.h >> 16);
-  bmpinfoheader[11] = (unsigned char)(resolution.h >> 24);
+  bmpinfoheader[4] = (unsigned char)(resolution.x);
+  bmpinfoheader[5] = (unsigned char)(resolution.x >> 8);
+  bmpinfoheader[6] = (unsigned char)(resolution.x >> 16);
+  bmpinfoheader[7] = (unsigned char)(resolution.x >> 24);
+  bmpinfoheader[8] = (unsigned char)(resolution.y);
+  bmpinfoheader[9] = (unsigned char)(resolution.y >> 8);
+  bmpinfoheader[10] = (unsigned char)(resolution.y >> 16);
+  bmpinfoheader[11] = (unsigned char)(resolution.y >> 24);
 
   out = fopen(file.data(), "wb");
   fwrite(bmpfileheader, 1, 14, out);
   fwrite(bmpinfoheader, 1, 40, out);
-  for (std::size_t i = 0; i < resolution.h; i++) {
-    fwrite(img + (resolution.w * (resolution.h - i - 1) * 3), 3, resolution.w,
+  for (std::size_t i = 0; i < resolution.y; i++) {
+    fwrite(img + (resolution.x * (resolution.y - i - 1) * 3), 3, resolution.x,
            out);
-    fwrite(bmppad, 1, (4 - (resolution.w * 3) % 4) % 4, out);
+    fwrite(bmppad, 1, (4 - (resolution.x * 3) % 4) % 4, out);
   }
   free(img);
   fclose(out);

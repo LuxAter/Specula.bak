@@ -26,13 +26,13 @@
 #include <CLI/CLI.hpp>
 #endif
 
-#include "util/util.hpp"
+#include "math/vec2.hpp"
 
 namespace specula::cli {
 std::string script_source = "";
 std::string output_path = "out.png";
 std::size_t verbosity = 0;
-Size<std::size_t> resolution = {100, 100};
+vec2<std::size_t> resolution = {100, 100};
 } // namespace specula::cli
 
 class RegexValidator : public CLI::Validator {
@@ -76,14 +76,14 @@ int specula::cli::parse_args(int argc, char *argv[]) {
     return app.exit(e);
   }
 
-  Size<double> aspect{0.0, 0.0};
+  vec2<double> aspect{0.0, 0.0};
   if (aspect_ratio.find(':') != std::string::npos)
-    sscanf(aspect_ratio.c_str(), "%lf:%lf", &aspect.w, &aspect.h);
+    sscanf(aspect_ratio.c_str(), "%lf:%lf", &aspect.x, &aspect.y);
   else
-    sscanf(aspect_ratio.c_str(), "%lfx%lf", &aspect.w, &aspect.h);
+    sscanf(aspect_ratio.c_str(), "%lfx%lf", &aspect.x, &aspect.y);
   resolution = {pix_width,
                 static_cast<std::size_t>(static_cast<double>(pix_width) *
-                                         aspect.h / aspect.w)};
+                                         aspect.y / aspect.x)};
 #ifdef DEBUG
   if (verbosity == 0)
     verbosity = 6;
