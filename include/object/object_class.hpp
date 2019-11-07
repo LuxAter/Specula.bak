@@ -33,10 +33,10 @@ public:
     trans_inv_ = glm::translate(trans_, glm::vec3(-x, -y, -z));
     return *this;
   }
-  // inline Object &scale(const float& s) {
-  //   trans_ = glm::scale(trans_, glm::vec3(s, s, s));
-  //   trans_inv_ = glm::scale(trans_, glm::vec3(1.0 / s, 1.0 / s, 1.0 / s));
-  // }
+  inline Object &scale_uniform(const float& s) {
+    trans_ = glm::scale(trans_, glm::vec3(s, s, s));
+    trans_inv_ = glm::scale(trans_, glm::vec3(1.0 / s, 1.0 / s, 1.0 / s));
+  }
   inline Object &scale(const float& x, const float& y, const float& z) {
     trans_ = glm::scale(trans_, glm::vec3(x, y, z));
     trans_inv_ = glm::scale(trans_, glm::vec3(1.0 / x, 1.0 / y, 1.0 / z));

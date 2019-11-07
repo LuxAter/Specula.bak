@@ -28,6 +28,3 @@
 [submodule "external/spdlog"]
 	path = external/spdlog
 	url = https://github.com/gabime/spdlog
-[submodule "external/chaiscript"]
-	path = external/chaiscript
-	url = https://github.com/ChaiScript/ChaiScript
