@@ -16,13 +16,13 @@
  *
  */
 
-#include <sol/sol.hpp>
-
 #include "cli/cli.hpp"
 #include "image/image.hpp"
-#include "object/object.hpp"
 #include "log.hpp"
+#include "object/object.hpp"
 #include "version.hpp"
+
+#include <sol/sol.hpp>
 
 int main(int argc, char *argv[]) {
   int ret = 0;
@@ -35,9 +35,9 @@ int main(int argc, char *argv[]) {
   LINFO("Specula v{}.{}.{}", SPECULA_VERSION_MAJOR, SPECULA_VERSION_MINOR,
         SPECULA_VERSION_PATCH);
 
-  sol::state lua;
-  auto ns = lua["specula"].get_or_create<sol::table>();
-  ns.new_usertype<specula::object::Object>("Object");
+  // sol::state lua;
+  // auto ns = lua["specula"].get_or_create<sol::table>();
+  // ns.new_usertype<specula::object::Object>("Object");
 
   specula::image::Image img(specula::cli::resolution);
   img.write(specula::cli::output_path);

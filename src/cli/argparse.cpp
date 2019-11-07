@@ -55,7 +55,7 @@ int specula::cli::parse_args(int argc, char *argv[]) {
   app.add_option("source", script_source, "Script source file")
       ->required()
       ->check(CLI::ExistingFile)
-      ->check(RegexValidator(".*\\.(lua)"));
+      ->check(RegexValidator(".*\\.(chai)"));
   app.add_flag("-v", verbosity, "Verbosity of the output");
   auto output = app.add_option_group("Output");
   output->add_option("-o,--output", output_path, "Output file/directory")

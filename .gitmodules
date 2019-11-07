@@ -19,12 +19,18 @@
 [submodule "external/fmt"]
 	path = external/fmt
 	url = https://github.com/fmtlib/fmt
-[submodule "external/luajit"]
-	path = external/luajit
-	url = https://github.com/LuaDist/luajit
 [submodule "external/libjpeg-turbo"]
 	path = external/libjpeg-turbo
 	url = https://github.com/libjpeg-turbo/libjpeg-turbo
 [submodule "external/spdlog"]
 	path = external/spdlog
 	url = https://github.com/gabime/spdlog
+[submodule "external/lua"]
+	path = external/lua
+	url = https://github.com/LuaDist/lua
+[submodule "external/ChaiScript"]
+	path = external/ChaiScript
+	url = https://github.com/ChaiScript/ChaiScript
+[submodule "external/luajit"]
+	path = external/luajit
+	url = http://luajit.org/git/luajit-2.0.git
