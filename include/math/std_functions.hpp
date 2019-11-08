@@ -32,7 +32,7 @@ FUNC2(fmin, std::fmin)
 FUNC2(min, std::fmin)
 FUNC2(fdim, std::fdim)
 FUNC2(dim, std::fdim)
-// FUNC3(lerp, std::lerp)
+FUNC3(lerp, __lerp)
 
 FUNC1(exp, std::exp)
 FUNC1(exp2, std::exp2)

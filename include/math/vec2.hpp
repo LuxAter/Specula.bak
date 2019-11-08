@@ -233,8 +233,6 @@ inline std::ostream &operator<<(std::ostream &out, const vec2<_T> &v) {
   return out << '<' << v.x << ',' << v.y << '>';
 }
 
-typedef vec2<bool> bool2;
-typedef vec2<int> int2;
 typedef vec2<float> float2;
 
 } // namespace specula

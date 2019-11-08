@@ -20,6 +20,7 @@
 #include "image/image.hpp"
 #include "log.hpp"
 #include "object/object.hpp"
+#include "math/math.hpp"
 #include "version.hpp"
 
 #include <sol/sol.hpp>
@@ -35,9 +36,32 @@ int main(int argc, char *argv[]) {
   LINFO("Specula v{}.{}.{}", SPECULA_VERSION_MAJOR, SPECULA_VERSION_MINOR,
         SPECULA_VERSION_PATCH);
 
-  // sol::state lua;
-  // auto ns = lua["specula"].get_or_create<sol::table>();
-  // ns.new_usertype<specula::object::Object>("Object");
+  specula::mat<float, 2> mat2(1.0, 2.0, 3.0, 4.0);
+
+  std::vector<std::shared_ptr<specula::object::Object>> objs;
+  std::vector<std::shared_ptr<specula::object::Object>> *objs_ptr = &objs;
+
+  sol::state lua;
+
+  lua.new_usertype<specula::object::Object>(
+      "Object", "translate", &specula::object::Object::translate);
+
+  lua.new_usertype<specula::object::Sphere>(
+      "Sphere", "new", sol::factories([objs_ptr](const float &radius) {
+        objs_ptr->push_back(std::make_shared<specula::object::Sphere>(radius));
+        return std::dynamic_pointer_cast<specula::object::Sphere>(
+            objs_ptr->back());
+      }),
+      "radius", &specula::object::Sphere::radius, sol::base_classes,
+      sol::bases<specula::object::Object>());
+
+  lua.script_file(specula::cli::script_source);
+
+  LDEBUG("OBJS: {}", objs.size());
+  for (auto &obj : objs) {
+    LDEBUG("RAD {}",
+           std::dynamic_pointer_cast<specula::object::Sphere>(obj)->radius);
+  }
 
   specula::image::Image img(specula::cli::resolution);
   img.write(specula::cli::output_path);

@@ -204,6 +204,12 @@
   FUNC410(func, src)                                                           \
   FUNC440(func, src)
 
+#define FUNC2V(func, src)                                                      \
+  FUNC110(func, src)                                                           \
+  FUNC220(func, src)                                                           \
+  FUNC330(func, src)                                                           \
+  FUNC440(func, src)
+
 #define FUNC3(func, src)                                                       \
   FUNC111(func, src)                                                           \
   FUNC112(func, src)                                                           \
@@ -226,4 +232,10 @@
   FUNC411(func, src)                                                           \
   FUNC414(func, src)                                                           \
   FUNC441(func, src)                                                           \
+  FUNC444(func, src)
+
+#define FUNC3V(func, src)                                                      \
+  FUNC111(func, src)                                                           \
+  FUNC222(func, src)                                                           \
+  FUNC333(func, src)                                                           \
   FUNC444(func, src)

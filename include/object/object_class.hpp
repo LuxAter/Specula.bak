@@ -9,8 +9,9 @@ namespace specula {
 namespace object {
 class Object {
 public:
-  Object(const std::function<float(const float3&)> &dst)
-      : dst_(dst) {}
+  Object(const std::function<float(const float3 &)> &dst) : dst_(dst) {}
+
+  virtual ~Object() {}
 
   inline Object &rotate_x(const float &angle) {
     // trans_ = glm::rotate(trans_, angle, glm::vec3(1.0, 0.0, 0.0));
@@ -27,17 +28,17 @@ public:
     // trans_inv_ = glm::rotate(trans_inv_, -angle, glm::vec3(0.0, 0.0, 1.0));
     return *this;
   }
-  inline Object &translate(const float& x, const float& y, const float& z) {
+  inline Object &translate(const float &x, const float &y, const float &z) {
     // trans_ = glm::translate(trans_, glm::vec3(x, y, z));
     // trans_inv_ = glm::translate(trans_, glm::vec3(-x, -y, -z));
     return *this;
   }
-  inline Object &scale_uniform(const float& s) {
+  inline Object &scale_uniform(const float &s) {
     // trans_ = glm::scale(trans_, glm::vec3(s, s, s));
     // trans_inv_ = glm::scale(trans_, glm::vec3(1.0 / s, 1.0 / s, 1.0 / s));
     return *this;
   }
-  inline Object &scale(const float& x, const float& y, const float& z) {
+  inline Object &scale(const float &x, const float &y, const float &z) {
     // trans_ = glm::scale(trans_, glm::vec3(x, y, z));
     // trans_inv_ = glm::scale(trans_, glm::vec3(1.0 / x, 1.0 / y, 1.0 / z));
     return *this;
