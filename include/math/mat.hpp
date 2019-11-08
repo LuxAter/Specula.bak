@@ -1,12 +1,17 @@
-#ifndef SPECULA_MATH_MAT4X4_HPP_
-#define SPECULA_MATH_MAT4X4_HPP_
+#ifndef SPECULA_MATH_MAT_HPP_
+#define SPECULA_MATH_MAT_HPP_
 
-#include "../log.hpp"
+#include <cstdlib>
+#include <array>
 
 namespace specula {
 template <typename _T, std::size_t _N> class mat {
 public:
-  explicit mat(const _T &x) {}
+  explicit mat(const _T &x) {
+    for (std::size_t i = 0; i < _N; ++i) {
+      data_[i][i] = x;
+    }
+  }
   template <typename... ARGS>
   mat(ARGS &&... vals) : data_{std::forward<ARGS>(vals)...} {
     static_assert(sizeof...(ARGS) == (_N * _N), "Expected _N arguments");
@@ -47,7 +52,7 @@ public:
     for (std::size_t i = 0; i < _N; ++i) {
       for (std::size_t j = 0; j < _N; ++j) {
         for (std::size_t k = 0; j < _N; ++k) {
-          res[i][j] += data_[i][k] * b[k][j];
+          res[i][j] += data_[i][k] * other.data_[k][j];
         }
       }
     }
@@ -65,6 +70,11 @@ public:
 
   std::array<std::array<_T, _N>, _N> data_;
 };
+
+template <typename _T>
+using mat4x4 = mat<_T, 4>;
+typedef mat<float, 4> mat4;
+
 } // namespace specula
 
-#endif // SPECULA_MATH_MAT4X4_HPP_
+#endif // SPECULA_MATH_MAT_HPP_

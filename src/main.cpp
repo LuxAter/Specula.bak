@@ -36,7 +36,7 @@ int main(int argc, char *argv[]) {
   LINFO("Specula v{}.{}.{}", SPECULA_VERSION_MAJOR, SPECULA_VERSION_MINOR,
         SPECULA_VERSION_PATCH);
 
-  specula::mat<float, 2> mat2(1.0, 2.0, 3.0, 4.0);
+  specula::mat<double, 2> mat2(1.0, 2.0, 3.0, 4.0);
 
   std::vector<std::shared_ptr<specula::object::Object>> objs;
   std::vector<std::shared_ptr<specula::object::Object>> *objs_ptr = &objs;
