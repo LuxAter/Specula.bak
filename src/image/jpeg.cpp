@@ -8,12 +8,13 @@
 
 #include <jpeglib.h>
 
-#include "log.hpp"
-#include "math/vec2.hpp"
+#include <glm/glm.hpp>
 
-bool specula::image::write_jpeg(
-    const std::string_view &file, const vec2<std::size_t> &resolution,
-    const std::vector<vec3<double>> &buffer) {
+#include "log.hpp"
+
+bool specula::image::write_jpeg(const std::string_view &file,
+                                const glm::uvec2 &resolution,
+                                const std::vector<glm::vec3> &buffer) {
   struct jpeg_compress_struct cinfo;
   struct jpeg_error_mgr jerr;
   FILE *out;
@@ -26,8 +27,8 @@ bool specula::image::write_jpeg(
     return false;
   }
   jpeg_stdio_dest(&cinfo, out);
-  cinfo.image_width = resolution.w;
-  cinfo.image_height = resolution.h;
+  cinfo.image_width = resolution.x;
+  cinfo.image_height = resolution.y;
   cinfo.input_components = 3;
   cinfo.in_color_space = JCS_RGB;
 

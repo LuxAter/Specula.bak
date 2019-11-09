@@ -27,7 +27,7 @@
 #include <CLI/CLI.hpp>
 #endif
 
-#include "../math/vec2.hpp"
+#include <glm/glm.hpp>
 
 namespace specula {
 namespace cli {
@@ -35,8 +35,8 @@ extern std::string script_source;
 extern std::string output_path;
 extern std::size_t verbosity;
 extern std::size_t spp;
-extern double fov;
-extern vec2<std::size_t> resolution;
+extern float fov;
+extern glm::uvec2 resolution;
 
 int parse_args(int argc, char *argv[]);
 } // namespace cli

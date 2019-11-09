@@ -21,10 +21,10 @@ endif()
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   message(
     STATUS
-      "Setting build type to '${default_build_type}' as none was specified.")
+    "Setting build type to '${default_build_type}' as none was specified.")
   set(CMAKE_BUILD_TYPE
-      "${default_build_type}"
-      CACHE STRING "Choose the type of build." FORCE)
+    "${default_build_type}"
+    CACHE STRING "Choose the type of build." FORCE)
   set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release")
 endif()
 string(TOUPPER ${CMAKE_BUILD_TYPE} CMAKE_BUILD_TYPE_DEFINE)
@@ -33,10 +33,10 @@ set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} -D${CMAKE_BUILD_TYPE_DEFINE})
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 if(EXISTS "${CMAKE_CURRENT_BINARY_DIR}/compile_commands.json")
   execute_process(COMMAND ${CMAKE_COMMAND}
-                          -E
-                          copy_if_different
-                          ${CMAKE_CURRENT_BINARY_DIR}/compile_commands.json
-                          ${CMAKE_CURRENT_SOURCE_DIR}/compile_commands.json)
+    -E
+    copy_if_different
+    ${CMAKE_CURRENT_BINARY_DIR}/compile_commands.json
+    ${CMAKE_CURRENT_SOURCE_DIR}/compile_commands.json)
 endif()
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
@@ -61,35 +61,35 @@ endif()
 # ##############################################################################
 
 set(SOURCES
-    src/cli/argparse.cpp
-    src/cli/progress_bar.cpp
-    src/log.cpp
-    src/renderer.cpp
-    src/rand.cpp
-    src/image/image_class.cpp
-    src/image/png.cpp
-    src/image/jpeg.cpp
-    src/image/bmp.cpp)
+  src/cli/argparse.cpp
+  src/cli/progress_bar.cpp
+  src/log.cpp
+  src/renderer.cpp
+  src/rand.cpp
+  src/image/image_class.cpp
+  src/image/png.cpp
+  src/image/jpeg.cpp
+  src/image/bmp.cpp)
 set(EXEC_SOURCES src/main.cpp)
 
 configure_file("${PROJECT_SOURCE_DIR}/include/version.hpp.in"
-               "${PROJECT_BINARY_DIR}/version.hpp")
+  "${PROJECT_BINARY_DIR}/version.hpp")
 include_directories("${PROJECT_BINARY_DIR}")
 
 file(GLOB template_files
-     RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}/resources
-     ${CMAKE_CURRENT_SOURCE_DIR}/resources/*)
+  RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}/resources
+  ${CMAKE_CURRENT_SOURCE_DIR}/resources/*)
 foreach(file ${template_files})
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/resources/${file}
-                 ${CMAKE_CURRENT_BINARY_DIR}/resources/${file} @ONLY)
+    ${CMAKE_CURRENT_BINARY_DIR}/resources/${file} @ONLY)
 endforeach()
 
 file(GLOB template_files
-     RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}/scripts
-     ${CMAKE_CURRENT_SOURCE_DIR}/scripts/*)
+  RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}/scripts
+  ${CMAKE_CURRENT_SOURCE_DIR}/scripts/*)
 foreach(file ${template_files})
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/scripts/${file}
-                 ${CMAKE_CURRENT_BINARY_DIR}/scripts/${file} @ONLY)
+    ${CMAKE_CURRENT_BINARY_DIR}/scripts/${file} @ONLY)
 endforeach()
 
 # ##############################################################################
@@ -104,12 +104,12 @@ else()
   target_compile_options(${LIBRARY_NAME} PUBLIC -Wall -Wfloat-conversion -O0)
 endif()
 set_target_properties(${LIBRARY_NAME}
-                      PROPERTIES CXX_STANDARD
-                                 17
-                                 CXX_STANDARD_REQUIRED
-                                 YES
-                                 CXX_EXTENSIONS
-                                 NO)
+  PROPERTIES CXX_STANDARD
+  17
+  CXX_STANDARD_REQUIRED
+  YES
+  CXX_EXTENSIONS
+  NO)
 
 add_executable(${EXECUTABLE_NAME} ${EXEC_SOURCES})
 target_link_libraries(${EXECUTABLE_NAME} ${LIBRARY_NAME})
@@ -119,12 +119,12 @@ else()
   target_compile_options(${EXECUTABLE_NAME} PUBLIC -Wall -Wfloat-conversion -O0)
 endif()
 set_target_properties(${EXECUTABLE_NAME}
-                      PROPERTIES CXX_STANDARD
-                                 17
-                                 CXX_STANDARD_REQUIRED
-                                 YES
-                                 CXX_EXTENSIONS
-                                 NO)
+  PROPERTIES CXX_STANDARD
+  17
+  CXX_STANDARD_REQUIRED
+  YES
+  CXX_EXTENSIONS
+  NO)
 
 # ##############################################################################
 # Dependencies
@@ -136,14 +136,14 @@ endmacro()
 macro(LOAD_EXTERNAL REPO_NAME)
   string(TOUPPER ${REPO_NAME} MODULE_NAME)
   if(NOT EXISTS ${PROJECT_SOURCE_DIR}/external/${REPO_NAME}/README*
-     AND GIT_FOUND)
+      AND GIT_FOUND)
     execute_process(COMMAND git
-                            submodule
-                            update
-                            --init
-                            --
-                            external/${REPO_NAME}
-                    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+      submodule
+      update
+      --init
+      --
+      external/${REPO_NAME}
+      WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
     set(${MODULE_NAME}_FOUND TRUE)
   elseif(NOT GIT_FOUND)
     message(FATAL_ERROR "Git is required for cloning
@@ -162,7 +162,7 @@ if(LIBPNG_FOUND)
   set(PNG_SHARED OFF CACHE BOOL "Build shared lib")
   add_subdirectory(${PROJECT_SOURCE_DIR}/external/libpng EXCLUDE_FROM_ALL)
   target_include_directories(${LIBRARY_NAME}
-                             PUBLIC ${PROJECT_SOURCE_DIR}/external/libpng)
+    PUBLIC ${PROJECT_SOURCE_DIR}/external/libpng)
   target_link_libraries(${LIBRARY_NAME} png_static)
 endif()
 
@@ -173,41 +173,41 @@ if(LIBJPEG-TURBO_FOUND)
     WITH_JPEG8
     TRUE
     CACHE
-      BOOL
-      "Emulate libjpeg v8 API/ABI (this makes ${CMAKE_PROJECT_NAME} backward-incompatible with libjpeg v6b)"
+    BOOL
+    "Emulate libjpeg v8 API/ABI (this makes ${CMAKE_PROJECT_NAME} backward-incompatible with libjpeg v6b)"
     )
   add_subdirectory(${PROJECT_SOURCE_DIR}/external/libjpeg-turbo
-                   EXCLUDE_FROM_ALL)
+    EXCLUDE_FROM_ALL)
   target_link_libraries(${LIBRARY_NAME} turbojpeg-static)
 endif()
 
 load_external(luajit)
 if(LUAJIT_FOUND)
   add_custom_target(luajit
-                    COMMAND ${CMAKE_COMMAND}
-                            -E
-                            copy_directory
-                            ${CMAKE_CURRENT_SOURCE_DIR}/external/luajit
-                            ${CMAKE_CURRENT_BINARY_DIR}/external/luajit
-                    COMMAND cd
-                            ${CMAKE_CURRENT_BINARY_DIR}/external/luajit
-                            &&
-                            make
-                            install
-                            PREFIX=${CMAKE_CURRENT_BINARY_DIR}/external/luajit)
+    COMMAND ${CMAKE_COMMAND}
+    -E
+    copy_directory
+    ${CMAKE_CURRENT_SOURCE_DIR}/external/luajit
+    ${CMAKE_CURRENT_BINARY_DIR}/external/luajit
+    COMMAND cd
+    ${CMAKE_CURRENT_BINARY_DIR}/external/luajit
+    &&
+    make
+    install
+    PREFIX=${CMAKE_CURRENT_BINARY_DIR}/external/luajit)
   add_library(luajit_static STATIC IMPORTED)
   set_property(
     TARGET luajit_static
     PROPERTY IMPORTED_LOCATION
-             ${CMAKE_CURRENT_BINARY_DIR}/external/luajit/lib/libluajit-5.1.a)
+    ${CMAKE_CURRENT_BINARY_DIR}/external/luajit/lib/libluajit-5.1.a)
   add_dependencies(luajit_static luajit)
   target_include_directories(
     ${EXECUTABLE_NAME}
     PUBLIC ${PROJECT_BINARY_DIR}/external/luajit/include/luajit-2.0)
   target_link_libraries(${EXECUTABLE_NAME}
-                        luajit_static
-                        m
-                        dl)
+    luajit_static
+    m
+    dl)
 endif()
 
 load_external(sol2)
@@ -235,6 +235,12 @@ load_external(variant)
 if(VARIANT_FOUND)
   add_subdirectory(${PROJECT_SOURCE_DIR}/external/variant EXCLUDE_FROM_ALL)
   target_link_libraries(${LIBRARY_NAME} mpark_variant)
+endif()
+
+load_external(glm)
+if(GLM_FOUND)
+  add_subdirectory(${PROJECT_SOURCE_DIR}/external/glm EXCLUDE_FROM_ALL)
+  target_link_libraries(${LIBRARY_NAME} glm::glm)
 endif()
 
 load_external(CLI11)
@@ -276,13 +282,13 @@ if(DOCUMENTATION)
   find_package(Doxygen)
   if(DOXYGEN_FOUND)
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in
-                   ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)
+      ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)
     add_custom_target(docs
-                      ${DOXYGEN_EXECUTABLE}
-                      ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-                      &>
-                      doxygen.log
-                      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+      ${DOXYGEN_EXECUTABLE}
+      ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
+      &>
+      doxygen.log
+      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
   endif()
 endif()
 

@@ -26,15 +26,15 @@
 #include <CLI/CLI.hpp>
 #endif
 
-#include "math/vec2.hpp"
+#include <glm/glm.hpp>
 
 namespace specula::cli {
 std::string script_source = "";
 std::string output_path = "out.png";
 std::size_t verbosity = 0;
-std::size_t spp;
-double fov;
-vec2<std::size_t> resolution = {100, 100};
+std::size_t spp = 1;
+float fov = static_cast<float>(M_PI / 2.0);
+glm::uvec2 resolution = {100, 100};
 } // namespace specula::cli
 
 class RegexValidator : public CLI::Validator {
@@ -83,11 +83,11 @@ int specula::cli::parse_args(int argc, char *argv[]) {
     return app.exit(e);
   }
 
-  vec2<double> aspect{0.0, 0.0};
+  glm::vec2 aspect{0.0, 0.0};
   if (aspect_ratio.find(':') != std::string::npos)
-    sscanf(aspect_ratio.c_str(), "%lf:%lf", &aspect.x, &aspect.y);
+    sscanf(aspect_ratio.c_str(), "%f:%f", &aspect.x, &aspect.y);
   else
-    sscanf(aspect_ratio.c_str(), "%lfx%lf", &aspect.x, &aspect.y);
+    sscanf(aspect_ratio.c_str(), "%fx%f", &aspect.x, &aspect.y);
   resolution = {pix_width,
                 static_cast<std::size_t>(static_cast<double>(pix_width) *
                                          aspect.y / aspect.x)};

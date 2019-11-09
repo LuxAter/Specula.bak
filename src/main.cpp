@@ -19,12 +19,28 @@
 #include "cli/cli.hpp"
 #include "image/image.hpp"
 #include "log.hpp"
-#include "math/math.hpp"
 #include "object/object.hpp"
 #include "renderer.hpp"
 #include "version.hpp"
 
+#include <glm/glm.hpp>
 #include <sol/sol.hpp>
+
+struct Camera {
+  glm::vec3 eye_{0.0, 0.0, -1.0}, center_{0.0, 0.0, 0.0}, up_{0.0, 1.0, 0.0};
+  inline Camera &eye(const float &x, const float &y, const float &z) {
+    eye_ = {x, y, z};
+    return *this;
+  }
+  inline Camera &center(const float &x, const float &y, const float &z) {
+    center_ = {x, y, z};
+    return *this;
+  }
+  inline Camera &up(const float &x, const float &y, const float &z) {
+    up_ = {x, y, z};
+    return *this;
+  }
+};
 
 int main(int argc, char *argv[]) {
   int ret = 0;
@@ -39,10 +55,14 @@ int main(int argc, char *argv[]) {
 
   std::vector<std::shared_ptr<specula::object::Object>> objs;
   std::vector<std::shared_ptr<specula::object::Object>> *objs_ptr = &objs;
-
-  sol::state lua;
   std::size_t render_calls = 0;
   std::size_t *render_calls_ptr = &render_calls;
+
+  sol::state lua;
+  lua.open_libraries();
+
+  lua.new_usertype<glm::vec3>("vec3", "x", &glm::vec3::x, "y", &glm::vec3::y,
+                              "z", &glm::vec3::z);
 
   lua.new_usertype<specula::object::Object>(
       "Object", "translate", &specula::object::Object::translate);
@@ -55,8 +75,23 @@ int main(int argc, char *argv[]) {
       }),
       "radius", &specula::object::Sphere::radius, sol::base_classes,
       sol::bases<specula::object::Object>());
+  lua.new_usertype<specula::object::Box>(
+      "Box", "new",
+      sol::factories([objs_ptr](const float &w, const float &h,
+                                const float &l) {
+        objs_ptr->push_back(std::make_shared<specula::object::Box>(w, h, l));
+        return std::dynamic_pointer_cast<specula::object::Box>(
+            objs_ptr->back());
+      }),
+      "box", &specula::object::Box::box, sol::base_classes,
+      sol::bases<specula::object::Object>());
 
-  lua.set_function("render", [render_calls_ptr, objs]() -> bool {
+  lua.new_usertype<Camera>("Camera", "eye", &Camera::eye, "center",
+                           &Camera::center, "up", &Camera::up);
+  lua.set("camera", Camera());
+  auto camera = lua["camera"];
+
+  lua.set_function("render", [render_calls_ptr, objs_ptr, camera]() -> bool {
     specula::fs::path file(specula::cli::output_path);
     specula::fs::path file_name = file.filename().replace_extension(""),
                       file_extension = file.extension();
@@ -65,17 +100,21 @@ int main(int argc, char *argv[]) {
     file.append(
         fmt::format("{}{}", *render_calls_ptr, file_extension.string()));
     (*render_calls_ptr)++;
-    return specula::renderer::render_frame(file, objs, specula::cli::spp,
-                                           specula::cli::fov,
-                                           specula::cli::resolution);
+    Camera frame_camera = camera;
+    return specula::renderer::render_frame(
+        file, *objs_ptr, specula::cli::spp, specula::cli::fov,
+        specula::cli::resolution,
+        {{frame_camera.eye_, frame_camera.center_, frame_camera.up_}});
   });
 
   lua.script_file(specula::cli::script_source);
 
   if (render_calls == 0) {
+    Camera frame_camera = camera;
     return specula::renderer::render_frame(
         specula::fs::path(specula::cli::output_path), objs, specula::cli::spp,
-        specula::cli::fov, specula::cli::resolution);
+        specula::cli::fov, specula::cli::resolution,
+        {{frame_camera.eye_, frame_camera.center_, frame_camera.up_}});
   }
 
   return 0;

@@ -7,34 +7,34 @@
 #include <string_view>
 #include <vector>
 
+#include <glm/glm.hpp>
+
 #include "../filesystem.hpp"
-#include "../math/vec2.hpp"
-#include "../math/vec3.hpp"
 
 namespace specula {
 namespace image {
 class Image {
 public:
   Image(const std::size_t &pix_width, const std::size_t &pix_height);
-  Image(const vec2<std::size_t> &resolution);
+  Image(const glm::uvec2 &resolution);
   bool write(const std::string_view &file);
   bool write(const fs::path &file);
 
-  inline vec3<double> &operator()(const std::size_t &x, const std::size_t &y) {
-    return buffer_[resolution_.w * y + x];
+  inline glm::vec3 &operator()(const std::size_t &x, const std::size_t &y) {
+    return buffer_[resolution_.y * y + x];
   }
   inline void operator()(const std::size_t &x, const std::size_t &y,
-                          const vec3<double> &c) {
-    buffer_[resolution_.w * y + x] = c;
+                         const glm::vec3 &c) {
+    buffer_[resolution_.y * y + x] = c;
   }
-  inline const vec3<double> &operator()(const std::size_t &x,
-                                        const std::size_t &y) const {
-    return buffer_[resolution_.w * y + x];
+  inline const glm::vec3 &operator()(const std::size_t &x,
+                                     const std::size_t &y) const {
+    return buffer_[resolution_.y * y + x];
   }
 
 private:
-  vec2<std::size_t> resolution_;
-  std::vector<vec3<double>> buffer_;
+  glm::uvec2 resolution_;
+  std::vector<glm::vec3> buffer_;
 };
 } // namespace image
 } // namespace specula

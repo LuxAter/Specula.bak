@@ -6,14 +6,12 @@
 #include <string_view>
 #include <vector>
 
-#include "../math/vec2.hpp"
-#include "../math/vec3.hpp"
+#include <glm/glm.hpp>
 
 namespace specula {
 namespace image {
-bool write_jpeg(const std::string_view &file,
-                const vec2<std::size_t> &resolutin,
-                const std::vector<vec3<double>> &buffer);
+bool write_jpeg(const std::string_view &file, const glm::uvec2 &resolutin,
+                const std::vector<glm::vec3> &buffer);
 } // namespace image
 } // namespace specula
 

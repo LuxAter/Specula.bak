@@ -1,7 +1,8 @@
 #ifndef SPECULA_OBJECT_SPHERE_HPP_
 #define SPECULA_OBJECT_SPHERE_HPP_
 
-#include "../math/math.hpp"
+#include <glm/glm.hpp>
+
 #include "object_class.hpp"
 
 namespace specula {
@@ -9,8 +10,9 @@ namespace object {
 class Sphere : public Object {
 public:
   Sphere(const float &radius)
-      : Object(
-            [this](const float3 &p) { return length(p) - this->radius; }),
+      : Object([this](const glm::vec3 &p) {
+          return glm::length(p) - this->radius;
+        }),
         radius(radius) {}
   ~Sphere() {}
 
