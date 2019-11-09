@@ -1,18 +1,25 @@
 #ifndef SPECULA_RENDERER_HPP_
 #define SPECULA_RENDERER_HPP_
 
-#include <vector>
 #include <memory>
+#include <vector>
 
 #include "filesystem.hpp"
 
-#include "util/util.hpp"
+#include "math/math.hpp"
 #include "object/object.hpp"
 
 namespace specula {
-  namespace renderer {
-    bool render_frame(const fs::path& file, std::vector<std::shared_ptr<object::Object>>& objs, 
-  } // namespace renderer
+namespace renderer {
+bool render_frame(const fs::path &file,
+                  const std::vector<std::shared_ptr<object::Object>> &objs,
+                  const std::size_t &spp, const double &fov,
+                  const vec2<std::size_t> &res);
+std::tuple<std::size_t, std::vector<std::vector<float3>>>
+render_tile(const std::size_t &tile_id, const vec4<std::size_t>& tile,
+             const std::vector<std::shared_ptr<object::Object>> &objs,
+             const std::size_t &spp, const double &fov);
+} // namespace renderer
 } // namespace specula
 
-#endif  // SPECULA_RENDERER_HPP_
+#endif // SPECULA_RENDERER_HPP_

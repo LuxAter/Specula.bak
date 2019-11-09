@@ -13,7 +13,7 @@
 
 bool specula::image::write_jpeg(
     const std::string_view &file, const vec2<std::size_t> &resolution,
-    const std::vector<std::array<double, 3>> &buffer) {
+    const std::vector<vec3<double>> &buffer) {
   struct jpeg_compress_struct cinfo;
   struct jpeg_error_mgr jerr;
   FILE *out;
@@ -26,8 +26,8 @@ bool specula::image::write_jpeg(
     return false;
   }
   jpeg_stdio_dest(&cinfo, out);
-  cinfo.image_width = resolution.x;
-  cinfo.image_height = resolution.y;
+  cinfo.image_width = resolution.w;
+  cinfo.image_height = resolution.h;
   cinfo.input_components = 3;
   cinfo.in_color_space = JCS_RGB;
 
@@ -39,18 +39,12 @@ bool specula::image::write_jpeg(
   row_pointer[0] = pix_buffer;
   while (cinfo.next_scanline < cinfo.image_height) {
     for (std::size_t x = 0; x < cinfo.image_width; ++x) {
-      pix_buffer[x * 3 + 0] =
-          static_cast<std::uint8_t>(
-              buffer[cinfo.next_scanline * cinfo.image_height + x][0] *
-          0xff);
-      pix_buffer[x * 3 + 1] =
-          static_cast<std::uint8_t>(
-              buffer[cinfo.next_scanline * cinfo.image_height + x][1] *
-          0xff);
-      pix_buffer[x * 3 + 2] =
-          static_cast<std::uint8_t>(
-              buffer[cinfo.next_scanline * cinfo.image_height + x][2] *
-          0xff);
+      pix_buffer[x * 3 + 0] = static_cast<std::uint8_t>(
+          buffer[cinfo.next_scanline * cinfo.image_height + x].r * 0xff);
+      pix_buffer[x * 3 + 1] = static_cast<std::uint8_t>(
+          buffer[cinfo.next_scanline * cinfo.image_height + x].g * 0xff);
+      pix_buffer[x * 3 + 2] = static_cast<std::uint8_t>(
+          buffer[cinfo.next_scanline * cinfo.image_height + x].b * 0xff);
     }
     (void)jpeg_write_scanlines(&cinfo, row_pointer, 1);
   }

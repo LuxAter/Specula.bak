@@ -7,5 +7,6 @@
 #include "mat.hpp"
 #include "std_functions.hpp"
 #include "geometric.hpp"
+#include "transform.hpp"
 
 #endif  // SPECULA_MATH_HPP_

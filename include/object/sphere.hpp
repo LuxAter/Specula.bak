@@ -9,10 +9,8 @@ namespace object {
 class Sphere : public Object {
 public:
   Sphere(const float &radius)
-      : Object([this](const float3 &p) {
-          return this->radius;
-          // return glm::length(p) - this->radius;
-        }),
+      : Object(
+            [this](const float3 &p) { return length(p) - this->radius; }),
         radius(radius) {}
   ~Sphere() {}
 

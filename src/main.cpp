@@ -19,8 +19,9 @@
 #include "cli/cli.hpp"
 #include "image/image.hpp"
 #include "log.hpp"
-#include "object/object.hpp"
 #include "math/math.hpp"
+#include "object/object.hpp"
+#include "renderer.hpp"
 #include "version.hpp"
 
 #include <sol/sol.hpp>
@@ -36,12 +37,12 @@ int main(int argc, char *argv[]) {
   LINFO("Specula v{}.{}.{}", SPECULA_VERSION_MAJOR, SPECULA_VERSION_MINOR,
         SPECULA_VERSION_PATCH);
 
-  specula::mat<double, 2> mat2(1.0, 2.0, 3.0, 4.0);
-
   std::vector<std::shared_ptr<specula::object::Object>> objs;
   std::vector<std::shared_ptr<specula::object::Object>> *objs_ptr = &objs;
 
   sol::state lua;
+  std::size_t render_calls = 0;
+  std::size_t *render_calls_ptr = &render_calls;
 
   lua.new_usertype<specula::object::Object>(
       "Object", "translate", &specula::object::Object::translate);
@@ -55,15 +56,27 @@ int main(int argc, char *argv[]) {
       "radius", &specula::object::Sphere::radius, sol::base_classes,
       sol::bases<specula::object::Object>());
 
+  lua.set_function("render", [render_calls_ptr, objs]() -> bool {
+    specula::fs::path file(specula::cli::output_path);
+    specula::fs::path file_name = file.filename().replace_extension(""),
+                      file_extension = file.extension();
+    file.remove_filename();
+    file.append(file_name.string());
+    file.append(
+        fmt::format("{}{}", *render_calls_ptr, file_extension.string()));
+    (*render_calls_ptr)++;
+    return specula::renderer::render_frame(file, objs, specula::cli::spp,
+                                           specula::cli::fov,
+                                           specula::cli::resolution);
+  });
+
   lua.script_file(specula::cli::script_source);
 
-  LDEBUG("OBJS: {}", objs.size());
-  for (auto &obj : objs) {
-    LDEBUG("RAD {}",
-           std::dynamic_pointer_cast<specula::object::Sphere>(obj)->radius);
+  if (render_calls == 0) {
+    return specula::renderer::render_frame(
+        specula::fs::path(specula::cli::output_path), objs, specula::cli::spp,
+        specula::cli::fov, specula::cli::resolution);
   }
 
-  specula::image::Image img(specula::cli::resolution);
-  img.write(specula::cli::output_path);
   return 0;
 }

@@ -23,6 +23,7 @@ template <typename _T> class vec2;
 template <typename _T> class vec3;
 template <typename _T> class vec4 {
 public:
+  vec4() : x(), y(), z(), w() {}
   vec4(const _T &v) : x(v), y(v), z(v), w(v) {}
   vec4(const _T &x, const _T &y, const _T &z, const _T &w)
       : x(x), y(y), z(z), w(w) {}
@@ -491,7 +492,18 @@ public:
   SWIZZLE(w, w, w, z)
   SWIZZLE(w, w, w, w)
 
-  _T x, y, z, w;
+  union {
+    _T x, r;
+  };
+  union {
+    _T y, g;
+  };
+  union {
+    _T z, b, h;
+  };
+  union {
+    _T w, a;
+  };
 };
 
 template <typename _T>
@@ -568,7 +580,7 @@ inline std::ostream &operator<<(std::ostream &out, const vec4<_T> &v) {
   return out << '<' << v.x << ',' << v.y << ',' << v.z << ',' << v.w << '>';
 }
 
-typedef vec4<float> float4;
+typedef vec4<double> float4;
 
 } // namespace specula
 

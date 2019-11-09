@@ -23,6 +23,7 @@ template <typename _T> class vec3;
 template <typename _T> class vec4;
 template <typename _T> class vec2 {
 public:
+  vec2() : x(), y() {}
   vec2(const _T &v) : x(v), y(v) {}
   vec2(const _T &x, const _T &y) : x(x), y(y) {}
   vec2(const vec2<_T> &copy) : x(copy.x), y(copy.y) {}
@@ -156,7 +157,12 @@ public:
   SWIZZLE(y, y, y, x)
   SWIZZLE(y, y, y, y)
 
-  _T x, y;
+  union {
+    _T x, r, w;
+  };
+  union {
+    _T y, g, h;
+  };
 };
 
 template <typename _T>

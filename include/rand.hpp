@@ -7,7 +7,11 @@ namespace specula {
 namespace rand {
 extern std::random_device rd;
 extern std::mt19937 gen;
-extern std::uniform_real_distribution<double> frand;
+extern std::uniform_real_distribution<double> unif_rand_dist;
+inline double frand(){
+  return unif_rand_dist(gen);
+}
+
 } // namespace rand
 } // namespace specula
 

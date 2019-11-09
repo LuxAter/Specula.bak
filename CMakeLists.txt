@@ -3,7 +3,7 @@
 # ##############################################################################
 
 cmake_minimum_required(VERSION 3.8.2)
-project(Specula VERSION 0.2.7 LANGUAGES CXX)
+project(Specula VERSION 0.2.8 LANGUAGES CXX)
 
 set(LIBRARY_NAME libspecula)
 set(EXECUTABLE_NAME specula)
@@ -62,7 +62,10 @@ endif()
 
 set(SOURCES
     src/cli/argparse.cpp
+    src/cli/progress_bar.cpp
     src/log.cpp
+    src/renderer.cpp
+    src/rand.cpp
     src/image/image_class.cpp
     src/image/png.cpp
     src/image/jpeg.cpp

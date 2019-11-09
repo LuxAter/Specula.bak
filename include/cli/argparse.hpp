@@ -34,6 +34,8 @@ namespace cli {
 extern std::string script_source;
 extern std::string output_path;
 extern std::size_t verbosity;
+extern std::size_t spp;
+extern double fov;
 extern vec2<std::size_t> resolution;
 
 int parse_args(int argc, char *argv[]);
