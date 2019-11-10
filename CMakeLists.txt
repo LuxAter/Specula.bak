@@ -217,13 +217,13 @@ if(SOL2_FOUND)
   target_link_libraries(${EXECUTABLE_NAME} sol2::sol2)
 endif()
 
-load_external(ChaiScript)
-if(CHAISCRIPT_FOUND)
-  target_link_libraries(${EXECUTABLE_NAME} ${CMAKE_DL_LIBS})
-  target_include_directories(
-    ${EXECUTABLE_NAME}
-    PUBLIC ${PROJECT_SOURCE_DIR}/external/ChaiScript/include)
-endif()
+# load_external(ChaiScript)
+# if(CHAISCRIPT_FOUND)
+#   target_link_libraries(${EXECUTABLE_NAME} ${CMAKE_DL_LIBS})
+#   target_include_directories(
+#     ${EXECUTABLE_NAME}
+#     PUBLIC ${PROJECT_SOURCE_DIR}/external/ChaiScript/include)
+# endif()
 
 load_external(filesystem)
 if(FILESYSTEM_FOUND)
@@ -241,6 +241,7 @@ load_external(glm)
 if(GLM_FOUND)
   add_subdirectory(${PROJECT_SOURCE_DIR}/external/glm EXCLUDE_FROM_ALL)
   target_link_libraries(${LIBRARY_NAME} glm::glm)
+  target_compile_definitions(${LIBRARY_NAME} PUBLIC -DGLM_FORCE_SWIZZLE)
 endif()
 
 load_external(CLI11)

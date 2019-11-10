@@ -23,11 +23,13 @@
 #include "renderer.hpp"
 #include "version.hpp"
 
+#define GLM_FORCE_SWIZZLE
+
 #include <glm/glm.hpp>
 #include <sol/sol.hpp>
 
 struct Camera {
-  glm::vec3 eye_{0.0, 0.0, -1.0}, center_{0.0, 0.0, 0.0}, up_{0.0, 1.0, 0.0};
+  glm::vec3 eye_{0.0, 0.0, -1.0}, center_{0.0, 0.0, 0.0}, up_{0.0, -1.0, 0.0};
   inline Camera &eye(const float &x, const float &y, const float &z) {
     eye_ = {x, y, z};
     return *this;
@@ -61,11 +63,18 @@ int main(int argc, char *argv[]) {
   sol::state lua;
   lua.open_libraries();
 
+  lua.new_usertype<glm::vec2>("vec2", "x", &glm::vec2::x, "y", &glm::vec2::y);
   lua.new_usertype<glm::vec3>("vec3", "x", &glm::vec3::x, "y", &glm::vec3::y,
                               "z", &glm::vec3::z);
+  lua.new_usertype<glm::vec4>("vec4", "x", &glm::vec4::x, "y", &glm::vec4::y,
+                              "z", &glm::vec4::z, "w", &glm::vec4::w);
 
   lua.new_usertype<specula::object::Object>(
-      "Object", "translate", &specula::object::Object::translate);
+      "Object", "translate", &specula::object::Object::translate, "rotate_x",
+      &specula::object::Object::rotate_x, "rotate_y",
+      &specula::object::Object::rotate_y, "rotate_z",
+      &specula::object::Object::rotate_z, "scale",
+      &specula::object::Object::scale);
 
   lua.new_usertype<specula::object::Sphere>(
       "Sphere", "new", sol::factories([objs_ptr](const float &radius) {
@@ -84,6 +93,50 @@ int main(int argc, char *argv[]) {
             objs_ptr->back());
       }),
       "box", &specula::object::Box::box, sol::base_classes,
+      sol::bases<specula::object::Object>());
+  lua.new_usertype<specula::object::Cone>(
+      "Cone", "new",
+      sol::factories([objs_ptr](const float &h, const float &rb,
+                                const float &rt) {
+        objs_ptr->push_back(std::make_shared<specula::object::Cone>(h, rb, rt));
+        return std::dynamic_pointer_cast<specula::object::Cone>(
+            objs_ptr->back());
+      }),
+      "height", &specula::object::Cone::height, "radius_bottom",
+      &specula::object::Cone::radius_bottom, "radius_top",
+      &specula::object::Cone::radius_top, sol::base_classes,
+      sol::bases<specula::object::Object>());
+  lua.new_usertype<specula::object::Cylinder>(
+      "Cylinder", "new",
+      sol::factories([objs_ptr](const float &h, const float &r) {
+        objs_ptr->push_back(std::make_shared<specula::object::Cylinder>(h, r));
+        return std::dynamic_pointer_cast<specula::object::Cylinder>(
+            objs_ptr->back());
+      }),
+      "height", &specula::object::Cylinder::height, "radius",
+      &specula::object::Cylinder::radius, sol::base_classes,
+      sol::bases<specula::object::Object>());
+  lua.new_usertype<specula::object::Plane>(
+      "Plane", "new",
+      sol::factories([objs_ptr](const float &x, const float &y, const float &z,
+                                const float &w) {
+        objs_ptr->push_back(
+            std::make_shared<specula::object::Plane>(x, y, z, w));
+        return std::dynamic_pointer_cast<specula::object::Plane>(
+            objs_ptr->back());
+      }),
+      "normal", &specula::object::Plane::normal, sol::base_classes,
+      sol::bases<specula::object::Object>());
+  lua.new_usertype<specula::object::Torus>(
+      "Torus", "new",
+      sol::factories([objs_ptr](const float &radius_big,
+                                const float &radius_small) {
+        objs_ptr->push_back(
+            std::make_shared<specula::object::Torus>(radius_big, radius_small));
+        return std::dynamic_pointer_cast<specula::object::Torus>(
+            objs_ptr->back());
+      }),
+      "torus", &specula::object::Torus::torus, sol::base_classes,
       sol::bases<specula::object::Object>());
 
   lua.new_usertype<Camera>("Camera", "eye", &Camera::eye, "center",
