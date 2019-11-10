@@ -6,17 +6,41 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+#include "../log.hpp"
+#include "../material/material.hpp"
+
 namespace specula {
 namespace object {
 class Object {
 public:
   Object(const std::function<float(const glm::vec3 &)> &dst)
-      : dst_(dst), trans_(1.0f), trans_inv_(1.0f) {}
+      : mat_(nullptr), dst_(dst), trans_(1.0f), trans_inv_(1.0f) {}
 
   virtual ~Object() {}
 
   inline float distance(const glm::vec3 &p) const {
     return this->dst_(glm::vec3(this->trans_inv_ * glm::vec4(p, 1.0f)));
+  }
+  inline glm::vec3 normal(const glm::vec3 &p, const float &ep) const {
+    glm::vec3 obj_p = this->trans_inv_ * glm::vec4(p, 1.0f);
+    return glm::normalize(
+        glm::vec3(this->dst_(glm::vec3(obj_p.x + ep, obj_p.y, obj_p.z)) -
+                      this->dst_(glm::vec3(obj_p.x - ep, obj_p.y, obj_p.z)),
+                  this->dst_(glm::vec3(obj_p.x, obj_p.y + ep, obj_p.z)) -
+                      this->dst_(glm::vec3(obj_p.x, obj_p.y - ep, obj_p.z)),
+                  this->dst_(glm::vec3(obj_p.x, obj_p.y, obj_p.z + ep)) -
+                      this->dst_(glm::vec3(obj_p.x, obj_p.y, obj_p.z - ep))));
+  }
+
+  // inline Object &set_material(const std::shared_ptr<material::Material> &mat)
+  // {
+  //   mat_ = mat;
+  //   return *this;
+  // }
+  inline Object &set_material(const material::Material &mat) {
+    mat_ = std::make_shared<material::Material>(mat.type, mat.base_color,
+                                                mat.emission, mat.ior);
+    return *this;
   }
 
   inline Object &rotate_x(const float &angle) {
@@ -49,6 +73,8 @@ public:
     trans_inv_ = glm::scale(trans_inv_, glm::vec3(1.0 / x, 1.0 / y, 1.0 / z));
     return *this;
   }
+
+  std::shared_ptr<material::Material> mat_;
 
 protected:
   std::function<float(const glm::vec3 &)> dst_;

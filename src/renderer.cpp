@@ -15,9 +15,10 @@
 #include "log.hpp"
 #include "object/object.hpp"
 #include "rand.hpp"
+#include "shader/shader.hpp"
 #include "thread.hpp"
 
-#define T_MAX 1e5f
+#define T_MAX 1e2f
 #define EPSILON 1e-5f
 
 bool specula::renderer::render_frame(
@@ -26,37 +27,26 @@ bool specula::renderer::render_frame(
     const std::size_t &spp, const float &fov, const glm::uvec2 &res,
     const std::array<glm::vec3, 3> &camera) {
 
-  std::size_t tile_size = static_cast<std::size_t>(
-      std::sqrt(res.x * res.y / (32 * std::thread::hardware_concurrency())));
-  // std::size_t tile_size = 256 / std::thread::hardware_concurrency();
+  std::vector<std::shared_ptr<object::Object>> reduced_objs;
+  std::copy_if(objs.begin(), objs.end(), std::back_inserter(reduced_objs),
+               [](const std::shared_ptr<object::Object> &o) {
+                 return o->mat_ != nullptr;
+               });
+  if (reduced_objs.size() == 0) {
+    LWARN("No object are visible, rendering empty frame");
+  }
+
+  // std::size_t tile_size = static_cast<std::size_t>(
+  //     std::sqrt(res.x * res.y / (8 * std::thread::hardware_concurrency())));
+  std::size_t tile_size = 32;
   std::size_t htiles = static_cast<std::size_t>(
       std::ceil(res.x / static_cast<double>(tile_size)));
   std::size_t vtiles = static_cast<std::size_t>(
       std::ceil(res.y / static_cast<double>(tile_size)));
   std::size_t tiles = htiles * vtiles;
 
-  LINFO("OBJS: {}", objs.size());
-  LTRACE("EYE: {},{},{}", camera[0].x, camera[0].y, camera[0].z);
-  LTRACE("CENTER: {},{},{}", camera[1].x, camera[1].y, camera[1].z);
-  LTRACE("UP: {},{},{}", camera[2].x, camera[2].y, camera[2].z);
-
-
   float filmz = res.x / 2.0f / static_cast<float>(std::tan(fov / 2.0));
   glm::mat4 view = glm::inverse(glm::lookAt(camera[0], camera[1], camera[2]));
-
-  LDEBUG("VIEW: {} {} {} {}", view[0][0], view[1][0], view[2][0], view[3][0]);
-  LDEBUG("VIEW: {} {} {} {}", view[0][1], view[1][1], view[2][1], view[3][1]);
-  LDEBUG("VIEW: {} {} {} {}", view[0][2], view[1][2], view[2][2], view[3][2]);
-  LDEBUG("VIEW: {} {} {} {}", view[0][3], view[1][3], view[2][3], view[3][3]);
-
-  glm::vec3 o(0,0,0), d(0,0,1);
-  o = view * glm::vec4(o, 1.0f);
-  d = view * glm::vec4(1.0f, 0.0f, 0.0f, 0.0f);
-  LDEBUG("{},{},{}->{},{},{}", o.x, o.y, o.z, d.x, d.y, d.z);
-  d = view * glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
-  LDEBUG("{},{},{}->{},{},{}", o.x, o.y, o.z, d.x, d.y, d.z);
-  d = view * glm::vec4(0.0f, 0.0f, -1.0f, 0.0f);
-  LDEBUG("{},{},{}->{},{},{}", o.x, o.y, o.z, d.x, d.y, d.z);
 
   thread::Pool pool(std::thread::hardware_concurrency());
   std::vector<
@@ -77,13 +67,12 @@ bool specula::renderer::render_frame(
                 res.y) -
                 (tile_id / htiles) * tile_size,
         },
-        res, objs, spp, fov, filmz, view));
+        res, reduced_objs, spp, fov, filmz, view));
   }
 
   specula::image::Image img(res);
 
-  // cli::ProgressBar progress(fmt::format("Rendering {}", file.string()),
-  // tiles);
+  cli::ProgressBar progress(fmt::format("Rendering {}", file.string()), tiles);
 
   while (pool_results.size() != 0) {
     for (std::size_t i = 0; i < pool_results.size(); ++i) {
@@ -91,7 +80,7 @@ bool specula::renderer::render_frame(
           std::future_status::ready)
         continue;
       auto [tile_id, tile] = pool_results[i].get();
-      // progress();
+      progress();
       std::size_t x_offset = (tile_id % htiles) * tile_size;
       std::size_t y_offset = (tile_id / htiles) * tile_size;
       for (std::size_t x = 0; x < tile.size(); ++x) {
@@ -146,7 +135,7 @@ glm::vec3 specula::renderer::ray_march(
     const float &t_max, const std::size_t &depth) {
   float rr_factor = 1.0f;
   if (depth >= 5) {
-    const float rr_stop_prob = 0.1f * depth;
+    const float rr_stop_prob = 0.1f;
     if (rand::frand() < rr_stop_prob)
       return glm::vec3(0.0f, 0.0f, 0.0f);
     rr_factor = 1.0f / (1.0f - rr_stop_prob);
@@ -155,7 +144,60 @@ glm::vec3 specula::renderer::ray_march(
   if (obj == nullptr)
     return glm::vec3(0.0f, 0.0f, 0.0f);
 
-  return rr_factor * glm::vec3{1.0, 1.0, 1.0};
+  glm::vec3 p = o + t * d;
+  glm::vec3 normal = obj->normal(p, ep);
+
+  const float emission = obj->mat_->emission;
+  glm::vec3 clr = obj->mat_->base_color * emission * rr_factor;
+
+  if (obj->mat_->type == material::Type::DIFFUSE) {
+    auto [rotx, roty] = shader::make_ortho_coord_sys(normal);
+    const float u1 = rand::frand();
+    const float u2 = rand::frand();
+    const double r = glm::sqrt(1.0 - u1 * u1);
+    const double phi = 2.0f * M_PI * u2;
+    glm::vec3 sampled_dir(glm::cos(phi) * r, glm::sin(phi) * r, u1);
+    glm::vec3 dir;
+    dir.x = glm::dot(glm::vec3(rotx.x, roty.x, normal.x), sampled_dir);
+    dir.y = glm::dot(glm::vec3(rotx.y, roty.y, normal.y), sampled_dir);
+    dir.z = glm::dot(glm::vec3(rotx.z, roty.z, normal.z), sampled_dir);
+    if (depth == 0) {
+      LDEBUG("P: {},{},{} N: {},{},{} DIR: {},{},{}", p.x, p.y, p.z, normal.x,
+             normal.y, normal.z, dir.x, dir.y, dir.z);
+    }
+    float cost = glm::dot(dir, normal);
+    clr += rr_factor *
+           (ray_march(p + 10.0f * ep * dir, dir, objs, ep, t_max, depth + 1) *
+            obj->mat_->base_color) *
+           cost * 0.1f;
+  } else if (obj->mat_->type == material::Type::SPECULAR) {
+    float cost = glm::dot(d, normal);
+    glm::vec3 dir = glm::normalize(d - normal * (cost * 2.0f));
+    clr += rr_factor *
+           ray_march(p + 2.0f * ep * dir, dir, objs, ep, t_max, depth + 1);
+  } else if (obj->mat_->type == material::Type::REFRACTIVE) {
+    float n = obj->mat_->ior;
+    float r0 = (1.0f - n) / (1.0f + n);
+    r0 = r0 * r0;
+    if (glm::dot(normal, d) > 0.0f) {
+      normal = -normal;
+      n = 1.0f / n;
+    }
+    n = 1.0f / n;
+    float cost1 = -glm::dot(normal, d);
+    float cost2 = 1.0f - n * n * (1.0f - cost1 * cost1);
+    float rprob = r0 + (1.0f - r0) * glm::pow(1.0f - cost1, 5.0f);
+    glm::vec3 dir;
+    if (cost2 > 0 && rand::frand() > rprob) {
+      dir = glm::normalize((d * n) + (normal * (n * cost1 - glm::sqrt(cost2))));
+    } else {
+      dir = glm::normalize(d + normal * (cost1 * 2));
+    }
+    clr += ray_march(p + 2.0f * ep * dir, dir, objs, ep, t_max, depth + 1) *
+           1.15f * rr_factor;
+  }
+
+  return clr;
 }
 
 std::tuple<float, std::shared_ptr<specula::object::Object>>

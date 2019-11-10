@@ -19,6 +19,7 @@
 #include "cli/cli.hpp"
 #include "image/image.hpp"
 #include "log.hpp"
+#include "material/material.hpp"
 #include "object/object.hpp"
 #include "renderer.hpp"
 #include "version.hpp"
@@ -29,7 +30,7 @@
 #include <sol/sol.hpp>
 
 struct Camera {
-  glm::vec3 eye_{0.0, 0.0, -1.0}, center_{0.0, 0.0, 0.0}, up_{0.0, -1.0, 0.0};
+  glm::vec3 eye_{0.0, 0.0, -1.0}, center_{0.0, 0.0, 0.0}, up_{0.0, 1.0, 0.0};
   inline Camera &eye(const float &x, const float &y, const float &z) {
     eye_ = {x, y, z};
     return *this;
@@ -69,12 +70,33 @@ int main(int argc, char *argv[]) {
   lua.new_usertype<glm::vec4>("vec4", "x", &glm::vec4::x, "y", &glm::vec4::y,
                               "z", &glm::vec4::z, "w", &glm::vec4::w);
 
+  lua.new_usertype<specula::material::Material>(
+      "Material", "new",
+      [](const float &r, const float &g, const float &b) {
+        return specula::material::Material(specula::material::DIFFUSE,
+                                           glm::vec3{r, g, b}, 0.0f, 1.0f);
+      },
+      "color", &specula::material::Material::base_color, "type",
+      &specula::material::Material::type, "emission",
+      &specula::material::Material::emission, "ior",
+      &specula::material::Material::ior, "set_color",
+      &specula::material::Material::set_color, "set_type",
+      &specula::material::Material::set_type, "get_r",
+      &specula::material::Material::get_r, "get_g",
+      &specula::material::Material::get_g, "get_b",
+      &specula::material::Material::get_b);
+  lua["Material"]["Type"] =
+      lua.create_table_with("DIFFUSE", specula::material::Type::DIFFUSE,
+                            "SPECULAR", specula::material::Type::SPECULAR,
+                            "REFRACTIVE", specula::material::Type::REFRACTIVE);
+
   lua.new_usertype<specula::object::Object>(
       "Object", "translate", &specula::object::Object::translate, "rotate_x",
       &specula::object::Object::rotate_x, "rotate_y",
       &specula::object::Object::rotate_y, "rotate_z",
       &specula::object::Object::rotate_z, "scale",
-      &specula::object::Object::scale);
+      &specula::object::Object::scale, "set_material",
+      &specula::object::Object::set_material);
 
   lua.new_usertype<specula::object::Sphere>(
       "Sphere", "new", sol::factories([objs_ptr](const float &radius) {

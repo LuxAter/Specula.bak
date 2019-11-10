@@ -69,7 +69,9 @@ set(SOURCES
   src/image/image_class.cpp
   src/image/png.cpp
   src/image/jpeg.cpp
-  src/image/bmp.cpp)
+  src/image/bmp.cpp
+  src/shader/shader.cpp
+  )
 set(EXEC_SOURCES src/main.cpp)
 
 configure_file("${PROJECT_SOURCE_DIR}/include/version.hpp.in"
