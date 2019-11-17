@@ -19,7 +19,8 @@
 #include "thread.hpp"
 
 #define T_MAX 1e2f
-#define EPSILON 1e-5f
+
+static float EPSILON = std::numeric_limits<float>::epsilon() * 100.0f;
 
 bool specula::renderer::render_frame(
     const fs::path &file,
@@ -145,7 +146,8 @@ glm::vec3 specula::renderer::ray_march(
     return glm::vec3(0.0f, 0.0f, 0.0f);
 
   if (depth == 1) {
-    LDEBUG("HIT {}: {} @ {}", depth, obj, t);
+    LERROR("EP: {}", ep);
+    LERROR("HIT {}: {} @ {} FROM: {},{},{}", depth, obj, t, o.x, o.y, o.z);
   }
 
   glm::vec3 p = o + t * d;
@@ -165,21 +167,23 @@ glm::vec3 specula::renderer::ray_march(
     dir.x = glm::dot(glm::vec3(rotx.x, roty.x, normal.x), sampled_dir);
     dir.y = glm::dot(glm::vec3(rotx.y, roty.y, normal.y), sampled_dir);
     dir.z = glm::dot(glm::vec3(rotx.z, roty.z, normal.z), sampled_dir);
+    glm::vec3 np = p + (10.0f * ep * dir);
     float cost = glm::dot(dir, normal);
+    if (depth == 0) {
+      LDEBUG("O:{},{},{} D: {},{},{} -> P: {},{},{} N: {},{},{} DIR: {},{},{} "
+             "P:{},{},{}",
+             o.x, o.y, o.z, d.x, d.y, d.z, p.x, p.y, p.z, normal.x, normal.y,
+             normal.z, dir.x, dir.y, dir.z, np.x, np.y, np.z);
+    }
     clr += rr_factor *
-           (ray_march(p + 2.0f * ep * dir, dir, objs, ep, t_max, depth + 1) *
+           (ray_march(p + (10.0f * ep * dir), dir, objs, ep, t_max, depth + 1) *
             obj->mat_->base_color) *
            cost * 0.1f;
   } else if (obj->mat_->type == material::Type::SPECULAR) {
     float cost = glm::dot(d, normal);
     glm::vec3 dir = glm::normalize(d - normal * (cost * 2.0f));
-    if (depth == 0) {
-      LDEBUG("O:{},{},{} D: {},{},{} -> P: {},{},{} N: {},{},{} DIR: {},{},{}",
-             o.x, o.y, o.z, d.x, d.y, d.z, p.x, p.y, p.z, normal.x, normal.y,
-             normal.z, dir.x, dir.y, dir.z);
-    }
     clr += rr_factor *
-           ray_march(p + 2.0f * ep * dir, dir, objs, ep, t_max, depth + 1);
+           ray_march(p + 10.0f * ep * dir, dir, objs, ep, t_max, depth + 1);
   } else if (obj->mat_->type == material::Type::REFRACTIVE) {
     float n = obj->mat_->ior;
     float r0 = (1.0f - n) / (1.0f + n);
@@ -213,7 +217,7 @@ specula::renderer::ray_intersect(
   float t = 0.0f;
   std::shared_ptr<object::Object> hit_obj = nullptr;
   while (t < t_max) {
-    glm::vec3 p = o + t * d;
+    glm::vec3 p = o + (t * d);
     float dt = std::numeric_limits<float>::infinity();
     for (auto &obj : objs) {
       float odt = obj->distance(p);
@@ -223,9 +227,11 @@ specula::renderer::ray_intersect(
           hit_obj = obj;
       }
     }
-    if (dt < ep)
+    if (t != 0.0f && dt < ep) {
+      LCRITICAL("O: {},{},{} D: {},{},{}, P: {},{},{}, DT: {}, EP: {}", o.x,
+                o.y, o.z, d.x, d.y, d.z, p.x, p.y, p.z, dt, ep);
       break;
-    else
+    } else
       t += dt;
   }
   return std::make_tuple(t, hit_obj);

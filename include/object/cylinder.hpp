@@ -1,8 +1,6 @@
 #ifndef SPECULA_OBJECT_CYLINDER_HPP_
 #define SPECULA_OBJECT_CYLINDER_HPP_
 
-#define GLM_FORCE_SWIZZLE
-
 #include <glm/glm.hpp>
 
 #include "object_class.hpp"
