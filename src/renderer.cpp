@@ -145,13 +145,13 @@ glm::vec3 specula::renderer::ray_march(
   if (obj == nullptr)
     return glm::vec3(0.0f, 0.0f, 0.0f);
 
-  if (depth == 1) {
-    LERROR("EP: {}", ep);
-    LERROR("HIT {}: {} @ {} FROM: {},{},{}", depth, obj, t, o.x, o.y, o.z);
-  }
-
   glm::vec3 p = o + t * d;
   glm::vec3 normal = obj->normal(p, ep);
+
+  if (depth == 1) {
+    LERROR("EP: {}", ep);
+    LERROR("HIT {}: {} @ {} FROM: {},{},{} AT: {},{},{}", depth, obj, t, o.x, o.y, o.z, p.x, p.y, p.z);
+  }
 
   const float emission = obj->mat_->emission;
   glm::vec3 clr = obj->mat_->base_color * emission * rr_factor;
@@ -176,14 +176,14 @@ glm::vec3 specula::renderer::ray_march(
              normal.z, dir.x, dir.y, dir.z, np.x, np.y, np.z);
     }
     clr += rr_factor *
-           (ray_march(p + (10.0f * ep * dir), dir, objs, ep, t_max, depth + 1) *
+           (ray_march(p + (ep * normal), dir, objs, ep, t_max, depth + 1) *
             obj->mat_->base_color) *
            cost * 0.1f;
   } else if (obj->mat_->type == material::Type::SPECULAR) {
     float cost = glm::dot(d, normal);
     glm::vec3 dir = glm::normalize(d - normal * (cost * 2.0f));
     clr += rr_factor *
-           ray_march(p + 10.0f * ep * dir, dir, objs, ep, t_max, depth + 1);
+           ray_march(p + ep * normal, dir, objs, ep, t_max, depth + 1);
   } else if (obj->mat_->type == material::Type::REFRACTIVE) {
     float n = obj->mat_->ior;
     float r0 = (1.0f - n) / (1.0f + n);
@@ -202,7 +202,7 @@ glm::vec3 specula::renderer::ray_march(
     } else {
       dir = glm::normalize(d + normal * (cost1 * 2));
     }
-    clr += ray_march(p + 2.0f * ep * dir, dir, objs, ep, t_max, depth + 1) *
+    clr += ray_march(p + ep * normal, dir, objs, ep, t_max, depth + 1) *
            1.15f * rr_factor;
   }
 
@@ -228,8 +228,6 @@ specula::renderer::ray_intersect(
       }
     }
     if (t != 0.0f && dt < ep) {
-      LCRITICAL("O: {},{},{} D: {},{},{}, P: {},{},{}, DT: {}, EP: {}", o.x,
-                o.y, o.z, d.x, d.y, d.z, p.x, p.y, p.z, dt, ep);
       break;
     } else
       t += dt;
