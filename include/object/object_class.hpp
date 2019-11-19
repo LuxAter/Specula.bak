@@ -21,15 +21,17 @@ public:
   inline float distance(const glm::vec3 &p) const {
     return this->dst_(glm::vec3(this->trans_inv_ * glm::vec4(p, 1.0f)));
   }
-  inline glm::vec3 normal(const glm::vec3 &p, const float &ep) const {
+  inline glm::vec3 calculate_normal(const glm::vec3 &p, const float &ep) const {
     glm::vec3 obj_p = this->trans_inv_ * glm::vec4(p, 1.0f);
-    return glm::normalize(
-        glm::vec3(this->dst_(glm::vec3(obj_p.x + ep, obj_p.y, obj_p.z)) -
-                      this->dst_(glm::vec3(obj_p.x - ep, obj_p.y, obj_p.z)),
-                  this->dst_(glm::vec3(obj_p.x, obj_p.y + ep, obj_p.z)) -
-                      this->dst_(glm::vec3(obj_p.x, obj_p.y - ep, obj_p.z)),
-                  this->dst_(glm::vec3(obj_p.x, obj_p.y, obj_p.z + ep)) -
-                      this->dst_(glm::vec3(obj_p.x, obj_p.y, obj_p.z - ep))));
+    return this->trans_ *
+           glm::normalize(glm::vec4(
+               this->dst_(glm::vec3(obj_p.x + ep, obj_p.y, obj_p.z)) -
+                   this->dst_(glm::vec3(obj_p.x - ep, obj_p.y, obj_p.z)),
+               this->dst_(glm::vec3(obj_p.x, obj_p.y + ep, obj_p.z)) -
+                   this->dst_(glm::vec3(obj_p.x, obj_p.y - ep, obj_p.z)),
+               this->dst_(glm::vec3(obj_p.x, obj_p.y, obj_p.z + ep)) -
+                   this->dst_(glm::vec3(obj_p.x, obj_p.y, obj_p.z - ep)),
+               0));
   }
 
   // inline Object &set_material(const std::shared_ptr<material::Material> &mat)
