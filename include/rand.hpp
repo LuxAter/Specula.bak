@@ -24,7 +24,7 @@ inline glm::vec3 uniform_hemisphere(const glm::vec3 &normal) {
   }
   const float u1 = unif_rand_dist(gen), u2 = unif_rand_dist(gen);
   const float r = std::sqrt(u1);
-  const float theta = 2 * M_PI * u2;
+  const float theta = 2.0f * (float)M_PI * u2;
   const float x = r * std::cos(theta);
   const float y = r * std::sin(theta);
   return R * glm::vec4(x, y, std::sqrt(std::max(0.0f, 1.0f - u1)), 1.0f);
@@ -45,7 +45,7 @@ inline std::vector<glm::vec3> uniform_hemisphere(const glm::vec3 &normal,
   for (std::size_t i = 0; i < n_samples; ++i) {
     const float u1 = unif_rand_dist(gen), u2 = unif_rand_dist(gen);
     const float r = std::sqrt(u1);
-    const float theta = 2 * M_PI * u2;
+    const float theta = 2.0f * (float)M_PI * u2;
     const float x = r * std::cos(theta);
     const float y = r * std::sin(theta);
     samples.push_back(

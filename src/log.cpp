@@ -41,6 +41,7 @@ bool specula::logger::initalize_logger(const std::size_t &verbosity) {
     spdlog::set_default_logger(std::make_shared<spdlog::logger>(
         "specula", spdlog::sinks_init_list({console_sink, file_sink})));
     spdlog::set_level(spdlog::level::trace);
+    // spdlog::set_pattern("[%Y-%m-%d %H:%M:%S.%e] [%n(%t)] [%^%l%$] [%s:%#] %v");
 
     return true;
   } catch (const spdlog::spdlog_ex &ex) {
