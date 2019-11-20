@@ -4,7 +4,7 @@ on:
     branches:
       - 'master'
     tags:
-      - '*'
+      - 'v*'
 
 jobs: 
   create:
@@ -23,14 +23,11 @@ jobs:
     needs: create
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [ubuntu-latest, macos-latest]
         include:
           - os: ubuntu-latest
             tarball: Specula-Linux.tar.gz
             zipball: Specula-Linux.zip
-          - os: windows-latest
-            tarball: Specula-Windows.tar.gz
-            zipball: Specula-Windows.zip
           - os: macos-latest
             tarball: Specula-Darwin.tar.gz
             zipball: Specula-Darwin.zip
