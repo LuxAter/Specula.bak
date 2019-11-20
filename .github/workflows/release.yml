@@ -1,23 +1,7 @@
 name: Release
-on:
-  push:
-    branches:
-      - 'master'
-    tags:
-      - 'v*'
+on: release
 
 jobs: 
-  create:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Create Release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: ${{ github.ref }}
-          draft: true
   build:
     runs-on: ${{ matrix.os }}
     needs: create
@@ -39,19 +23,15 @@ jobs:
         run: cmake --build .
       - name: package
         run: cmake --build . -- package
-      - name: upload tar
-        uses: svenstaro/upload-release-action@v1-release
+      - name: upload tar.gz 
+        uses: JasonEtco/upload-to-release@master
         with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: ${{ matrix.tarball }}
-          asset_name: ${{ matrix.tarball }}
-          tag: ${{ github.ref }}
-          overwrite: true
+          args: ${{ matrix.tarball }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: upload zip
-        uses: svenstaro/upload-release-action@v1-release
+        uses: JasonEtco/upload-to-release@master
         with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: ${{ matrix.zipball }}
-          asset_name: ${{ matrix.zipball }}
-          tag: ${{ github.ref }}
-          overwrite: true
+          args: ${{ matrix.zipball }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
