@@ -11,9 +11,6 @@ jobs:
           - os: ubuntu-latest
             tarball: Specula-Linux.tar.gz
             zipball: Specula-Linux.zip
-          - os: macos-latest
-            tarball: Specula-Darwin.tar.gz
-            zipball: Specula-Darwin.zip
     steps:
       - uses: actions/checkout@v1
       - name: configue
@@ -25,12 +22,12 @@ jobs:
       - name: upload tar.gz 
         uses: JasonEtco/upload-to-release@master
         with:
-          args: ${{ matrix.tarball }} application/zip
+          args: Specula-Linux.tar.gz application/zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: upload zip
         uses: JasonEtco/upload-to-release@master
         with:
-          args: ${{ matrix.zipball }} application/zip
+          args: Specula-Linux.zip application/zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
