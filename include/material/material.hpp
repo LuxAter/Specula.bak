@@ -35,6 +35,10 @@ struct Material {
     type = _type;
     return *this;
   }
+  Material &set_emission(const float& em) {
+    emission = em;
+    return *this;
+  }
 };
 } // namespace material
 } // namespace specula

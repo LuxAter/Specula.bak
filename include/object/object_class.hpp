@@ -61,8 +61,8 @@ public:
     return *this;
   }
   inline Object &translate(const float &x, const float &y, const float &z) {
-    trans_ = glm::translate(trans_, glm::vec3(x, y, z));
-    trans_inv_ = glm::translate(trans_inv_, glm::vec3(-x, -y, -z));
+    trans_ = glm::translate(trans_, glm::vec3(-x, -y, -z));
+    trans_inv_ = glm::translate(trans_inv_, glm::vec3(x, y, z));
     return *this;
   }
   inline Object &scale_uniform(const float &s) {

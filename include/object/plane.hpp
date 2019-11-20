@@ -11,7 +11,7 @@ class Plane : public Object {
 public:
   Plane(const float &x, const float &y, const float &z, const float &w)
       : Object([this](const glm::vec3 &p) {
-          return glm::dot(p, this->normal.xyz()) + this->normal.w;
+          return glm::dot(p, -this->normal.xyz()) - this->normal.w;
         }),
         normal(x, y, z, w) {}
   ~Plane() {}

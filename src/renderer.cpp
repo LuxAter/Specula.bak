@@ -134,8 +134,8 @@ glm::vec3 specula::renderer::ray_march(
     const std::vector<std::shared_ptr<object::Object>> &objs, const float &ep,
     const float &t_max, const std::size_t &depth) {
   float rr_factor = 1.0f;
-  if (depth >= 5) {
-    const float rr_stop_prob = 0.1f;
+  if (depth >= 10) {
+    const float rr_stop_prob = 0.01f;
     if (rand::frand() < rr_stop_prob)
       return glm::vec3(0.0f, 0.0f, 0.0f);
     rr_factor = 1.0f / (1.0f - rr_stop_prob);

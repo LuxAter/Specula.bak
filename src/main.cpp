@@ -78,7 +78,8 @@ int main(int argc, char *argv[]) {
       &specula::material::Material::type, "emission",
       &specula::material::Material::emission, "ior",
       &specula::material::Material::ior, "set_color",
-      &specula::material::Material::set_color, "set_type",
+      &specula::material::Material::set_color, "set_emission",
+      &specula::material::Material::set_emission, "set_type",
       &specula::material::Material::set_type, "get_r",
       &specula::material::Material::get_r, "get_g",
       &specula::material::Material::get_g, "get_b",
@@ -177,7 +178,7 @@ int main(int argc, char *argv[]) {
     return specula::renderer::render_frame(
         file, *objs_ptr, specula::cli::spp, specula::cli::fov,
         specula::cli::resolution,
-        {{frame_camera.eye_, frame_camera.center_, frame_camera.up_}});
+        {{-frame_camera.eye_, -frame_camera.center_, frame_camera.up_}});
   });
 
   lua.script_file(specula::cli::script_source);
@@ -187,7 +188,7 @@ int main(int argc, char *argv[]) {
     return specula::renderer::render_frame(
         specula::fs::path(specula::cli::output_path), objs, specula::cli::spp,
         specula::cli::fov, specula::cli::resolution,
-        {{frame_camera.eye_, frame_camera.center_, frame_camera.up_}});
+        {{-frame_camera.eye_, -frame_camera.center_, frame_camera.up_}});
   }
 
   return 0;
