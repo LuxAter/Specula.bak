@@ -3,12 +3,10 @@
 # ##############################################################################
 
 cmake_minimum_required(VERSION 3.8.2)
-project(Specula VERSION 0.3.1 LANGUAGES CXX)
+project(Specula VERSION 0.3.0 LANGUAGES CXX)
 
 set(LIBRARY_NAME libspecula)
 set(EXECUTABLE_NAME specula)
-option(STATIC_ANALYSIS "Enables static analysis for code" ON)
-option(DOCUMENTATION "Enables documentation" ON)
 
 # ##############################################################################
 # Settings
@@ -45,18 +43,6 @@ set(CMAKE_INSTALL_DOCDIR "${CMAKE_BINARY_DIR}/docs")
 find_package(Git QUIET)
 
 # ##############################################################################
-# Static Analysis
-# ##############################################################################
-
-if(STATIC_ANALYSIS OR CMAKE_BUILD_TYPE STREQUAL "Release")
-  # find_program(CMAKE_CXX_CLANG_TIDY NAMES clang-tidy)
-  # find_program(CMAKE_CXX_CPPCHECK NAMES cppcheck)
-  # find_program(CMAKE_CXX_CPPLINT NAMES cpplint)
-  # find_program(CMAKE_CXX_INCLUDE_WHAT_YOU_USE NAMES iwyu-tidy)
-  # set(CMAKE_LINK_WHAT_YOU_USE TRUE)
-endif()
-
-# ##############################################################################
 # Files
 # ##############################################################################
 
@@ -79,19 +65,11 @@ configure_file("${PROJECT_SOURCE_DIR}/include/version.hpp.in"
 include_directories("${PROJECT_BINARY_DIR}")
 
 file(GLOB template_files
-  RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}/resources
-  ${CMAKE_CURRENT_SOURCE_DIR}/resources/*)
+  RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}/examples
+  ${CMAKE_CURRENT_SOURCE_DIR}/examples/*)
 foreach(file ${template_files})
-  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/resources/${file}
-    ${CMAKE_CURRENT_BINARY_DIR}/resources/${file} @ONLY)
-endforeach()
-
-file(GLOB template_files
-  RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}/scripts
-  ${CMAKE_CURRENT_SOURCE_DIR}/scripts/*)
-foreach(file ${template_files})
-  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/scripts/${file}
-    ${CMAKE_CURRENT_BINARY_DIR}/scripts/${file} @ONLY)
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/examples/${file}
+    ${CMAKE_CURRENT_BINARY_DIR}/examples/${file} @ONLY)
 endforeach()
 
 # ##############################################################################
@@ -219,14 +197,6 @@ if(SOL2_FOUND)
   target_link_libraries(${EXECUTABLE_NAME} sol2::sol2)
 endif()
 
-# load_external(ChaiScript)
-# if(CHAISCRIPT_FOUND)
-#   target_link_libraries(${EXECUTABLE_NAME} ${CMAKE_DL_LIBS})
-#   target_include_directories(
-#     ${EXECUTABLE_NAME}
-#     PUBLIC ${PROJECT_SOURCE_DIR}/external/ChaiScript/include)
-# endif()
-
 load_external(filesystem)
 if(FILESYSTEM_FOUND)
   add_subdirectory(${PROJECT_SOURCE_DIR}/external/filesystem EXCLUDE_FROM_ALL)
@@ -264,10 +234,6 @@ if(SPDLOG_FOUND)
   target_link_libraries(${LIBRARY_NAME} spdlog::spdlog)
 endif()
 
-# find_package(OpenCL) if(OpenCL_FOUND) target_link_libraries(${LIBRARY_NAME}
-# OpenCL::OpenCL) target_compile_definitions(${LIBRARY_NAME} PUBLIC
-# -D__HAS_OPENCL__) else() message(WARNING "OpenCL was not found") endif()
-
 # ##############################################################################
 # Definitions
 # ##############################################################################
@@ -278,37 +244,11 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 endif()
 
 # ##############################################################################
-# Documentation
-# ##############################################################################
-
-if(DOCUMENTATION)
-  find_package(Doxygen)
-  if(DOXYGEN_FOUND)
-    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in
-      ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)
-    add_custom_target(docs
-      ${DOXYGEN_EXECUTABLE}
-      ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-      &>
-      doxygen.log
-      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
-  endif()
-endif()
-
-# ##############################################################################
-# Testing
-# ##############################################################################
-
-# ##############################################################################
-# Coverage
-# ##############################################################################
-
-# ##############################################################################
 # Packaging
 # ##############################################################################
 
 if(CMAKE_BUILD_TYPE STREQUAL "Release")
-  set(CPACK_GENERATOR "STGZ;TGZ;ZIP")
+  set(CPACK_GENERATOR "TGZ;ZIP")
   _install(TARGETS ${LIBRARY_NAME})
   _install(TARGETS ${EXECUTABLE_NAME})
   set(CPACK_PACKAGE_VENDOR "LuxAter")
@@ -317,6 +257,7 @@ if(CMAKE_BUILD_TYPE STREQUAL "Release")
   set(CPACK_PACKAGE_VERSION_PATCH ${PROJECT_VERSION_PATCH})
   set(CPACK_RESOURCE_FILE_README "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
   set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
+  set(CPACK_PACKAGE_FILE_NAME "${PROJECT_NAME}-${CMAKE_SYSTEM_NAME}")
   set(CPACK_MONOLITHIC_INSTALL TRUE)
   include(CPack)
 endif()
