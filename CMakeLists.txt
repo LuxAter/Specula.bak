@@ -3,7 +3,7 @@
 # ##############################################################################
 
 cmake_minimum_required(VERSION 3.8.2)
-project(Specula VERSION 0.4.1 LANGUAGES CXX)
+project(Specula VERSION 0.4.2 LANGUAGES CXX)
 
 set(LIBRARY_NAME libspecula)
 set(EXECUTABLE_NAME specula)
@@ -249,8 +249,10 @@ endif()
 
 if(CMAKE_BUILD_TYPE STREQUAL "Release")
   set(CPACK_GENERATOR "TGZ;ZIP")
-  _install(TARGETS ${LIBRARY_NAME})
-  _install(TARGETS ${EXECUTABLE_NAME})
+  _install(TARGETS ${LIBRARY_NAME}
+           ARCHIVE DESTINATION lib)
+  _install(TARGETS ${EXECUTABLE_NAME}
+           RUNTIME DESTINATION bin)
   set(CPACK_PACKAGE_VENDOR "LuxAter")
   set(CPACK_PACKAGE_VERSION_MAJOR ${PROJECT_VERSION_MAJOR})
   set(CPACK_PACKAGE_VERSION_MINOR ${PROJECT_VERSION_MINOR})
