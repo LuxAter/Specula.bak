@@ -1,9 +1,11 @@
 # Specula
 
-> Highly Configurable PBR
+> Highly Configurable PBR Ray Marcher
 
-[![Travis (.org)](https://img.shields.io/travis/luxater/specula?style=for-the-badge)](https://travis-ci.org/LuxAter/Specula)
-[![Codecov](https://img.shields.io/codecov/c/github/luxater/specula?style=for-the-badge)](https://codecov.io/gh/LuxAter/Specula)
-[![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/luxater/specula?style=for-the-badge)](https://github.com/LuxAter/Specula)
+[![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/LuxAter/Specula?sort=semver&style=for-the-badge)](https://github.com/LuxAter/Specula/releases/latest)
+[![GitHub](https://img.shields.io/github/license/LuxAter/Specula?style=for-the-badge)](https://github.com/LuxAter/Specula/blob/development/LICENSE)
+[![GitHub issues](https://img.shields.io/github/issues/LuxAter/Specula?style=for-the-badge)](https://github.com/LuxAter/Specula/issues)
 
-​ 
+[Getting Started](/getting_started/)
+[API Reference](/api/)
+[Downloads](/downloads/)

@@ -1,24 +1,33 @@
-[submodule "external/doctest"]
-	path = external/doctest
-	url = https://github.com/onqtam/doctest.git
 [submodule "external/libpng"]
 	path = external/libpng
 	url = https://github.com/glennrp/libpng
-[submodule "external/luajit"]
-	path = external/luajit
-	url = http://luajit.org/git/luajit-2.0.git
 [submodule "external/sol2"]
 	path = external/sol2
 	url = https://github.com/ThePhD/sol2
 [submodule "external/filesystem"]
 	path = external/filesystem
 	url = https://github.com/gulrak/filesystem
+[submodule "external/variant"]
+	path = external/variant
+	url = https://github.com/mpark/variant
 [submodule "external/CLI11"]
 	path = external/CLI11
 	url = https://github.com/CLIUtils/CLI11
 [submodule "external/glm"]
 	path = external/glm
 	url = https://github.com/g-truc/glm
-[submodule "external/variant"]
-	path = external/variant
-	url = https://github.com/mpark/variant.git
+[submodule "external/fmt"]
+	path = external/fmt
+	url = https://github.com/fmtlib/fmt
+[submodule "external/libjpeg-turbo"]
+	path = external/libjpeg-turbo
+	url = https://github.com/libjpeg-turbo/libjpeg-turbo
+[submodule "external/spdlog"]
+	path = external/spdlog
+	url = https://github.com/gabime/spdlog
+[submodule "external/ChaiScript"]
+	path = external/ChaiScript
+	url = https://github.com/ChaiScript/ChaiScript
+[submodule "external/luajit"]
+	path = external/luajit
+	url = http://luajit.org/git/luajit-2.0.git
