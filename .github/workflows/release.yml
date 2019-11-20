@@ -25,12 +25,12 @@ jobs:
       - name: upload tar.gz 
         uses: JasonEtco/upload-to-release@master
         with:
-          args: ${{ matrix.tarball }}
+          args: ${{ matrix.tarball }} application/zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: upload zip
         uses: JasonEtco/upload-to-release@master
         with:
-          args: ${{ matrix.zipball }}
+          args: ${{ matrix.zipball }} application/zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
