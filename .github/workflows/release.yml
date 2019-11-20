@@ -4,7 +4,6 @@ on: release
 jobs: 
   build:
     runs-on: ${{ matrix.os }}
-    needs: create
     strategy:
       matrix:
         os: [ubuntu-latest]
