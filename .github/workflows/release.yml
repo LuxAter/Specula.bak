@@ -1,0 +1,53 @@
+name: Release
+on:
+  push:
+    branches:
+      - 'master'
+    tags:
+      - '*'
+
+jobs: 
+  create:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: ${{ github.ref }}
+          draft: true
+  build:
+    runs-on: ${{ matrix.os }}
+    needs: create
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            tarball: Specula-Linux.tar.gz
+            zipball: Specula-Linux.zip
+    steps:
+      - uses: actions/checkout@v1
+      - name: configue
+        run: cmake . -DCMAKE_BUILD_TYPE=Release
+      - name: compile
+        run: cmake --build .
+      - name: package
+        run: cmake --build . -- package
+      - name: upload tar
+        uses: svenstaro/upload-release-action@v1-release
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ${{ matrix.tarball }}
+          asset_name: ${{ matrix.tarball }}
+          tag: ${{ github.ref }}
+          overwrite: true
+      - name: upload zip
+        uses: svenstaro/upload-release-action@v1-release
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ${{ matrix.zipball }}
+          asset_name: ${{ matrix.zipball }}
+          tag: ${{ github.ref }}
+          overwrite: true

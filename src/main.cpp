@@ -1,201 +1,195 @@
-#include <iostream>
-#include <limits>
-#include <memory>
-#include <regex>
-#include <string>
+/* Copyright (C)
+ * 2019 - Arden Rasmussen
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ */
 
-#include <CLI/CLI.hpp>
+#include "cli/cli.hpp"
+#include "image/image.hpp"
+#include "log.hpp"
+#include "material/material.hpp"
+#include "object/object.hpp"
+#include "renderer.hpp"
+#include "version.hpp"
+
+#include <glm/glm.hpp>
 #include <sol/sol.hpp>
 
-#include "specula/specula.hpp"
-
-class RegexValidator : public CLI::Validator {
-public:
-  RegexValidator(const std::string &pattern) {
-    const std::regex pattern_regex(pattern);
-    func_ = [pattern, pattern_regex](const std::string &str) {
-      if (std::regex_match(str, pattern_regex)) {
-        return std::string();
-      }
-      return "Value " + str + " does not match " + pattern;
-    };
+struct Camera {
+  glm::vec3 eye_{0.0, 0.0, -1.0}, center_{0.0, 0.0, 0.0}, up_{0.0, 1.0, 0.0};
+  inline Camera &eye(const float &x, const float &y, const float &z) {
+    eye_ = {x, y, z};
+    return *this;
+  }
+  inline Camera &center(const float &x, const float &y, const float &z) {
+    center_ = {x, y, z};
+    return *this;
+  }
+  inline Camera &up(const float &x, const float &y, const float &z) {
+    up_ = {x, y, z};
+    return *this;
   }
 };
+
 int main(int argc, char *argv[]) {
-  srand(time(NULL));
-  CLI::App app{"Lua controled graphics rendering engine"};
-  std::string lua_source;
-  std::string render_method = "pathTrace";
-  std::string output = "out.png";
-  std::size_t res_width = 500, res_height = 1080;
-  std::string aspect_ratio = "1:1";
-  unsigned verbosity;
+  int ret = 0;
+  if ((ret = specula::cli::parse_args(argc, argv)) > 0) {
+    return ret;
+  } else if (ret == -1) {
+    return 0;
+  }
+  specula::logger::initalize_logger(specula::cli::verbosity);
+  LINFO("Specula v{}.{}.{}", SPECULA_VERSION_MAJOR, SPECULA_VERSION_MINOR,
+        SPECULA_VERSION_PATCH);
 
-  app.add_option("source", lua_source, "Lua source code")
-      ->required()
-      ->check(CLI::ExistingFile);
-
-  app.add_option_group("Output");
-  app.add_option("-o,--output", output, "Output file/directory")
-      ->check(CLI::NonexistentPath);
-  app.add_option("-r,--res,--resolution", res_width,
-                 "Output image x resolution")
-      ->check(CLI::PositiveNumber);
-  app.add_option("--aspect", aspect_ratio, "Output image aspect ratio")
-      ->check(RegexValidator("\\d+:\\d+"));
-  app.add_flag("-v", verbosity, "Verbosity of the output");
-
-  CLI11_PARSE(app, argc, argv);
-
-  if (verbosity != 0)
-    specula::log::verbosity(verbosity + 3);
-
-  specula::ldatetime();
-  specula::lversion("Specula v.%lu.%lu.%lu", SPECULA_VERSION_MAJOR,
-                    SPECULA_VERSION_MINOR, SPECULA_VERSION_PATCH);
-
-  std::size_t ax, ay;
-  sscanf(aspect_ratio.c_str(), "%lu:%lu", &ax, &ay);
-  res_height = res_width * ay / ax;
-
-  float fov = M_PI / 2.0;
-
-  std::vector<std::shared_ptr<specula::Primative>> objs;
-  std::vector<std::shared_ptr<specula::Primative>> *objs_ptr = &objs;
-  std::vector<std::shared_ptr<specula::Material>> mats;
-  std::vector<std::shared_ptr<specula::Material>> *mats_ptr = &mats;
+  std::vector<std::shared_ptr<specula::object::Object>> objs;
+  std::vector<std::shared_ptr<specula::object::Object>> *objs_ptr = &objs;
+  std::size_t render_calls = 0;
+  std::size_t *render_calls_ptr = &render_calls;
 
   sol::state lua;
   lua.open_libraries();
-  auto obj = lua["obj"].get_or_create<sol::table>();
-  obj.new_usertype<specula::LuaPrimative>(
-      "Object", "set_material", &specula::LuaPrimative::set_material,
-      "material", &specula::LuaPrimative::set_material, "rotate_x",
-      &specula::LuaPrimative::rotate_x, "rotate_y",
-      &specula::LuaPrimative::rotate_y, "rotate_z",
-      &specula::LuaPrimative::rotate_z, "rotate_xy",
-      &specula::LuaPrimative::rotate_xy, "rotate_xz",
-      &specula::LuaPrimative::rotate_xz, "rotate_yx",
-      &specula::LuaPrimative::rotate_yx, "rotate_yz",
-      &specula::LuaPrimative::rotate_yz, "rotate_zx",
-      &specula::LuaPrimative::rotate_zx, "rotate_zy",
-      &specula::LuaPrimative::rotate_zy, "rotate_xyz",
-      &specula::LuaPrimative::rotate_xyz, "rotate_xzy",
-      &specula::LuaPrimative::rotate_xzy, "rotate_yxz",
-      &specula::LuaPrimative::rotate_yxz, "rotate_yzx",
-      &specula::LuaPrimative::rotate_yzx, "rotate_zxy",
-      &specula::LuaPrimative::rotate_zxy, "rotate_zyx",
-      &specula::LuaPrimative::rotate_zyx, "rotate",
-      &specula::LuaPrimative::rotate, "scale", &specula::LuaPrimative::scale,
-      "translate", &specula::LuaPrimative::translate,
-      sol::meta_function::addition,
-      [objs_ptr](const specula::LuaPrimative &lhs,
-                 const specula::LuaPrimative &rhs) {
-        return specula::LuaUnion(lhs, rhs, objs_ptr);
-      });
-  auto mat = lua["mat"].get_or_create<sol::table>();
-  mat.new_usertype<specula::LuaMaterial>("Material");
-  lua.set_function(
-      "Material", sol::overload([mats_ptr](const sol::table &table) {
-        glm::vec3 color(0.0, 0.0, 0.0);
-        auto color_table = table.get<sol::optional<sol::table>>("color");
-        if (color_table) {
-          color = glm::vec3(color_table.value()[1], color_table.value()[2],
-                            color_table.value()[3]);
-        } else if (table.size() == 3) {
-          color = glm::vec3(table[1], table[2], table[3]);
-        }
-        float metallic = table.get_or("metallic", 0.0f);
-        float specular = table.get_or("specular", 0.0f);
-        float specular_tint = table.get_or("specular_tint", 0.0f);
-        float roughness = table.get_or("roughness", 0.0f);
-        float sheen = table.get_or("sheen", 0.0f);
-        float sheen_tint = table.get_or("sheen_tint", 0.0f);
-        float ior = table.get_or("ior", 0.0f);
-        float transmission = table.get_or("transmission", 0.0f);
-        float transmission_roughness =
-            table.get_or("transmission_roughness", 0.0f);
-        float emission = table.get_or("emission", 0.0f);
-        return specula::gen_LuaMaterial(
-            color, metallic, specular, specular_tint, roughness, sheen,
-            sheen_tint, ior, transmission, transmission_roughness, emission,
-            mats_ptr);
-      }));
 
-  lua.set_function("SolidAngle", [objs_ptr](const float &a, const float &b,
-                                            const float &ra) mutable {
-    return specula::LuaSolidAngle(a, b, ra, objs_ptr);
-  });
-  lua.set_function("Box", [objs_ptr](const float &w, const float &l,
-                                     const float &h) mutable {
-    return specula::LuaBox(w, l, h, objs_ptr);
-  });
-  lua.set_function("RoundBox",
-                   [objs_ptr](const float &r, const float &w, const float &l,
-                              const float &h) mutable {
-                     return specula::LuaRoundBox(w, l, h, r, objs_ptr);
-                   });
-  lua.set_function("Capsule", [objs_ptr](const float &x1, const float &y1,
-                                         const float &z1, const float &x2,
-                                         const float &y2, const float &z2,
-                                         const float &r) {
-    return specula::LuaCapsule(x1, y1, z1, x2, y2, z2, r, objs_ptr);
-  });
-  lua.set_function("VerticalCapsule",
-                   [objs_ptr](const float &h, const float &r) mutable {
-                     return specula::LuaVerticalCapsule(h, r, objs_ptr);
-                   });
-  lua.set_function("Cone", [objs_ptr](const float &r1, const float &r2,
-                                      const float &h) mutable {
-    return specula::LuaCone(h, r1, r2, objs_ptr);
-  });
-  lua.set_function("InfiniteCone", [objs_ptr](const float &alpha) mutable {
-    return specula::LuaInfiniteCone(alpha, objs_ptr);
-  });
-  lua.set_function("Cylinder",
-                   [objs_ptr](const float &h, const float &r) mutable {
-                     return specula::LuaCylinder(h, r, objs_ptr);
-                   });
-  lua.set_function(
-      "RoundedCylinder",
-      [objs_ptr](const float &ra, const float &rb, const float &h) mutable {
-        return specula::LuaRoundedCylinder(ra, rb, h, objs_ptr);
-      });
-  lua.set_function("InfiniteCylinder", [objs_ptr](const float &r) mutable {
-    return specula::LuaInfiniteCylinder(r, objs_ptr);
-  });
-  lua.set_function("Link", [objs_ptr](const float &len, const float &r_outer,
-                                      const float &r_inner) mutable {
-    return specula::LuaLink(len, r_outer, r_inner, objs_ptr);
-  });
-  lua.set_function("Plane", [objs_ptr](const float &x, const float &y,
-                                       const float &z, const float &w) mutable {
-    return specula::LuaPlane(x, y, z, w, objs_ptr);
-  });
-  lua.set_function("HexagonalPrism",
-                   [objs_ptr](const float &a, const float &b) mutable {
-                     return specula::LuaHexagonalPrism(a, b, objs_ptr);
-                   });
-  lua.set_function("TriangularPrism",
-                   [objs_ptr](const float &a, const float &b) mutable {
-                     return specula::LuaTriangularPrism(a, b, objs_ptr);
-                   });
-  lua.set_function("Sphere", [objs_ptr](const float &r) mutable {
-    return specula::LuaSphere(r, objs_ptr);
-  });
-  lua.set_function(
-      "Torus", [objs_ptr](const float &r_big, const float &r_small) mutable {
-        return specula::LuaTorus(r_big, r_small, objs_ptr);
-      });
-  lua.set_function(
-      "CappedTorus", [objs_ptr](const float &r_big, const float &r_small,
-                                const float &ra, const float &rb) mutable {
-        return specula::LuaCappedTorus(r_big, r_small, ra, rb, objs_ptr);
-      });
+  lua.new_usertype<glm::vec2>("vec2", "x", &glm::vec2::x, "y", &glm::vec2::y);
+  lua.new_usertype<glm::vec3>("vec3", "x", &glm::vec3::x, "y", &glm::vec3::y,
+                              "z", &glm::vec3::z);
+  lua.new_usertype<glm::vec4>("vec4", "x", &glm::vec4::x, "y", &glm::vec4::y,
+                              "z", &glm::vec4::z, "w", &glm::vec4::w);
 
-  lua.script_file(lua_source);
+  lua.new_usertype<specula::material::Material>(
+      "Material", "new",
+      [](const float &r, const float &g, const float &b) {
+        return specula::material::Material(specula::material::DIFFUSE,
+                                           glm::vec3{r, g, b}, 0.0f, 1.0f);
+      },
+      "color", &specula::material::Material::base_color, "type",
+      &specula::material::Material::type, "emission",
+      &specula::material::Material::emission, "ior",
+      &specula::material::Material::ior, "set_color",
+      &specula::material::Material::set_color, "set_emission",
+      &specula::material::Material::set_emission, "set_type",
+      &specula::material::Material::set_type, "get_r",
+      &specula::material::Material::get_r, "get_g",
+      &specula::material::Material::get_g, "get_b",
+      &specula::material::Material::get_b);
+  lua["Material"]["Type"] =
+      lua.create_table_with("DIFFUSE", specula::material::Type::DIFFUSE,
+                            "SPECULAR", specula::material::Type::SPECULAR,
+                            "REFRACTIVE", specula::material::Type::REFRACTIVE);
 
-  specula::render(objs, mats, 1, fov, res_width, res_height, output, 0,
-                  false);
+  lua.new_usertype<specula::object::Object>(
+      "Object", "translate", &specula::object::Object::translate, "rotate_x",
+      &specula::object::Object::rotate_x, "rotate_y",
+      &specula::object::Object::rotate_y, "rotate_z",
+      &specula::object::Object::rotate_z, "scale",
+      &specula::object::Object::scale, "set_material",
+      &specula::object::Object::set_material);
+
+  lua.new_usertype<specula::object::Sphere>(
+      "Sphere", "new", sol::factories([objs_ptr](const float &radius) {
+        objs_ptr->push_back(std::make_shared<specula::object::Sphere>(radius));
+        return std::dynamic_pointer_cast<specula::object::Sphere>(
+            objs_ptr->back());
+      }),
+      "radius", &specula::object::Sphere::radius, sol::base_classes,
+      sol::bases<specula::object::Object>());
+  lua.new_usertype<specula::object::Box>(
+      "Box", "new",
+      sol::factories([objs_ptr](const float &w, const float &h,
+                                const float &l) {
+        objs_ptr->push_back(std::make_shared<specula::object::Box>(w, h, l));
+        return std::dynamic_pointer_cast<specula::object::Box>(
+            objs_ptr->back());
+      }),
+      "box", &specula::object::Box::box, sol::base_classes,
+      sol::bases<specula::object::Object>());
+  lua.new_usertype<specula::object::Cone>(
+      "Cone", "new",
+      sol::factories([objs_ptr](const float &h, const float &rb,
+                                const float &rt) {
+        objs_ptr->push_back(std::make_shared<specula::object::Cone>(h, rb, rt));
+        return std::dynamic_pointer_cast<specula::object::Cone>(
+            objs_ptr->back());
+      }),
+      "height", &specula::object::Cone::height, "radius_bottom",
+      &specula::object::Cone::radius_bottom, "radius_top",
+      &specula::object::Cone::radius_top, sol::base_classes,
+      sol::bases<specula::object::Object>());
+  lua.new_usertype<specula::object::Cylinder>(
+      "Cylinder", "new",
+      sol::factories([objs_ptr](const float &h, const float &r) {
+        objs_ptr->push_back(std::make_shared<specula::object::Cylinder>(h, r));
+        return std::dynamic_pointer_cast<specula::object::Cylinder>(
+            objs_ptr->back());
+      }),
+      "height", &specula::object::Cylinder::height, "radius",
+      &specula::object::Cylinder::radius, sol::base_classes,
+      sol::bases<specula::object::Object>());
+  lua.new_usertype<specula::object::Plane>(
+      "Plane", "new",
+      sol::factories([objs_ptr](const float &x, const float &y, const float &z,
+                                const float &w) {
+        objs_ptr->push_back(
+            std::make_shared<specula::object::Plane>(x, y, z, w));
+        return std::dynamic_pointer_cast<specula::object::Plane>(
+            objs_ptr->back());
+      }),
+      "normal", &specula::object::Plane::normal, sol::base_classes,
+      sol::bases<specula::object::Object>());
+  lua.new_usertype<specula::object::Torus>(
+      "Torus", "new",
+      sol::factories([objs_ptr](const float &radius_big,
+                                const float &radius_small) {
+        objs_ptr->push_back(
+            std::make_shared<specula::object::Torus>(radius_big, radius_small));
+        return std::dynamic_pointer_cast<specula::object::Torus>(
+            objs_ptr->back());
+      }),
+      "torus", &specula::object::Torus::torus, sol::base_classes,
+      sol::bases<specula::object::Object>());
+
+  lua.new_usertype<Camera>("Camera", "eye", &Camera::eye, "center",
+                           &Camera::center, "up", &Camera::up);
+  lua.set("camera", Camera());
+  auto camera = lua["camera"];
+
+  lua.set_function("render", [render_calls_ptr, objs_ptr, camera]() -> bool {
+    specula::fs::path file(specula::cli::output_path);
+    specula::fs::path file_name = file.filename().replace_extension(""),
+                      file_extension = file.extension();
+    file.remove_filename();
+    file.append(file_name.string());
+    file.append(
+        fmt::format("{}{}", *render_calls_ptr, file_extension.string()));
+    (*render_calls_ptr)++;
+    Camera frame_camera = camera;
+    return specula::renderer::render_frame(
+        file, *objs_ptr, specula::cli::spp, specula::cli::fov,
+        specula::cli::resolution,
+        {{-frame_camera.eye_, -frame_camera.center_, frame_camera.up_}});
+  });
+
+  lua.script_file(specula::cli::script_source);
+
+  if (render_calls == 0) {
+    Camera frame_camera = camera;
+    return specula::renderer::render_frame(
+        specula::fs::path(specula::cli::output_path), objs, specula::cli::spp,
+        specula::cli::fov, specula::cli::resolution,
+        {{-frame_camera.eye_, -frame_camera.center_, frame_camera.up_}});
+  }
+
   return 0;
 }
