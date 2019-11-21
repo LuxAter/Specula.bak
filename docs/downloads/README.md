@@ -10,7 +10,7 @@ To build form source code, there are a few requirements before you can compile
 the executable. First install ``git``, ``cmake``, and any modern C++ compiler
 that supports C++17.
 
-!> Compiling on Windows and Linux is currently failing, and without a machine
+!> Compiling on Windows and OSX is currently failing, and without a machine
 to develop on, other operating systems will not be supported.
 
 Once those have been installed follow these commands to compile to executable.

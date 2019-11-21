@@ -13,17 +13,7 @@ struct Material {
   Type type;
   glm::vec3 base_color;
   float emission;
-  // float sheen, sheen_tint;
-  // float clearcoat, clearcoat_gloss;
-  // float metallic;
-  // float spec_trans;
-  // float diff_trans;
-  // float flatness;
-  // float anisotropic;
   float ior;
-  // float specular_tint;
-  // float roughness;
-  // float scatter_distance;
   float get_r() { return base_color.r; }
   float get_g() { return base_color.g; }
   float get_b() { return base_color.b; }
@@ -35,8 +25,12 @@ struct Material {
     type = _type;
     return *this;
   }
-  Material &set_emission(const float& em) {
-    emission = em;
+  Material &set_emission(const float& _emission) {
+    emission = _emission;
+    return *this;
+  }
+  Material &set_ior(const float& _ior) {
+    ior = _ior;
     return *this;
   }
 };

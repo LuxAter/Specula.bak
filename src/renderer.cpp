@@ -37,8 +37,6 @@ bool specula::renderer::render_frame(
     LWARN("No object are visible, rendering empty frame");
   }
 
-  // std::size_t tile_size = static_cast<std::size_t>(
-  //     std::sqrt(res.x * res.y / (8 * std::thread::hardware_concurrency())));
   std::size_t tile_size = 32;
   std::size_t htiles = static_cast<std::size_t>(
       std::ceil(res.x / static_cast<double>(tile_size)));
@@ -85,7 +83,7 @@ bool specula::renderer::render_frame(
       std::size_t y_offset = (tile_id / htiles) * tile_size;
       for (std::size_t x = 0; x < tile.size(); ++x) {
         for (std::size_t y = 0; y < tile[x].size(); ++y) {
-          img(x + x_offset, y + y_offset, tile[x][y]);
+          img(x + x_offset, res.y - (1 + y + y_offset), tile[x][y]);
         }
       }
       pool_results.erase(pool_results.begin() + i);
@@ -134,12 +132,12 @@ glm::vec3 specula::renderer::ray_march(
     const std::vector<std::shared_ptr<object::Object>> &objs, const float &ep,
     const float &t_max, const std::size_t &depth) {
   float rr_factor = 1.0f;
-  if (depth >= 10) {
+  if (depth >= 5) {
     const float rr_stop_prob = 0.01f;
     if (rand::frand() < rr_stop_prob)
       return glm::vec3(0.0f, 0.0f, 0.0f);
     rr_factor = 1.0f / (1.0f - rr_stop_prob);
-    rr_factor = 1.0f;
+    // rr_factor = 1.0f;
   }
   auto [t, obj] = ray_intersect(o, d, objs, ep, t_max);
   if (obj == nullptr)
@@ -165,24 +163,21 @@ glm::vec3 specula::renderer::ray_march(
     float cost = glm::dot(dir, normal);
     clr +=
         rr_factor *
-        (ray_march(p + (2.0f * ep * normal), dir, objs, ep, t_max, depth + 1) *
+        2.0f * (ray_march(p + (2.0f * ep * normal), dir, objs, ep, t_max, depth + 1) *
          obj->mat_->base_color) *
         cost;
   } else if (obj->mat_->type == material::Type::SPECULAR) {
     glm::vec3 dir = glm::reflect(d, normal);
-    if(glm::abs(d.x) < ep  * 10.f) {
-      LDEBUG("{},{},{} @ {} :: {},{},{}->{},{},{}", p.x, p.y, p.z, t, d.x,d.y,d.z,dir.x,dir.y,dir.z);
-    }
     clr += rr_factor *
            ray_march(p + (2.0f * ep * normal), dir, objs, ep, t_max, depth + 1);
   } else if (obj->mat_->type == material::Type::REFRACTIVE) {
     float n = obj->mat_->ior;
     float r0 = (1.0f - n) / (1.0f + n);
     r0 = r0 * r0;
-    if (glm::dot(normal, d) > 0.0f) {
-      normal = -normal;
-      n = 1.0f / n;
-    }
+    // if (glm::dot(normal, d) > 0.0f) {
+    //   normal = -normal;
+    //   n = 1.0f / n;
+    // }
     n = 1.0f / n;
     float cost1 = -glm::dot(normal, d);
     float cost2 = 1.0f - n * n * (1.0f - cost1 * cost1);
@@ -194,7 +189,7 @@ glm::vec3 specula::renderer::ray_march(
       dir = glm::normalize(d + normal * (cost1 * 2));
     }
     clr +=
-        ray_march(p + (2.0f * ep * normal), dir, objs, ep, t_max, depth + 1) *
+        ray_march(p - (2.0f * ep * normal), dir, objs, ep, t_max, depth + 1) *
         1.15f * rr_factor;
   }
 
@@ -210,21 +205,20 @@ specula::renderer::ray_intersect(
   std::shared_ptr<object::Object> hit_obj = nullptr;
   bool first = true;
   while (t < t_max) {
-    // std::cout << "T = " << t << "/" << t_max << "\n";
     glm::vec3 p = o + (t * d);
     float dt = std::numeric_limits<float>::infinity();
     for (auto &obj : objs) {
       float odt = obj->distance(p);
-      if (odt < dt) {
+      if (std::fabs(odt) < std::fabs(dt)) {
         dt = odt;
-        if (odt < ep)
+        if (std::fabs(odt) < ep)
           hit_obj = obj;
       }
     }
-    if (!first && dt < ep) {
+    if (!first && std::fabs(dt) < ep) {
       break;
     } else
-      t += dt;
+      t += std::fabs(dt);
     first = false;
   }
   return std::make_tuple(t, hit_obj);

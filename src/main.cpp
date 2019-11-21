@@ -41,6 +41,10 @@ struct Camera {
     up_ = {x, y, z};
     return *this;
   }
+  inline Camera &direction(const float &x, const float &y, const float &z) {
+    center_ = eye_ + glm::vec3(x, y, z);
+    return *this;
+  }
 };
 
 int main(int argc, char *argv[]) {
@@ -79,7 +83,8 @@ int main(int argc, char *argv[]) {
       &specula::material::Material::emission, "ior",
       &specula::material::Material::ior, "set_color",
       &specula::material::Material::set_color, "set_emission",
-      &specula::material::Material::set_emission, "set_type",
+      &specula::material::Material::set_emission, "set_ior",
+      &specula::material::Material::set_ior, "set_type",
       &specula::material::Material::set_type, "get_r",
       &specula::material::Material::get_r, "get_g",
       &specula::material::Material::get_g, "get_b",
@@ -159,9 +164,25 @@ int main(int argc, char *argv[]) {
       }),
       "torus", &specula::object::Torus::torus, sol::base_classes,
       sol::bases<specula::object::Object>());
+  lua.new_usertype<specula::object::Quad>(
+      "Quad", "new",
+      sol::factories(
+          [objs_ptr](const float &ax, const float &ay, const float &az,
+                     const float &bx, const float &by, const float &bz,
+                     const float &cx, const float &cy, const float &cz,
+                     const float &dx, const float &dy, const float &dz) {
+            objs_ptr->push_back(std::make_shared<specula::object::Quad>(
+                ax, ay, az, bx, by, bz, cx, cy, cz, dx, dy, dz));
+            return std::dynamic_pointer_cast<specula::object::Quad>(
+                objs_ptr->back());
+          }),
+      "a", &specula::object::Quad::a, "b", &specula::object::Quad::b, "c",
+      &specula::object::Quad::c, "d", &specula::object::Quad::d,
+      sol::base_classes, sol::bases<specula::object::Object>());
 
   lua.new_usertype<Camera>("Camera", "eye", &Camera::eye, "center",
-                           &Camera::center, "up", &Camera::up);
+                           &Camera::center, "up", &Camera::up, "direction",
+                           &Camera::direction);
   lua.set("camera", Camera());
   auto camera = lua["camera"];
 
@@ -188,7 +209,7 @@ int main(int argc, char *argv[]) {
     return specula::renderer::render_frame(
         specula::fs::path(specula::cli::output_path), objs, specula::cli::spp,
         specula::cli::fov, specula::cli::resolution,
-        {{-frame_camera.eye_, -frame_camera.center_, frame_camera.up_}});
+        {{frame_camera.eye_, frame_camera.center_, frame_camera.up_}});
   }
 
   return 0;

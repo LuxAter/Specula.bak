@@ -6,6 +6,10 @@
 
 ---
 
+* [Examples](examples/)
+
+---
+
 * [API Reference](api/)
 
 ---

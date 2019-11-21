@@ -33,7 +33,7 @@ std::string script_source = "";
 std::string output_path = "out.png";
 std::size_t verbosity = 0;
 std::size_t spp = 1;
-float fov = static_cast<float>(M_PI / 2.0);
+float fov = static_cast<float>(M_PI / 4.0);
 glm::uvec2 resolution = {100, 100};
 } // namespace specula::cli
 
@@ -62,8 +62,7 @@ int specula::cli::parse_args(int argc, char *argv[]) {
   auto renderer = app.add_option_group("Renderer");
   renderer->add_option("-s,--spp", spp, "Samples per pixel")
       ->check(CLI::PositiveNumber);
-  renderer->add_option("-f,--fov", fov, "Renderer FOV")
-      ->check(CLI::PositiveNumber);
+  renderer->add_option("-f,--fov", fov, "Renderer FOV");
   auto output = app.add_option_group("Output");
   output->add_option("-o,--output", output_path, "Output file/directory")
       ->check(RegexValidator(".*\\.(png|jpeg|bmp)"));

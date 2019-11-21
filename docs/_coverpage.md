@@ -7,5 +7,6 @@
 [![GitHub issues](https://img.shields.io/github/issues/LuxAter/Specula?style=for-the-badge)](https://github.com/LuxAter/Specula/issues)
 
 [Getting Started](/getting_started/)
+[Examples](/examples/)
 [API Reference](/api/)
 [Downloads](/downloads/)
