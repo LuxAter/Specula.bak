@@ -31,8 +31,14 @@
 namespace specula::cli {
 std::string script_source = "";
 std::string output_path = "out.png";
+bool render_albido = false;
+bool render_normal = false;
+bool render_depth = false;
+bool denoise = false;
 std::size_t verbosity = 0;
 std::size_t spp = 1;
+std::size_t tile_size = 32;
+std::size_t min_bounce = 10;
 float fov = static_cast<float>(M_PI / 4.0);
 glm::uvec2 resolution = {100, 100};
 } // namespace specula::cli
@@ -63,14 +69,26 @@ int specula::cli::parse_args(int argc, char *argv[]) {
   renderer->add_option("-s,--spp", spp, "Samples per pixel")
       ->check(CLI::PositiveNumber);
   renderer->add_option("-f,--fov", fov, "Renderer FOV");
+  renderer
+      ->add_option("-b,--bounces", min_bounce,
+                   "Minimum number of bounces the light makes")
+      ->check(CLI::PositiveNumber);
+  renderer->add_option("-t,--tile", tile_size, "Size of individual tiles")
+      ->check(CLI::PositiveNumber);
+  renderer->add_flag("--no-denoise", denoise, "Disables denoising algorithm");
   auto output = app.add_option_group("Output");
   output->add_option("-o,--output", output_path, "Output file/directory")
       ->check(RegexValidator(".*\\.(png|jpeg|bmp)"));
+  output->add_flag("-a,--albido", render_albido,
+                   "Output albido file/directory");
+  output->add_flag("-n,--normal", render_normal,
+                   "Output normal file/directory");
+  output->add_flag("-d,--depth", render_depth, "Output depth file/directory");
   output
       ->add_option("-r,--res,--resolution", pix_width,
                    "Output image resolution")
       ->check(CLI::PositiveNumber);
-  output->add_option("-a,--aspect", aspect_ratio, "Output image aspect ratio")
+  output->add_option("--aspect", aspect_ratio, "Output image aspect ratio")
       ->check(RegexValidator("\\d+[:x]\\d+"));
 
   try {
@@ -90,6 +108,7 @@ int specula::cli::parse_args(int argc, char *argv[]) {
   resolution = {pix_width,
                 static_cast<std::size_t>(static_cast<double>(pix_width) *
                                          aspect.y / aspect.x)};
+  denoise = !denoise;
 #ifdef DEBUG
   if (verbosity == 0)
     verbosity = 6;

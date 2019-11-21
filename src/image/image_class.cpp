@@ -58,3 +58,20 @@ bool specula::image::Image::write(const fs::path &file) {
   }
   return false;
 }
+
+void specula::image::Image::normalize() {
+  float min_v = INFINITY, max_v = -INFINITY;
+  for (auto &px : buffer_) {
+    min_v = std::min(min_v, std::min(px.r, std::min(px.g, px.b)));
+    max_v = std::max(max_v, std::max(px.r, std::max(px.g, px.b)));
+  }
+  float diff = 1.0f / (max_v - min_v);
+  for (std::size_t i = 0; i < buffer_.size(); ++i) {
+    buffer_[i] = (buffer_[i] - min_v) * diff;
+  }
+}
+void specula::image::Image::abs() {
+  for (std::size_t i = 0; i < buffer_.size(); ++i) {
+    buffer_[i] = glm::abs(buffer_[i]);
+  }
+}

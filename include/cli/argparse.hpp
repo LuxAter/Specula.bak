@@ -33,8 +33,14 @@ namespace specula {
 namespace cli {
 extern std::string script_source;
 extern std::string output_path;
+extern bool render_albido;
+extern bool render_normal;
+extern bool render_depth;
+extern bool denoise;
 extern std::size_t verbosity;
 extern std::size_t spp;
+extern std::size_t tile_size;
+extern std::size_t min_bounce;
 extern float fov;
 extern glm::uvec2 resolution;
 

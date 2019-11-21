@@ -186,30 +186,68 @@ int main(int argc, char *argv[]) {
   lua.set("camera", Camera());
   auto camera = lua["camera"];
 
-  lua.set_function("render", [render_calls_ptr, objs_ptr, camera]() -> bool {
-    specula::fs::path file(specula::cli::output_path);
-    specula::fs::path file_name = file.filename().replace_extension(""),
-                      file_extension = file.extension();
-    file.remove_filename();
-    file.append(file_name.string());
-    file.append(
-        fmt::format("{}{}", *render_calls_ptr, file_extension.string()));
-    (*render_calls_ptr)++;
-    Camera frame_camera = camera;
-    return specula::renderer::render_frame(
-        file, *objs_ptr, specula::cli::spp, specula::cli::fov,
-        specula::cli::resolution,
-        {{-frame_camera.eye_, -frame_camera.center_, frame_camera.up_}});
-  });
+  lua.set_function(
+      "render",
+      sol::overload(
+          [render_calls_ptr, objs_ptr, camera]() -> bool {
+            specula::fs::path file(specula::cli::output_path);
+            specula::fs::path file_name = file.filename().replace_extension(""),
+                              file_extension = file.extension();
+            file.remove_filename();
+            file.append(file_name.string());
+            file.append(fmt::format("{}{}", *render_calls_ptr,
+                                    file_extension.string()));
+            (*render_calls_ptr)++;
+            Camera frame_camera = camera;
+            return specula::renderer::render_frame(
+                file, *objs_ptr,
+                {{specula::cli::render_albido, specula::cli::render_normal,
+                  specula::cli::render_depth}},
+                specula::cli::tile_size, specula::cli::spp, specula::cli::fov,
+                specula::cli::min_bounce, specula::cli::resolution,
+                {{-frame_camera.eye_, -frame_camera.center_, frame_camera.up_}},
+                specula::cli::denoise);
+          },
+          [render_calls_ptr, objs_ptr, camera](const sol::table &vars) -> bool {
+            specula::fs::path file(specula::cli::output_path);
+            specula::fs::path file_name = file.filename().replace_extension(""),
+                              file_extension = file.extension();
+            file.remove_filename();
+            file.append(file_name.string());
+            file.append(fmt::format("{}{}", *render_calls_ptr,
+                                    file_extension.string()));
+            (*render_calls_ptr)++;
+            Camera frame_camera = camera;
+            glm::uvec2 res =
+                var.get<std::size_t>("res").has_value()
+                    ? specula::cli::resolution
+                    : glm::uvec2(var.get<std::size_t>("resolution").value());
+            return specula::renderer::render_frame(
+                file, *objs_ptr,
+                {{vars.get_or<bool>("albido", specula::cli::render_albido),
+                  vars.get_or<bool>("normal", specula::cli::render_normal),
+                  vars.get_or<bool>("depth", specula::cli::render_depth)}},
+                vars.get_or<std::size_t>("tile_size", specula::cli::tile_size),
+                vars.get_or<std::size_t>("spp", specula::cli::spp),
+                vars.get_or<float>("fov", specula::cli::fov),
+                vars.get_or<std::size_t>("bounces", specula::cli::min_bounce),
+                res,
+                {{-frame_camera.eye_, -frame_camera.center_, frame_camera.up_}},
+                vars.get_or<bool>("denoise", denoise));
+          }));
 
   lua.script_file(specula::cli::script_source);
 
   if (render_calls == 0) {
     Camera frame_camera = camera;
     return specula::renderer::render_frame(
-        specula::fs::path(specula::cli::output_path), objs, specula::cli::spp,
-        specula::cli::fov, specula::cli::resolution,
-        {{frame_camera.eye_, frame_camera.center_, frame_camera.up_}});
+        specula::fs::path(specula::cli::output_path), objs,
+        {{specula::cli::render_albido, specula::cli::render_normal,
+          specula::cli::render_depth}},
+        specula::cli::tile_size, specula::cli::spp, specula::cli::fov,
+        specula::cli::min_bounce, specula::cli::resolution,
+        {{frame_camera.eye_, frame_camera.center_, frame_camera.up_}},
+        specula::cli::denoise);
   }
 
   return 0;

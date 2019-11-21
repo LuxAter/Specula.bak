@@ -19,6 +19,8 @@ public:
   Image(const glm::uvec2 &resolution);
   bool write(const std::string_view &file);
   bool write(const fs::path &file);
+  void normalize();
+  void abs();
 
   inline glm::vec3 &operator()(const std::size_t &x, const std::size_t &y) {
     return buffer_[resolution_.y * y + x];
