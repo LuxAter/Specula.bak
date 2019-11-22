@@ -1,35 +1,35 @@
 # Examples
 
-Here are a number of examples to take insperation from, and to see how the
+Here are a number of examples to take inspiration from, and to see how the
 mechanics of constructing a scene works.
 
 ## Diffuse Sphere :id=diffusesphere
 
-## Specular Sphere
-
-This scene is a variant of the basic [Diffuse Sphere](#diffusesphere), with
-the change that the sphere is now a perfect mirror surface.
+This is the basic scene, containing two diffuse spheres in a box, and a light
+source for the celling.
 
 ```lua
-l = Material.new(1.0, 1.0, 1.0):set_emission(1.0)
-r = Material.new(1.0, 0.0, 0.0)
-g = Material.new(0.0, 1.0, 0.0)
-b = Material.new(0.0, 0.0, 1.0)
-d = Material.new(1.0, 1.0, 1.0):set_type(Material.Type.DIFFUSE)
-s = Material.new(1.0, 1.0, 1.0):set_type(Material.Type.SPECULAR)
+camera:eye(2.78, 2.73, -8.00)
+camera:direction(0.0, 0.0, 1.0)
+camera:up(0.0, 1.0, 0.0)
 
-Sphere.new(5.0):translate(0.0, 0.0, 0.0):set_material(s)
-Plane.new(0.0, 1.0, 0.0, 0.0):rotate_z(math.pi):translate(0.0, 20.0, 0.0):set_material(l)
-Plane.new(0.0, 1.0, 0.0, 0.0):rotate_z(0.0):translate(0.0, -20.0, 0.0):set_material(d)
-Plane.new(0.0, 1.0, 0.0, 0.0):rotate_z(math.pi/2):translate(20.0, 0.0, 0.0):set_material(r)
-Plane.new(0.0, 1.0, 0.0, 0.0):rotate_z(-math.pi/2):translate(-20.0, 0.0, 0.0):set_material(g)
-Plane.new(0.0, 1.0, 0.0, 0.0):rotate_x(-math.pi/2):translate(0.0, 0.0, 20.0):set_material(b)
-Plane.new(0.0, 1.0, 0.0, 0.0):rotate_x(math.pi/2):translate(0.0, 0.0, -20.0):set_material(d)
+light_mat = Material.new(1.0, 1.0, 1.0):set_emission(1.0)
 
-camera:center(0.0, 0.0, 0.0)
-camera:eye(0.0, 0.0, -10.0)
+white_mat = Material.new(1.0, 1.0, 1.0):set_type(Material.Type.DIFFUSE)
+green_mat = Material.new(0.0, 1.0, 0.0):set_type(Material.Type.DIFFUSE)
+red_mat = Material.new(1.0, 0.0, 0.0):set_type(Material.Type.DIFFUSE)
+
+floor = Plane.new(0.0, 1.0, 0.0, 0.0):set_material(white_mat)
+ceiling = Plane.new(0.0, -1.0, 0.0, 5.5):set_material(light_mat)
+back_wall = Plane.new(0.0, 0.0, -1.0, 5.592):set_material(white_mat)
+right_wall = Plane.new(1.0, 0.0, 0.0, 0.0):set_material(green_mat)
+left_wall = Plane.new(-1.0, 0.0, 0.0, 5.528):set_material(red_mat)
+front_wall = Plane.new(0.0, 0.0, 1.0, -8.1):set_material(white_mat)
+
+large = Sphere.new(2.0):translate(3.528, 2.0, 3.592):set_material(white_mat)
+small = Sphere.new(0.8):translate(1.0, 1.0, 0.5):set_material(white_mat)
 ```
 
 This will produce the output shown below.
 
-![Specular Sphere](specular.png)
+![Diffuse Sphere](diffuse.png)

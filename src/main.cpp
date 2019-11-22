@@ -219,9 +219,9 @@ int main(int argc, char *argv[]) {
             (*render_calls_ptr)++;
             Camera frame_camera = camera;
             glm::uvec2 res =
-                var.get<std::size_t>("res").has_value()
+                std::optional<std::size_t>(vars["res"]).has_value()
                     ? specula::cli::resolution
-                    : glm::uvec2(var.get<std::size_t>("resolution").value());
+                    : glm::uvec2(vars.get<std::size_t>("resolution"));
             return specula::renderer::render_frame(
                 file, *objs_ptr,
                 {{vars.get_or<bool>("albido", specula::cli::render_albido),
@@ -233,7 +233,7 @@ int main(int argc, char *argv[]) {
                 vars.get_or<std::size_t>("bounces", specula::cli::min_bounce),
                 res,
                 {{-frame_camera.eye_, -frame_camera.center_, frame_camera.up_}},
-                vars.get_or<bool>("denoise", denoise));
+                vars.get_or<bool>("denoise", specula::cli::denoise));
           }));
 
   lua.script_file(specula::cli::script_source);
