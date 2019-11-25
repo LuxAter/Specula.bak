@@ -93,6 +93,16 @@ if(BUILD_SHARED)
   set_target_properties(
     specula_shared PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED YES
                               CXX_EXTENSIONS TRUE)
+
+  target_link_libraries(specula_shared ${CMAKE_THREAD_LIBS_INIT})
+  target_link_libraries(specula_shared fmt::fmt)
+  target_link_libraries(specula_shared spdlog::spdlog)
+  target_link_libraries(specula_shared png)
+  target_link_libraries(specula_shared turbojpeg)
+  target_link_libraries(specula_shared ghc_filesystem)
+
+  target_include_directories(specula_shared
+                             PRIVATE ${PROJECT_SOURCE_DIR}/external/libpng)
   if(USE_OPENCL)
     target_link_libraries(specula_shared ${OpenCL_LIBRARIES})
     target_include_directories(specula_shared PRIVATE ${OpenCL_INCLUDE_DIRS})
