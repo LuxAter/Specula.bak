@@ -1,7 +1,7 @@
 #ifndef SPECULA_VEC_HPP_
 #define SPECULA_VEC_HPP_
 
-#define MONOP(name, func)                                                      \
+#define MONFUNC(name, func)                                                    \
   template <typename T> constexpr inline vec2<T> name(const vec2<T> &v) {      \
     return {func(v.x), func(v.y)};                                             \
   }                                                                            \
@@ -12,7 +12,7 @@
     return {func(v.x), func(v.y), func(v.z), func(v.w)};                       \
   }
 
-#define BINOP(name, func)                                                      \
+#define BINFUNC(name, func)                                                    \
   template <typename T>                                                        \
   constexpr inline vec2<T> name(const vec2<T> &v, const T &a) {                \
     return {func(v.x, a), func(v.y, a)};                                       \
@@ -38,7 +38,7 @@
     return {func(v.x, a.x), func(v.y, a.y), func(v.z, a.z), func(v.w, a.w)};   \
   }
 
-#define TRIOP(name, func)                                                      \
+#define TRIFUNC(name, func)                                                    \
   template <typename T>                                                        \
   constexpr inline vec2<T> name(const vec2<T> &v, const T &a, const T &b) {    \
     return {func(v.x, a, b), func(v.y, a, b)};                                 \
@@ -69,6 +69,35 @@
             func(v.w, a.w, b.w)};                                              \
   }
 
+#define ARITHOP(op)                                                            \
+  template <typename T>                                                        \
+  constexpr inline vec2<T> operator##op(const vec2<T> &lhs, const T &rhs) {    \
+    return {lhs.x op rhs, lhs.y op rhs};                                       \
+  }                                                                            \
+  template <typename T>                                                        \
+  constexpr inline vec3<T> operator##op(const vec3<T> &lhs, const T &rhs) {    \
+    return {lhs.x op rhs, lhs.y op rhs, lhs.z op rhs};                         \
+  }                                                                            \
+  template <typename T>                                                        \
+  constexpr inline vec4<T> operator##op(const vec4<T> &lhs, const T &rhs) {    \
+    return {lhs.x op rhs, lhs.y op rhs, lhs.z op rhs, lhs.w op rhs};           \
+  }                                                                            \
+  template <typename T>                                                        \
+  constexpr inline vec2<T> operator##op(const vec2<T> &lhs,                    \
+                                        const vec2<T> &rhs) {                  \
+    return {lhs.x op rhs.x, lhs.y op rhs.y};                                   \
+  }                                                                            \
+  template <typename T>                                                        \
+  constexpr inline vec3<T> operator##op(const vec3<T> &lhs,                    \
+                                        const vec3<T> &rhs) {                  \
+    return {lhs.x op rhs.x, lhs.y op rhs.y, lhs.z op rhs.z};                   \
+  }                                                                            \
+  template <typename T>                                                        \
+  constexpr inline vec4<T> operator##op(const vec4<T> &lhs,                    \
+                                        const vec4<T> &rhs) {                  \
+    return {lhs.x op rhs.x, lhs.y op rhs.y, lhs.z op rhs.z, lhs.w op rhs.w};   \
+  }
+
 namespace specula {
 template <typename T, std::size_t N> struct vecn {};
 template <typename T> using vec2 = vecn<T, 2>;
@@ -97,6 +126,24 @@ template <typename T> struct vecn<T, 2> {
       typename U, std::size_t N,
       typename = std::enable_if_t<std::is_convertible<U, T>::value && N >= 1>>
   constexpr inline vecn(const U &x, const vecn<U, N> &copy) : x(x), y(copy.x) {}
+
+  template <typename U> inline vecn<T, 2> &operator+=(const U &v) {
+    *this = *this + v;
+    return *this;
+  }
+  template <typename U> inline vecn<T, 2> &operator-=(const U &v) {
+    *this = *this - v;
+    return *this;
+  }
+  template <typename U> inline vecn<T, 2> &operator*=(const U &v) {
+    *this = *this * v;
+    return *this;
+  }
+  template <typename U> inline vecn<T, 2> &operator/=(const U &v) {
+    *this = *this / v;
+    return *this;
+  }
+
   union {
     T x, r, w
   };
@@ -133,6 +180,24 @@ template <typename T> struct vecn<T, 3> {
       typename = std::enable_if_t<std::is_convertible<U, T>::value && N == 2>>
   constexpr inline vecn(const vecn<U, N> &copy, const U &z)
       : x(copy.x), y(copy.y), z(z) {}
+
+  template <typename U> inline vecn<T, 3> &operator+=(const U &v) {
+    *this = *this + v;
+    return *this;
+  }
+  template <typename U> inline vecn<T, 3> &operator-=(const U &v) {
+    *this = *this - v;
+    return *this;
+  }
+  template <typename U> inline vecn<T, 3> &operator*=(const U &v) {
+    *this = *this * v;
+    return *this;
+  }
+  template <typename U> inline vecn<T, 3> &operator/=(const U &v) {
+    *this = *this / v;
+    return *this;
+  }
+
   union {
     T x, r
   };
@@ -203,6 +268,24 @@ template <typename T> struct vecn<T, 4> {
       typename = std::enable_if_t<std::is_convertible<U, T>::value && N == 3>>
   constexpr inline vecn(const vecn<U, N> &xyz, const U &w)
       : x(xyz.x), y(xyz.y), z(xyz.z), w(w) {}
+
+  template <typename U> inline vecn<T, 4> &operator+=(const U &v) {
+    *this = *this + v;
+    return *this;
+  }
+  template <typename U> inline vecn<T, 4> &operator-=(const U &v) {
+    *this = *this - v;
+    return *this;
+  }
+  template <typename U> inline vecn<T, 4> &operator*=(const U &v) {
+    *this = *this * v;
+    return *this;
+  }
+  template <typename U> inline vecn<T, 4> &operator/=(const U &v) {
+    *this = *this / v;
+    return *this;
+  }
+
   union {
     T x, r
   };
@@ -221,21 +304,79 @@ namespace {
 template <typename T> int __sign(T val) { return (T(0) < val) - (val < T(0)); }
 } // namespace
 
-MONOP(abs, std::fabs)
-MONOP(ceil, std::ceil)
-MONOP(floor, std::floor)
-MONOP(sign, __sign)
-MONOP(exp, std::exp)
-MONOP(exp2, std::exp2)
-MONOP(log, std::log)
-MONOP(sqrt, std::sqrt)
-MONOP(cbrt, std::cbrt)
+template <typename T>
+constexpr inline bool operator==(const vec2<T> &lhs, const vec2<T> &rhs) {
+  return lhs.x == rhs.x && lhs.y == rhs.y;
+}
+template <typename T>
+constexpr inline bool operator!=(const vec2<T> &lhs, const vec2<T> &rhs) {
+  return !(lhs == rhs);
+}
+template <typename T>
+constexpr inline bool operator<(const vec2<T> &lhs, const vec2<T> &rhs) {
+  return (lhs.x < rhs.x) || (!(rhs.x < lhs.x) && lhs.y < rhs.y);
+}
+template <typename T>
+constexpr inline bool operator<=(const vec2<T> &lhs, const vec2<T> &rhs) {
+  return !(rhs < lhs);
+}
+template <typename T>
+constexpr inline bool operator>(const vec2<T> &lhs, const vec2<T> &rhs) {
+  return rhs < lhs;
+}
+template <typename T>
+constexpr inline bool operator>=(const vec2<T> &lhs, const vec2<T> &rhs) {
+  return !(lhs < rhs);
+}
 
-BINOP(max, std::max)
-BINOP(min, std::min)
-BINOP(pow, std::pow)
+ARITHOP(+)
+ARITHOP(-)
+ARITHOP(*)
+ARITHOP(/)
 
-TRIOP(clamp, std::clamp)
+template <typename T>
+constexpr inline vec2<T> operator*(const T &lhs, const vec2<T> &rhs) {
+  return {lhs * rhs.x, lhs * rhs.y};
+}
+template <typename T>
+constexpr inline vec3<T> operator*(const T &lhs, const vec3<T> &rhs) {
+  return {lhs * rhs.x, lhs * rhs.y, lhs * rhs.z};
+}
+template <typename T>
+constexpr inline vec4<T> operator*(const T &lhs, const vec4<T> &rhs) {
+  return {lhs * rhs.x, lhs * rhs.y, lhs * rhs.z, lhs * rhs.w};
+}
+
+MONFUNC(abs, std::fabs)
+MONFUNC(ceil, std::ceil)
+MONFUNC(floor, std::floor)
+MONFUNC(sign, __sign)
+MONFUNC(exp, std::exp)
+MONFUNC(exp2, std::exp2)
+MONFUNC(log, std::log)
+MONFUNC(sqrt, std::sqrt)
+MONFUNC(cbrt, std::cbrt)
+
+BINFUNC(max, std::max)
+BINFUNC(min, std::min)
+BINFUNC(pow, std::pow)
+
+TRIFUNC(clamp, std::clamp)
+
+template <typename T>
+constexpr inline vec3<T> cross(const vec3<T> &lhs, const vec3<T> &rhs) {}
+
+template <typename T>
+constexpr inline vec2<T> distance(const vec2<T> &lhs, const vec2<T> &rhs) {}
+template <typename T>
+constexpr inline vec2<T> dot(const vec2<T> &lhs, const vec2<T> &rhs) {}
+template <typename T> constexpr inline T length(const vec2<T> &v) {}
+template <typename T> constexpr inline vec2<T> normalize(const vec2<T> &v) {}
+template <typename T>
+constexpr inline vec2<T> reflect(const vec2<T> &i, const vec2<T> &normal) {}
+template <typename T>
+constexpr inline vec2<T> refract(const vec2<T> &i, const vec2<T> &normal,
+                                 const T &eta) {}
 
 } // namespace specula
 
