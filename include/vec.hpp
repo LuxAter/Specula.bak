@@ -364,16 +364,44 @@ BINFUNC(pow, std::pow)
 TRIFUNC(clamp, std::clamp)
 
 template <typename T>
-constexpr inline vec3<T> cross(const vec3<T> &lhs, const vec3<T> &rhs) {}
+constexpr inline vec3<T> cross(const vec3<T> &lhs, const vec3<T> &rhs) {
+  return {lhs.y * rhs.z - rhs.y * lhs.z, lhs.z * rhs.x - rhs.z * lhs.x,
+          lhs.x * rhs.y - rhs.x * lhs.y};
+}
 
+template <typename T, std::size_t N>
+constexpr inline T distance(const vec<T, N> &lhs, const vec<T, N> &rhs) {
+  return length(lhs - rhs);
+}
 template <typename T>
-constexpr inline vec2<T> distance(const vec2<T> &lhs, const vec2<T> &rhs) {}
+constexpr inline T dot(const vec2<T> &lhs, const vec2<T> &rhs) {
+  return lhs.x * rhs.x + lhs.y * rhs.y;
+}
 template <typename T>
-constexpr inline vec2<T> dot(const vec2<T> &lhs, const vec2<T> &rhs) {}
-template <typename T> constexpr inline T length(const vec2<T> &v) {}
-template <typename T> constexpr inline vec2<T> normalize(const vec2<T> &v) {}
+constexpr inline T dot(const vec3<T> &lhs, const vec3<T> &rhs) {
+  return lhs.x * rhs.x + lhs.y * rhs.y + lhs.z * rhs.z;
+}
 template <typename T>
-constexpr inline vec2<T> reflect(const vec2<T> &i, const vec2<T> &normal) {}
+constexpr inline T dot(const vec4<T> &lhs, const vec4<T> &rhs) {
+  return lhs.x * rhs.x + lhs.y * rhs.y + lhs.z * rhs.z + lhs.w * rhs.w;
+}
+template <typename T> constexpr inline T length(const vec2<T> &v) {
+  return std::sqrt(v.x * v.x + v.y * v.y);
+}
+template <typename T> constexpr inline T length(const vec3<T> &v) {
+  return std::sqrt(v.x * v.x + v.y * v.y + v.z * v.z);
+}
+template <typename T> constexpr inline T length(const vec4<T> &v) {
+  return std::sqrt(v.x * v.x + v.y * v.y + v.z * v.z + v.w * v.w);
+}
+template <typename T, std::size_t N>
+constexpr inline vec<T, N> normalize(const vec<T, N> &v) {
+  return v / length(v);
+}
+template <typename T, std::size_t N>
+constexpr inline vec<T, N> reflect(const vec<T, N> &i, const vec<T, N> &normal) {
+  return i - normal * dot(normal, i) * static_cast<T>(2);
+}
 template <typename T>
 constexpr inline vec2<T> refract(const vec2<T> &i, const vec2<T> &normal,
                                  const T &eta) {}
