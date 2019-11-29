@@ -10,8 +10,9 @@ project(
 # ##############################################################################
 # OPTIONS
 # ##############################################################################
-option(USE_OPENCL "Use OpenCL and GPU optimizations" TRUE)
-option(BUILD_SHARED "Builed shared library" TRUE)
+option(ENABLE_OPENCL "Use OpenCL and GPU optimizations" TRUE)
+option(ENABLE_OIDN "Enables Intel Open AI Denoise" TRUE)
+option(BUILD_SHARED "Builed shared library" FALSE)
 
 # ##############################################################################
 # SOURCE
@@ -72,11 +73,14 @@ target_link_libraries(specula_static spdlog::spdlog)
 target_link_libraries(specula_static png)
 target_link_libraries(specula_static turbojpeg)
 target_link_libraries(specula_static ghc_filesystem)
+target_link_libraries(specula_static mpark_variant)
+target_link_libraries(specula_static glm::glm)
+target_compile_definitions(specula_static PRIVATE -DGLM_FORCE_SWIZZLE)
 
 target_include_directories(specula_static
                            PRIVATE ${PROJECT_SOURCE_DIR}/external/libpng)
 
-if(USE_OPENCL)
+if(ENABLE_OPENCL)
   target_link_libraries(specula_static ${OpenCL_LIBRARIES})
   target_include_directories(specula_static PRIVATE ${OpenCL_INCLUDE_DIRS})
 endif()
@@ -100,10 +104,13 @@ if(BUILD_SHARED)
   target_link_libraries(specula_shared png)
   target_link_libraries(specula_shared turbojpeg)
   target_link_libraries(specula_shared ghc_filesystem)
+  target_link_libraries(specula_shared mpark_variant)
+  target_link_libraries(specula_shared glm::glm)
+  target_compile_definitions(specula_shared PRIVATE -DGLM_FORCE_SWIZZLE)
 
   target_include_directories(specula_shared
                              PRIVATE ${PROJECT_SOURCE_DIR}/external/libpng)
-  if(USE_OPENCL)
+  if(ENABLE_OPENCL)
     target_link_libraries(specula_shared ${OpenCL_LIBRARIES})
     target_include_directories(specula_shared PRIVATE ${OpenCL_INCLUDE_DIRS})
   endif()

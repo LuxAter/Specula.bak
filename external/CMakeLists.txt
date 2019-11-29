@@ -32,10 +32,14 @@ option(SOL2_LUA_VERSION "" "5.1.5")
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/sol2 EXCLUDE_FROM_ALL)
 load_external(filesystem)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/filesystem EXCLUDE_FROM_ALL)
+load_external(variant)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/variant EXCLUDE_FROM_ALL)
 load_external(CLI11)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/CLI11 EXCLUDE_FROM_ALL)
 load_external(fmt)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/fmt EXCLUDE_FROM_ALL)
+load_external(glm)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/glm EXCLUDE_FROM_ALL)
 
 load_external(luajit)
 add_custom_target(
@@ -44,7 +48,7 @@ add_custom_target(
           ${CMAKE_CURRENT_BINARY_DIR}/luajit
   COMMAND cd ${CMAKE_CURRENT_BINARY_DIR}/luajit && make install
           PREFIX=${CMAKE_CURRENT_BINARY_DIR}/luajit)
-add_library(luajit_static STATIC IMPORTED)
+add_library(luajit_static STATIC IMPORTED GLOBAL)
 set_property(
   TARGET luajit_static
   PROPERTY IMPORTED_LOCATION

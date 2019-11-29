@@ -7,17 +7,17 @@
 
 namespace specula {
 namespace object {
+
 class Sphere : public Object {
 public:
   Sphere(const float &radius)
-      : Object([this](const glm::vec3 &p) {
-          return glm::length(p) - this->radius;
-        }),
+      : Object(
+            [this](const glm::vec3 &p) {
+              return glm::length(p) - this->radius;
+            },
+            "return length(p) - {{ radius }}", {{"radius", &this->radius}}),
         radius(radius) {}
   ~Sphere() {}
-
-  void set_radius(const float &r) { radius = r; }
-  float get_radius() const { return radius; }
 
   float radius;
 };
