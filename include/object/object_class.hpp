@@ -7,8 +7,8 @@
 #include <memory>
 #include <string>
 
-#include "../material/material_class.hpp"
 #include "../math.hpp"
+#include "../shader/material.hpp"
 #include "../variant.hpp"
 
 namespace specula {
@@ -37,11 +37,21 @@ public:
           &variables);
   virtual ~ObjectBase() {}
 
+  inline bool gpu_compatable() const {
+    return distance_estimator_src.length() != 0;
+  }
+  inline bool cpu_compatable() const { return distance_estimator != nullptr; }
+
   inline float &get_float(const std::string &name) {
     return *std::get<float *>(variables.at(name));
   }
   inline const float &get_float(const std::string &name) const {
     return *std::get<float *>(variables.at(name));
+  }
+
+  inline ObjectBase &set_material(const Material &mat) {
+    material = std::make_shared<Material>(mat);
+    return *this;
   }
 
   inline ObjectBase &translate(const float &x, const float &y, const float &z) {

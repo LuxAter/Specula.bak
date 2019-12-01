@@ -11,6 +11,7 @@ namespace specula {
 struct ray {
   glm::vec4 o;
   glm::vec3 d;
+  float *ior;
 };
 
 inline glm::vec3 operator*(const glm::mat4 &lhs, const glm::vec3 &rhs) {

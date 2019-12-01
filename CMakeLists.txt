@@ -25,7 +25,9 @@ set(SOURCES
     src/image/bmp.cpp
     src/object/object_class.cpp
     src/scene.cpp
-    src/rand.cpp)
+    src/rand.cpp
+    src/renderer.cpp
+    src/renderer_args.cpp)
 set(EXEC_SOURCES src/main.cpp src/cli.cpp)
 configure_file("${PROJECT_SOURCE_DIR}/include/version.hpp.in"
                "${PROJECT_SOURCE_DIR}/include/version.hpp")
@@ -65,7 +67,7 @@ set_target_properties(
                             CXX_EXTENSIONS TRUE)
 find_package(Git REQUIRED)
 find_package(Threads REQUIRED)
-find_package(OpenCL)
+find_package(OpenCL OPTIONAL)
 target_link_libraries(specula_static PUBLIC ${CMAKE_THREAD_LIBS_INIT})
 target_link_libraries(specula_static PUBLIC fmt::fmt)
 target_link_libraries(specula_static PUBLIC spdlog::spdlog)
@@ -78,7 +80,7 @@ target_link_libraries(specula_static PUBLIC glm::glm_static)
 target_include_directories(specula_static
                            PRIVATE ${PROJECT_SOURCE_DIR}/external/libpng)
 
-if(ENABLE_OPENCL)
+if(ENABLE_OPENCL AND OpenCL_FOUND)
   target_link_libraries(specula_static PUBLIC ${OpenCL_LIBRARIES})
   target_include_directories(specula_static PRIVATE ${OpenCL_INCLUDE_DIRS})
 endif()
@@ -107,7 +109,7 @@ if(BUILD_SHARED_LIBS)
 
   target_include_directories(specula_shared
                              PRIVATE ${PROJECT_SOURCE_DIR}/external/libpng)
-  if(ENABLE_OPENCL)
+  if(ENABLE_OPENCL AND OpenCL_FOUND)
     target_link_libraries(specula_shared PUBLIC ${OpenCL_LIBRARIES})
     target_include_directories(specula_shared PRIVATE ${OpenCL_INCLUDE_DIRS})
   endif()

@@ -12,13 +12,15 @@ glm::vec3 camera_pos, camera_center, camera_up;
 std::vector<std::shared_ptr<ObjectBase>> objects;
 } // namespace specula::scene
 
-std::vector<std::shared_ptr<ObjectBase>> get_visible() {
+std::vector<std::shared_ptr<specula::ObjectBase>>
+specula::scene::get_visible() {
   std::vector<std::shared_ptr<ObjectBase>> visible_objects;
   std::copy_if(objects.begin(), objects.end(),
                std::back_inserter(visible_objects),
                [](const std::shared_ptr<ObjectBase> &o) {
                  return o->material != nullptr;
                });
+  return visible_objects;
 }
 
 void specula::set_camera_fov(const float &v) { scene::fov = v; }
@@ -32,6 +34,13 @@ void specula::set_camera_center(const glm::vec3 &c) {
 void specula::set_camera_center(const float &x, const float &y,
                                 const float &z) {
   scene::camera_center = {x, y, z};
+}
+void specula::set_camera_direction(const glm::vec3 &c) {
+  scene::camera_center = scene::camera_pos + c;
+}
+void specula::set_camera_direction(const float &x, const float &y,
+                                   const float &z) {
+  scene::camera_center = scene::camera_pos + glm::vec3(x, y, z);
 }
 void specula::set_camera_up(const glm::vec3 &up) { scene::camera_up = up; }
 void specula::set_camera_up(const float &x, const float &y, const float &z) {

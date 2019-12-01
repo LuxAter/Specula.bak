@@ -1,8 +1,8 @@
 #include "cli.hpp"
 
+#include <optional>
 #include <regex>
 #include <string>
-#include <thread>
 #ifdef __APPLE__
 #include <cli/cli.hpp>
 #else
@@ -29,21 +29,9 @@ args_t parse_args(int argc, char *argv[]) {
   args.valid = true;
   args.script_path = "";
   args.output_path = "out.png";
-  args.verbosity = 0;
-  args.spp = 32;
-  args.min_bounces = 10;
-  args.tile_size = 32;
-  args.threads = std::thread::hardware_concurrency();
-  args.res_width = 1000;
-  args.res_height = 1000;
-  args.render_albido = false;
-  args.render_normal = false;
-  args.render_depth = false;
-  args.denoise = false;
-  args.fov = M_PI / 4.0f;
 
   std::string aspect_ratio = "1:1";
-  std::size_t pix_width;
+  std::optional<std::size_t> pix_width;
 
   CLI::App app{"Specula"};
   app.add_option("source", args.script_path, "Scene definition script")
@@ -74,8 +62,8 @@ args_t parse_args(int argc, char *argv[]) {
   output->add_option("--aspect", aspect_ratio, "Output image aspect ratio")
       ->check(CLI::RegexValidator("\\d+[:x]\\d+"));
   output->add_option(
-      "-a,--albido", args.render_albido,
-      "Render image containing just the albido map of the objects");
+      "-a,--albedo", args.render_albedo,
+      "Render image containing just the albedo map of the objects");
   output->add_option(
       "-d,--depth", args.render_depth,
       "Render image containing just the depth map of the objects");
@@ -106,9 +94,11 @@ args_t parse_args(int argc, char *argv[]) {
     sscanf(aspect_ratio.c_str(), "%fx%f", &aspect_width, &aspect_height);
   }
 
-  args.res_width = pix_width;
-  args.res_height = static_cast<std::size_t>(static_cast<float>(pix_width) *
-                                             aspect_height / aspect_width);
+  if (pix_width) {
+    args.res_width = pix_width.value();
+    args.res_height = static_cast<std::size_t>(
+        static_cast<float>(pix_width.value()) * aspect_height / aspect_width);
+  }
 
   return args;
 };

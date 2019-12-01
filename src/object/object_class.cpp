@@ -5,7 +5,7 @@
 #include <memory>
 #include <string>
 
-#include "material/material_class.hpp"
+#include "shader/material.hpp"
 #include "math.hpp"
 #include "rand.hpp"
 

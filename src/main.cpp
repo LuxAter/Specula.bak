@@ -27,19 +27,45 @@ int main(int argc, char *argv[]) {
   specula::logger::initalize_logger(args.verbosity);
   LINFO("Specula v{}.{}.{}", SPECULA_VERSION_MAJOR, SPECULA_VERSION_MINOR,
         SPECULA_VERSION_PATCH);
-  specula::set_camera_fov(args.fov);
 
-  specula::Sphere sph(2.0f);
-  std::cout << sph.radius << ":" << sph.get_float("radius") << ":"
-            << specula::scene::objects.front()->get_float("radius") << "\n";
-  sph.radius = 3.0f;
-  std::cout << sph.radius << ":" << sph.get_float("radius") << ":"
-            << specula::scene::objects.front()->get_float("radius") << "\n";
-  sph.get_float("radius") = 4.0f;
-  std::cout << sph.radius << ":" << sph.get_float("radius") << ":"
-            << specula::scene::objects.front()->get_float("radius") << "\n";
-  specula::scene::objects.front()->get_float("radius") = 5.0f;
-  std::cout << sph.radius << ":" << sph.get_float("radius") << ":"
-            << specula::scene::objects.front()->get_float("radius") << "\n";
+  // Cornell Box
+  specula::set_camera_pos(2.78, 2.73, -8.00);
+  specula::set_camera_direction(0.0, 0.0, 1.0);
+  specula::set_camera_up(0.0, 1.0, 0.0);
+
+  specula::Material light = specula::Material::Emissive();
+  specula::Material white = specula::Material::Diffuse(1.0, 1.0, 1.0);
+  specula::Material green = specula::Material::Diffuse(0.0, 1.0, 0.0);
+  specula::Material red = specula::Material::Diffuse(1.0, 0.0, 0.0);
+
+  specula::Plane(0.0, 1.0, 0.0, 0.0).set_material(white);    // FLOOR
+  specula::Plane(0.0, -1.0, 0.0, 5.5).set_material(light);   // CEILING
+  specula::Plane(0.0, 0.0, 1.0, -8.1).set_material(white);   // FRONT WALL
+  specula::Plane(0.0, 0.0, -1.0, 5.592).set_material(white); // BACK WALL
+  specula::Plane(1.0, 0.0, 0.0, 0.0).set_material(green);    // RIGHT WALL
+  specula::Plane(-1.0, 0.0, 0.0, 5.528).set_material(red);   // LEFT WALL
+
+  specula::Sphere(2.0)
+      .translate(3.528, 2.0, 3.592)
+      .set_material(white); // LARGE SPHERE
+  specula::Sphere(0.8)
+      .translate(1.0, 1.0, 0.5)
+      .set_material(white); // SMALL SPHERE
+
+  specula::render(specula::RendererArgs()
+                      .file(args.output_path)
+                      .spp(args.spp)
+                      .min_bounces(args.min_bounces)
+                      .tile_size(args.tile_size)
+                      .threads(args.threads)
+                      .res_width(args.res_width)
+                      .res_height(args.res_height)
+                      .albedo(args.render_albedo)
+                      .normal(args.render_normal)
+                      .depth(args.render_depth)
+                      .denoise(args.denoise)
+                      .fov(args.fov)
+                      .build());
+
   return 0;
 }
