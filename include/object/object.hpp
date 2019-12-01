@@ -3,4 +3,6 @@
 
 #include "object_class.hpp"
 
+#include "sphere.hpp"
+
 #endif  // SPECULA_OBJECT_HPP_

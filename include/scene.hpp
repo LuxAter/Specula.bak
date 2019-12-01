@@ -7,9 +7,13 @@
 #include "object/object_class.hpp"
 
 namespace specula {
+namespace scene {
 extern float fov;
 extern glm::vec3 camera_pos, camera_center, camera_up;
 extern std::vector<std::shared_ptr<ObjectBase>> objects;
+
+std::vector<std::shared_ptr<ObjectBase>> get_visible();
+} // namespace scene
 
 void set_camera_fov(const float &v);
 void set_camera_pos(const glm::vec3 &p);

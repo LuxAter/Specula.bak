@@ -22,10 +22,24 @@
 
 int main(int argc, char *argv[]) {
   args_t args = parse_args(argc, argv);
-  if(!args.valid) return 0;
+  if (!args.valid)
+    return 0;
   specula::logger::initalize_logger(args.verbosity);
   LINFO("Specula v{}.{}.{}", SPECULA_VERSION_MAJOR, SPECULA_VERSION_MINOR,
         SPECULA_VERSION_PATCH);
   specula::set_camera_fov(args.fov);
+
+  specula::Sphere sph(2.0f);
+  std::cout << sph.radius << ":" << sph.get_float("radius") << ":"
+            << specula::scene::objects.front()->get_float("radius") << "\n";
+  sph.radius = 3.0f;
+  std::cout << sph.radius << ":" << sph.get_float("radius") << ":"
+            << specula::scene::objects.front()->get_float("radius") << "\n";
+  sph.get_float("radius") = 4.0f;
+  std::cout << sph.radius << ":" << sph.get_float("radius") << ":"
+            << specula::scene::objects.front()->get_float("radius") << "\n";
+  specula::scene::objects.front()->get_float("radius") = 5.0f;
+  std::cout << sph.radius << ":" << sph.get_float("radius") << ":"
+            << specula::scene::objects.front()->get_float("radius") << "\n";
   return 0;
 }

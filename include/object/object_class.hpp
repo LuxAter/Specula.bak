@@ -3,11 +3,13 @@
 
 #include <cstdlib>
 #include <functional>
+#include <map>
 #include <memory>
 #include <string>
 
 #include "../material/material_class.hpp"
 #include "../math.hpp"
+#include "../variant.hpp"
 
 namespace specula {
 class ObjectBase {
@@ -17,7 +19,30 @@ public:
   ObjectBase(const std::string &distance_function);
   ObjectBase(const std::function<float(const glm::vec3 &)> &distance_function,
              const std::string &distance_function_src);
+  ObjectBase(
+      const std::function<float(const glm::vec3 &)> &distance_function,
+      const std::map<std::string,
+                     variant<float *, glm::vec2 *, glm::vec3 *, glm::vec4 *>>
+          &variables);
+  ObjectBase(
+      const std::string &distance_function,
+      const std::map<std::string,
+                     variant<float *, glm::vec2 *, glm::vec3 *, glm::vec4 *>>
+          &variables);
+  ObjectBase(
+      const std::function<float(const glm::vec3 &)> &distance_function,
+      const std::string &distance_function_src,
+      const std::map<std::string,
+                     variant<float *, glm::vec2 *, glm::vec3 *, glm::vec4 *>>
+          &variables);
   virtual ~ObjectBase() {}
+
+  inline float &get_float(const std::string &name) {
+    return *std::get<float *>(variables.at(name));
+  }
+  inline const float &get_float(const std::string &name) const {
+    return *std::get<float *>(variables.at(name));
+  }
 
   inline ObjectBase &translate(const float &x, const float &y, const float &z) {
     transform = glm::translate(transform, {x, y, z});
@@ -52,6 +77,8 @@ public:
   std::size_t uuid;
   std::function<float(const glm::vec3 &)> distance_estimator;
   std::string distance_estimator_src;
+  std::map<std::string, variant<float *, glm::vec2 *, glm::vec3 *, glm::vec4 *>>
+      variables;
 
   std::shared_ptr<Material> material;
 
