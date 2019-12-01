@@ -1,11 +1,15 @@
 #ifndef SPECULA_SCENE_HPP_
 #define SPECULA_SCENE_HPP_
 
+#include <memory>
+
 #include "math.hpp"
+#include "object/object_class.hpp"
 
 namespace specula {
 extern float fov;
 extern glm::vec3 camera_pos, camera_center, camera_up;
+extern std::vector<std::shared_ptr<ObjectBase>> objects;
 
 void set_camera_fov(const float &v);
 void set_camera_pos(const glm::vec3 &p);

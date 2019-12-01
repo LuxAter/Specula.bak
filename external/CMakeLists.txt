@@ -18,7 +18,7 @@ macro(install)
 endmacro()
 
 load_external(spdlog)
-option(SPDLOG_BUILD_SHARED "" ${BUILD_SHARED})
+option(SPDLOG_BUILD_SHARED "" ${BUILD_SHARED_LIBS})
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/spdlog EXCLUDE_FROM_ALL)
 load_external(libpng)
 option(PNG_STATIC "" OFF)

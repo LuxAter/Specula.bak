@@ -1,10 +1,15 @@
 #include "scene.hpp"
 
+#include <memory>
+#include <vector>
+
 #include "math.hpp"
+#include "object/object_class.hpp"
 
 namespace specula {
 float fov;
 glm::vec3 camera_pos, camera_center, camera_up;
+std::vector<std::shared_ptr<ObjectBase>> objects;
 } // namespace specula
 
 void specula::set_camera_fov(const float &v) { fov = v; }

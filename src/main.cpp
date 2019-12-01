@@ -24,7 +24,6 @@ int main(int argc, char *argv[]) {
   args_t args = parse_args(argc, argv);
   if(!args.valid) return 0;
   specula::logger::initalize_logger(args.verbosity);
-  LINFO("VERBOSIDY: {}", args.verbosity);
   LINFO("Specula v{}.{}.{}", SPECULA_VERSION_MAJOR, SPECULA_VERSION_MINOR,
         SPECULA_VERSION_PATCH);
   specula::set_camera_fov(args.fov);
