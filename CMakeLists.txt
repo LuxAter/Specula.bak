@@ -4,7 +4,7 @@
 cmake_minimum_required(VERSION 3.8.2 FATAL_ERROR)
 project(
   Specula
-  VERSION 0.4.2
+  VERSION 0.4.3
   LANGUAGES CXX)
 
 # ##############################################################################
@@ -12,32 +12,28 @@ project(
 # ##############################################################################
 option(ENABLE_OPENCL "Use OpenCL and GPU optimizations" TRUE)
 option(ENABLE_OIDN "Enables Intel Open AI Denoise" TRUE)
-option(BUILD_SHARED "Builed shared library" FALSE)
+option(BUILD_SHARED_LIBS "Builed shared library" TRUE)
 
 # ##############################################################################
 # SOURCE
 # ##############################################################################
 set(SOURCES
-    src/cli/progress_bar.cpp
-    src/log.cpp
-    src/renderer.cpp
-    src/rand.cpp
-    src/image/image_class.cpp
-    src/image/png.cpp
-    src/image/jpeg.cpp
-    src/image/bmp.cpp
-    src/shader/shader.cpp)
-set(EXEC_SOURCES src/main.cpp src/cli/argparse.cpp)
+  src/log.cpp
+  src/image/image_class.cpp
+  src/image/png.cpp
+  src/image/jpeg.cpp
+  src/image/bmp.cpp)
+set(EXEC_SOURCES src/main.cpp src/cli.cpp)
 configure_file("${PROJECT_SOURCE_DIR}/include/version.hpp.in"
-               "${PROJECT_SOURCE_DIR}/include/version.hpp")
+  "${PROJECT_SOURCE_DIR}/include/version.hpp")
 
 # ##############################################################################
 # BUILD TYPE
 # ##############################################################################
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   set(CMAKE_BUILD_TYPE
-      "Debug"
-      CACHE STRING "Choose the type of build" FORCE)
+    "Debug"
+    CACHE STRING "Choose the type of build" FORCE)
   set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release")
 endif()
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -45,8 +41,8 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
   if(EXISTS "${CMAKE_CURRENT_BINARY_DIR}/compile_commands.json")
     execute_process(
       COMMAND ${CMAKE_COMMAND} -E copy_if_different
-              ${CMAKE_CURRENT_BINARY_DIR}/compile_commands.json
-              ${CMAKE_CURRENT_SOURCE_DIR}/compile_commands.json)
+      ${CMAKE_CURRENT_BINARY_DIR}/compile_commands.json
+      ${CMAKE_CURRENT_SOURCE_DIR}/compile_commands.json)
   endif()
 endif()
 
@@ -58,12 +54,12 @@ add_library(specula_static STATIC ${SOURCES})
 target_include_directories(specula_static PUBLIC ${PROJECT_SOURCE_DIR}/include)
 target_compile_options(
   specula_static PUBLIC -Wall -Wextra
-                        $<$<CONFIG:Debug>:-O0>$<$<CONFIG:Release>:-O3>)
+  $<$<CONFIG:Debug>:-O0>$<$<CONFIG:Release>:-O3>)
 target_compile_definitions(specula_static PUBLIC
-                           $<$<CONFIG:Debug>:DEBUG>$<$<CONFIG:Release>:RELEASE>)
+  $<$<CONFIG:Debug>:DEBUG>$<$<CONFIG:Release>:RELEASE>)
 set_target_properties(
   specula_static PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED YES
-                            CXX_EXTENSIONS TRUE)
+  CXX_EXTENSIONS TRUE)
 find_package(Git REQUIRED)
 find_package(Threads REQUIRED)
 find_package(OpenCL)
@@ -74,10 +70,10 @@ target_link_libraries(specula_static PUBLIC png)
 target_link_libraries(specula_static PUBLIC turbojpeg-static)
 target_link_libraries(specula_static PUBLIC ghc_filesystem)
 target_link_libraries(specula_static PUBLIC mpark_variant)
-target_link_libraries(specula_static PUBLIC glm::glm)
+target_link_libraries(specula_static PUBLIC glm::glm_static)
 
 target_include_directories(specula_static
-                           PRIVATE ${PROJECT_SOURCE_DIR}/external/libpng)
+  PRIVATE ${PROJECT_SOURCE_DIR}/external/libpng)
 
 if(ENABLE_OPENCL)
   target_link_libraries(specula_static PUBLIC ${OpenCL_LIBRARIES})
@@ -87,29 +83,29 @@ endif()
 if(BUILD_SHARED)
   add_library(specula_shared SHARED ${SOURCES})
   target_include_directories(specula_shared
-                             PUBLIC ${PROJECT_SOURCE_DIR}/include)
+    PUBLIC ${PROJECT_SOURCE_DIR}/include)
   target_compile_options(
     specula_shared PUBLIC -Wall -Wextra
-                          $<$<CONFIG:Debug>:-O0>$<$<CONFIG:Release>:-O3>)
+    $<$<CONFIG:Debug>:-O0>$<$<CONFIG:Release>:-O3>)
   target_compile_definitions(
     specula_shared PUBLIC $<$<CONFIG:Debug>:DEBUG>$<$<CONFIG:Release>:RELEASE>)
   set_target_properties(
     specula_shared PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED YES
-                              CXX_EXTENSIONS TRUE)
+    CXX_EXTENSIONS TRUE)
 
-  target_link_libraries(specula_shared ${CMAKE_THREAD_LIBS_INIT})
-  target_link_libraries(specula_shared fmt::fmt)
-  target_link_libraries(specula_shared spdlog::spdlog)
-  target_link_libraries(specula_shared png)
-  target_link_libraries(specula_shared turbojpeg)
-  target_link_libraries(specula_shared ghc_filesystem)
-  target_link_libraries(specula_shared mpark_variant)
-  target_link_libraries(specula_shared glm::glm)
+  target_link_libraries(specula_shared PUBLIC ${CMAKE_THREAD_LIBS_INIT})
+  target_link_libraries(specula_shared PUBLIC fmt::fmt)
+  target_link_libraries(specula_shared PUBLIC spdlog::spdlog)
+  target_link_libraries(specula_shared PUBLIC png)
+  target_link_libraries(specula_shared PUBLIC turbojpeg)
+  target_link_libraries(specula_shared PUBLIC ghc_filesystem)
+  target_link_libraries(specula_shared PUBLIC mpark_variant)
+  target_link_libraries(specula_shared PUBLIC glm::glm_shared)
 
   target_include_directories(specula_shared
-                             PRIVATE ${PROJECT_SOURCE_DIR}/external/libpng)
+    PRIVATE ${PROJECT_SOURCE_DIR}/external/libpng)
   if(ENABLE_OPENCL)
-    target_link_libraries(specula_shared ${OpenCL_LIBRARIES})
+    target_link_libraries(specula_shared PUBLIC ${OpenCL_LIBRARIES})
     target_include_directories(specula_shared PRIVATE ${OpenCL_INCLUDE_DIRS})
   endif()
   add_library(specula ALIAS specula_shared)
@@ -122,9 +118,9 @@ target_link_libraries(main specula)
 target_compile_options(
   main PUBLIC -Wall -Wextra $<$<CONFIG:Debug>:-O0>$<$<CONFIG:Release>:-O3>)
 target_compile_definitions(main PUBLIC
-                           $<$<CONFIG:Debug>:DEBUG>$<$<CONFIG:Release>:RELEASE>)
+  $<$<CONFIG:Debug>:DEBUG>$<$<CONFIG:Release>:RELEASE>)
 set_target_properties(main PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED YES
-                                      CXX_EXTENSIONS TRUE)
+  CXX_EXTENSIONS TRUE)
 
 target_link_libraries(main luajit_static m dl)
 target_link_libraries(main sol2::sol2)

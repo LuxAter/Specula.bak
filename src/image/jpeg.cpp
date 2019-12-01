@@ -8,13 +8,12 @@
 
 #include <jpeglib.h>
 
-#include <glm/glm.hpp>
-
 #include "log.hpp"
+#include "math.hpp"
 
 bool specula::image::write_jpeg(const std::string_view &file,
                                 const glm::uvec2 &resolution,
-                                const std::vector<glm::vec3> &buffer) {
+                                const std::vector<float> &buffer) {
   struct jpeg_compress_struct cinfo;
   struct jpeg_error_mgr jerr;
   FILE *out;
@@ -41,11 +40,11 @@ bool specula::image::write_jpeg(const std::string_view &file,
   while (cinfo.next_scanline < cinfo.image_height) {
     for (std::size_t x = 0; x < cinfo.image_width; ++x) {
       pix_buffer[x * 3 + 0] = static_cast<std::uint8_t>(
-          buffer[cinfo.next_scanline * cinfo.image_height + x].r * 0xff);
+          buffer[cinfo.next_scanline * cinfo.image_height + x + 0] * 0xff);
       pix_buffer[x * 3 + 1] = static_cast<std::uint8_t>(
-          buffer[cinfo.next_scanline * cinfo.image_height + x].g * 0xff);
+          buffer[cinfo.next_scanline * cinfo.image_height + x + 1] * 0xff);
       pix_buffer[x * 3 + 2] = static_cast<std::uint8_t>(
-          buffer[cinfo.next_scanline * cinfo.image_height + x].b * 0xff);
+          buffer[cinfo.next_scanline * cinfo.image_height + x + 2] * 0xff);
     }
     (void)jpeg_write_scanlines(&cinfo, row_pointer, 1);
   }

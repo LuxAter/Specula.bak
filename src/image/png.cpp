@@ -8,13 +8,12 @@
 
 #include <png.h>
 
-#include <glm/glm.hpp>
-
 #include "log.hpp"
+#include "math.hpp"
 
 bool specula::image::write_png(const std::string_view &file,
                                const glm::uvec2 &resolution,
-                               const std::vector<glm::vec3> &buffer) {
+                               const std::vector<float> &buffer) {
   png_structp png =
       png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
   if (!png) {
@@ -56,11 +55,11 @@ bool specula::image::write_png(const std::string_view &file,
     std::memset(byte_data[i], 0x00, 6 * resolution.x * sizeof(uint8_t));
     for (std::size_t j = 0; j < resolution.x; ++j) {
       uint16_t red =
-          static_cast<uint16_t>(buffer[i * resolution.x + j].r * 65535 + 0.5);
+          static_cast<uint16_t>(buffer[i * resolution.x + j + 0] * 65535 + 0.5);
       uint16_t green =
-          static_cast<uint16_t>(buffer[i * resolution.x + j].g * 65535 + 0.5);
+          static_cast<uint16_t>(buffer[i * resolution.x + j + 1] * 65535 + 0.5);
       uint16_t blue =
-          static_cast<uint16_t>(buffer[i * resolution.x + j].b * 65535 + 0.5);
+          static_cast<uint16_t>(buffer[i * resolution.x + j + 2] * 65535 + 0.5);
       std::size_t id = 6 * j;
       byte_data[i][id] = static_cast<uint8_t>((red >> 8) & 0xff);
       byte_data[i][id + 1] = static_cast<uint8_t>(red & 0xff);

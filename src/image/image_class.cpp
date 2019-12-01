@@ -7,18 +7,17 @@
 
 #include <cstdio>
 
-#include <glm/glm.hpp>
-
 #include "filesystem.hpp"
 #include "image/bmp.hpp"
 #include "image/jpeg.hpp"
 #include "image/png.hpp"
 #include "log.hpp"
+#include "math.hpp"
 
 specula::image::Image::Image(const std::size_t &pix_width,
                              const std::size_t &pix_height)
     : resolution_{pix_width, pix_height},
-      buffer_(pix_width * pix_height, glm::vec3{0.0, 0.0, 0.0}) {}
+      buffer_(pix_width * pix_height * 3.0) {}
 specula::image::Image::Image(const glm::uvec2 &resolution)
     : resolution_(resolution), buffer_(resolution.x * resolution.y) {}
 
@@ -61,9 +60,11 @@ bool specula::image::Image::write(const fs::path &file) {
 
 void specula::image::Image::normalize() {
   float min_v = INFINITY, max_v = -INFINITY;
-  for (auto &px : buffer_) {
-    min_v = std::min(min_v, std::min(px.r, std::min(px.g, px.b)));
-    max_v = std::max(max_v, std::max(px.r, std::max(px.g, px.b)));
+  for (std::size_t i = 0; i < buffer_.size(); i += 3) {
+    min_v = std::min(min_v, std::min(buffer_[i + 0],
+                                     std::min(buffer_[i + 1], buffer_[i + 2])));
+    max_v = std::max(max_v, std::max(buffer_[i + 0],
+                                     std::max(buffer_[i + 1], buffer_[i + 2])));
   }
   float diff = 1.0f / (max_v - min_v);
   for (std::size_t i = 0; i < buffer_.size(); ++i) {

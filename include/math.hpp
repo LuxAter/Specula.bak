@@ -1,11 +1,26 @@
 #ifndef SPECULA_MATH_HPP_
 #define SPECULA_MATH_HPP_
 
-namespace glm {
-template <typename genType>
-genType lerp(genType const &a, genType const &b, const float &t) {
-  return a + t * b;
+#include <cmath>
+
+#define GLM_FORCE_SWIZZLE
+#include <glm/glm.hpp>
+
+namespace specula {
+struct ray {
+  glm::vec4 o;
+  glm::vec3 d;
+};
+
+inline glm::vec3 operator*(const glm::mat4 &lhs, const glm::vec3 &rhs) {
+  return lhs * glm::vec4(rhs, 0.0f);
 }
-} // namespace glm
+inline glm::vec4 operator+(const glm::vec4 &lhs, const glm::vec3 &rhs) {
+  return lhs + glm::vec4(rhs, 0.0f);
+}
+inline glm::vec4 operator-(const glm::vec4 &lhs, const glm::vec3 &rhs) {
+  return lhs - glm::vec4(rhs, 0.0f);
+}
+} // namespace specula
 
 #endif // SPECULA_MATH_HPP_

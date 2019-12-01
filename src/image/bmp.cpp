@@ -6,13 +6,12 @@
 #include <string_view>
 #include <vector>
 
-#include <glm/glm.hpp>
-
 #include "log.hpp"
+#include "math.hpp"
 
 bool specula::image::write_bmp(const std::string_view &file,
                                const glm::uvec2 &resolution,
-                               const std::vector<glm::vec3> &buffer) {
+                               const std::vector<float> &buffer) {
   FILE *out;
   int filesize = 54 + 3 * resolution.x * resolution.y;
   std::uint8_t *img =
@@ -23,11 +22,11 @@ bool specula::image::write_bmp(const std::string_view &file,
       std::size_t x = i;
       std::size_t y = (resolution.y - 1) - j;
       img[(x + y * resolution.x) * 3 + 2] =
-          static_cast<uint8_t>(buffer[i + j * resolution.x].r * 0xff);
+          static_cast<uint8_t>(buffer[i + j * resolution.x + 0] * 0xff);
       img[(x + y * resolution.x) * 3 + 1] =
-          static_cast<uint8_t>(buffer[i + j * resolution.x].g * 0xff);
+          static_cast<uint8_t>(buffer[i + j * resolution.x + 1] * 0xff);
       img[(x + y * resolution.x) * 3 + 0] =
-          static_cast<uint8_t>(buffer[i + j * resolution.x].b * 0xff);
+          static_cast<uint8_t>(buffer[i + j * resolution.x + 2] * 0xff);
     }
   }
 

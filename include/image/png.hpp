@@ -6,13 +6,12 @@
 #include <string_view>
 #include <vector>
 
-#define GLM_FORCE_SWIZZLE
-#include <glm/glm.hpp>
+#include "../math.hpp"
 
 namespace specula {
 namespace image {
 bool write_png(const std::string_view &file, const glm::uvec2 &resolution,
-               const std::vector<glm::vec3> &buffer);
+               const std::vector<float> &buffer);
 } // namespace image
 } // namespace specula
 

@@ -7,10 +7,8 @@
 #include <string_view>
 #include <vector>
 
-#define GLM_FORCE_SWIZZLE
-#include <glm/glm.hpp>
-
 #include "../filesystem.hpp"
+#include "../math.hpp"
 
 namespace specula {
 namespace image {
@@ -23,21 +21,17 @@ public:
   void normalize();
   void abs();
 
-  inline glm::vec3 &operator()(const std::size_t &x, const std::size_t &y) {
-    return buffer_[resolution_.y * y + x];
-  }
   inline void operator()(const std::size_t &x, const std::size_t &y,
                          const glm::vec3 &c) {
-    buffer_[resolution_.y * y + x] = c;
-  }
-  inline const glm::vec3 &operator()(const std::size_t &x,
-                                     const std::size_t &y) const {
-    return buffer_[resolution_.y * y + x];
+    std::size_t idx = resolution_.y * y + x;
+    buffer_[idx + 0] = c.r;
+    buffer_[idx + 1] = c.g;
+    buffer_[idx + 2] = c.b;
   }
 
 private:
   glm::uvec2 resolution_;
-  std::vector<glm::vec3> buffer_;
+  std::vector<float> buffer_;
 };
 } // namespace image
 } // namespace specula
