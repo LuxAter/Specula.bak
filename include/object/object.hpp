@@ -6,7 +6,7 @@
 // #include "box.hpp"
 // #include "cone.hpp"
 // #include "cylinder.hpp"
-// #include "plane.hpp"
+#include "plane.hpp"
 // #include "quad.hpp"
 // #include "round_box.hpp"
 // #include "round_cylinder.hpp"

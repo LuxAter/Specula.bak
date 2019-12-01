@@ -1,7 +1,10 @@
 #ifndef SPECULA_MATERIAL_HPP_
 #define SPECULA_MATERIAL_HPP_
 
+#define GLM_FORCE_SWIZZLE
 #include <glm/glm.hpp>
+
+#include "../rand.hpp"
 
 namespace specula {
 namespace material {
@@ -9,14 +12,13 @@ enum Type { DIFFUSE, SPECULAR, REFRACTIVE };
 struct Material {
   Material(const Type &type, const glm::vec3 &color, const float &emission,
            const float &ior)
-      : type(type), base_color(color), emission(emission), ior(ior) {}
+      : type(type), base_color(color), emission(emission), ior(ior),
+        uuid_(rand::urand()) {}
   Type type;
   glm::vec3 base_color;
   float emission;
   float ior;
-  float get_r() { return base_color.r; }
-  float get_g() { return base_color.g; }
-  float get_b() { return base_color.b; }
+  std::size_t uuid_;
   Material &set_color(const float &r, const float &g, const float &b) {
     base_color = {r, g, b};
     return *this;
@@ -25,11 +27,11 @@ struct Material {
     type = _type;
     return *this;
   }
-  Material &set_emission(const float& _emission) {
+  Material &set_emission(const float &_emission) {
     emission = _emission;
     return *this;
   }
-  Material &set_ior(const float& _ior) {
+  Material &set_ior(const float &_ior) {
     ior = _ior;
     return *this;
   }

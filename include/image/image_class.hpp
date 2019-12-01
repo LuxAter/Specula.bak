@@ -7,6 +7,7 @@
 #include <string_view>
 #include <vector>
 
+#define GLM_FORCE_SWIZZLE
 #include <glm/glm.hpp>
 
 #include "../filesystem.hpp"

@@ -27,6 +27,7 @@
 #include <CLI/CLI.hpp>
 #endif
 
+#define GLM_FORCE_SWIZZLE
 #include <glm/glm.hpp>
 
 namespace specula {

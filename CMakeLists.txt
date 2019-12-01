@@ -67,21 +67,20 @@ set_target_properties(
 find_package(Git REQUIRED)
 find_package(Threads REQUIRED)
 find_package(OpenCL)
-target_link_libraries(specula_static ${CMAKE_THREAD_LIBS_INIT})
-target_link_libraries(specula_static fmt::fmt)
-target_link_libraries(specula_static spdlog::spdlog)
-target_link_libraries(specula_static png)
-target_link_libraries(specula_static turbojpeg)
-target_link_libraries(specula_static ghc_filesystem)
-target_link_libraries(specula_static mpark_variant)
-target_link_libraries(specula_static glm::glm)
-target_compile_definitions(specula_static PRIVATE -DGLM_FORCE_SWIZZLE)
+target_link_libraries(specula_static PUBLIC ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(specula_static PUBLIC fmt::fmt)
+target_link_libraries(specula_static PUBLIC spdlog::spdlog)
+target_link_libraries(specula_static PUBLIC png)
+target_link_libraries(specula_static PUBLIC turbojpeg-static)
+target_link_libraries(specula_static PUBLIC ghc_filesystem)
+target_link_libraries(specula_static PUBLIC mpark_variant)
+target_link_libraries(specula_static PUBLIC glm::glm)
 
 target_include_directories(specula_static
                            PRIVATE ${PROJECT_SOURCE_DIR}/external/libpng)
 
 if(ENABLE_OPENCL)
-  target_link_libraries(specula_static ${OpenCL_LIBRARIES})
+  target_link_libraries(specula_static PUBLIC ${OpenCL_LIBRARIES})
   target_include_directories(specula_static PRIVATE ${OpenCL_INCLUDE_DIRS})
 endif()
 
@@ -106,7 +105,6 @@ if(BUILD_SHARED)
   target_link_libraries(specula_shared ghc_filesystem)
   target_link_libraries(specula_shared mpark_variant)
   target_link_libraries(specula_shared glm::glm)
-  target_compile_definitions(specula_shared PRIVATE -DGLM_FORCE_SWIZZLE)
 
   target_include_directories(specula_shared
                              PRIVATE ${PROJECT_SOURCE_DIR}/external/libpng)

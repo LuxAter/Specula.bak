@@ -10,7 +10,9 @@ namespace rand {
 extern std::random_device rd;
 extern std::mt19937 gen;
 extern std::uniform_real_distribution<float> unif_rand_dist;
+extern std::uniform_int_distribution<std::size_t> unif_int_dist;
 inline float frand() { return unif_rand_dist(gen); }
+inline std::size_t urand() { return unif_int_dist(gen); }
 inline glm::vec3 uniform_hemisphere(const glm::vec3 &normal) {
   glm::vec3 v = glm::cross(glm::vec3(0.0, 0.0, 1.0), normal);
   const float c = glm::dot(glm::vec3(0.0, 0.0, 1.0), normal);

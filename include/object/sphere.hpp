@@ -1,6 +1,7 @@
 #ifndef SPECULA_OBJECT_SPHERE_HPP_
 #define SPECULA_OBJECT_SPHERE_HPP_
 
+#define GLM_FORCE_SWIZZLE
 #include <glm/glm.hpp>
 
 #include "object_class.hpp"
@@ -15,7 +16,7 @@ public:
             [this](const glm::vec3 &p) {
               return glm::length(p) - this->radius;
             },
-            "return length(p) - {{ radius }}", {{"radius", &this->radius}}),
+            "return length(p) - {{ radius }};", {{"radius", &this->radius}}),
         radius(radius) {}
   ~Sphere() {}
 

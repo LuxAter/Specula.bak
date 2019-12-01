@@ -184,44 +184,9 @@ specula::renderer::ray_march(ray r, const std::size_t &depth) {
   const float emission = obj->mat_->emission;
   glm::vec3 clr = obj->mat_->base_color * emission * rr_factor;
 
-  if (obj->mat_->type == material::Type::DIFFUSE) {
-    auto [rotx, roty] = shader::make_ortho_coord_sys(normal);
-    const float u1 = rand::frand();
-    const float u2 = rand::frand();
-    const double ra = glm::sqrt(1.0 - u1 * u1);
-    const double phi = 2.0f * M_PI * u2;
-    glm::vec3 sampled_dir(glm::cos(phi) * ra, glm::sin(phi) * ra, u1);
-    glm::vec3 dir;
-    dir.x = glm::dot(glm::vec3(rotx.x, roty.x, normal.x), sampled_dir);
-    dir.y = glm::dot(glm::vec3(rotx.y, roty.y, normal.y), sampled_dir);
-    dir.z = glm::dot(glm::vec3(rotx.z, roty.z, normal.z), sampled_dir);
-    float cost = glm::dot(dir, normal);
-    clr += rr_factor * 2.0f *
-           (std::get<0>(ray_march({p + (2.0f * ep * normal), dir}, depth + 1)) *
-            obj->mat_->base_color) *
-           cost;
-  } else if (obj->mat_->type == material::Type::SPECULAR) {
-    glm::vec3 dir = glm::reflect(r.d, normal);
-    clr += rr_factor *
-           std::get<0>(ray_march({p + (2.0f * ep * normal), dir}, depth + 1));
-  } else if (obj->mat_->type == material::Type::REFRACTIVE) {
-    float n = obj->mat_->ior;
-    float r0 = (1.0f - n) / (1.0f + n);
-    r0 = r0 * r0;
-    n = 1.0f / n;
-    float cost1 = -glm::dot(normal, r.d);
-    float cost2 = 1.0f - n * n * (1.0f - cost1 * cost1);
-    float rprob = r0 + (1.0f - r0) * glm::pow(1.0f - cost1, 5.0f);
-    glm::vec3 dir;
-    if (cost2 > 0 && rand::frand() > rprob) {
-      dir =
-          glm::normalize((r.d * n) + (normal * (n * cost1 - glm::sqrt(cost2))));
-    } else {
-      dir = glm::normalize(r.d + normal * (cost1 * 2));
-    }
-    clr += std::get<0>(ray_march({p - (2.0f * ep * normal), dir}, depth + 1)) *
-           1.15f * rr_factor;
-  }
+  ray out = shader::sample_bsdf(p, r, normal, obj->mat_, ep);
+  glm::vec3 incoming = std::get<0>(ray_march(out, depth + 1));
+  clr += shader::evaluate(p, r, out, normal, incoming, obj->mat_);
 
   return std::make_tuple(glm::clamp(clr, 0.0f, 1.0f), obj->mat_->base_color,
                          normal, t);
