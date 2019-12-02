@@ -32,6 +32,10 @@ args_t parse_args(int argc, char *argv[]) {
 
   std::string aspect_ratio = "1:1";
   std::optional<std::size_t> pix_width;
+  bool albedo = false;
+  bool normal = false;
+  bool depth = false;
+  bool denoise = false;
 
   CLI::App app{"Specula"};
   app.add_option("source", args.script_path, "Scene definition script")
@@ -45,8 +49,8 @@ args_t parse_args(int argc, char *argv[]) {
       ->add_option("-b,--bounces", args.min_bounces,
                    "Minimum number of bounces each ray will make")
       ->check(CLI::PositiveNumber);
-  renderer->add_option("-d,--denoise", args.denoise,
-                       "Enable AI denoiser (Not Yet Implemented)");
+  renderer->add_flag("--denoise", denoise,
+                     "Enable AI denoiser (Not Yet Implemented)");
   renderer->add_option("-f,--fov", args.fov, "Renderer FOV")
       ->check(CLI::PositiveNumber);
   renderer->add_option("-s,--spp", args.spp, "Samples per pixel")
@@ -61,14 +65,13 @@ args_t parse_args(int argc, char *argv[]) {
   auto output = app.add_option_group("Output");
   output->add_option("--aspect", aspect_ratio, "Output image aspect ratio")
       ->check(CLI::RegexValidator("\\d+[:x]\\d+"));
-  output->add_option(
-      "-a,--albedo", args.render_albedo,
+  output->add_flag(
+      "-a,--albedo", albedo,
       "Render image containing just the albedo map of the objects");
-  output->add_option(
-      "-d,--depth", args.render_depth,
-      "Render image containing just the depth map of the objects");
-  output->add_option(
-      "-n,--normal", args.render_normal,
+  output->add_flag("-d,--depth", depth,
+                   "Render image containing just the depth map of the objects");
+  output->add_flag(
+      "-n,--normal", normal,
       "Render image containing just the normal map of the objects");
   output->add_option("-o,--output", args.output_path, "Output file/directory")
       ->check(CLI::RegexValidator(".*\\.(png|jpeg|bmp)"));
@@ -93,6 +96,15 @@ args_t parse_args(int argc, char *argv[]) {
   } else {
     sscanf(aspect_ratio.c_str(), "%fx%f", &aspect_width, &aspect_height);
   }
+
+  if (denoise)
+    args.denoise = denoise;
+  if (albedo)
+    args.render_albedo = albedo;
+  if (depth)
+    args.render_depth = depth;
+  if (normal)
+    args.render_normal = normal;
 
   if (pix_width) {
     args.res_width = pix_width.value();

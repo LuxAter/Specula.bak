@@ -1,9 +1,9 @@
 #ifndef SPECULA_BIN_CLI_HPP_
 #define SPECULA_BIN_CLI_HPP_
 
+#include <optional>
 #include <regex>
 #include <string>
-#include <optional>
 #ifdef __APPLE__
 #include <cli/cli.hpp>
 #else
