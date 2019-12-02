@@ -37,10 +37,10 @@ public:
           &variables);
   virtual ~ObjectBase() {}
 
-  inline bool gpu_compatable() const {
+  inline bool gpu_enabled() const {
     return distance_estimator_src.length() != 0;
   }
-  inline bool cpu_compatable() const { return distance_estimator != nullptr; }
+  inline bool cpu_enabled() const { return distance_estimator != nullptr; }
 
   inline float &get_float(const std::string &name) {
     return *std::get<float *>(variables.at(name));

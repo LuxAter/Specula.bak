@@ -9,7 +9,8 @@ specula::RendererArgs::RendererArgs()
            10,        32,    std::thread::hardware_concurrency(),
            1000,      1000,  M_PI / 4.0f,
            false,     false, false,
-           false,     false} {}
+           false,     false} {
+           }
 
 specula::RendererArgs &specula::RendererArgs::file(const std::string &file) {
   args.file = file;
