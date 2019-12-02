@@ -4,7 +4,7 @@
 cmake_minimum_required(VERSION 3.8.2 FATAL_ERROR)
 project(
   Specula
-  VERSION 0.4.4
+  VERSION 0.4.5
   LANGUAGES CXX)
 
 # ##############################################################################
@@ -67,7 +67,7 @@ set_target_properties(
                             CXX_EXTENSIONS TRUE)
 find_package(Git REQUIRED)
 find_package(Threads REQUIRED)
-find_package(OpenCL OPTIONAL)
+find_package(OpenCL)
 target_link_libraries(specula_static PUBLIC ${CMAKE_THREAD_LIBS_INIT})
 target_link_libraries(specula_static PUBLIC fmt::fmt)
 target_link_libraries(specula_static PUBLIC spdlog::spdlog)
