@@ -5,9 +5,9 @@
 #include <memory>
 #include <string>
 
-#include "shader/material.hpp"
 #include "math.hpp"
 #include "rand.hpp"
+#include "shader/material.hpp"
 
 specula::ObjectBase::ObjectBase()
     : uuid(urand()), distance_estimator(nullptr), distance_estimator_src(),

@@ -17,8 +17,11 @@
 #include "filesystem.hpp"
 #include "image/image.hpp"
 #include "log.hpp"
+#include "math.hpp"
+#include "rand.hpp"
 #include "renderer_args.hpp"
 #include "scene.hpp"
+#include "thread.hpp"
 
 bool specula::render(const renderer_args_t &args) {
   fs::path file(args.file);
@@ -27,6 +30,8 @@ bool specula::render(const renderer_args_t &args) {
   if (args.sequence)
     file.append(std::to_string(args.frame));
 
+  LINFO("RENDERER OBJS: {}", specula::scene::objects.front()->cpu_enabled());
+  LINFO("RENDERER COPY: {}", specula::scene::get_visible().front()->cpu_enabled());
   std::vector<std::shared_ptr<ObjectBase>> objects = scene::get_visible();
   if (objects.size() == 0) {
     LWARN("No visible object present in scene");
@@ -43,7 +48,7 @@ bool specula::render(const renderer_args_t &args) {
   if (args.render_normal || args.denoise)
     normal = std::make_shared<image::Image>(args.res_width, args.res_height);
 
-#ifdef __OPENCL__
+#ifdef __NO_OPENCL__
   if (std::any_of(objects.begin(), objects.end(),
                   [](const std::shared_ptr<ObjectBase> &o) {
                     return !o->gpu_enabled();
@@ -66,6 +71,11 @@ bool specula::render(const renderer_args_t &args) {
                   [](const std::shared_ptr<ObjectBase> &o) {
                     return !o->cpu_enabled();
                   })) {
+    for (std::size_t i = 0; i < objects.size(); ++i) {
+      LDEBUG("{}: {}", i, objects[i]->cpu_enabled());
+      LDEBUG("de({0.0, 0.0, 0.0}) = {}",
+             objects[i]->distance_estimator({0.0, 0.0, 0.0}));
+    }
     LERROR("Not all objects are CPU enabled, aborting render");
     return false;
   } else {
@@ -119,4 +129,62 @@ bool specula::cpu_renderer(const std::vector<std::shared_ptr<ObjectBase>> &objs,
                            const renderer_args_t &args,
                            const buffer_t &buffers) {
   LINFO("Utilizing CPU renderer");
+  std::size_t htiles = static_cast<std::size_t>(
+      std::ceil(args.res_width / static_cast<double>(args.tile_size)));
+  std::size_t vtiles = static_cast<std::size_t>(
+      std::ceil(args.res_height / static_cast<double>(args.tile_size)));
+  std::size_t tiles = htiles * vtiles;
+  thread::Pool pool(args.threads);
+  std::vector<std::future<std::size_t>> pool_results;
+  for (std::size_t tile_id = 0; tile_id < tiles; ++tile_id) {
+    pool_results.push_back(pool.enqueue(
+        cpu_render_tile, tile_id, glm::uvec2{args.res_width, args.res_height},
+        glm::uvec4{
+            (tile_id % htiles) * args.tile_size,
+            (tile_id / htiles) * args.tile_size,
+            ((tile_id % htiles) * args.tile_size) +
+                std::min(static_cast<std::size_t>(((tile_id % htiles) + 1) *
+                                                  args.tile_size),
+                         args.res_width) -
+                (tile_id % htiles) * args.tile_size,
+            ((tile_id / htiles) * args.tile_size) +
+                std::min(static_cast<std::size_t>(((tile_id / htiles) + 1) *
+                                                  args.tile_size),
+                         args.res_height) -
+                (tile_id / htiles) * args.tile_size,
+        },
+        buffers));
+  }
+
+  std::size_t processed = 0;
+  while (pool_results.size() != 0) {
+    for (std::size_t i = 0; i < pool_results.size(); ++i) {
+      if (pool_results[i].wait_for(std::chrono::milliseconds(10)) !=
+          std::future_status::ready)
+        continue;
+      std::size_t id = pool_results[i].get();
+      processed++;
+      LINFO("Rendered Tile {} [{}/{}]", id, processed, tiles);
+      pool_results.erase(pool_results.begin() + i);
+    }
+    pool_results.erase(std::remove_if(pool_results.begin(), pool_results.end(),
+                                      [](const std::future<std::size_t> &it) {
+                                        return !it.valid();
+                                      }),
+                       pool_results.end());
+  }
+  return true;
+}
+
+std::size_t specula::cpu_render_tile(const std::size_t &tile_id,
+                                     const glm::uvec2 &img_bounds,
+                                     const glm::uvec4 &tile_bounds,
+                                     const buffer_t &buffers) {
+  const std::uint8_t r = u8rand(), g = u8rand(), b = u8rand();
+  for (std::size_t x = tile_bounds.x; x < tile_bounds.z; ++x) {
+    for (std::size_t y = tile_bounds.y; y < tile_bounds.w; ++y) {
+      buffers.img->set(x, y, {r, g, b});
+    }
+  }
+  return tile_id;
 }

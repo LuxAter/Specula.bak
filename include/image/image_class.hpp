@@ -21,9 +21,16 @@ public:
   void normalize();
   void abs();
 
+  inline void set(const std::size_t &x, const std::size_t &y,
+                         const glm::vec3 &c) {
+    std::size_t idx = 3 * (resolution_.y * y + x);
+    buffer_[idx + 0] = c.r;
+    buffer_[idx + 1] = c.g;
+    buffer_[idx + 2] = c.b;
+  }
   inline void operator()(const std::size_t &x, const std::size_t &y,
                          const glm::vec3 &c) {
-    std::size_t idx = resolution_.y * y + x;
+    std::size_t idx = 3 * (resolution_.y * y + x);
     buffer_[idx + 0] = c.r;
     buffer_[idx + 1] = c.g;
     buffer_[idx + 2] = c.b;
