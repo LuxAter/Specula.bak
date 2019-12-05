@@ -6,10 +6,8 @@
 #include "../math.hpp"
 #include "object_class.hpp"
 
-#include "../scene.hpp"
-
-namespace specula {
-class Plane : public ObjectBase {
+namespace specula::object {
+class Plane : public ObjectBase, public std::enable_shared_from_this<Plane> {
 public:
   Plane(const float &x, const float &y, const float &z, const float &w)
       : ObjectBase(
@@ -18,9 +16,7 @@ public:
             },
             "return dot(p, {{ normal.xyz }}) + {{ normal.w }}",
             {{"normal", &(this->normal)}}),
-        normal(x, y, z, w) {
-    scene::objects.push_back(std::shared_ptr<Plane>(this));
-  }
+        normal(x, y, z, w) {}
   Plane(const glm::vec4 &normal)
       : ObjectBase(
             [this](const glm::vec3 &p) {
@@ -28,11 +24,11 @@ public:
             },
             "return dot(p, {{ normal.xyz }}) + {{ normal.w }}",
             {{"normal", &(this->normal)}}),
-        normal(normal) {
-    scene::objects.push_back(std::shared_ptr<Plane>(this));
-  }
+        normal(normal) {}
   glm::vec4 normal;
+
+  ObjectOperators(Plane)
 };
-} // namespace specula
+} // namespace specula::object
 
 #endif // SPECULA_OBJECT_PLANE_HPP_

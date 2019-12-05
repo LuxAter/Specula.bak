@@ -6,12 +6,7 @@
 #include "math.hpp"
 #include "object/object_class.hpp"
 
-namespace specula::scene {
-float fov;
-glm::vec3 camera_pos, camera_center, camera_up;
-std::vector<std::shared_ptr<ObjectBase>> objects;
-} // namespace specula::scene
-
+specula::scene *specula::scene::instance = nullptr;
 std::vector<std::shared_ptr<specula::ObjectBase>>
 specula::scene::get_visible() {
   std::vector<std::shared_ptr<ObjectBase>> visible_objects;
@@ -23,26 +18,30 @@ specula::scene::get_visible() {
   return visible_objects;
 }
 
-void specula::set_camera_fov(const float &v) { scene::fov = v; }
-void specula::set_camera_pos(const glm::vec3 &p) { scene::camera_pos = p; }
+void specula::set_camera_fov(const float &v) { scene::get()->fov = v; }
+void specula::set_camera_pos(const glm::vec3 &p) {
+  scene::get()->camera_pos = p;
+}
 void specula::set_camera_pos(const float &x, const float &y, const float &z) {
-  scene::camera_pos = {x, y, z};
+  scene::get()->camera_pos = {x, y, z};
 }
 void specula::set_camera_center(const glm::vec3 &c) {
-  scene::camera_center = c;
+  scene::get()->camera_center = c;
 }
 void specula::set_camera_center(const float &x, const float &y,
                                 const float &z) {
-  scene::camera_center = {x, y, z};
+  scene::get()->camera_center = {x, y, z};
 }
 void specula::set_camera_direction(const glm::vec3 &c) {
-  scene::camera_center = scene::camera_pos + c;
+  scene::get()->camera_center = scene::get()->camera_pos + c;
 }
 void specula::set_camera_direction(const float &x, const float &y,
                                    const float &z) {
-  scene::camera_center = scene::camera_pos + glm::vec3(x, y, z);
+  scene::get()->camera_center = scene::get()->camera_pos + glm::vec3(x, y, z);
 }
-void specula::set_camera_up(const glm::vec3 &up) { scene::camera_up = up; }
+void specula::set_camera_up(const glm::vec3 &up) {
+  scene::get()->camera_up = up;
+}
 void specula::set_camera_up(const float &x, const float &y, const float &z) {
-  scene::camera_up = {x, y, z};
+  scene::get()->camera_up = {x, y, z};
 }

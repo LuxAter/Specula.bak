@@ -30,9 +30,12 @@ bool specula::render(const renderer_args_t &args) {
   if (args.sequence)
     file.append(std::to_string(args.frame));
 
-  LINFO("RENDERER OBJS: {}", specula::scene::objects.front()->cpu_enabled());
-  LINFO("RENDERER COPY: {}", specula::scene::get_visible().front()->cpu_enabled());
-  std::vector<std::shared_ptr<ObjectBase>> objects = scene::get_visible();
+  LINFO("RENDERER OBJS: {}",
+        specula::scene::get()->objects.front()->cpu_enabled());
+  LINFO("RENDERER COPY: {}",
+        specula::scene::get()->get_visible().front()->cpu_enabled());
+  std::vector<std::shared_ptr<ObjectBase>> objects =
+      scene::get()->get_visible();
   if (objects.size() == 0) {
     LWARN("No visible object present in scene");
   }

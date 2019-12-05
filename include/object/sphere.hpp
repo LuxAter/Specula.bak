@@ -6,10 +6,8 @@
 #include "../math.hpp"
 #include "object_class.hpp"
 
-#include "../scene.hpp"
-
-namespace specula {
-class Sphere : public ObjectBase {
+namespace specula::object {
+class Sphere : public ObjectBase, public std::enable_shared_from_this<Sphere> {
 public:
   Sphere(const float &radius)
       : ObjectBase(
@@ -17,11 +15,11 @@ public:
               return glm::length(p) - this->radius;
             },
             "return length(p) - {{ radius }}", {{"radius", &(this->radius)}}),
-        radius(radius) {
-    scene::objects.push_back(std::shared_ptr<Sphere>(this));
-  }
+        radius(radius) {}
   float radius;
+
+  ObjectOperators(Sphere)
 };
-} // namespace specula
+} // namespace specula::object
 
 #endif // SPECULA_OBJECT_SPHERE_HPP_
