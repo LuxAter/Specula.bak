@@ -117,6 +117,41 @@ bool specula::gpu_renderer(const std::vector<std::shared_ptr<ObjectBase>> &objs,
             dev.getInfo<CL_DEVICE_MAX_COMPUTE_UNITS>());
     }
   }
+  cl::Platform default_platform = platforms[0];
+  std::vector<cl::Device> devices;
+  default_platform.getDevices(CL_DEVICE_TYPE_ALL, &devices);
+  cl::Device default_device = devices[0];
+
+  cl::Context context({default_device});
+  cl::Program::Sources sources;
+  std::string kernel_code = gpu_render_generate();
+  sources.push_back({kernel_code.c_str(), kernel_code.length()});
+  cl::Program program(context, sources);
+  if (program.build({default_device}) != CL_SUCCESS) {
+    LERROR("Failed building CL: {}",
+           program.getBuildInfo<CL_PROGRAM_BUILD_LOG>(default_device));
+    return false;
+  }
+  cl::CommandQueue queue(context,default_device);
+  cl::Buffer buffer_dir(context, CL_MEM_READ_WRITE,
+                        sizeof(cl_float3) * args.res_width * args.res_height);
+  cl::Buffer buffer_color(context, CL_MEM_READ_WRITE,
+                          sizeof(cl_float3) * args.res_width * args.res_height);
+  std::vector<cl_float3> dirs(args.res_width * args.res_height,
+                              cl_float3{1.0, 1.0, 1.0});
+  queue.enqueueWriteBuffer(buffer_dir, CL_TRUE, 0,
+                           sizeof(cl_float3) * args.res_width * args.res_height,
+                           dirs.data());
+  cl::Kernel gpu_render(program, "render");
+  gpu_render.setArg(0, buffer_dir);
+  gpu_render.setArg(1, buffer_color);
+  queue.enqueueNDRangeKernel(gpu_render, cl::NullRange, cl::NDRange(10),
+                             cl::NullRange);
+  std::vector<cl_float3> colors(args.res_width * args.res_height);
+  queue.enqueueReadBuffer(buffer_color, CL_TRUE, 0,
+                          sizeof(cl_float3) * args.res_width * args.res_height,
+                          colors.data());
+
 }
 #endif
 
@@ -198,6 +233,13 @@ bool specula::cpu_renderer(const std::vector<std::shared_ptr<ObjectBase>> &objs,
   }
   return true;
 }
+
+#ifdef __OPENCL__
+std::string specula::gpu_render_generate() {
+  return "void kernel render(global const float3* dir, global float3* c) "
+         "{C[get_global_id(0)]=(float3)(1.0,0.0,1.0);}";
+}
+#endif
 
 std::size_t specula::cpu_render_tile(const std::size_t &tile_id,
                                      const glm::uvec2 &img_bounds,
