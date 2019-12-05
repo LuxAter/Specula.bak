@@ -54,12 +54,10 @@ bool specula::image::write_png(const std::string_view &file,
     }
     std::memset(byte_data[i], 0x00, 6 * resolution.x * sizeof(uint8_t));
     for (std::size_t j = 0; j < resolution.x; ++j) {
-      uint16_t red =
-          static_cast<uint16_t>(buffer[i * resolution.x + j + 0] * 65535 + 0.5);
-      uint16_t green =
-          static_cast<uint16_t>(buffer[i * resolution.x + j + 1] * 65535 + 0.5);
-      uint16_t blue =
-          static_cast<uint16_t>(buffer[i * resolution.x + j + 2] * 65535 + 0.5);
+      std::size_t idx = 3 * (i * resolution.x + j);
+      uint16_t red = static_cast<uint16_t>(buffer[idx + 0] * 65535 + 0.5);
+      uint16_t green = static_cast<uint16_t>(buffer[idx + 1] * 65535 + 0.5);
+      uint16_t blue = static_cast<uint16_t>(buffer[idx + 2] * 65535 + 0.5);
       std::size_t id = 6 * j;
       byte_data[i][id] = static_cast<uint8_t>((red >> 8) & 0xff);
       byte_data[i][id + 1] = static_cast<uint8_t>(red & 0xff);

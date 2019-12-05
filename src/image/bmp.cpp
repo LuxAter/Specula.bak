@@ -21,12 +21,13 @@ bool specula::image::write_bmp(const std::string_view &file,
     for (std::size_t j = 0; j < resolution.y; ++j) {
       std::size_t x = i;
       std::size_t y = (resolution.y - 1) - j;
+      std::size_t idx = 3 * (i + j * resolution.x);
       img[(x + y * resolution.x) * 3 + 2] =
-          static_cast<uint8_t>(buffer[i + j * resolution.x + 0] * 0xff);
+          static_cast<uint8_t>(buffer[idx + 0] * 0xff);
       img[(x + y * resolution.x) * 3 + 1] =
-          static_cast<uint8_t>(buffer[i + j * resolution.x + 1] * 0xff);
+          static_cast<uint8_t>(buffer[idx + 1] * 0xff);
       img[(x + y * resolution.x) * 3 + 0] =
-          static_cast<uint8_t>(buffer[i + j * resolution.x + 2] * 0xff);
+          static_cast<uint8_t>(buffer[idx + 2] * 0xff);
     }
   }
 
@@ -53,8 +54,8 @@ bool specula::image::write_bmp(const std::string_view &file,
   out = fopen(file.data(), "wb");
   fwrite(bmpfileheader, 1, 14, out);
   fwrite(bmpinfoheader, 1, 40, out);
-  for (std::size_t i = 0; i < resolution.y; i++) {
-    fwrite(img + (resolution.x * (resolution.y - i - 1) * 3), 3, resolution.x,
+  for (std::size_t i = resolution.y; i > 0; --i) {
+    fwrite(img + (resolution.x * (resolution.y - i) * 3), 3, resolution.x,
            out);
     fwrite(bmppad, 1, (4 - (resolution.x * 3) % 4) % 4, out);
   }

@@ -39,12 +39,10 @@ bool specula::image::write_jpeg(const std::string_view &file,
   row_pointer[0] = pix_buffer;
   while (cinfo.next_scanline < cinfo.image_height) {
     for (std::size_t x = 0; x < cinfo.image_width; ++x) {
-      pix_buffer[x * 3 + 0] = static_cast<std::uint8_t>(
-          buffer[cinfo.next_scanline * cinfo.image_height + x + 0] * 0xff);
-      pix_buffer[x * 3 + 1] = static_cast<std::uint8_t>(
-          buffer[cinfo.next_scanline * cinfo.image_height + x + 1] * 0xff);
-      pix_buffer[x * 3 + 2] = static_cast<std::uint8_t>(
-          buffer[cinfo.next_scanline * cinfo.image_height + x + 2] * 0xff);
+      std::size_t idx = 3 * (cinfo.next_scanline * cinfo.image_height + x);
+      pix_buffer[x * 3 + 0] = static_cast<std::uint8_t>(buffer[idx + 0] * 0xff);
+      pix_buffer[x * 3 + 1] = static_cast<std::uint8_t>(buffer[idx + 1] * 0xff);
+      pix_buffer[x * 3 + 2] = static_cast<std::uint8_t>(buffer[idx + 2] * 0xff);
     }
     (void)jpeg_write_scanlines(&cinfo, row_pointer, 1);
   }

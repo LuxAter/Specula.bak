@@ -1,6 +1,7 @@
 #include "renderer.hpp"
 
 #include <algorithm>
+#include <chrono>
 #include <cstdlib>
 #include <memory>
 #include <string>
@@ -30,10 +31,6 @@ bool specula::render(const renderer_args_t &args) {
   if (args.sequence)
     file.append(std::to_string(args.frame));
 
-  LINFO("RENDERER OBJS: {}",
-        specula::scene::get()->objects.front()->cpu_enabled());
-  LINFO("RENDERER COPY: {}",
-        specula::scene::get()->get_visible().front()->cpu_enabled());
   std::vector<std::shared_ptr<ObjectBase>> objects =
       scene::get()->get_visible();
   if (objects.size() == 0) {
@@ -51,7 +48,7 @@ bool specula::render(const renderer_args_t &args) {
   if (args.render_normal || args.denoise)
     normal = std::make_shared<image::Image>(args.res_width, args.res_height);
 
-#ifdef __NO_OPENCL__
+#ifdef __OPENCL__
   if (std::any_of(objects.begin(), objects.end(),
                   [](const std::shared_ptr<ObjectBase> &o) {
                     return !o->gpu_enabled();
@@ -74,11 +71,6 @@ bool specula::render(const renderer_args_t &args) {
                   [](const std::shared_ptr<ObjectBase> &o) {
                     return !o->cpu_enabled();
                   })) {
-    for (std::size_t i = 0; i < objects.size(); ++i) {
-      LDEBUG("{}: {}", i, objects[i]->cpu_enabled());
-      LDEBUG("de({0.0, 0.0, 0.0}) = {}",
-             objects[i]->distance_estimator({0.0, 0.0, 0.0}));
-    }
     LERROR("Not all objects are CPU enabled, aborting render");
     return false;
   } else {
@@ -160,6 +152,9 @@ bool specula::cpu_renderer(const std::vector<std::shared_ptr<ObjectBase>> &objs,
   }
 
   std::size_t processed = 0;
+  std::size_t len_tiles = std::to_string(tiles).size();
+  double total_time = 0.0f;
+  auto start = std::chrono::high_resolution_clock::now();
   while (pool_results.size() != 0) {
     for (std::size_t i = 0; i < pool_results.size(); ++i) {
       if (pool_results[i].wait_for(std::chrono::milliseconds(10)) !=
@@ -167,7 +162,32 @@ bool specula::cpu_renderer(const std::vector<std::shared_ptr<ObjectBase>> &objs,
         continue;
       std::size_t id = pool_results[i].get();
       processed++;
-      LINFO("Rendered Tile {} [{}/{}]", id, processed, tiles);
+      double delta_time = std::chrono::duration_cast<std::chrono::nanoseconds>(
+                              std::chrono::high_resolution_clock::now() - start)
+                              .count() /
+                          1e9;
+      total_time += delta_time;
+      unsigned long elapsed_hour_count =
+          static_cast<unsigned long>(total_time) / 3600;
+      unsigned long elapsed_minute_count =
+          (static_cast<unsigned long>(total_time) % 3600) / 60;
+      unsigned long elapsed_second_count =
+          (static_cast<unsigned long>(total_time) % 60);
+      double remaining = (total_time / processed) * (tiles - processed);
+      unsigned long remaining_hour_count =
+          static_cast<unsigned long>(remaining) / 3600;
+      unsigned long remaining_minute_count =
+          (static_cast<unsigned long>(remaining) % 3600) / 60;
+      unsigned long remaining_second_count =
+          (static_cast<unsigned long>(remaining) % 60);
+      LINFO("Rendered Tile {:>{}} [{:>{}}/{}] ({:7.3f}%) "
+            "Elapsed: {:02}:{:02}:{:02} Remaining: {:02}:{:02}:{:02}",
+            id, len_tiles, processed, len_tiles, tiles,
+            100.0f * static_cast<float>(processed) / static_cast<float>(tiles),
+            elapsed_hour_count, elapsed_minute_count, elapsed_second_count,
+            remaining_hour_count, remaining_minute_count,
+            remaining_second_count);
+      start = std::chrono::high_resolution_clock::now();
       pool_results.erase(pool_results.begin() + i);
     }
     pool_results.erase(std::remove_if(pool_results.begin(), pool_results.end(),
@@ -183,7 +203,7 @@ std::size_t specula::cpu_render_tile(const std::size_t &tile_id,
                                      const glm::uvec2 &img_bounds,
                                      const glm::uvec4 &tile_bounds,
                                      const buffer_t &buffers) {
-  const std::uint8_t r = u8rand(), g = u8rand(), b = u8rand();
+  const float r = frand(), g = frand(), b = frand();
   for (std::size_t x = tile_bounds.x; x < tile_bounds.z; ++x) {
     for (std::size_t y = tile_bounds.y; y < tile_bounds.w; ++y) {
       buffers.img->set(x, y, {r, g, b});
