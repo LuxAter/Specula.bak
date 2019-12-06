@@ -4,7 +4,7 @@
 cmake_minimum_required(VERSION 3.8.2 FATAL_ERROR)
 project(
   Specula
-  VERSION 0.4.5
+  VERSION 0.4.6
   LANGUAGES CXX)
 
 # ##############################################################################
@@ -29,8 +29,10 @@ set(SOURCES
     src/renderer.cpp
     src/renderer_args.cpp)
 set(EXEC_SOURCES src/main.cpp src/cli.cpp)
-configure_file("${PROJECT_SOURCE_DIR}/include/version.hpp.in"
-               "${PROJECT_SOURCE_DIR}/include/version.hpp")
+file(GLOB OPENCL_KERNELS ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cl)
+LIST(APPEND OPENCL_KERNELS ${CMAKE_CURRENT_SOURCE_DIR}/scripts/compile_kernel.sh)
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/include/version.hpp.in"
+               "${CMAKE_CURRENT_SOURCE_DIR}/include/version.hpp")
 
 # ##############################################################################
 # BUILD TYPE
@@ -54,8 +56,17 @@ endif()
 # ##############################################################################
 # TARGETS
 # ##############################################################################
+add_custom_command(
+  OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/src/kernels.hpp
+  COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/scripts/compile_kernel.sh
+          ${CMAKE_CURRENT_SOURCE_DIR}/src/kernels.hpp
+          ${CMAKE_CURRENT_SOURCE_DIR}/src
+  DEPENDS ${OPENCL_KERNELS}
+  COMMENT "Generating kernels")
+
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external)
-add_library(specula_static STATIC ${SOURCES})
+add_library(specula_static STATIC ${SOURCES}
+                                  ${CMAKE_CURRENT_SOURCE_DIR}/src/kernels.hpp)
 target_include_directories(specula_static PUBLIC ${PROJECT_SOURCE_DIR}/include)
 target_compile_options(
   specula_static PUBLIC -Wall -Wextra
@@ -90,7 +101,8 @@ if(ENABLE_OPENCL AND OpenCL_FOUND)
 endif()
 
 if(BUILD_SHARED_LIBS)
-  add_library(specula_shared SHARED ${SOURCES})
+  add_library(specula_shared SHARED ${SOURCES}
+                                    ${CMAKE_CURRENT_SOURCE_DIR}/src/kernels.hpp)
   target_include_directories(specula_shared
                              PUBLIC ${PROJECT_SOURCE_DIR}/include)
   target_compile_options(

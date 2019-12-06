@@ -11,4 +11,6 @@ std::uniform_int_distribution<std::size_t>
     unif_uint_dist(0, std::numeric_limits<std::size_t>::max());
 std::uniform_int_distribution<std::uint8_t>
     unif_uint8_dist(0, std::numeric_limits<std::uint8_t>::max());
+std::uniform_int_distribution<std::uint32_t>
+    unif_uint32_dist(0, std::numeric_limits<std::uint8_t>::max());
 } // namespace specula

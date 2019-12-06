@@ -34,10 +34,10 @@ public:
     buffer_[idx + 1] = c.g;
     buffer_[idx + 2] = c.b;
   }
-
-private:
   glm::uvec2 resolution_;
   std::vector<float> buffer_;
+
+private:
 };
 } // namespace image
 } // namespace specula

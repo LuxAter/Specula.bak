@@ -13,6 +13,7 @@
 #else
 #include <CL/cl.hpp>
 #endif
+#include "kernels.hpp"
 #endif
 
 #include "filesystem.hpp"
@@ -109,7 +110,8 @@ bool specula::gpu_renderer(const std::vector<std::shared_ptr<ObjectBase>> &objs,
   std::vector<cl::Platform> platforms;
   cl::Platform::get(&platforms);
   for (auto &it : platforms) {
-    LINFO("CL Platform: {}", it.getInfo<CL_PLATFORM_NAME>());
+    LINFO("CL Platform: {}[{}]", it.getInfo<CL_PLATFORM_NAME>(),
+          it.getInfo<CL_PLATFORM_VERSION>());
     std::vector<cl::Device> devices;
     it.getDevices(CL_DEVICE_TYPE_ALL, &devices);
     for (auto &dev : devices) {
@@ -117,6 +119,7 @@ bool specula::gpu_renderer(const std::vector<std::shared_ptr<ObjectBase>> &objs,
             dev.getInfo<CL_DEVICE_MAX_COMPUTE_UNITS>());
     }
   }
+
   cl::Platform default_platform = platforms[0];
   std::vector<cl::Device> devices;
   default_platform.getDevices(CL_DEVICE_TYPE_ALL, &devices);
@@ -124,34 +127,77 @@ bool specula::gpu_renderer(const std::vector<std::shared_ptr<ObjectBase>> &objs,
 
   cl::Context context({default_device});
   cl::Program::Sources sources;
-  std::string kernel_code = gpu_render_generate();
-  sources.push_back({kernel_code.c_str(), kernel_code.length()});
+  sources.push_back({gpu_render_tile_kernel, gpu_render_tile_kernel_size});
   cl::Program program(context, sources);
   if (program.build({default_device}) != CL_SUCCESS) {
     LERROR("Failed building CL: {}",
            program.getBuildInfo<CL_PROGRAM_BUILD_LOG>(default_device));
     return false;
   }
-  cl::CommandQueue queue(context,default_device);
-  cl::Buffer buffer_dir(context, CL_MEM_READ_WRITE,
-                        sizeof(cl_float3) * args.res_width * args.res_height);
-  cl::Buffer buffer_color(context, CL_MEM_READ_WRITE,
-                          sizeof(cl_float3) * args.res_width * args.res_height);
-  std::vector<cl_float3> dirs(args.res_width * args.res_height,
-                              cl_float3{1.0, 1.0, 1.0});
-  queue.enqueueWriteBuffer(buffer_dir, CL_TRUE, 0,
-                           sizeof(cl_float3) * args.res_width * args.res_height,
-                           dirs.data());
-  cl::Kernel gpu_render(program, "render");
-  gpu_render.setArg(0, buffer_dir);
-  gpu_render.setArg(1, buffer_color);
-  queue.enqueueNDRangeKernel(gpu_render, cl::NullRange, cl::NDRange(10),
-                             cl::NullRange);
-  std::vector<cl_float3> colors(args.res_width * args.res_height);
-  queue.enqueueReadBuffer(buffer_color, CL_TRUE, 0,
-                          sizeof(cl_float3) * args.res_width * args.res_height,
-                          colors.data());
 
+  std::size_t htiles = static_cast<std::size_t>(
+      std::ceil(args.res_width / static_cast<double>(args.tile_size)));
+  std::size_t vtiles = static_cast<std::size_t>(
+      std::ceil(args.res_height / static_cast<double>(args.tile_size)));
+  std::size_t tiles = htiles * vtiles;
+
+  std::vector<cl_uint4> tile_bounds;
+  std::vector<cl_uint> randoms;
+  for (std::size_t tile_id = 0; tile_id < tiles; ++tile_id) {
+    tile_bounds.push_back(cl_uint4{
+        (tile_id % htiles) * args.tile_size,
+        (tile_id / htiles) * args.tile_size,
+        ((tile_id % htiles) * args.tile_size) +
+            std::min(static_cast<std::size_t>(((tile_id % htiles) + 1) *
+                                              args.tile_size),
+                     args.res_width) -
+            (tile_id % htiles) * args.tile_size,
+        ((tile_id / htiles) * args.tile_size) +
+            std::min(static_cast<std::size_t>(((tile_id / htiles) + 1) *
+                                              args.tile_size),
+                     args.res_height) -
+            (tile_id / htiles) * args.tile_size,
+    });
+    randoms.push_back(u32rand());
+  }
+
+  cl::CommandQueue queue(context, default_device);
+  cl::Buffer buffer_tile_bounds(context, CL_MEM_READ_ONLY,
+                                sizeof(cl_uint4) * tiles);
+  cl::Buffer buffer_color(context, CL_MEM_WRITE_ONLY,
+                          sizeof(cl_float) * 3 * args.res_width *
+                              args.res_height);
+  cl::Buffer buffer_albedo(context, CL_MEM_READ_WRITE,
+                           sizeof(cl_float) * 3 * args.res_width *
+                               args.res_height);
+  cl::Buffer buffer_depth(context, CL_MEM_READ_WRITE,
+                          sizeof(cl_float) * 3 * args.res_width *
+                              args.res_height);
+  cl::Buffer buffer_normal(context, CL_MEM_READ_WRITE,
+                           sizeof(cl_float) * 3 * args.res_width *
+                               args.res_height);
+  cl::Buffer buffer_randoms(context, CL_MEM_READ_WRITE,
+                            sizeof(cl_uint) * tiles);
+  queue.enqueueWriteBuffer(buffer_tile_bounds, CL_TRUE, 0,
+                           sizeof(cl_uint4) * tiles, tile_bounds.data());
+  queue.enqueueWriteBuffer(buffer_randoms, CL_TRUE, 0, sizeof(cl_uint) * tiles,
+                           randoms.data());
+  cl::Kernel gpu_render(program, "gpu_render_tile");
+  gpu_render.setArg(0, cl_uint2{args.res_width, args.res_height});
+  gpu_render.setArg(1, buffer_tile_bounds);
+  gpu_render.setArg(2, buffer_color);
+  gpu_render.setArg(3, buffer_albedo);
+  gpu_render.setArg(4, buffer_depth);
+  gpu_render.setArg(5, buffer_normal);
+  gpu_render.setArg(6, buffer_randoms);
+  queue.enqueueNDRangeKernel(gpu_render, cl::NullRange, cl::NDRange(tiles),
+                             cl::NullRange);
+  queue.finish();
+  queue.enqueueReadBuffer(buffer_color, CL_TRUE, 0,
+                          sizeof(cl_float) * 3 * args.res_width *
+                              args.res_height,
+                          buffers.img->buffer_.data());
+  queue.finish();
 }
 #endif
 
@@ -233,13 +279,6 @@ bool specula::cpu_renderer(const std::vector<std::shared_ptr<ObjectBase>> &objs,
   }
   return true;
 }
-
-#ifdef __OPENCL__
-std::string specula::gpu_render_generate() {
-  return "void kernel render(global const float3* dir, global float3* c) "
-         "{C[get_global_id(0)]=(float3)(1.0,0.0,1.0);}";
-}
-#endif
 
 std::size_t specula::cpu_render_tile(const std::size_t &tile_id,
                                      const glm::uvec2 &img_bounds,
