@@ -26,6 +26,7 @@ set(SOURCES
     src/object/object_class.cpp
     src/scene.cpp
     src/rand.cpp
+    src/generator.cpp
     src/renderer.cpp
     src/renderer_args.cpp)
 set(EXEC_SOURCES src/main.cpp src/cli.cpp)

@@ -17,6 +17,7 @@
  */
 
 #include "specula.hpp"
+#include "generator.hpp"
 
 #include "cli.hpp"
 
@@ -28,16 +29,23 @@ int main(int argc, char *argv[]) {
   LINFO("Specula v{}.{}.{}", SPECULA_VERSION_MAJOR, SPECULA_VERSION_MINOR,
         SPECULA_VERSION_PATCH);
 
+  std::string src = "this is a {{ radius }} to see if everything works {{ box.zx }}?";
+  std::map<std::string, specula::variant<float, glm::vec2, glm::vec3, glm::vec4>> vars;
+  vars["radius"] = 2.0f;
+  vars["box"] = glm::vec3(1.0f, 2.0f, 3.0f);
+  std::cout << "SRC:" << src << '\n';
+  std::cout << "FMT:" << specula::format(src, vars) << '\n';
+
   // Cornell Box
   // specula::set_camera_pos(2.78, 2.73, -8.00);
-  specula::set_camera_direction(0.0, 0.0, 1.0);
-  specula::set_camera_up(0.0, 1.0, 0.0);
+  // specula::set_camera_direction(0.0, 0.0, 1.0);
+  // specula::set_camera_up(0.0, 1.0, 0.0);
 
-  specula::Material light = specula::Material::Emissive();
-  specula::Material white = specula::Material::Diffuse(1.0, 1.0, 1.0);
-  specula::Material red = specula::Material::Diffuse(1.0, 0.0, 0.0);
-  specula::Material green = specula::Material::Diffuse(0.0, 1.0, 0.0);
-  specula::Material blue= specula::Material::Diffuse(0.0, 0.0, 1.0);
+  // specula::Material light = specula::Material::Emissive();
+  // specula::Material white = specula::Material::Diffuse(1.0, 1.0, 1.0);
+  // specula::Material red = specula::Material::Diffuse(1.0, 0.0, 0.0);
+  // specula::Material green = specula::Material::Diffuse(0.0, 1.0, 0.0);
+  // specula::Material blue= specula::Material::Diffuse(0.0, 0.0, 1.0);
 
   // specula::Plane(0.0, 1.0, 0.0, 0.0)->set_material(white);    // FLOOR
   // specula::Plane(0.0, -1.0, 0.0, 5.5)->set_material(light);   // CEILING
@@ -52,33 +60,33 @@ int main(int argc, char *argv[]) {
   // specula::Sphere(1.0)
   //     ->translate(1.0, 1.0, 0.5)
   //     ->set_material(green); // SMALL SPHERE
-  specula::Sphere(1.0)
-      ->translate(2.0, 0.0, 10.0)
-      ->set_material(green);
-  specula::Sphere(1.0)
-      ->translate(-2.0, 0.0, 10.0)
-      ->set_material(blue);
-  specula::Sphere(1.0)
-      ->translate(0.0, 2.0, 10.0)
-      ->set_material(red);
-  specula::Sphere(1.0)
-      ->translate(0.0, -2.0, 10.0)
-      ->set_material(white);
-
-  specula::render(specula::RendererArgs()
-                      .file(args.output_path)
-                      .spp(args.spp)
-                      .min_bounces(args.min_bounces)
-                      .tile_size(args.tile_size)
-                      .threads(args.threads)
-                      .res_width(args.res_width)
-                      .res_height(args.res_height)
-                      .albedo(args.render_albedo)
-                      .normal(args.render_normal)
-                      .depth(args.render_depth)
-                      .denoise(args.denoise)
-                      .fov(args.fov)
-                      .build());
+  // specula::Sphere(1.0)
+  //     ->translate(2.0, 0.0, 10.0)
+  //     ->set_material(green);
+  // specula::Sphere(1.0)
+  //     ->translate(-2.0, 0.0, 10.0)
+  //     ->set_material(blue);
+  // specula::Sphere(1.0)
+  //     ->translate(0.0, 2.0, 10.0)
+  //     ->set_material(red);
+  // specula::Sphere(1.0)
+  //     ->translate(0.0, -2.0, 10.0)
+  //     ->set_material(white);
+  //
+  // specula::render(specula::RendererArgs()
+  //                     .file(args.output_path)
+  //                     .spp(args.spp)
+  //                     .min_bounces(args.min_bounces)
+  //                     .tile_size(args.tile_size)
+  //                     .threads(args.threads)
+  //                     .res_width(args.res_width)
+  //                     .res_height(args.res_height)
+  //                     .albedo(args.render_albedo)
+  //                     .normal(args.render_normal)
+  //                     .depth(args.render_depth)
+  //                     .denoise(args.denoise)
+  //                     .fov(args.fov)
+  //                     .build());
 
   return 0;
 }
