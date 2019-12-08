@@ -25,6 +25,12 @@
 #include "scene.hpp"
 #include "thread.hpp"
 
+static glm::mat4 view;
+static std::size_t spp, min_bounce;
+static float filmz, t_max, ep;
+static glm::vec3 sky;
+static std::vector<std::shared_ptr<specula::ObjectBase>> objs;
+
 bool specula::render(const renderer_args_t &args) {
   fs::path file(args.file);
   std::string file_extension = file.extension().string();
@@ -103,9 +109,9 @@ bool specula::render(const renderer_args_t &args) {
 }
 
 #ifdef __OPENCL__
-bool specula::gpu_renderer(const std::vector<std::shared_ptr<ObjectBase>> &objs,
-                           const renderer_args_t &args,
-                           const buffer_t &buffers) {
+bool specula::gpu_renderer(
+    const std::vector<std::shared_ptr<ObjectBase>> &objects,
+    const renderer_args_t &args, const buffer_t &buffers) {
   LINFO("Utilizing GPU renderer");
   std::vector<cl::Platform> platforms;
   cl::Platform::get(&platforms);
@@ -198,18 +204,32 @@ bool specula::gpu_renderer(const std::vector<std::shared_ptr<ObjectBase>> &objs,
                               args.res_height,
                           buffers.img->buffer_.data());
   queue.finish();
+  return true;
 }
 #endif
 
-bool specula::cpu_renderer(const std::vector<std::shared_ptr<ObjectBase>> &objs,
-                           const renderer_args_t &args,
-                           const buffer_t &buffers) {
+bool specula::cpu_renderer(
+    const std::vector<std::shared_ptr<ObjectBase>> &objects,
+    const renderer_args_t &args, const buffer_t &buffers) {
   LINFO("Utilizing CPU renderer");
+
+  view = glm::inverse(glm::lookAt(scene::get()->camera_pos,
+                                  scene::get()->camera_center,
+                                  scene::get()->camera_up));
+  spp = args.spp;
+  min_bounce = args.min_bounces;
+  filmz = args.res_width / (2.0f * std::tan(args.fov / 2.0f));
+  t_max = 100.0f;
+  ep = 1e-3f;
+  sky = glm::vec3(0.2f, 0.2f, 0.2f);
+  objs = objects;
+
   std::size_t htiles = static_cast<std::size_t>(
       std::ceil(args.res_width / static_cast<double>(args.tile_size)));
   std::size_t vtiles = static_cast<std::size_t>(
       std::ceil(args.res_height / static_cast<double>(args.tile_size)));
   std::size_t tiles = htiles * vtiles;
+
   thread::Pool pool(args.threads);
   std::vector<std::future<std::size_t>> pool_results;
   for (std::size_t tile_id = 0; tile_id < tiles; ++tile_id) {
@@ -284,11 +304,85 @@ std::size_t specula::cpu_render_tile(const std::size_t &tile_id,
                                      const glm::uvec2 &img_bounds,
                                      const glm::uvec4 &tile_bounds,
                                      const buffer_t &buffers) {
-  const float r = frand(), g = frand(), b = frand();
+  glm::vec3 o(0.0f, 0.0f, 0.0f);
+  o = view * glm::vec4(o, 1.0f);
+  glm::vec3 rgb(frand(), frand(), frand());
+  rgb *= 0.1;
   for (std::size_t x = tile_bounds.x; x < tile_bounds.z; ++x) {
     for (std::size_t y = tile_bounds.y; y < tile_bounds.w; ++y) {
-      buffers.img->set(x, y, {r, g, b});
+      for (std::size_t s = 0; s < spp; ++s) {
+        glm::vec3 dir(x - img_bounds.x / 2.0f + frand(),
+                      y - img_bounds.y / 2.0f + frand(), -filmz);
+        LDEBUG("{},{},{}->({},{},{})->({},{},{})", x, y, s, o.x, o.y, o.z,
+               dir.x, dir.y, dir.z);
+        auto [c, a, d, n] = cpu_ray_trace(
+            {o, glm::normalize(glm::vec3(view * glm::vec4(dir, 0.0f))),
+             nullptr});
+        buffers.img->set(x, img_bounds.y - (1 + y),
+                         buffers.img->at(x, img_bounds.y - (1 + y)) +
+                             c / static_cast<float>(spp));
+        if (buffers.albedo) {
+          buffers.albedo->set(x, img_bounds.y - (1 + y),
+                              buffers.albedo->at(x, img_bounds.y - (1 + y)) +
+                                  a / static_cast<float>(spp));
+        }
+        if (buffers.depth) {
+          buffers.depth->set(x, img_bounds.y - (1 + y),
+                             buffers.depth->at(x, img_bounds.y - (1 + y)) +
+                                 d / static_cast<float>(spp));
+        }
+        if (buffers.normal) {
+          buffers.normal->set(x, img_bounds.y - (1 + y),
+                              buffers.normal->at(x, img_bounds.y - (1 + y)) +
+                                  n / static_cast<float>(spp));
+        }
+      }
     }
   }
   return tile_id;
+}
+
+std::tuple<glm::vec3, glm::vec3, glm::vec3, glm::vec3>
+specula::cpu_ray_trace(const ray &r, std::size_t depth) {
+  if (depth >= min_bounce) {
+    const float rr_stop_prob = 0.01f;
+    if (frand() < rr_stop_prob)
+      return std::make_tuple(glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(0.0f),
+                             glm::vec3(0.0f));
+  }
+  auto [t, obj] = cpu_ray_march(r);
+  if (obj == nullptr) {
+    return std::make_tuple(sky, sky, glm::vec3(t), glm::vec3(0.0f));
+  }
+  glm::vec3 p = r.o + t * r.d;
+  glm::vec3 normal = obj->normal(p, ep);
+  return std::make_tuple(obj->material->base_color, obj->material->base_color,
+                         glm::vec3(t), normal);
+}
+
+std::tuple<float, std::shared_ptr<specula::ObjectBase>>
+specula::cpu_ray_march(const ray &r) {
+  float t = 0.0f;
+  std::shared_ptr<ObjectBase> hit_obj = nullptr;
+  bool first = true;
+  while (t < t_max) {
+    glm::vec3 p = r.o + (t * r.d);
+    float dt = std::numeric_limits<float>::infinity();
+    for (auto &obj : objs) {
+      float obj_dt = obj->distance(p);
+      if (obj_dt < dt) {
+        dt = obj_dt;
+        if (obj_dt < ep) {
+          hit_obj = obj;
+        }
+      }
+    }
+    if (!first && dt < ep) {
+      break;
+    } else {
+      t += dt;
+    }
+    first = false;
+  }
+  return std::make_tuple(t, hit_obj);
 }

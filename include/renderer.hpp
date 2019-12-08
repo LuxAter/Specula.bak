@@ -16,16 +16,19 @@ struct buffer_t {
 bool render(const renderer_args_t &args);
 
 #ifdef __OPENCL__
-bool gpu_renderer(const std::vector<std::shared_ptr<ObjectBase>> &objs,
+bool gpu_renderer(const std::vector<std::shared_ptr<ObjectBase>> &objects,
                   const renderer_args_t &args, const buffer_t &buffers);
 #endif
-bool cpu_renderer(const std::vector<std::shared_ptr<ObjectBase>> &objs,
+bool cpu_renderer(const std::vector<std::shared_ptr<ObjectBase>> &objects,
                   const renderer_args_t &args, const buffer_t &buffers);
 
 std::size_t cpu_render_tile(const std::size_t &tile_id,
                             const glm::uvec2 &img_bounds,
                             const glm::uvec4 &tile_bounds,
                             const buffer_t &buffers);
+std::tuple<glm::vec3, glm::vec3, glm::vec3, glm::vec3>
+cpu_ray_trace(const ray &r, std::size_t depth = 0);
+std::tuple<float, std::shared_ptr<specula::ObjectBase>> cpu_ray_march(const ray &r);
 } // namespace specula
 
 #endif // SPECULA_RENDERER_HPP_

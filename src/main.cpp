@@ -29,28 +29,41 @@ int main(int argc, char *argv[]) {
         SPECULA_VERSION_PATCH);
 
   // Cornell Box
-  specula::set_camera_pos(2.78, 2.73, -8.00);
+  // specula::set_camera_pos(2.78, 2.73, -8.00);
   specula::set_camera_direction(0.0, 0.0, 1.0);
   specula::set_camera_up(0.0, 1.0, 0.0);
 
   specula::Material light = specula::Material::Emissive();
   specula::Material white = specula::Material::Diffuse(1.0, 1.0, 1.0);
-  specula::Material green = specula::Material::Diffuse(0.0, 1.0, 0.0);
   specula::Material red = specula::Material::Diffuse(1.0, 0.0, 0.0);
+  specula::Material green = specula::Material::Diffuse(0.0, 1.0, 0.0);
+  specula::Material blue= specula::Material::Diffuse(0.0, 0.0, 1.0);
 
-  specula::Plane(0.0, 1.0, 0.0, 0.0)->set_material(white);    // FLOOR
-  specula::Plane(0.0, -1.0, 0.0, 5.5)->set_material(light);   // CEILING
-  specula::Plane(0.0, 0.0, 1.0, -8.1)->set_material(white);   // FRONT WALL
-  specula::Plane(0.0, 0.0, -1.0, 5.592)->set_material(white); // BACK WALL
-  specula::Plane(1.0, 0.0, 0.0, 0.0)->set_material(green);    // RIGHT WALL
-  specula::Plane(-1.0, 0.0, 0.0, 5.528)->set_material(red);   // LEFT WALL
+  // specula::Plane(0.0, 1.0, 0.0, 0.0)->set_material(white);    // FLOOR
+  // specula::Plane(0.0, -1.0, 0.0, 5.5)->set_material(light);   // CEILING
+  // specula::Plane(0.0, 0.0, 1.0, -8.1)->set_material(white);   // FRONT WALL
+  // specula::Plane(0.0, 0.0, -1.0, 5.592)->set_material(white); // BACK WALL
+  // specula::Plane(1.0, 0.0, 0.0, 0.0)->set_material(green);    // RIGHT WALL
+  // specula::Plane(-1.0, 0.0, 0.0, 5.528)->set_material(red);   // LEFT WALL
 
-  specula::Sphere(2.0)
-      ->translate(3.528, 2.0, 3.592)
-      ->set_material(white); // LARGE SPHERE
-  specula::Sphere(0.8)
-      ->translate(1.0, 1.0, 0.5)
-      ->set_material(white); // SMALL SPHERE
+  // specula::Sphere(2.0)
+  //     ->translate(3.528, 2.0, 3.592)
+  //     ->set_material(white); // LARGE SPHERE
+  // specula::Sphere(1.0)
+  //     ->translate(1.0, 1.0, 0.5)
+  //     ->set_material(green); // SMALL SPHERE
+  specula::Sphere(1.0)
+      ->translate(2.0, 0.0, 10.0)
+      ->set_material(green);
+  specula::Sphere(1.0)
+      ->translate(-2.0, 0.0, 10.0)
+      ->set_material(blue);
+  specula::Sphere(1.0)
+      ->translate(0.0, 2.0, 10.0)
+      ->set_material(red);
+  specula::Sphere(1.0)
+      ->translate(0.0, -2.0, 10.0)
+      ->set_material(white);
 
   specula::render(specula::RendererArgs()
                       .file(args.output_path)

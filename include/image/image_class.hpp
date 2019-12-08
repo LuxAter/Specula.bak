@@ -34,6 +34,10 @@ public:
     buffer_[idx + 1] = c.g;
     buffer_[idx + 2] = c.b;
   }
+  inline glm::vec3 at(const std::size_t &x, const std::size_t &y) {
+    std::size_t idx = 3 * (resolution_.y * y + x);
+    return glm::vec3{buffer_[idx + 0], buffer_[idx + 1], buffer_[idx + 2]};
+  }
   glm::uvec2 resolution_;
   std::vector<float> buffer_;
 

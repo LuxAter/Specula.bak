@@ -4,7 +4,7 @@
 cmake_minimum_required(VERSION 3.8.2 FATAL_ERROR)
 project(
   Specula
-  VERSION 0.4.6
+  VERSION 0.4.7
   LANGUAGES CXX)
 
 # ##############################################################################

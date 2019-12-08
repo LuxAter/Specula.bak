@@ -9,7 +9,7 @@
 
 namespace specula {
 struct ray {
-  glm::vec4 o;
+  glm::vec3 o;
   glm::vec3 d;
   float *ior;
 };

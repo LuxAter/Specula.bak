@@ -71,6 +71,29 @@ public:
     return *std::get<float *>(variables.at(name));
   }
 
+  inline float distance(const glm::vec3 &p) const {
+    return this->distance_estimator(
+        glm::vec3(this->inverse_transform * glm::vec4(p, 1.0f)));
+  }
+  inline glm::vec3 normal(const glm::vec3 &p, const float &ep) const {
+    glm::vec3 obj_p = this->inverse_transform * glm::vec4(p, 1.0f);
+    return this->transform *
+           glm::normalize(
+               glm::vec4(this->distance_estimator(
+                             glm::vec3(obj_p.x + ep, obj_p.y, obj_p.z)) -
+                             this->distance_estimator(
+                                 glm::vec3(obj_p.x - ep, obj_p.y, obj_p.z)),
+                         this->distance_estimator(
+                             glm::vec3(obj_p.x, obj_p.y + ep, obj_p.z)) -
+                             this->distance_estimator(
+                                 glm::vec3(obj_p.x, obj_p.y - ep, obj_p.z)),
+                         this->distance_estimator(
+                             glm::vec3(obj_p.x, obj_p.y, obj_p.z + ep)) -
+                             this->distance_estimator(
+                                 glm::vec3(obj_p.x, obj_p.y, obj_p.z - ep)),
+                         0));
+  }
+
   inline void __set_material(const Material &mat) {
     this->material = std::make_shared<Material>(mat);
   }
