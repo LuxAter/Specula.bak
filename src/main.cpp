@@ -16,8 +16,8 @@
  *
  */
 
-#include "specula.hpp"
 #include "generator.hpp"
+#include "specula.hpp"
 
 #include "cli.hpp"
 
@@ -29,64 +29,80 @@ int main(int argc, char *argv[]) {
   LINFO("Specula v{}.{}.{}", SPECULA_VERSION_MAJOR, SPECULA_VERSION_MINOR,
         SPECULA_VERSION_PATCH);
 
-  std::string src = "this is a {{ radius }} to see if everything works {{ box.zx }}?";
-  std::map<std::string, specula::variant<float, glm::vec2, glm::vec3, glm::vec4>> vars;
-  vars["radius"] = 2.0f;
-  vars["box"] = glm::vec3(1.0f, 2.0f, 3.0f);
-  std::cout << "SRC:" << src << '\n';
-  std::cout << "FMT:" << specula::format(src, vars) << '\n';
-
   // Cornell Box
-  // specula::set_camera_pos(2.78, 2.73, -8.00);
-  // specula::set_camera_direction(0.0, 0.0, 1.0);
-  // specula::set_camera_up(0.0, 1.0, 0.0);
+  specula::set_camera_pos(2.78, 2.73, -8.00);
+  specula::set_camera_direction(0.0, 0.0, 1.0);
+  specula::set_camera_up(0.0, 1.0, 0.0);
 
-  // specula::Material light = specula::Material::Emissive();
-  // specula::Material white = specula::Material::Diffuse(1.0, 1.0, 1.0);
-  // specula::Material red = specula::Material::Diffuse(1.0, 0.0, 0.0);
-  // specula::Material green = specula::Material::Diffuse(0.0, 1.0, 0.0);
-  // specula::Material blue= specula::Material::Diffuse(0.0, 0.0, 1.0);
+  specula::Material light = specula::Material::Emissive();
+  specula::Material white = specula::Material::Diffuse(1.0, 1.0, 1.0);
+  specula::Material red = specula::Material::Diffuse(1.0, 0.0, 0.0);
+  specula::Material green = specula::Material::Diffuse(0.0, 1.0, 0.0);
+  specula::Material blue = specula::Material::Diffuse(0.0, 0.0, 1.0);
 
-  // specula::Plane(0.0, 1.0, 0.0, 0.0)->set_material(white);    // FLOOR
-  // specula::Plane(0.0, -1.0, 0.0, 5.5)->set_material(light);   // CEILING
-  // specula::Plane(0.0, 0.0, 1.0, -8.1)->set_material(white);   // FRONT WALL
-  // specula::Plane(0.0, 0.0, -1.0, 5.592)->set_material(white); // BACK WALL
-  // specula::Plane(1.0, 0.0, 0.0, 0.0)->set_material(green);    // RIGHT WALL
-  // specula::Plane(-1.0, 0.0, 0.0, 5.528)->set_material(red);   // LEFT WALL
+  specula::Plane(0.0, 1.0, 0.0, 0.0)->set_material(white);    // FLOOR
+  specula::Plane(0.0, -1.0, 0.0, 5.5)->set_material(light);   // CEILING
+  specula::Plane(0.0, 0.0, 1.0, 8.1)->set_material(white);    // FRONT WALL
+  specula::Plane(0.0, 0.0, -1.0, 5.592)->set_material(green); // BACK WALL
+  specula::Plane(1.0, 0.0, 0.0, 0.0)->set_material(blue);     // RIGHT WALL
+  specula::Plane(-1.0, 0.0, 0.0, 5.528)->set_material(red);   // LEFT WALL
 
-  // specula::Sphere(2.0)
-  //     ->translate(3.528, 2.0, 3.592)
-  //     ->set_material(white); // LARGE SPHERE
-  // specula::Sphere(1.0)
-  //     ->translate(1.0, 1.0, 0.5)
-  //     ->set_material(green); // SMALL SPHERE
-  // specula::Sphere(1.0)
-  //     ->translate(2.0, 0.0, 10.0)
-  //     ->set_material(green);
-  // specula::Sphere(1.0)
-  //     ->translate(-2.0, 0.0, 10.0)
-  //     ->set_material(blue);
-  // specula::Sphere(1.0)
-  //     ->translate(0.0, 2.0, 10.0)
-  //     ->set_material(red);
-  // specula::Sphere(1.0)
-  //     ->translate(0.0, -2.0, 10.0)
-  //     ->set_material(white);
-  //
-  // specula::render(specula::RendererArgs()
-  //                     .file(args.output_path)
-  //                     .spp(args.spp)
-  //                     .min_bounces(args.min_bounces)
-  //                     .tile_size(args.tile_size)
-  //                     .threads(args.threads)
-  //                     .res_width(args.res_width)
-  //                     .res_height(args.res_height)
-  //                     .albedo(args.render_albedo)
-  //                     .normal(args.render_normal)
-  //                     .depth(args.render_depth)
-  //                     .denoise(args.denoise)
-  //                     .fov(args.fov)
-  //                     .build());
+  specula::Sphere(2.0)
+      ->translate(3.528, 2.0, 3.592)
+      ->set_material(white); // LARGE SPHERE
+  specula::Sphere(1.0)
+      ->translate(1.0, 1.0, 0.5)
+      ->set_material(white); // SMALL SPHERE
+
+  // for (std::size_t spp_exp = 1; spp_exp <= 10; ++spp_exp) {
+  //   std::size_t spp = std::pow(2, spp_exp);
+  //   for (std::size_t res = 100; res <= 1000; res += 100) {
+  //     specula::render(
+  //         specula::RendererArgs()
+  //             .file(std::to_string(res) + "-" + std::to_string(spp) + ".png")
+  //             .spp(spp)
+  //             .min_bounces(args.min_bounces)
+  //             .tile_size(args.tile_size)
+  //             .threads(args.threads)
+  //             .res_width(res)
+  //             .res_height(res)
+  //             .albedo(args.render_albedo)
+  //             .normal(args.render_normal)
+  //             .depth(args.render_depth)
+  //             .denoise(args.denoise)
+  //             .fov(args.fov)
+  //             .build());
+  //   }
+  //   // specula::render(
+  //   //     specula::RendererArgs()
+  //   //         .file(std::to_string(5000) + "-" + std::to_string(spp) + ".png")
+  //   //         .spp(spp)
+  //   //         .min_bounces(args.min_bounces)
+  //   //         .tile_size(args.tile_size)
+  //   //         .threads(args.threads)
+  //   //         .res_width(5000)
+  //   //         .res_height(5000)
+  //   //         .albedo(args.render_albedo)
+  //   //         .normal(args.render_normal)
+  //   //         .depth(args.render_depth)
+  //   //         .denoise(args.denoise)
+  //   //         .fov(args.fov)
+  //   //         .build());
+  // }
+  specula::render(specula::RendererArgs()
+                      .file(args.output_path)
+                      .spp(args.spp)
+                      .min_bounces(args.min_bounces)
+                      .tile_size(args.tile_size)
+                      .threads(args.threads)
+                      .res_width(args.res_width)
+                      .res_height(args.res_height)
+                      .albedo(args.render_albedo)
+                      .normal(args.render_normal)
+                      .depth(args.render_depth)
+                      .denoise(args.denoise)
+                      .fov(args.fov)
+                      .build());
 
   return 0;
 }

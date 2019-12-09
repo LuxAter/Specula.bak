@@ -10,8 +10,8 @@ project(
 # ##############################################################################
 # OPTIONS
 # ##############################################################################
-option(ENABLE_OPENCL "Use OpenCL and GPU optimizations" TRUE)
-option(ENABLE_OIDN "Enables Intel Open AI Denoise" TRUE)
+option(ENABLE_OPENCL "Use OpenCL and GPU optimizations" FALSE)
+option(ENABLE_OIDN "Enables Intel Open AI Denoise" FALSE)
 # option(BUILD_SHARED_LIBS "Builed shared library" TRUE)
 
 # ##############################################################################
@@ -28,6 +28,7 @@ set(SOURCES
     src/rand.cpp
     src/generator.cpp
     src/renderer.cpp
+    src/shader/shader.cpp
     src/renderer_args.cpp)
 set(EXEC_SOURCES src/main.cpp src/cli.cpp)
 file(GLOB OPENCL_KERNELS ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cl)

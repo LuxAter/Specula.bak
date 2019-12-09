@@ -23,6 +23,7 @@
 #include "rand.hpp"
 #include "renderer_args.hpp"
 #include "scene.hpp"
+#include "shader/shader.hpp"
 #include "thread.hpp"
 
 static glm::mat4 view;
@@ -221,7 +222,7 @@ bool specula::cpu_renderer(
   filmz = args.res_width / (2.0f * std::tan(args.fov / 2.0f));
   t_max = 100.0f;
   ep = 1e-3f;
-  sky = glm::vec3(0.2f, 0.2f, 0.2f);
+  sky = glm::vec3(0.1f, 0.1f, 0.1f);
   objs = objects;
 
   std::size_t htiles = static_cast<std::size_t>(
@@ -313,8 +314,8 @@ std::size_t specula::cpu_render_tile(const std::size_t &tile_id,
       for (std::size_t s = 0; s < spp; ++s) {
         glm::vec3 dir(x - img_bounds.x / 2.0f + frand(),
                       y - img_bounds.y / 2.0f + frand(), -filmz);
-        LDEBUG("{},{},{}->({},{},{})->({},{},{})", x, y, s, o.x, o.y, o.z,
-               dir.x, dir.y, dir.z);
+        // LDEBUG("{},{},{}->({},{},{})->({},{},{})", x, y, s, o.x, o.y, o.z,
+        //        dir.x, dir.y, dir.z);
         auto [c, a, d, n] = cpu_ray_trace(
             {o, glm::normalize(glm::vec3(view * glm::vec4(dir, 0.0f))),
              nullptr});
@@ -346,6 +347,7 @@ std::tuple<glm::vec3, glm::vec3, glm::vec3, glm::vec3>
 specula::cpu_ray_trace(const ray &r, std::size_t depth) {
   if (depth >= min_bounce) {
     const float rr_stop_prob = 0.01f;
+    LDEBUG("BOUNCE: {}", depth);
     if (frand() < rr_stop_prob)
       return std::make_tuple(glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(0.0f),
                              glm::vec3(0.0f));
@@ -356,8 +358,17 @@ specula::cpu_ray_trace(const ray &r, std::size_t depth) {
   }
   glm::vec3 p = r.o + t * r.d;
   glm::vec3 normal = obj->normal(p, ep);
-  return std::make_tuple(obj->material->base_color, obj->material->base_color,
-                         glm::vec3(t), normal);
+  glm::vec3 dir = sample_bsdf(r.medium, obj->material, r.d, normal);
+  glm::vec3 ri(0.0f), albedo_, depth_, normal_;
+  if(dir != glm::vec3(0.0f))
+    std::tie(ri, albedo_, depth_, normal_) = cpu_ray_trace(
+        {p + (2.0f * ep * normal), dir,
+         obj->material->type == Material::TRANSPARENT ? obj->material : nullptr},
+        depth + 1);
+  return std::make_tuple(
+      glm::clamp(evaluate_bsdf(obj->material, ri, dir, r.d, normal), 0.0f,
+                 1.0f),
+      obj->material->base_color, glm::vec3(t), normal);
 }
 
 std::tuple<float, std::shared_ptr<specula::ObjectBase>>
