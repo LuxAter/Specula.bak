@@ -39,6 +39,8 @@ int main(int argc, char *argv[]) {
   specula::Material red = specula::Material::Diffuse(1.0, 0.0, 0.0);
   specula::Material green = specula::Material::Diffuse(0.0, 1.0, 0.0);
   specula::Material blue = specula::Material::Diffuse(0.0, 0.0, 1.0);
+  specula::Material mirror = specula::Material::Specular();
+  specula::Material glass = specula::Material::Transparent(1.25);
 
   specula::Plane(0.0, 1.0, 0.0, 0.0)->set_material(white);    // FLOOR
   specula::Plane(0.0, -1.0, 0.0, 5.5)->set_material(light);   // CEILING
@@ -47,48 +49,16 @@ int main(int argc, char *argv[]) {
   specula::Plane(1.0, 0.0, 0.0, 0.0)->set_material(blue);     // RIGHT WALL
   specula::Plane(-1.0, 0.0, 0.0, 5.528)->set_material(red);   // LEFT WALL
 
+  // specula::Box(1.0, 1.0, 1.0)
+  //     ->translate(2.75, 1.5, 1.0)
+  //     ->set_material(glass);
   specula::Sphere(2.0)
       ->translate(3.528, 2.0, 3.592)
-      ->set_material(white); // LARGE SPHERE
+      ->set_material(glass); // LARGE SPHERE
   specula::Sphere(1.0)
       ->translate(1.0, 1.0, 0.5)
-      ->set_material(white); // SMALL SPHERE
+      ->set_material(glass); // SMALL SPHERE
 
-  // for (std::size_t spp_exp = 1; spp_exp <= 10; ++spp_exp) {
-  //   std::size_t spp = std::pow(2, spp_exp);
-  //   for (std::size_t res = 100; res <= 1000; res += 100) {
-  //     specula::render(
-  //         specula::RendererArgs()
-  //             .file(std::to_string(res) + "-" + std::to_string(spp) + ".png")
-  //             .spp(spp)
-  //             .min_bounces(args.min_bounces)
-  //             .tile_size(args.tile_size)
-  //             .threads(args.threads)
-  //             .res_width(res)
-  //             .res_height(res)
-  //             .albedo(args.render_albedo)
-  //             .normal(args.render_normal)
-  //             .depth(args.render_depth)
-  //             .denoise(args.denoise)
-  //             .fov(args.fov)
-  //             .build());
-  //   }
-  //   // specula::render(
-  //   //     specula::RendererArgs()
-  //   //         .file(std::to_string(5000) + "-" + std::to_string(spp) + ".png")
-  //   //         .spp(spp)
-  //   //         .min_bounces(args.min_bounces)
-  //   //         .tile_size(args.tile_size)
-  //   //         .threads(args.threads)
-  //   //         .res_width(5000)
-  //   //         .res_height(5000)
-  //   //         .albedo(args.render_albedo)
-  //   //         .normal(args.render_normal)
-  //   //         .depth(args.render_depth)
-  //   //         .denoise(args.denoise)
-  //   //         .fov(args.fov)
-  //   //         .build());
-  // }
   specula::render(specula::RendererArgs()
                       .file(args.output_path)
                       .spp(args.spp)

@@ -5,5 +5,6 @@
 
 #include "sphere.hpp"
 #include "plane.hpp"
+#include "box.hpp"
 
 #endif  // SPECULA_OBJECT_HPP_

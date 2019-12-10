@@ -32,7 +32,8 @@ set(SOURCES
     src/renderer_args.cpp)
 set(EXEC_SOURCES src/main.cpp src/cli.cpp)
 file(GLOB OPENCL_KERNELS ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cl)
-LIST(APPEND OPENCL_KERNELS ${CMAKE_CURRENT_SOURCE_DIR}/scripts/compile_kernel.sh)
+list(APPEND OPENCL_KERNELS
+            ${CMAKE_CURRENT_SOURCE_DIR}/scripts/compile_kernel.sh)
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/include/version.hpp.in"
                "${CMAKE_CURRENT_SOURCE_DIR}/include/version.hpp")
 
@@ -41,7 +42,7 @@ configure_file("${CMAKE_CURRENT_SOURCE_DIR}/include/version.hpp.in"
 # ##############################################################################
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   set(CMAKE_BUILD_TYPE
-      "Debug"
+      "Release"
       CACHE STRING "Choose the type of build" FORCE)
   set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release")
 endif()

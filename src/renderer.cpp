@@ -347,7 +347,7 @@ std::tuple<glm::vec3, glm::vec3, glm::vec3, glm::vec3>
 specula::cpu_ray_trace(const ray &r, std::size_t depth) {
   if (depth >= min_bounce) {
     const float rr_stop_prob = 0.01f;
-    LDEBUG("BOUNCE: {}", depth);
+    // LDEBUG("BOUNCE: {}", depth);
     if (frand() < rr_stop_prob)
       return std::make_tuple(glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(0.0f),
                              glm::vec3(0.0f));
@@ -360,11 +360,28 @@ specula::cpu_ray_trace(const ray &r, std::size_t depth) {
   glm::vec3 normal = obj->normal(p, ep);
   glm::vec3 dir = sample_bsdf(r.medium, obj->material, r.d, normal);
   glm::vec3 ri(0.0f), albedo_, depth_, normal_;
-  if(dir != glm::vec3(0.0f))
-    std::tie(ri, albedo_, depth_, normal_) = cpu_ray_trace(
-        {p + (2.0f * ep * normal), dir,
-         obj->material->type == Material::TRANSPARENT ? obj->material : nullptr},
-        depth + 1);
+  if (dir != glm::vec3(0.0f)) {
+    if (obj->material->type == Material::Type::TRANSPARENT) {
+      if (r.medium == obj->material) {
+        glm::vec3 dir = sample_bsdf(r.medium, obj->material, r.d, -normal);
+        // LDEBUG("LEAVING: ind: {},{},{} outd: {},{},{}, P:{},{},{} N:{},{},{},
+        // "
+        //        "@ {}",
+        //        r.d.x, r.d.y, r.d.z, dir.x, dir.y, dir.z, p.x, p.y, p.z,
+        //        normal.x, normal.y, normal.z, t);
+        // ri = glm::vec3(1.0f, 0.0, 1.0f);
+        std::tie(ri, albedo_, depth_, normal_) =
+            cpu_ray_trace({p + (2.0f * ep * normal), dir, nullptr}, depth + 1);
+      } else {
+        // LDEBUG("ENTERING: {},{},{} @ {}", p.x, p.y, p.z, t);
+        std::tie(ri, albedo_, depth_, normal_) = cpu_ray_trace(
+            {p + (-2.0f * ep * normal), dir, obj->material}, depth + 1);
+      }
+    } else {
+      std::tie(ri, albedo_, depth_, normal_) =
+          cpu_ray_trace({p + (2.0f * ep * normal), dir, nullptr}, depth + 1);
+    }
+  }
   return std::make_tuple(
       glm::clamp(evaluate_bsdf(obj->material, ri, dir, r.d, normal), 0.0f,
                  1.0f),
@@ -380,7 +397,7 @@ specula::cpu_ray_march(const ray &r) {
     glm::vec3 p = r.o + (t * r.d);
     float dt = std::numeric_limits<float>::infinity();
     for (auto &obj : objs) {
-      float obj_dt = obj->distance(p);
+      float obj_dt = std::fabs(obj->distance(p));
       if (obj_dt < dt) {
         dt = obj_dt;
         if (obj_dt < ep) {

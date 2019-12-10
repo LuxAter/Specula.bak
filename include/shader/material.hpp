@@ -32,7 +32,7 @@ public:
     return Material(SPECULAR, glm::vec3(0.0f), 0.0f, 1.0f);
   }
   inline static Material Transparent(float ior = 1.0f) {
-    return Material(SPECULAR, glm::vec3(0.0f), 0.0f, ior);
+    return Material(TRANSPARENT, glm::vec3(0.0f), 0.0f, ior);
   }
 
   Type type;

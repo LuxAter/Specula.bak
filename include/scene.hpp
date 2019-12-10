@@ -47,6 +47,7 @@ void set_camera_up(const glm::vec3 &up);
 void set_camera_up(const float &x, const float &y, const float &z);
 
 ObjectConstructor(Sphere);
+ObjectConstructor(Box);
 ObjectConstructor(Plane);
 } // namespace specula
 
