@@ -40,7 +40,7 @@ int main(int argc, char *argv[]) {
   specula::Material green = specula::Material::Diffuse(0.0, 1.0, 0.0);
   specula::Material blue = specula::Material::Diffuse(0.0, 0.0, 1.0);
   specula::Material mirror = specula::Material::Specular();
-  specula::Material glass = specula::Material::Transparent(1.25);
+  specula::Material glass = specula::Material::Transparent(1.5);
 
   specula::Plane(0.0, 1.0, 0.0, 0.0)->set_material(white);    // FLOOR
   specula::Plane(0.0, -1.0, 0.0, 5.5)->set_material(light);   // CEILING
