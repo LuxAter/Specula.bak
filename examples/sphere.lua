@@ -16,4 +16,9 @@ Plane.new(0.0, 0.0, -1.0, 5.592):set_material(green)
 Plane.new(1.0, 0.0, 0.0, 0.0):set_material(blue)
 Plane.new(-1.0, 0.0, 0.0, 5.528):set_material(red)
 Sphere.new(2.0):translate(3.528, 2.0, 3.592):set_material(white)
-Torus.new(1.0, 0.3):set_material(glass):rotate(-math.pi/4, 1.0, 0.0, 0.0):translate(1.0, 1.0, 1.5)
+-- Cylinder.new(1.0, 2.0):translate(3.528, 1.0, 3.592):set_material(white)
+Torus.new(1.0, 0.3):set_material(glass):rotate(-math.pi / 4, 1.0, 0.0, 0.0):translate(
+  1.0,
+  1.0,
+  1.5
+)

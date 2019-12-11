@@ -9,4 +9,8 @@
 #include "sphere.hpp"
 #include "torus.hpp"
 
+#include "intersection.hpp"
+#include "subtraction.hpp"
+#include "union.hpp"
+
 #endif // SPECULA_OBJECT_HPP_

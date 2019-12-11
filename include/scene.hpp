@@ -51,6 +51,10 @@ ObjectConstructor(Cylinder);
 ObjectConstructor(Plane);
 ObjectConstructor(Sphere);
 ObjectConstructor(Torus);
+
+ObjectConstructor(Union);
+ObjectConstructor(Intersection);
+ObjectConstructor(Subtraction);
 } // namespace specula
 
 #endif // SPECULA_SCENE_HPP_

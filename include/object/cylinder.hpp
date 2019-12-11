@@ -13,8 +13,9 @@ public:
   Cylinder(const float &r, const float &h)
       : ObjectBase(
             [this](const glm::vec3 &p) {
-              const glm::vec2 d = glm::abs(glm::vec2(glm::length(p.xz()), p.y)) -
-                                  glm::vec2(this->height, this->radius);
+              const glm::vec2 d =
+                  glm::abs(glm::vec2(glm::length(p.xz()), p.y)) -
+                  glm::vec2(this->radius, this->height);
               return std::min(std::max(d.x, d.y), 0.0f) +
                      glm::length(glm::max(d, 0.0f));
             },

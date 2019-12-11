@@ -131,4 +131,43 @@ void load_bindings(sol::state &lua) {
                          const float &, const float &)>(&specula::Cylinder)),
       "radius", &specula::object::Cylinder::radius, "height",
       &specula::object::Cylinder::height);
+
+  JoinBinding(
+      "UnionBase", Union,
+      sol::factories(
+          sol::resolve<std::shared_ptr<specula::object::Union>(
+              const std::shared_ptr<specula::ObjectBase> &,
+              const std::shared_ptr<specula::ObjectBase> &)>(&specula::Union)));
+  lua["Union"] = [](const std::shared_ptr<specula::ObjectBase> &a,
+                    const std::shared_ptr<specula::ObjectBase> &b) {
+    return specula::Union(a, b);
+  };
+  JoinBinding("IntersectionBase", Intersection,
+              sol::factories(
+                  sol::resolve<std::shared_ptr<specula::object::Intersection>(
+                      const std::shared_ptr<specula::ObjectBase> &,
+                      const std::shared_ptr<specula::ObjectBase> &)>(
+                      &specula::Intersection)));
+  lua["Intersection"] = [](const std::shared_ptr<specula::ObjectBase> &a,
+                           const std::shared_ptr<specula::ObjectBase> &b) {
+    return specula::Intersection(a, b);
+  };
+  lua["Intersect"] = [](const std::shared_ptr<specula::ObjectBase> &a,
+                        const std::shared_ptr<specula::ObjectBase> &b) {
+    return specula::Intersection(a, b);
+  };
+  JoinBinding(
+      "SubtractionBase", Subtraction,
+      sol::factories(sol::resolve<std::shared_ptr<specula::object::Subtraction>(
+                         const std::shared_ptr<specula::ObjectBase> &,
+                         const std::shared_ptr<specula::ObjectBase> &)>(
+          &specula::Subtraction)));
+  lua["Subtraction"] = [](const std::shared_ptr<specula::ObjectBase> &a,
+                          const std::shared_ptr<specula::ObjectBase> &b) {
+    return specula::Subtraction(a, b);
+  };
+  lua["Subtract"] = [](const std::shared_ptr<specula::ObjectBase> &a,
+                       const std::shared_ptr<specula::ObjectBase> &b) {
+    return specula::Subtraction(a, b);
+  };
 }
