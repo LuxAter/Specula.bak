@@ -59,20 +59,21 @@ int main(int argc, char *argv[]) {
 
   lua.script_file(args.script_path);
 
-  specula::render(specula::RendererArgs()
-                      .file(args.output_path)
-                      .spp(args.spp)
-                      .min_bounces(args.min_bounces)
-                      .tile_size(args.tile_size)
-                      .threads(args.threads)
-                      .res_width(args.res_width)
-                      .res_height(args.res_height)
-                      .albedo(args.render_albedo)
-                      .normal(args.render_normal)
-                      .depth(args.render_depth)
-                      .denoise(args.denoise)
-                      .fov(args.fov)
-                      .build());
+  if (render_calls == 0)
+    specula::render(specula::RendererArgs()
+                        .file(args.output_path)
+                        .spp(args.spp)
+                        .min_bounces(args.min_bounces)
+                        .tile_size(args.tile_size)
+                        .threads(args.threads)
+                        .res_width(args.res_width)
+                        .res_height(args.res_height)
+                        .albedo(args.render_albedo)
+                        .normal(args.render_normal)
+                        .depth(args.render_depth)
+                        .denoise(args.denoise)
+                        .fov(args.fov)
+                        .build());
 
   return 0;
 }
