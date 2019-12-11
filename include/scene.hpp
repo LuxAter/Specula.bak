@@ -46,9 +46,11 @@ void set_camera_direction(const float &x, const float &y, const float &z);
 void set_camera_up(const glm::vec3 &up);
 void set_camera_up(const float &x, const float &y, const float &z);
 
-ObjectConstructor(Sphere);
 ObjectConstructor(Box);
+ObjectConstructor(Cylinder);
 ObjectConstructor(Plane);
+ObjectConstructor(Sphere);
+ObjectConstructor(Torus);
 } // namespace specula
 
 #endif // SPECULA_SCENE_HPP_

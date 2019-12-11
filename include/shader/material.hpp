@@ -1,10 +1,12 @@
 #ifndef SPECULA_MATERIAL_HPP_
 #define SPECULA_MATERIAL_HPP_
 
+#include <memory>
+
 #include "../math.hpp"
 
 namespace specula {
-class Material {
+class Material : public std::enable_shared_from_this<Material> {
 public:
   enum Type { EMISSIVE, DIFFUSE, SPECULAR, TRANSPARENT };
 
@@ -13,26 +15,30 @@ public:
   Material(const Type &type, const glm::vec3 &base_color, const float &emission,
            const float &ior)
       : type(type), base_color(base_color), emission(emission), ior(ior) {}
-  inline static Material Emissive(const float &emmisive, float r = 1.0f,
-                                  float g = 1.0f, float b = 1.0f) {
-    return Material(EMISSIVE, glm::vec3(r, g, b), emmisive, 1.0f);
+  inline static std::shared_ptr<Material> Emissive(const float &emmisive,
+                                                   float r = 1.0f,
+                                                   float g = 1.0f,
+                                                   float b = 1.0f) {
+    return std::make_shared<Material>(EMISSIVE, glm::vec3(r, g, b), emmisive,
+                                      1.0f);
   }
-  inline static Material Emissive(float emmisive = 1.0f,
-                                  glm::vec3 base_color = glm::vec3(1.0f)) {
-    return Material(EMISSIVE, base_color, emmisive, 1.0f);
+  inline static std::shared_ptr<Material>
+  Emissive(float emmisive = 1.0f, glm::vec3 base_color = glm::vec3(1.0f)) {
+    return std::make_shared<Material>(EMISSIVE, base_color, emmisive, 1.0f);
   }
-  inline static Material Diffuse(const float &r, const float &g,
-                                 const float &b) {
-    return Material(DIFFUSE, glm::vec3(r, g, b), 0.0f, 1.0f);
+  inline static std::shared_ptr<Material>
+  Diffuse(const float &r, const float &g, const float &b) {
+    return std::make_shared<Material>(DIFFUSE, glm::vec3(r, g, b), 0.0f, 1.0f);
   }
-  inline static Material Diffuse(glm::vec3 base_color = glm::vec3(1.0f)) {
-    return Material(DIFFUSE, base_color, 0.0f, 1.0f);
+  inline static std::shared_ptr<Material>
+  Diffuse(glm::vec3 base_color = glm::vec3(1.0f)) {
+    return std::make_shared<Material>(DIFFUSE, base_color, 0.0f, 1.0f);
   }
-  inline static Material Specular() {
-    return Material(SPECULAR, glm::vec3(0.0f), 0.0f, 1.0f);
+  inline static std::shared_ptr<Material> Specular() {
+    return std::make_shared<Material>(SPECULAR, glm::vec3(0.0f), 0.0f, 1.0f);
   }
-  inline static Material Transparent(float ior = 1.0f) {
-    return Material(TRANSPARENT, glm::vec3(0.0f), 0.0f, ior);
+  inline static std::shared_ptr<Material> Transparent(float ior = 1.0f) {
+    return std::make_shared<Material>(TRANSPARENT, glm::vec3(0.0f), 0.0f, ior);
   }
 
   Type type;
@@ -40,25 +46,26 @@ public:
   float emission;
   float ior;
 
-  Material &set_type(const Type &tp) {
+  std::shared_ptr<Material> set_type(const Type &tp) {
     type = tp;
-    return *this;
+    return shared_from_this();
   }
-  Material &set_color(const float &r, const float &g, const float &b) {
+  std::shared_ptr<Material> set_color(const float &r, const float &g,
+                                      const float &b) {
     base_color = {r, g, b};
-    return *this;
+    return shared_from_this();
   }
-  Material &set_color(const glm::vec3 &c) {
+  std::shared_ptr<Material> set_color(const glm::vec3 &c) {
     base_color = c;
-    return *this;
+    return shared_from_this();
   }
-  Material &set_emission(const float &v) {
+  std::shared_ptr<Material> set_emission(const float &v) {
     emission = v;
-    return *this;
+    return shared_from_this();
   }
-  Material &set_ior(const float &v) {
+  std::shared_ptr<Material> set_ior(const float &v) {
     ior = v;
-    return *this;
+    return shared_from_this();
   }
 };
 } // namespace specula

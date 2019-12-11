@@ -12,24 +12,41 @@
 #include "../variant.hpp"
 
 #define ObjectOperators(OBJ)                                                   \
-  template <typename... ARGS>                                                  \
-  inline std::shared_ptr<OBJ> set_material(const ARGS &... args) {             \
-    this->__set_material(args...);                                             \
+  inline std::shared_ptr<OBJ> set_material(const Material &args) {             \
+    this->__set_material(args);                                                \
     return shared_from_this();                                                 \
   }                                                                            \
-  template <typename... ARGS>                                                  \
-  inline std::shared_ptr<OBJ> translate(const ARGS &... args) {                \
-    this->__translate(args...);                                                \
+  inline std::shared_ptr<OBJ> set_material(                                    \
+      const std::shared_ptr<Material> &args) {                                 \
+    this->__set_material(args);                                                \
     return shared_from_this();                                                 \
   }                                                                            \
-  template <typename... ARGS>                                                  \
-  inline std::shared_ptr<OBJ> rotate(const ARGS &... args) {                   \
-    this->__rotate(args...);                                                   \
+  inline std::shared_ptr<OBJ> translate(const glm::vec3 &args) {               \
+    this->__translate(args);                                                   \
     return shared_from_this();                                                 \
   }                                                                            \
-  template <typename... ARGS>                                                  \
-  inline std::shared_ptr<OBJ> scale(const ARGS &... args) {                    \
-    this->__scale(args...);                                                    \
+  inline std::shared_ptr<OBJ> translate(const float &x, const float &y,        \
+                                        const float &z) {                      \
+    this->__translate(x, y, z);                                                \
+    return shared_from_this();                                                 \
+  }                                                                            \
+  inline std::shared_ptr<OBJ> rotate(const float &angle, const float &x,       \
+                                     const float &y, const float &z) {         \
+    this->__rotate(angle, x, y, z);                                            \
+    return shared_from_this();                                                 \
+  }                                                                            \
+  inline std::shared_ptr<OBJ> rotate(const float &angle,                       \
+                                     const glm::vec3 &axis) {                  \
+    this->__rotate(angle, axis);                                               \
+    return shared_from_this();                                                 \
+  }                                                                            \
+  inline std::shared_ptr<OBJ> scale(const glm::vec3 &args) {                   \
+    this->__scale(args);                                                       \
+    return shared_from_this();                                                 \
+  }                                                                            \
+  inline std::shared_ptr<OBJ> scale(const float &x, const float &y,            \
+                                    const float &z) {                          \
+    this->__scale(x, y, z);                                                    \
     return shared_from_this();                                                 \
   }
 
@@ -97,6 +114,9 @@ public:
   inline void __set_material(const Material &mat) {
     this->material = std::make_shared<Material>(mat);
   }
+  inline void __set_material(const std::shared_ptr<Material> &mat) {
+    this->material = mat;
+  }
 
   inline void __translate(const float &x, const float &y, const float &z) {
     this->transform = glm::translate(this->transform, {x, y, z});
@@ -124,6 +144,10 @@ public:
     this->transform = glm::scale(this->transform, {x, y, z});
     this->inverse_transform =
         glm::scale(this->inverse_transform, {1.0f / x, 1.0f / y, 1.0f / z});
+  }
+  inline void __scale(const glm::vec3 &s) {
+    this->transform = glm::scale(this->transform, s);
+    this->inverse_transform = glm::scale(this->inverse_transform, 1.0f / s);
   }
 
   std::size_t uuid;

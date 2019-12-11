@@ -16,7 +16,6 @@ public:
               return glm::length(glm::max(q, 0.0f)) +
                      glm::min(glm::max(q.x, glm::max(q.y, q.z)), 0.0f);
             },
-            "return length(p) - {{ radius }}",
             {{"dimensions", &(this->dimensions)}}),
         dimensions(x, y, z) {}
   Box(const glm::vec3 &dimensions)
@@ -26,7 +25,6 @@ public:
               return glm::length(glm::max(q, 0.0f)) +
                      glm::min(glm::max(q.x, glm::max(q.y, q.z)), 0.0f);
             },
-            "return length(p) - {{ radius }}",
             {{"dimensions", &(this->dimensions)}}),
         dimensions(dimensions) {}
   glm::vec3 dimensions;

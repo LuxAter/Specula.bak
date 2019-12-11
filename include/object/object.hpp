@@ -3,8 +3,10 @@
 
 #include "object_class.hpp"
 
-#include "sphere.hpp"
-#include "plane.hpp"
 #include "box.hpp"
+#include "cylinder.hpp"
+#include "plane.hpp"
+#include "sphere.hpp"
+#include "torus.hpp"
 
-#endif  // SPECULA_OBJECT_HPP_
+#endif // SPECULA_OBJECT_HPP_

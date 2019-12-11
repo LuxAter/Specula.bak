@@ -14,7 +14,6 @@ public:
             [this](const glm::vec3 &p) {
               return glm::dot(p, this->normal.xyz()) + this->normal.w;
             },
-            "return dot(p, {{ normal.xyz }}) + {{ normal.w }}",
             {{"normal", &(this->normal)}}),
         normal(x, y, z, w) {}
   Plane(const glm::vec4 &normal)
@@ -22,7 +21,6 @@ public:
             [this](const glm::vec3 &p) {
               return glm::dot(p, this->normal.xyz()) + this->normal.w;
             },
-            "return dot(p, {{ normal.xyz }}) + {{ normal.w }}",
             {{"normal", &(this->normal)}}),
         normal(normal) {}
   glm::vec4 normal;

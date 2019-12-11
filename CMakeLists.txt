@@ -30,7 +30,7 @@ set(SOURCES
     src/renderer.cpp
     src/shader/shader.cpp
     src/renderer_args.cpp)
-set(EXEC_SOURCES src/main.cpp src/cli.cpp)
+set(EXEC_SOURCES src/main.cpp src/cli.cpp src/lua_binding.cpp)
 file(GLOB OPENCL_KERNELS ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cl)
 list(APPEND OPENCL_KERNELS
             ${CMAKE_CURRENT_SOURCE_DIR}/scripts/compile_kernel.sh)

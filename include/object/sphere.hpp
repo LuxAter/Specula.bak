@@ -14,7 +14,7 @@ public:
             [this](const glm::vec3 &p) {
               return glm::length(p) - this->radius;
             },
-            "return length(p) - {{ radius }}", {{"radius", &(this->radius)}}),
+            {{"radius", &(this->radius)}}),
         radius(radius) {}
   float radius;
 

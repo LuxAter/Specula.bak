@@ -16,10 +16,12 @@
  *
  */
 
-#include "generator.hpp"
 #include "specula.hpp"
 
+#include <sol/sol.hpp>
+
 #include "cli.hpp"
+#include "lua_binding.hpp"
 
 int main(int argc, char *argv[]) {
   args_t args = parse_args(argc, argv);
@@ -29,35 +31,33 @@ int main(int argc, char *argv[]) {
   LINFO("Specula v{}.{}.{}", SPECULA_VERSION_MAJOR, SPECULA_VERSION_MINOR,
         SPECULA_VERSION_PATCH);
 
-  // Cornell Box
-  specula::set_camera_pos(2.78, 2.73, -8.00);
-  specula::set_camera_direction(0.0, 0.0, 1.0);
-  specula::set_camera_up(0.0, 1.0, 0.0);
+  sol::state lua;
+  lua.open_libraries();
 
-  specula::Material light = specula::Material::Emissive();
-  specula::Material white = specula::Material::Diffuse(1.0, 1.0, 1.0);
-  specula::Material red = specula::Material::Diffuse(1.0, 0.0, 0.0);
-  specula::Material green = specula::Material::Diffuse(0.0, 1.0, 0.0);
-  specula::Material blue = specula::Material::Diffuse(0.0, 0.0, 1.0);
-  specula::Material mirror = specula::Material::Specular();
-  specula::Material glass = specula::Material::Transparent(1.25);
+  std::size_t render_calls = 0;
+  load_bindings(lua);
 
-  specula::Plane(0.0, 1.0, 0.0, 0.0)->set_material(white);    // FLOOR
-  specula::Plane(0.0, -1.0, 0.0, 5.5)->set_material(light);   // CEILING
-  specula::Plane(0.0, 0.0, 1.0, 8.1)->set_material(white);    // FRONT WALL
-  specula::Plane(0.0, 0.0, -1.0, 5.592)->set_material(green); // BACK WALL
-  specula::Plane(1.0, 0.0, 0.0, 0.0)->set_material(blue);     // RIGHT WALL
-  specula::Plane(-1.0, 0.0, 0.0, 5.528)->set_material(red);   // LEFT WALL
+  lua["render"] = sol::overload([render_calls, args]() mutable {
+    specula::render(specula::RendererArgs()
+                        .file(args.output_path)
+                        .spp(args.spp)
+                        .min_bounces(args.min_bounces)
+                        .tile_size(args.tile_size)
+                        .threads(args.threads)
+                        .res_width(args.res_width)
+                        .res_height(args.res_height)
+                        .albedo(args.render_albedo)
+                        .normal(args.render_normal)
+                        .depth(args.render_depth)
+                        .denoise(args.denoise)
+                        .fov(args.fov)
+                        .frame(render_calls)
+                        .sequence(true)
+                        .build());
+    render_calls++;
+  });
 
-  // specula::Box(1.0, 1.0, 1.0)
-  //     ->translate(2.75, 1.5, 1.0)
-  //     ->set_material(glass);
-  specula::Sphere(2.0)
-      ->translate(3.528, 2.0, 3.592)
-      ->set_material(glass); // LARGE SPHERE
-  specula::Sphere(1.0)
-      ->translate(1.0, 1.0, 0.5)
-      ->set_material(glass); // SMALL SPHERE
+  lua.script_file(args.script_path);
 
   specula::render(specula::RendererArgs()
                       .file(args.output_path)
