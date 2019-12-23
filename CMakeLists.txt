@@ -2,7 +2,7 @@
 # PROJECT
 # ##############################################################################
 cmake_minimum_required(VERSION 3.11.0 FATAL_ERROR)
-project(Specula VERSION 2.0.1)
+project(Specula VERSION 2.0.2)
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
   set(MAIN_PROJECT TRUE)
@@ -13,7 +13,7 @@ endif()
 # ##############################################################################
 option(BUILD_BINARY "Compiles binary executable" TRUE)
 option(BUILD_SHARED_LIBS "Compile shared libraries" TRUE)
-option(BUILD_STATIC_LIBS "Compile static libraries" TRUE)
+option(BUILD_STATIC_LIBS "Compile static libraries" FALSE)
 option(STATIC_ANALYSIS "Use static analysis tools" TRUE)
 option(GPU_OPTIMIZE "Enable GPU optimizations" TRUE)
 set(SPECULA_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR})
@@ -84,6 +84,12 @@ add_subdirectory(src)
 # EXECUTABLE
 # ##############################################################################
 add_subdirectory(tools)
+
+# ##############################################################################
+# SCRIPTS
+# ##############################################################################
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/scripts
+     DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/)
 
 # ##############################################################################
 # PACKAGING
