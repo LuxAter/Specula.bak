@@ -19,7 +19,7 @@ endif()
 # ##############################################################################
 # SOURCE FILES
 # ##############################################################################
-set(SOURCES specula.cpp image.cpp stb_image_write.cpp)
+set(SOURCES specula.cpp image.cpp stb_image_write.cpp log.cpp rand.cpp)
 if(GPU_OPTIMIZE)
   list(APPEND SOURCES ${SPECULA_SOURCE_DIR}/src/kernels.hpp)
 endif()
