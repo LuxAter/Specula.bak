@@ -51,15 +51,15 @@
     return shared_from_this();                                                 \
   }                                                                            \
   inline virtual std::shared_ptr<Obj> scale_x(const float &s) {                \
-    this->__scale(s, 1.0f, 0.0f, 0.0f);                                        \
+    this->__scale(s, 0.0f, 0.0f);                                              \
     return shared_from_this();                                                 \
   }                                                                            \
   inline virtual std::shared_ptr<Obj> scale_y(const float &s) {                \
-    this->__scale(s, 0.0f, 1.0f, 0.0f);                                        \
+    this->__scale(0.0f, s, 0.0f);                                              \
     return shared_from_this();                                                 \
   }                                                                            \
   inline virtual std::shared_ptr<Obj> scale_z(const float &s) {                \
-    this->__scale(s, 0.0f, 0.0f, 1.0f);                                        \
+    this->__scale(0.0f, 0.0f, s);                                              \
     return shared_from_this();                                                 \
   }
 
@@ -68,13 +68,33 @@ class Object : public std::enable_shared_from_this<Object> {
 public:
   typedef std::variant<float, glm::vec2, glm::vec3, glm::vec4> value_type;
   Object();
-  Object(const std::function<float(const glm::vec3 &)> &sdf_func_);
-  Object(const std::string &sdf_str_);
   Object(const std::function<float(const glm::vec3 &)> &sdf_func_,
-         const std::string &sdf_str_);
+         std::map<std::string, value_type> vars =
+             std::map<std::string, value_type>());
+  Object(const std::string &sdf_str_, std::map<std::string, value_type> vars =
+                                          std::map<std::string, value_type>());
+  Object(const std::function<float(const glm::vec3 &)> &sdf_func_,
+         const std::string &sdf_str_,
+         std::map<std::string, value_type> vars =
+             std::map<std::string, value_type>());
+
+  inline float sdf(const glm::vec3 &p) const {
+    return sdf_func(inv * glm::vec4(p, 1.0f));
+  }
+  inline glm::vec3 normal(const glm::vec3 &p, const float &ep) const {
+    glm::vec3 obj_p = inv * glm::vec4(p, 1.0f);
+    return tran * glm::normalize(glm::vec4(
+                      sdf_func(glm::vec3(obj_p.x + ep, obj_p.y, obj_p.z)) -
+                          sdf_func(glm::vec3(obj_p.x - ep, obj_p.y, obj_p.z)),
+                      sdf_func(glm::vec3(obj_p.x, obj_p.y + ep, obj_p.z)) -
+                          sdf_func(glm::vec3(obj_p.x, obj_p.y - ep, obj_p.z)),
+                      sdf_func(glm::vec3(obj_p.x, obj_p.y, obj_p.z + ep)) -
+                          sdf_func(glm::vec3(obj_p.x, obj_p.y, obj_p.z - ep)),
+                      0.0f));
+  }
 
   inline bool gpu_enabled() const { return sdf_str.size() != 0; }
-  inline bool cpu_enabled() const { sdf_func != nullptr; }
+  inline bool cpu_enabled() const { return sdf_func != nullptr; }
 
   inline const unsigned long &get_uuid() const { return uuid; }
   inline std::function<float(const glm::vec3 &)> &get_sdf_func() {
