@@ -52,15 +52,15 @@
     return shared_from_this();                                                 \
   }                                                                            \
   inline virtual std::shared_ptr<Obj> scale_x(const float &s) {                \
-    this->__scale(s, 1.0f, 0.0f, 0.0f);                                        \
+    this->__scale(s, 0.0f, 0.0f);                                              \
     return shared_from_this();                                                 \
   }                                                                            \
   inline virtual std::shared_ptr<Obj> scale_y(const float &s) {                \
-    this->__scale(s, 0.0f, 1.0f, 0.0f);                                        \
+    this->__scale(0.0f, s, 0.0f);                                              \
     return shared_from_this();                                                 \
   }                                                                            \
   inline virtual std::shared_ptr<Obj> scale_z(const float &s) {                \
-    this->__scale(s, 0.0f, 0.0f, 1.0f);                                        \
+    this->__scale(0.0f, 0.0f, s);                                              \
     return shared_from_this();                                                 \
   }
 
@@ -69,40 +69,46 @@ class Object : public std::enable_shared_from_this<Object> {
 public:
   typedef std::variant<float, glm::vec2, glm::vec3, glm::vec4> value_type;
   Object();
-  Object(const std::function<float(const glm::vec3 &)> &sdf_func_,
-         std::map<std::string, value_type> vars =
-             std::map<std::string, value_type>());
+  Object(
+      const std::function<float(const Object *, const glm::vec3 &)> &sdf_func_,
+      std::map<std::string, value_type> vars =
+          std::map<std::string, value_type>());
   Object(const std::string &sdf_str_, std::map<std::string, value_type> vars =
                                           std::map<std::string, value_type>());
-  Object(const std::function<float(const glm::vec3 &)> &sdf_func_,
-         const std::string &sdf_str_,
-         std::map<std::string, value_type> vars =
-             std::map<std::string, value_type>());
+  Object(
+      const std::function<float(const Object *, const glm::vec3 &)> &sdf_func_,
+      const std::string &sdf_str_,
+      std::map<std::string, value_type> vars =
+          std::map<std::string, value_type>());
 
   inline float sdf(const glm::vec3 &p) const {
-    return sdf_func(inv * glm::vec4(p, 1.0f));
+    return sdf_func(this, inv * glm::vec4(p, 1.0f));
   }
-  inline float normal(const glm::vec3 &p, const float &ep) const {
+  std::string gen_sdf(const float &ep) const;
+
+  inline glm::vec3 normal(const glm::vec3 &p, const float &ep) const {
     glm::vec3 obj_p = inv * glm::vec4(p, 1.0f);
-    return tran * glm::normalize(
-                      {
-                        sdf_func(glm::vec3(obj_p.x + ep, obj_p.y, obj_p.z)) -
-                       sdf_func(glm::vec3(obj_p.x - ep, obj_p.y, obj_p.z)),
-                        sdf_func(glm::vec3(obj_p.x , obj_p.y, obj_p.z)) -
-                       sdf_func(glm::vec3(obj_p.x , obj_p.y - ep, obj_p.z)),
-                        sdf_func(glm::vec3(obj_p.x , obj_p.y, obj_p.z + ep)) -
-                       sdf_func(glm::vec3(obj_p.x , obj_p.y, obj_p.z - ep)),
-                       });
+    return tran *
+           glm::normalize(glm::vec4(
+               sdf_func(this, glm::vec3(obj_p.x + ep, obj_p.y, obj_p.z)) -
+                   sdf_func(this, glm::vec3(obj_p.x - ep, obj_p.y, obj_p.z)),
+               sdf_func(this, glm::vec3(obj_p.x, obj_p.y + ep, obj_p.z)) -
+                   sdf_func(this, glm::vec3(obj_p.x, obj_p.y - ep, obj_p.z)),
+               sdf_func(this, glm::vec3(obj_p.x, obj_p.y, obj_p.z + ep)) -
+                   sdf_func(this, glm::vec3(obj_p.x, obj_p.y, obj_p.z - ep)),
+               0.0f));
   }
 
   inline bool gpu_enabled() const { return sdf_str.size() != 0; }
-  inline bool cpu_enabled() const { sdf_func != nullptr; }
+  inline bool cpu_enabled() const { return sdf_func != nullptr; }
 
   inline const unsigned long &get_uuid() const { return uuid; }
-  inline std::function<float(const glm::vec3 &)> &get_sdf_func() {
+  inline std::function<float(const Object *, const glm::vec3 &)> &
+  get_sdf_func() {
     return sdf_func;
   }
-  inline const std::function<float(const glm::vec3 &)> &get_sdf_func() const {
+  inline const std::function<float(const Object *, const glm::vec3 &)> &
+  get_sdf_func() const {
     return sdf_func;
   }
   inline std::string &get_sdf_str() { return sdf_str; }
@@ -112,8 +118,29 @@ public:
   inline const value_type &get(const std::string &name) const {
     return variables.at(name);
   }
+  inline void set(const std::string &name, const value_type &val) {
+    variables[name] = val;
+  }
+  inline float &getf(const std::string &name) {
+    return std::get<float>(variables.at(name));
+  }
+  inline const float &getf(const std::string &name) const {
+    return std::get<float>(variables.at(name));
+  }
+  inline const glm::vec2 &get2(const std::string &name) const {
+    return std::get<glm::vec2>(variables.at(name));
+  }
+  inline const glm::vec3 &get3(const std::string &name) const {
+    return std::get<glm::vec3>(variables.at(name));
+  }
+  inline const glm::vec4 &get4(const std::string &name) const {
+    return std::get<glm::vec4>(variables.at(name));
+  }
 
   ObjectOps(Object);
+
+  unsigned long uuid;
+  std::map<std::string, value_type> variables;
 
 protected:
   void __translate(const float &x, const float &y, const float &z);
@@ -121,10 +148,15 @@ protected:
                 const float &z);
   void __scale(const float &x, const float &y, const float &z);
 
-  unsigned long uuid;
-  std::function<float(const glm::vec3 &)> sdf_func;
+  std::string gpu_format(const std::string &key) const;
+  static std::string gpu_format(const float &val, const std::string &ext) ;
+  static std::string gpu_format(const glm::vec2 &val, const std::string &ext) ;
+  static std::string gpu_format(const glm::vec3 &val, const std::string &ext) ;
+  static std::string gpu_format(const glm::vec4 &val, const std::string &ext) ;
+  static std::string gpu_matrix(const glm::mat4 &v) ;
+
+  std::function<float(const Object *, const glm::vec3 &)> sdf_func;
   std::string sdf_str;
-  std::map<std::string, value_type> variables;
 
   glm::mat4 tran, inv;
 };

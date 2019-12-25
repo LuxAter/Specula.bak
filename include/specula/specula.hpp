@@ -4,7 +4,7 @@
 #include <array>
 
 #include "image.hpp"
-#include "object/object.hpp"
+#include "object.hpp"
 #include "version.hpp"
 
 namespace specula {
