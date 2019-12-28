@@ -19,9 +19,21 @@ endif()
 # ##############################################################################
 # SOURCE FILES
 # ##############################################################################
-set(SOURCES specula.cpp image.cpp stb_image_write.cpp log.cpp rand.cpp
-            object.cpp)
+set(SOURCES
+    specula.cpp
+    image.cpp
+    stb_image_write.cpp
+    log.cpp
+    rand.cpp
+    object.cpp
+    scene.cpp
+    primatives.cpp
+    shader/material.cpp
+    shader/bsdf.cpp
+    cpu_render.cpp
+    core.cpp)
 if(GPU_OPTIMIZE)
+  # list(APPEND SOURCES gpu_render.cpp)
   list(APPEND SOURCES ${SPECULA_SOURCE_DIR}/src/kernels.hpp)
 endif()
 configure_file("${SPECULA_SOURCE_DIR}/include/specula/version.hpp.in"

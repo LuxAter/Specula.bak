@@ -1,11 +1,17 @@
-#ifndef TORUS_HPP_W5XJMAN7
-#define TORUS_HPP_W5XJMAN7
+#include <specula/object.hpp>
+#include <specula/primatives.hpp>
 
 #define GLM_FORCE_SWIZZLE
-#include "../object.hpp"
+#include <glm/glm.hpp>
 
-namespace specula {
-Object Torus(const float &rad_rev, const float &r) {
+specula::Object specula::Sphere(const float &r) {
+  return Object(
+      [](const Object *obj, const glm::vec3 &p) {
+        return glm::length(p) - std::get<float>(obj->variables.at("radius"));
+      },
+      "return length(p) - {{ radius }};", {{"radius", r}});
+}
+specula::Object specula::Torus(const float &rad_rev, const float &r) {
   return Object(
       [](const Object *obj, const glm::vec3 &p) {
         const glm::vec2 q =
@@ -18,6 +24,3 @@ Object Torus(const float &rad_rev, const float &r) {
       "length(q) - {{ radius }};",
       {{"radius_rev", rad_rev}, {"radius", r}});
 }
-} // namespace specula
-
-#endif /* end of include guard: TORUS_HPP_W5XJMAN7 */

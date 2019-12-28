@@ -18,22 +18,22 @@
 #include "kernels.hpp"
 
 specula::Object::Object()
-    : uuid(ulrand()), variables(), sdf_func(nullptr), sdf_str(), tran(1.0f),
-      inv(1.0f) {}
+    : uuid(ulrand()), variables(), material(nullptr), sdf_func(nullptr),
+      sdf_str(), tran(1.0f), inv(1.0f) {}
 specula::Object::Object(
     const std::function<float(const Object *, const glm::vec3 &)> &sdf_func_,
     std::map<std::string, value_type> vars)
-    : uuid(ulrand()), variables(vars), sdf_func(sdf_func_), sdf_str(),
-      tran(1.0f), inv(1.0f) {}
+    : uuid(ulrand()), variables(vars), material(nullptr), sdf_func(sdf_func_),
+      sdf_str(), tran(1.0f), inv(1.0f) {}
 specula::Object::Object(const std::string &sdf_str_,
                         std::map<std::string, value_type> vars)
-    : uuid(ulrand()), variables(vars), sdf_func(nullptr), sdf_str(sdf_str_),
-      tran(1.0f), inv(1.0f) {}
+    : uuid(ulrand()), variables(vars), material(nullptr), sdf_func(nullptr),
+      sdf_str(sdf_str_), tran(1.0f), inv(1.0f) {}
 specula::Object::Object(
     const std::function<float(const Object *, const glm::vec3 &)> &sdf_func_,
     const std::string &sdf_str_, std::map<std::string, value_type> vars)
-    : uuid(ulrand()), variables(vars), sdf_func(sdf_func_), sdf_str(sdf_str_),
-      tran(1.0f), inv(1.0f) {}
+    : uuid(ulrand()), variables(vars), material(nullptr), sdf_func(sdf_func_),
+      sdf_str(sdf_str_), tran(1.0f), inv(1.0f) {}
 
 std::string specula::Object::gen_sdf(const float &ep) const {
   std::string sdf_src = this->sdf_str;

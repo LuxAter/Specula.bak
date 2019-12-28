@@ -10,59 +10,7 @@
 #define GLM_FORCE_SWIZZLE
 #include <glm/glm.hpp>
 
-#define ObjectOps(Obj)                                                         \
-  inline virtual std::shared_ptr<Obj> translate(                               \
-      const float &x, const float &y, const float &z) {                        \
-    this->__translate(x, y, z);                                                \
-    return shared_from_this();                                                 \
-  }                                                                            \
-  inline virtual std::shared_ptr<Obj> translate(const glm::vec3 &v) {          \
-    this->__translate(v.x, v.y, v.z);                                          \
-    return shared_from_this();                                                 \
-  }                                                                            \
-  inline virtual std::shared_ptr<Obj> rotate(                                  \
-      const float &angle, const float &x, const float &y, const float &z) {    \
-    this->__rotate(angle, x, y, z);                                            \
-    return shared_from_this();                                                 \
-  }                                                                            \
-  inline virtual std::shared_ptr<Obj> rotate(const float &angle,               \
-                                             const glm::vec3 &a) {             \
-    this->__rotate(angle, a.x, a.y, a.z);                                      \
-    return shared_from_this();                                                 \
-  }                                                                            \
-  inline virtual std::shared_ptr<Obj> rotate_x(const float &angle) {           \
-    this->__rotate(angle, 1.0f, 0.0f, 0.0f);                                   \
-    return shared_from_this();                                                 \
-  }                                                                            \
-  inline virtual std::shared_ptr<Obj> rotate_y(const float &angle) {           \
-    this->__rotate(angle, 0.0f, 1.0f, 0.0f);                                   \
-    return shared_from_this();                                                 \
-  }                                                                            \
-  inline virtual std::shared_ptr<Obj> rotate_z(const float &angle) {           \
-    this->__rotate(angle, 0.0f, 0.0f, 1.0f);                                   \
-    return shared_from_this();                                                 \
-  }                                                                            \
-  inline virtual std::shared_ptr<Obj> scale(const float &x, const float &y,    \
-                                            const float &z) {                  \
-    this->__scale(x, y, z);                                                    \
-    return shared_from_this();                                                 \
-  }                                                                            \
-  inline virtual std::shared_ptr<Obj> scale(const glm::vec3 &s) {              \
-    this->__scale(s.x, s.y, s.z);                                              \
-    return shared_from_this();                                                 \
-  }                                                                            \
-  inline virtual std::shared_ptr<Obj> scale_x(const float &s) {                \
-    this->__scale(s, 0.0f, 0.0f);                                              \
-    return shared_from_this();                                                 \
-  }                                                                            \
-  inline virtual std::shared_ptr<Obj> scale_y(const float &s) {                \
-    this->__scale(0.0f, s, 0.0f);                                              \
-    return shared_from_this();                                                 \
-  }                                                                            \
-  inline virtual std::shared_ptr<Obj> scale_z(const float &s) {                \
-    this->__scale(0.0f, 0.0f, s);                                              \
-    return shared_from_this();                                                 \
-  }
+#include "shader/material.hpp"
 
 namespace specula {
 class Object : public std::enable_shared_from_this<Object> {
@@ -137,10 +85,71 @@ public:
     return std::get<glm::vec4>(variables.at(name));
   }
 
-  ObjectOps(Object);
+  inline std::shared_ptr<Object> translate(const float &x, const float &y,
+                                           const float &z) {
+    this->__translate(x, y, z);
+    return shared_from_this();
+  }
+  inline std::shared_ptr<Object> translate(const glm::vec3 &v) {
+    this->__translate(v.x, v.y, v.z);
+    return shared_from_this();
+  }
+  inline std::shared_ptr<Object> rotate(const float &angle, const float &x,
+                                        const float &y, const float &z) {
+    this->__rotate(angle, x, y, z);
+    return shared_from_this();
+  }
+  inline std::shared_ptr<Object> rotate(const float &angle,
+                                        const glm::vec3 &a) {
+    this->__rotate(angle, a.x, a.y, a.z);
+    return shared_from_this();
+  }
+  inline std::shared_ptr<Object> rotate_x(const float &angle) {
+    this->__rotate(angle, 1.0f, 0.0f, 0.0f);
+    return shared_from_this();
+  }
+  inline std::shared_ptr<Object> rotate_y(const float &angle) {
+    this->__rotate(angle, 0.0f, 1.0f, 0.0f);
+    return shared_from_this();
+  }
+  inline std::shared_ptr<Object> rotate_z(const float &angle) {
+    this->__rotate(angle, 0.0f, 0.0f, 1.0f);
+    return shared_from_this();
+  }
+  inline std::shared_ptr<Object> scale(const float &x, const float &y,
+                                       const float &z) {
+    this->__scale(x, y, z);
+    return shared_from_this();
+  }
+  inline std::shared_ptr<Object> scale(const glm::vec3 &s) {
+    this->__scale(s.x, s.y, s.z);
+    return shared_from_this();
+  }
+  inline std::shared_ptr<Object> scale_x(const float &s) {
+    this->__scale(s, 0.0f, 0.0f);
+    return shared_from_this();
+  }
+  inline std::shared_ptr<Object> scale_y(const float &s) {
+    this->__scale(0.0f, s, 0.0f);
+    return shared_from_this();
+  }
+  inline std::shared_ptr<Object> scale_z(const float &s) {
+    this->__scale(0.0f, 0.0f, s);
+    return shared_from_this();
+  }
+  inline std::shared_ptr<Object> set_material(Material &mat) {
+    this->material = mat.shared_from_this();
+    return shared_from_this();
+  }
+  inline std::shared_ptr<Object>
+  set_material(const std::shared_ptr<Material> &mat) {
+    this->material = mat;
+    return shared_from_this();
+  }
 
   unsigned long uuid;
   std::map<std::string, value_type> variables;
+  std::shared_ptr<Material> material;
 
 protected:
   void __translate(const float &x, const float &y, const float &z);
@@ -149,11 +158,11 @@ protected:
   void __scale(const float &x, const float &y, const float &z);
 
   std::string gpu_format(const std::string &key) const;
-  static std::string gpu_format(const float &val, const std::string &ext) ;
-  static std::string gpu_format(const glm::vec2 &val, const std::string &ext) ;
-  static std::string gpu_format(const glm::vec3 &val, const std::string &ext) ;
-  static std::string gpu_format(const glm::vec4 &val, const std::string &ext) ;
-  static std::string gpu_matrix(const glm::mat4 &v) ;
+  static std::string gpu_format(const float &val, const std::string &ext);
+  static std::string gpu_format(const glm::vec2 &val, const std::string &ext);
+  static std::string gpu_format(const glm::vec3 &val, const std::string &ext);
+  static std::string gpu_format(const glm::vec4 &val, const std::string &ext);
+  static std::string gpu_matrix(const glm::mat4 &v);
 
   std::function<float(const Object *, const glm::vec3 &)> sdf_func;
   std::string sdf_str;
