@@ -51,8 +51,8 @@ if(BUILD_STATIC_LIBS)
   set_target_properties(
     specula_static
     PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED YES CXX_EXTENSIONS OFF)
-  target_link_libraries(specula_static spdlog::spdlog)
-  target_link_libraries(specula_static glm::glm_static)
+  target_link_libraries(specula_static spdlog)
+  target_link_libraries(specula_static glm_static)
 endif()
 
 # ##############################################################################
@@ -67,8 +67,8 @@ if(BUILD_SHARED_LIBS)
   set_target_properties(
     specula_shared
     PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED YES CXX_EXTENSIONS OFF)
-  target_link_libraries(specula_shared spdlog::spdlog)
-  target_link_libraries(specula_shared glm::glm_shared)
+  target_link_libraries(specula_shared spdlog)
+  target_link_libraries(specula_shared glm_shared)
 endif()
 
 # ##############################################################################
