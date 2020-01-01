@@ -111,6 +111,9 @@ bool specula::cpu::render(const std::shared_ptr<Image> &img, const Scene &scene,
                                       }),
                        pool_results.end());
   }
+  auto [hour_total, min_total, sec_total, milli_total] = split_time(total_time);
+  LINFO("Total Elapsed Time: {:02}:{:02}:{:02}.{:03}", hour_total, min_total,
+        sec_total, milli_total);
   return true;
 }
 unsigned long specula::cpu::render_tile(
@@ -143,11 +146,15 @@ glm::vec3 specula::cpu::ray_trace(const Ray &ray, unsigned long depth) {
     return sky;
   }
   glm::vec3 p = ray.o + t * ray.d;
-  glm::vec3 normal = obj->normal(p, ep);
-  glm::vec3 dir = shader::sample_bsdf(ray.medium, obj->material, ray.d, normal);
-  if (dir == glm::vec3(0.0f))
+  glm::vec3 normal =
+      (ray.medium != nullptr) ? -(obj->normal(p, ep)) : obj->normal(p, ep);
+  Ray ray_out = shader::sample_bsdf(ray, obj->material, normal, ep);
+  if (ray_out.d == glm::vec3(0.0f))
     return glm::vec3(0.0f);
-  return glm::vec3(1.0f);
+  return glm::clamp(shader::evaluate_bsdf(ray, ray_out, obj->material,
+                                          cpu::ray_trace(ray_out, depth + 1),
+                                          normal),
+                    0.0f, 1.0f);
 }
 
 std::pair<float, std::shared_ptr<specula::Object>>

@@ -10,6 +10,7 @@ struct Material : public std::enable_shared_from_this<Material> {
   Material();
   glm::vec3 base_color;
   glm::vec3 transmittance_color;
+  glm::vec3 emission_color;
   float sheen, sheen_tint;
   float clearcoat, clearcoat_gloss;
   float metallic;
@@ -38,6 +39,7 @@ public:
 
   BUILD_VAR(base_color, glm::vec3)
   BUILD_VAR(transmittance_color, glm::vec3)
+  BUILD_VAR(emission_color, glm::vec3)
   BUILD_VAR(sheen, float)
   BUILD_VAR(sheen_tint, float)
   BUILD_VAR(clearcoat, float)

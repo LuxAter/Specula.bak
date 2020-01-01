@@ -30,6 +30,7 @@ set(SOURCES
     primatives.cpp
     shader/material.cpp
     shader/bsdf.cpp
+    shader/fresnel.cpp
     cpu_render.cpp
     core.cpp)
 if(GPU_OPTIMIZE)
