@@ -7,6 +7,10 @@
 
 #include <GLFW/glfw3.h>
 
+#include <imgui.h>
+
+#include "gui.hpp"
+
 void glfw_error_callback(int error_code, const char *description) {
   specula::logger::error("GLFW [{}]: {}", error_code, description);
 }
@@ -27,7 +31,7 @@ int main(int argc, char const *argv[]) {
     return -1;
   }
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
   GLFWwindow *window = glfwCreateWindow(1280, 720, "Specula", NULL, NULL);
   if (window == NULL) {
     glfwTerminate();
@@ -41,14 +45,32 @@ int main(int argc, char const *argv[]) {
     glfwTerminate();
     return -1;
   }
+
   glViewport(0, 0, 1280, 720);
   glfwSetFramebufferSizeCallback(window, glfw_framebuffer_size_callback);
-  glClearColor(0.0, 1.0, 0.0, 1.0);
+  glClearColor(0.0, 0.0, 0.0, 1.0);
+
+  gui::init(window);
+
+  bool show = true;
+
   while (!glfwWindowShouldClose(window)) {
     glfwPollEvents();
     glClear(GL_COLOR_BUFFER_BIT);
+
+    gui::frame();
+
+    ImGui::ShowDemoWindow(&show);
+
+    ImGui::Begin("Style");
+    gui::style_gui();
+    ImGui::End();
+
+    gui::render();
     glfwSwapBuffers(window);
   }
+
+  gui::shutdown();
 
   glfwDestroyWindow(window);
   glfwTerminate();

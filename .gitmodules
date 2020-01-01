@@ -7,3 +7,6 @@
 [submodule "external/glfw"]
 	path = external/glfw
 	url = https://github.com/glfw/glfw
+[submodule "external/imgui-cmake"]
+	path = external/imgui-cmake
+	url = https://github.com/LuxAter/imgui-cmake
