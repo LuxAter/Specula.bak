@@ -19,20 +19,7 @@ endif()
 # ##############################################################################
 # SOURCE FILES
 # ##############################################################################
-set(SOURCES
-    specula.cpp
-    image.cpp
-    stb_image_write.cpp
-    log.cpp
-    rand.cpp
-    object.cpp
-    scene.cpp
-    primatives.cpp
-    shader/material.cpp
-    shader/bsdf.cpp
-    shader/fresnel.cpp
-    cpu_render.cpp
-    core.cpp)
+set(SOURCES specula.cpp image.cpp stb_image_write.cpp log.cpp)
 if(GPU_OPTIMIZE)
   # list(APPEND SOURCES gpu_render.cpp)
   list(APPEND SOURCES ${SPECULA_SOURCE_DIR}/src/kernels.hpp)

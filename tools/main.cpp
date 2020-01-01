@@ -1,31 +1,57 @@
 #include <iostream>
 
+#include <glad/glad.h>
+
 #include <specula/log.hpp>
-#include <specula/primatives.hpp>
 #include <specula/specula.hpp>
 
-int main(int argc, char const *argv[]) {
+#include <GLFW/glfw3.h>
 
+void glfw_error_callback(int error_code, const char *description) {
+  specula::logger::error("GLFW [{}]: {}", error_code, description);
+}
+void glfw_framebuffer_size_callback(GLFWwindow *, int w, int h) {
+  glViewport(0, 0, w, h);
+}
+
+int main(int argc, char const *argv[]) {
   specula::initalize_logger(10);
   auto [major, minor, patch] = specula::get_version();
-  std::cout << "SPECULA: " << major << "." << minor << "." << patch << "\n";
+  LINFO("Specula v{}.{}.{}", major, minor, patch);
 
-  specula::Scene main = specula::Scene::get();
-  auto &red = main.add_material(specula::MaterialBuilder::Diffuse()
-                                    .base_color({1.0f, 0.0f, 0.0f})
-                                    .build());
-  auto &sph = main.add_sphere(1.0f);
-  sph.set_material(red);
+  glfwSetErrorCallback(glfw_error_callback);
+  if (!glfwInit()) {
+    const char *glfw_error;
+    glfwGetError(&glfw_error);
+    LCRITICAL("Failed to initalize GLFW: {}", glfw_error);
+    return -1;
+  }
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+  GLFWwindow *window = glfwCreateWindow(1280, 720, "Specula", NULL, NULL);
+  if (window == NULL) {
+    glfwTerminate();
+    LCRITICAL("Failed to create GLFW window");
+    return -1;
+  }
+  glfwMakeContextCurrent(window);
+  if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+    LCRITICAL("Failed to load OpenGL");
+    glfwDestroyWindow(window);
+    glfwTerminate();
+    return -1;
+  }
+  glViewport(0, 0, 1280, 720);
+  glfwSetFramebufferSizeCallback(window, glfw_framebuffer_size_callback);
+  glClearColor(0.0, 1.0, 0.0, 1.0);
+  while (!glfwWindowShouldClose(window)) {
+    glfwPollEvents();
+    glClear(GL_COLOR_BUFFER_BIT);
+    glfwSwapBuffers(window);
+  }
 
-  specula::render(main, specula::RenderArgsBuilder().build());
+  glfwDestroyWindow(window);
+  glfwTerminate();
 
-  // specula::MaterialBuilder::Diffuse().specular_tint(0.7f).build();
-
-  // specula::Object sph = specula::Sphere(1.0f);
-  // std::cout << "GPU SPH:\n" << sph.gen_sdf(1e-5f);
-  // specula::Object tor = specula::Torus(2.0f, 0.5f);
-  // std::cout << "GPU TOR:\n" << tor.gen_sdf(1e-5f);
-
-  specula::Image img(500, 500);
   return 0;
 }

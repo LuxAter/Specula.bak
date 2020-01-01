@@ -3,11 +3,7 @@
 
 #include <array>
 
-#include "core.hpp"
 #include "image.hpp"
-#include "object.hpp"
-#include "scene.hpp"
-#include "shader/material.hpp"
 #include "version.hpp"
 
 namespace specula {
