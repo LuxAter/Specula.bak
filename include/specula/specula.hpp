@@ -5,6 +5,7 @@
 
 #include "image.hpp"
 #include "version.hpp"
+#include "material.hpp"
 
 namespace specula {
 std::array<unsigned, 3> get_version();

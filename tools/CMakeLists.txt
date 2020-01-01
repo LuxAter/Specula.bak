@@ -5,7 +5,16 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${SPECULA_BINARY_DIR})
 # ##############################################################################
 # SOURCE FILES
 # ##############################################################################
-set(SOURCES main.cpp gui.cpp)
+file(GLOB FONT_FILES ${SPECULA_SOURCE_DIR}/resources/*.ttf)
+add_custom_command(
+  OUTPUT ${SPECULA_SOURCE_DIR}/tools/fonts.hpp
+  COMMAND ${SPECULA_SOURCE_DIR}/resources/compile_resource.sh
+          ${SPECULA_SOURCE_DIR}/tools/fonts.hpp ${SPECULA_SOURCE_DIR}/resources
+          ttf
+  DEPENDS ${FONT_FILES} ${SPECULA_SOURCE_DIR}/resources/compile_resource.sh
+  COMMENT "Compiling fonts")
+set(SOURCES main.cpp gui.cpp imgui_ser.cpp)
+list(APPEND SOURCES ${SPECULA_SOURCE_DIR}/tools/fonts.hpp)
 list(
   APPEND
     SOURCES

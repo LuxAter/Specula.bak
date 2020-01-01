@@ -9,10 +9,11 @@ if(GPU_OPTIMIZE)
   file(GLOB OPENCL_KERNELS ${SPECULA_SOURCE_DIR}/resources/*.cl)
   add_custom_command(
     OUTPUT ${SPECULA_SOURCE_DIR}/src/kernels.hpp
-    COMMAND ${SPECULA_SOURCE_DIR}/resources/compile_kernels.sh
+    COMMAND ${SPECULA_SOURCE_DIR}/resources/compile_resource.sh
             ${SPECULA_SOURCE_DIR}/src/kernels.hpp
-            ${SPECULA_SOURCE_DIR}/resources
-    DEPENDS ${OPENCL_KERNELS} ${SPECULA_SOURCE_DIR}/resources/compile_kernels.sh
+            ${SPECULA_SOURCE_DIR}/resources cl
+    DEPENDS ${OPENCL_KERNELS}
+            ${SPECULA_SOURCE_DIR}/resources/compile_resource.sh
     COMMENT "Generating GPU kernels")
 endif()
 

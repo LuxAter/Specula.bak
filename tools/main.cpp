@@ -2,6 +2,7 @@
 
 #include <glad/glad.h>
 
+#include <memory>
 #include <specula/log.hpp>
 #include <specula/specula.hpp>
 
@@ -10,6 +11,7 @@
 #include <imgui.h>
 
 #include "gui.hpp"
+#include "specula/material.hpp"
 
 void glfw_error_callback(int error_code, const char *description) {
   specula::logger::error("GLFW [{}]: {}", error_code, description);
@@ -52,19 +54,15 @@ int main(int argc, char const *argv[]) {
 
   gui::init(window);
 
-  bool show = true;
+  std::shared_ptr<specula::Material> mat =
+      std::make_shared<specula::Material>();
+  gui::set_material_ptr(mat);
 
   while (!glfwWindowShouldClose(window)) {
     glfwPollEvents();
     glClear(GL_COLOR_BUFFER_BIT);
 
     gui::frame();
-
-    ImGui::ShowDemoWindow(&show);
-
-    ImGui::Begin("Style");
-    gui::style_gui();
-    ImGui::End();
 
     gui::render();
     glfwSwapBuffers(window);

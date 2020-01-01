@@ -1,30 +1,53 @@
 #include "gui.hpp"
 
+#include <filesystem>
 #include <map>
+#include <memory>
 #include <string>
 
 #include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
+#include <imgui_internal.h>
 
-static std::string colors[17] = {
-    "Red",       "Pink",  "Purple", "Deep Purple", "Indigo",     "Blue",
-    "Pale Blue", "Cyan",  "Teal",   "Green",       "Pale Green", "Lime",
-    "Yellow",    "Amber", "Orange", "Deep Orange", "Brown"};
+#include <specula/specula.hpp>
+
+#include "colors.hpp"
+#include "fonts.hpp"
+#include "imgui_ser.hpp"
+#include "specula/material.hpp"
+
+static std::map<std::string, bool> windows;
+static GLFWwindow *imgui_window;
+static bool dockspace_open = false;
+static bool static_true_window = true;
+
+static std::shared_ptr<specula::Material> mat;
 
 void gui::init(GLFWwindow *window) {
+  imgui_window = window;
   IMGUI_CHECKVERSION();
   ImGui::CreateContext();
   ImGuiIO &io = ImGui::GetIO();
   io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
   io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
   //   io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+  void *tmp_data = std::malloc(Roboto_Regular_ttf_size);
+  memcpy(tmp_data, Roboto_Regular_ttf, Roboto_Regular_ttf_size);
+  io.Fonts->AddFontFromMemoryTTF(tmp_data, Roboto_Regular_ttf_size, 20.0f);
   ImGui_ImplGlfw_InitForOpenGL(window, true);
   ImGui_ImplOpenGL3_Init("#version 410");
-  ImGui::StyleColorsDark();
-  style(false, "Blue");
+  windows["viewer"] = true;
+  windows["material editor"] = true;
+  if (std::filesystem::exists("imgui_style.ini")) {
+    ImGuiLoadStyle("imgui_style.ini", ImGui::GetStyle());
+  } else {
+    style(false, "Blue");
+  }
 }
 
 void gui::shutdown() {
@@ -37,6 +60,42 @@ void gui::frame() {
   ImGui_ImplOpenGL3_NewFrame();
   ImGui_ImplGlfw_NewFrame();
   ImGui::NewFrame();
+
+  ImGuiDockNodeFlags dockspace_flags =
+      ImGuiDockNodeFlags_None | ImGuiDockNodeFlags_AutoHideTabBar;
+  ImGuiWindowFlags window_flags =
+      ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking |
+      ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse |
+      ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
+      ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+  ImGuiViewport *viewport = ImGui::GetMainViewport();
+  ImGui::SetNextWindowPos(viewport->Pos);
+  ImGui::SetNextWindowSize(viewport->Size);
+  ImGui::SetNextWindowViewport(viewport->ID);
+  ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+  ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+  ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+  ImGui::Begin("Specula Editor", &static_true_window, window_flags);
+  ImGui::PopStyleVar(3);
+  ImGuiID dockspace = ImGui::GetID("Specula Dockspace");
+  ImGui::DockSpace(dockspace, ImVec2(0.0f, 0.0f), dockspace_flags);
+  if (!dockspace_open) {
+    ImGuiID dock_main = dockspace;
+    ImGuiID dock_left = ImGui::DockBuilderSplitNode(dock_main, ImGuiDir_Left,
+                                                    0.20f, NULL, &dock_main);
+    ImGuiID dock_right = ImGui::DockBuilderSplitNode(dock_main, ImGuiDir_Right,
+                                                     0.20f, NULL, &dock_main);
+    ImGui::DockBuilderDockWindow("Material Editor", dock_right);
+    ImGui::DockBuilderDockWindow("Viewer", dock_main);
+    ImGui::DockBuilderFinish(dockspace);
+    dockspace_open = true;
+  }
+
+  menu_bar();
+  ImGui::End();
+
+  viewer();
+  material_editor();
 }
 
 void gui::render() {
@@ -53,71 +112,6 @@ void gui::render() {
 
 void gui::style(bool light, const std::string &accent) {
   ImGuiStyle &style = ImGui::GetStyle();
-  ImVec4 *colors = style.Colors;
-
-  std::map<std::string, ImVec4> isotope;
-
-  isotope["light_Red"] = ImVec4(0.99609375, 0.53515625, 0.37890625, 1.0);
-  isotope["Red"] = ImVec4(0.953125, 0.26171875, 0.2109375, 1.0);
-  isotope["dark_Red"] = ImVec4(0.7265625, 0.0, 0.05078125, 1.0);
-  isotope["light_Pink"] = ImVec4(0.99609375, 0.375, 0.5625, 1.0);
-  isotope["Pink"] = ImVec4(0.91015625, 0.1171875, 0.38671875, 1.0);
-  isotope["dark_Pink"] = ImVec4(0.6875, 0.0, 0.2265625, 1.0);
-  isotope["light_Purple"] = ImVec4(0.8125, 0.359375, 0.88671875, 1.0);
-  isotope["Purple"] = ImVec4(0.609375, 0.15234375, 0.6875, 1.0);
-  isotope["dark_Purple"] = ImVec4(0.4140625, 0.0, 0.5, 1.0);
-  isotope["light_Deep Purple"] = ImVec4(0.6015625, 0.40234375, 0.9140625, 1.0);
-  isotope["Deep Purple"] = ImVec4(0.40234375, 0.2265625, 0.71484375, 1.0);
-  isotope["dark_Deep Purple"] = ImVec4(0.1953125, 0.04296875, 0.5234375, 1.0);
-  isotope["light_Indigo"] = ImVec4(0.45703125, 0.48828125, 0.90625, 1.0);
-  isotope["Indigo"] = ImVec4(0.24609375, 0.31640625, 0.70703125, 1.0);
-  isotope["dark_Indigo"] = ImVec4(0.0, 0.16015625, 0.515625, 1.0);
-  isotope["light_Blue"] = ImVec4(0.4296875, 0.7734375, 0.99609375, 1.0);
-  isotope["Blue"] = ImVec4(0.12890625, 0.5859375, 0.94921875, 1.0);
-  isotope["dark_Blue"] = ImVec4(0.0, 0.41015625, 0.75, 1.0);
-  isotope["light_Pale Blue"] = ImVec4(0.40234375, 0.8515625, 0.99609375, 1.0);
-  isotope["Pale Blue"] = ImVec4(0.01171875, 0.66015625, 0.953125, 1.0);
-  isotope["dark_Pale Blue"] = ImVec4(0.0, 0.4765625, 0.75390625, 1.0);
-  isotope["light_Cyan"] = ImVec4(0.3828125, 0.93359375, 0.99609375, 1.0);
-  isotope["Cyan"] = ImVec4(0.0, 0.734375, 0.828125, 1.0);
-  isotope["dark_Cyan"] = ImVec4(0.0, 0.54296875, 0.63671875, 1.0);
-  isotope["light_Teal"] = ImVec4(0.3203125, 0.77734375, 0.71875, 1.0);
-  isotope["Teal"] = ImVec4(0.0, 0.5859375, 0.53125, 1.0);
-  isotope["dark_Teal"] = ImVec4(0.0, 0.40234375, 0.35546875, 1.0);
-  isotope["light_Green"] = ImVec4(0.5, 0.8828125, 0.4921875, 1.0);
-  isotope["Green"] = ImVec4(0.296875, 0.68359375, 0.3125, 1.0);
-  isotope["dark_Green"] = ImVec4(0.03125, 0.49609375, 0.13671875, 1.0);
-  isotope["light_Pale Green"] = ImVec4(0.7421875, 0.9609375, 0.4765625, 1.0);
-  isotope["Pale Green"] = ImVec4(0.54296875, 0.76171875, 0.2890625, 1.0);
-  isotope["dark_Pale Green"] = ImVec4(0.3515625, 0.5703125, 0.0859375, 1.0);
-  isotope["light_Lime"] = ImVec4(0.99609375, 0.99609375, 0.4296875, 1.0);
-  isotope["Lime"] = ImVec4(0.80078125, 0.859375, 0.22265625, 1.0);
-  isotope["dark_Lime"] = ImVec4(0.59765625, 0.6640625, 0.0, 1.0);
-  isotope["light_Yellow"] = ImVec4(0.99609375, 0.99609375, 0.4453125, 1.0);
-  isotope["Yellow"] = ImVec4(0.99609375, 0.91796875, 0.23046875, 1.0);
-  isotope["dark_Yellow"] = ImVec4(0.78125, 0.72265625, 0.0, 1.0);
-  isotope["light_Amber"] = ImVec4(0.99609375, 0.94921875, 0.3125, 1.0);
-  isotope["Amber"] = ImVec4(0.99609375, 0.75390625, 0.02734375, 1.0);
-  isotope["dark_Amber"] = ImVec4(0.77734375, 0.56640625, 0.0, 1.0);
-  isotope["light_Orange"] = ImVec4(0.99609375, 0.78515625, 0.27734375, 1.0);
-  isotope["Orange"] = ImVec4(0.99609375, 0.59375, 0.0, 1.0);
-  isotope["dark_Orange"] = ImVec4(0.7734375, 0.41015625, 0.0, 1.0);
-  isotope["light_Deep Orange"] = ImVec4(0.87890625, 0.5390625, 0.3125, 1.0);
-  isotope["Deep Orange"] = ImVec4(0.87890625, 0.33984375, 0.1328125, 1.0);
-  isotope["dark_Deep Orange"] = ImVec4(0.765625, 0.109375, 0.0, 1.0);
-  isotope["light_Brown"] = ImVec4(0.66015625, 0.5078125, 0.453125, 1.0);
-  isotope["Brown"] = ImVec4(0.47265625, 0.33203125, 0.28125, 1.0);
-  isotope["dark_Brown"] = ImVec4(0.29296875, 0.171875, 0.125, 1.0);
-  isotope["grey1"] = ImVec4(0.921875, 0.93359375, 0.94140625, 1.0);
-  isotope["grey2"] = ImVec4(0.80859375, 0.84375, 0.859375, 1.0);
-  isotope["grey3"] = ImVec4(0.6875, 0.7421875, 0.76953125, 1.0);
-  isotope["grey4"] = ImVec4(0.5625, 0.640625, 0.6796875, 1.0);
-  isotope["grey5"] = ImVec4(0.46875, 0.5625, 0.609375, 1.0);
-  isotope["grey6"] = ImVec4(0.375, 0.48828125, 0.54296875, 1.0);
-  isotope["grey7"] = ImVec4(0.328125, 0.4296875, 0.4765625, 1.0);
-  isotope["grey8"] = ImVec4(0.26953125, 0.3515625, 0.390625, 1.0);
-  isotope["grey9"] = ImVec4(0.21484375, 0.27734375, 0.30859375, 1.0);
-  isotope["grey10"] = ImVec4(0.1484375, 0.1953125, 0.21875, 1.0);
 
   ImVec4 col_text, col_back, col_area, col_main;
   if (light) {
@@ -149,12 +143,18 @@ void gui::style(bool light, const std::string &accent) {
       ImVec4(col_main.x, col_main.y, col_main.z, 0.68f);
   style.Colors[ImGuiCol_FrameBgActive] =
       ImVec4(col_main.x, col_main.y, col_main.z, 1.00f);
+
   style.Colors[ImGuiCol_Tab] =
-      ImVec4(col_main.x, col_main.y, col_main.z, 0.45f);
-  style.Colors[ImGuiCol_TabUnfocused] =
-      ImVec4(col_main.x, col_main.y, col_main.z, 0.35f);
+      ImVec4(col_main.x, col_main.y, col_main.z, 0.44f);
+  style.Colors[ImGuiCol_TabHovered] =
+      ImVec4(col_main.x, col_main.y, col_main.z, 0.86f);
   style.Colors[ImGuiCol_TabActive] =
-      ImVec4(col_main.x, col_main.y, col_main.z, 0.78f);
+      ImVec4(col_main.x, col_main.y, col_main.z, 1.00f);
+  style.Colors[ImGuiCol_TabUnfocused] =
+      ImVec4(col_main.x, col_main.y, col_main.z, 0.24f);
+  style.Colors[ImGuiCol_TabUnfocusedActive] =
+      ImVec4(col_main.x, col_main.y, col_main.z, 0.80f);
+
   style.Colors[ImGuiCol_TitleBg] =
       ImVec4(col_main.x, col_main.y, col_main.z, 0.45f);
   style.Colors[ImGuiCol_TitleBgCollapsed] =
@@ -207,6 +207,12 @@ void gui::style(bool light, const std::string &accent) {
       ImVec4(col_main.x, col_main.y, col_main.z, 0.43f);
   style.Colors[ImGuiCol_ModalWindowDarkening] =
       ImVec4(0.20f, 0.20f, 0.20f, 0.35f);
+  style.Colors[ImGuiCol_DockingPreview] =
+      ImVec4(col_area.x, col_area.y, col_area.z, 0.65f);
+  style.Colors[ImGuiCol_DockingEmptyBg] =
+      ImVec4(col_back.x, col_back.y, col_back.z, 1.00f);
+  style.Colors[ImGuiCol_DragDropTarget] =
+      ImVec4(col_area.x, col_area.y, col_area.z, 0.65f);
 
   style.PopupRounding = 3;
 
@@ -234,6 +240,7 @@ void gui::style(bool light, const std::string &accent) {
     style.WindowRounding = 0.0f;
     style.Colors[ImGuiCol_WindowBg].w = 1.0f;
   }
+  ImGuiSaveStyle("imgui_style.ini", ImGui::GetStyle());
 }
 
 void gui::style_gui() {
@@ -266,4 +273,65 @@ void gui::style_gui() {
     }
     ImGui::EndCombo();
   }
+}
+
+void gui::menu_bar() {
+  if (ImGui::BeginMenuBar()) {
+    if (ImGui::BeginMenu("File")) {
+      if (ImGui::MenuItem("Quit", "ESC"))
+        glfwSetWindowShouldClose(imgui_window, true);
+      ImGui::EndMenu();
+    }
+    if (ImGui::BeginMenu("Window")) {
+      if (ImGui::MenuItem("Viewer", "", windows["viewer"]))
+        windows["viewer"] = !windows["viewer"];
+      if (ImGui::MenuItem("Material Editor", "", windows["material editor"]))
+        windows["material editor"] = !windows["material editor"];
+      ImGui::EndMenu();
+    }
+    if (ImGui::BeginMenu("Settings")) {
+      style_gui();
+      ImGui::EndMenu();
+    }
+    ImGui::EndMenuBar();
+  }
+}
+
+void gui::viewer() {
+  if (!windows["viewer"])
+    return;
+  ImGui::Begin("Viewer", &windows["viewer"],
+               ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar);
+  ImGui::Text("Some preview image");
+  ImGui::End();
+}
+void gui::material_editor() {
+  if (!windows["material editor"])
+    return;
+  ImGui::Begin("Material Editor", &windows["material editor"],
+               ImGuiWindowFlags_NoTitleBar);
+  ImGui::ColorEdit3("Base Color", glm::value_ptr(mat->base_color));
+  ImGui::SliderFloat("Subsurface", &(mat->subsurface), 0.0f, 1.0f);
+  ImGui::SliderFloat3("Subsurface Radius",
+                      glm::value_ptr(mat->subsurface_radius), 0.0f, 1.0f);
+  ImGui::ColorEdit3("Subsurface Color", glm::value_ptr(mat->subsurface_color));
+  ImGui::SliderFloat("Metallic", &(mat->metallic), 0.0f, 1.0f);
+  ImGui::SliderFloat("Specular", &(mat->specular), 0.0f, 1.0f);
+  ImGui::SliderFloat("Specular Tint", &(mat->specular_tint), 0.0f, 1.0f);
+  ImGui::SliderFloat("Roughness", &(mat->roughness), 0.0f, 1.0f);
+  ImGui::SliderFloat("Anisotropic", &(mat->anisotropic), 0.0f, 1.0f);
+  ImGui::SliderFloat("Anisotropic Rotation", &(mat->anisotropic_rotation), 0.0f,
+                     1.0f);
+  ImGui::SliderFloat("Sheen", &(mat->sheen), 0.0f, 1.0f);
+  ImGui::SliderFloat("Sheen Tint", &(mat->sheen_tint), 0.0f, 1.0f);
+  ImGui::SliderFloat("Clearcoat", &(mat->clearcoat), 0.0f, 1.0f);
+  ImGui::SliderFloat("Clearcoat Roughness", &(mat->clearcoat_roughness), 0.0f,
+                     1.0f);
+  ImGui::SliderFloat("IOR", &(mat->ior), 0.0f, 1.0f);
+  ImGui::SliderFloat("Transmission", &(mat->transmission), 0.0f, 1.0f);
+  ImGui::End();
+}
+
+void gui::set_material_ptr(const std::shared_ptr<specula::Material> &mat_) {
+  mat = mat_;
 }
