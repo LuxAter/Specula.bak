@@ -54,9 +54,9 @@ int main(int argc, char const *argv[]) {
 
   gui::init(window);
 
-  std::shared_ptr<specula::Material> mat =
-      std::make_shared<specula::Material>();
-  gui::set_material_ptr(mat);
+  glm::vec3 base_color;
+  gui::create_window("Material Editor");
+  gui::add_variable("Material Editor", "Base Color", &base_color);
 
   while (!glfwWindowShouldClose(window)) {
     glfwPollEvents();

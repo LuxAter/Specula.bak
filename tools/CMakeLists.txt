@@ -13,7 +13,7 @@ add_custom_command(
           ttf
   DEPENDS ${FONT_FILES} ${SPECULA_SOURCE_DIR}/resources/compile_resource.sh
   COMMENT "Compiling fonts")
-set(SOURCES main.cpp gui.cpp imgui_ser.cpp)
+set(SOURCES main.cpp gui.cpp)
 list(APPEND SOURCES ${SPECULA_SOURCE_DIR}/tools/fonts.hpp)
 list(
   APPEND
