@@ -54,11 +54,15 @@ void gui::frame() {
   ImGui::NewFrame();
 
   for (auto &win : windows) {
-    if (windows_state[win.first])
+    if (windows_state[win.first]) {
+      ImGui::Begin(win.first.c_str(), &windows_state[win.first]);
       win.second();
+      ImGui::End();
+    }
   }
   for (auto &win : variables) {
     if (windows_state[win.first]) {
+      ImGui::Begin(win.first.c_str(), &windows_state[win.first]);
       for (auto &var : win.second) {
         if (std::holds_alternative<bool *>(var.second))
           continue;
@@ -76,6 +80,7 @@ void gui::frame() {
           }
         }
       }
+      ImGui::End();
     }
   }
 }
