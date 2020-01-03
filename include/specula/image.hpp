@@ -13,6 +13,7 @@ public:
   Image();
   Image(const unsigned &width, const unsigned &height);
 
+  inline void set(const unsigned &id, const glm::vec3 &v) { buffer[id] = v; }
   inline void set(const unsigned &x, const unsigned &y, const glm::vec3 &v) {
     buffer[y * buffer_width + x] = v;
   }
