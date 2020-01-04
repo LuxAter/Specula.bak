@@ -23,16 +23,24 @@ public:                                                                        \
   inline const type &get_##name() const { return name; }                       \
   type name = default;
 
-#define GET_VAR(class, type, name, default)                                    \
+#define PBUILD_VAR(class, type, name, default)                                 \
 public:                                                                        \
+  inline std::shared_ptr<class> set_##name(const type &v) {                    \
+    name##_ = v;                                                               \
+    return shared_from_this();                                                 \
+  }                                                                            \
   inline type &get_##name() { return name##_; }                                \
   inline const type &get_##name() const { return name##_; }                    \
                                                                                \
 protected:                                                                     \
   type name##_ = default;
 
-#define GET_PVAR(class, type, name, default)                                   \
+#define PBUILD_PVAR(class, type, name, default)                                \
 public:                                                                        \
+  inline std::shared_ptr<class> set_##name(const type &v) {                    \
+    name = v;                                                                  \
+    return shared_from_this();                                                 \
+  }                                                                            \
   inline type &get_##name() { return name; }                                   \
   inline const type &get_##name() const { return name; }                       \
   type name = default;

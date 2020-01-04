@@ -35,6 +35,24 @@ float *specula::Image::get_float_data() const {
   return byte_data;
 }
 
+void specula::Image::abs() {
+  for (auto &it : buffer) {
+    it = glm::abs(it);
+  }
+}
+void specula::Image::norm() {
+  glm::vec3 vmax(0.0f);
+  glm::vec3 vmin(std::numeric_limits<float>::infinity());
+  for (auto &it : buffer) {
+    vmax = glm::max(it, vmax);
+    vmin = glm::min(it, vmin);
+  }
+  const glm::vec3 delta = vmax - vmin;
+  for (auto &it : buffer) {
+    it = (it - vmin) / delta;
+  }
+}
+
 bool specula::Image::write(const std::string_view &file_path) {
   int result = 1;
   if (file_path.length() >= 4 &&

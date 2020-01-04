@@ -30,7 +30,7 @@ set(SOURCES
     cpu_renderer.cpp
     object.cpp
     primatives.cpp
-    )
+    material.cpp)
 if(GPU_OPTIMIZE)
   # list(APPEND SOURCES gpu_render.cpp)
   list(APPEND SOURCES ${SPECULA_SOURCE_DIR}/src/kernels.hpp)

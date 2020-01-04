@@ -9,7 +9,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "log.hpp"
+#include "material.hpp"
 
 namespace specula {
 class Object : public std::enable_shared_from_this<Object> {
@@ -25,6 +25,18 @@ public:
 
   inline float distance(const glm::vec3 &p) {
     return this->sdf(this, glm::vec3(this->inv * glm::vec4(p, 1.0f)));
+  }
+  inline glm::vec3 normal(const glm::vec3 &p, const float &ep) {
+    const glm::vec3 pt = this->inv * glm::vec4(p, 1.0f);
+    return this->mat *
+           glm::normalize(
+               glm::vec4(this->sdf(this, glm::vec3(pt.x + ep, pt.y, pt.z)) -
+                             this->sdf(this, glm::vec3(pt.x - ep, pt.y, pt.z)),
+                         this->sdf(this, glm::vec3(pt.x, pt.y + ep, pt.z)) -
+                             this->sdf(this, glm::vec3(pt.x, pt.y - ep, pt.z)),
+                         this->sdf(this, glm::vec3(pt.x, pt.y, pt.z + ep)) -
+                             this->sdf(this, glm::vec3(pt.x, pt.y, pt.z - ep)),
+                         0.0f));
   }
 
   inline void set(const std::string &key,
@@ -63,6 +75,7 @@ public:
     inv = glm::translate(glm::inverse(rot), -trans);
   }
   std::size_t uuid;
+  std::shared_ptr<Material> material;
 
 private:
   glm::mat4 mat, inv;

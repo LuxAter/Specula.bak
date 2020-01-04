@@ -26,6 +26,8 @@ public:
     return buffer[y * buffer_width + x];
   }
 
+  void abs();
+  void norm();
   bool write(const std::string_view &file_path);
 
 private:

@@ -134,6 +134,12 @@ glm::vec3 specula::cpu::ray_march(const ray &r, unsigned depth) {
     return rand_color(obj->uuid);
   case MATERIAL_INDEX:
     return rand_color(obj->material->uuid);
+  case ALBEDO:
+    return obj->material->base_color;
+  case DEPTH:
+    return glm::vec3(t);
+  case NORMAL:
+    return obj->normal(r.o + t * r.d, settings->epsilon);
   };
   return glm::vec3(1.0f);
 }
@@ -198,10 +204,10 @@ specula::ray specula::cpu::camera_sample(const unsigned &px,
     switch (settings->get_sampler()) {
     case NONE: {
       return ray{
-          glm::vec3(2.0f * (px - settings->get_width() / 2.0f) / settings -
-                        width,
-                    2.0f * (py - settings->get_height() / 2.0f, 0.0f) /
-                        settings->height),
+          glm::vec3(
+              2.0f * (px - settings->get_width() / 2.0f) / settings->width,
+              2.0f * (py - settings->get_height() / 2.0f) / settings->height,
+              0.0f),
           glm::vec3(0.0f, 0.0f, -1.0f)};
     }
     case JITTER: {
