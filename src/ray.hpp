@@ -8,7 +8,7 @@ struct ray {
   glm::vec3 o, d;
 };
 
-ray operator*(const glm::mat4& mat, const ray& r) {
+inline ray operator*(const glm::mat4& mat, const ray& r) {
   return {mat * glm::vec4(r.o, 1.0f), mat * glm::vec4(r.d, 0.0f)};
 }
 

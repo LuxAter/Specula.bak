@@ -32,6 +32,7 @@ inline glm::vec3 hsv_rgb(const glm::vec3 &hsv) {
 }
 void seed_rand_color(const glm::vec3 &seed);
 glm::vec3 rand_color();
+glm::vec3 rand_color(const std::size_t& id);
 } // namespace specula
 
 #endif // SPECULA_COLOR_HPP_

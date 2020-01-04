@@ -4,6 +4,7 @@
 
 #include <glm/glm.hpp>
 
+#include "specula/log.hpp"
 #include "specula/rand.hpp"
 
 static glm::vec3 last_color;
@@ -17,4 +18,8 @@ glm::vec3 specula::rand_color() {
                            frand(0.3f, 1.0f), frand(0.95f, 0.951f));
   }
   return hsv_rgb(last_color);
+}
+glm::vec3 specula::rand_color(const std::size_t &id) {
+  return hsv_rgb(
+      glm::vec3(id % 360, (30 + (id % 71)) / 100.0, (40 + (id % 56)) / 100.0));
 }

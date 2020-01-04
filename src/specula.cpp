@@ -35,5 +35,8 @@ specula::Image specula::render(const Settings &settings, const Scene &scene) {
   LINFO("                 tile size: {}", settings.get_size());
   LINFO("                 image width: {}", settings.get_width());
   LINFO("                 image height: {}", settings.get_height());
+  for(auto & obj : scene.objects) {
+    obj->construct();
+  }
   return cpu::render(&settings, &scene);
 }

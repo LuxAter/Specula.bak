@@ -19,7 +19,7 @@ public:
   BUILD_PVAR(Settings, unsigned, spp, 16);
   BUILD_PVAR(Settings, unsigned, bounces, 16);
   BUILD_PVAR(Settings, float, roulette_prob, 0.05f);
-  BUILD_PVAR(Settings, unsigned, size, 64);
+  BUILD_PVAR(Settings, unsigned, size, 32);
   BUILD_PVAR(Settings, unsigned, width, 848);
   BUILD_PVAR(Settings, unsigned, height, 480);
   BUILD_PVAR(Settings, float, epsilon, 1e-3f);

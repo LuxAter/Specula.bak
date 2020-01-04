@@ -27,7 +27,10 @@ set(SOURCES
     log.cpp
     color.cpp
     rand.cpp
-    cpu_renderer.cpp)
+    cpu_renderer.cpp
+    object.cpp
+    primatives.cpp
+    )
 if(GPU_OPTIMIZE)
   # list(APPEND SOURCES gpu_render.cpp)
   list(APPEND SOURCES ${SPECULA_SOURCE_DIR}/src/kernels.hpp)

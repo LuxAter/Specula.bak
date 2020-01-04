@@ -10,6 +10,7 @@
 
 #include "specula/image.hpp"
 #include "specula/log.hpp"
+#include "specula/object.hpp"
 #include "specula/scene.hpp"
 #include "specula/settings.hpp"
 
@@ -67,19 +68,19 @@ specula::Image specula::cpu::render(const Settings *render_settings,
       double delta_t = std::chrono::duration_cast<std::chrono::milliseconds>(
                            std::chrono::high_resolution_clock::now() - start)
                            .count() /
-                       1000;
+                       1000.0f;
       total_time += delta_t;
       processed++;
 
       unsigned ehour = static_cast<unsigned>(total_time) / 3600;
       unsigned emin = (static_cast<unsigned>(total_time) % 3600) / 60;
       unsigned esec = (static_cast<unsigned>(total_time) % 60);
-      unsigned emilli = (static_cast<unsigned>(total_time) * 1000) % 1000;
+      unsigned emilli = static_cast<unsigned>(total_time * 1000) % 1000;
       double remaining = (total_time / processed) * (tiles - processed);
       unsigned rhour = static_cast<unsigned>(remaining) / 3600;
       unsigned rmin = (static_cast<unsigned>(remaining) % 3600) / 60;
       unsigned rsec = (static_cast<unsigned>(remaining) % 60);
-      unsigned rmilli = (static_cast<unsigned>(remaining) * 1000) % 1000;
+      unsigned rmilli = static_cast<unsigned>(remaining * 1000) % 1000;
 
       LINFO("Rendered Tile {:>{}} [{:>{}}/{}] ({:7.3f}%) Elapsed: "
             "{:02}:{:02}:{:02}.{:03} Remaining: {:02}:{:02}:{:02}.{:03}",
@@ -100,7 +101,6 @@ specula::Image specula::cpu::render(const Settings *render_settings,
 
 unsigned long specula::cpu::render_tile(const unsigned long &tile_id,
                                         specula::Image *img) {
-  glm::vec3 c = rand_color();
   glm::uvec2 start((tile_id % htiles) * settings->get_size(),
                    (tile_id / htiles) * settings->get_size());
   glm::uvec2 stop =
@@ -108,34 +108,59 @@ unsigned long specula::cpu::render_tile(const unsigned long &tile_id,
                glm::uvec2(settings->get_width(), settings->get_height()));
   for (unsigned px = start.x; px < stop.x; ++px) {
     for (unsigned py = start.y; py < stop.y; ++py) {
-      img->set(px, py, cpu::ray_march(cpu::camera_sample(px, py)));
+      glm::vec3 c(0.0f);
+      for (unsigned s = 0; s < settings->spp; ++s) {
+        c += cpu::ray_march(cpu::camera_sample(px, py)) /
+             static_cast<float>(settings->spp);
+      }
+      img->set(px, py, c);
     }
   }
   return tile_id;
 }
 
 glm::vec3 specula::cpu::ray_march(const ray &r, unsigned depth) {
-  if(depth >= settings->get_bounces()) {
-    if(frand() < settings->get_roulette_prob()) {
+  if (depth >= settings->get_bounces()) {
+    if (frand() < settings->get_roulette_prob()) {
       return glm::vec3(0.0f);
     }
   }
   auto [t, obj] = cpu::ray_intersect(r);
-  if(obj == nullptr) {
+  if (obj == nullptr) {
     return scene->get_sky();
   }
+  switch (settings->pass) {
+  case OBJECT_INDEX:
+    return rand_color(obj->uuid);
+  case MATERIAL_INDEX:
+    return rand_color(obj->material->uuid);
+  };
+  return glm::vec3(1.0f);
 }
 
-std::pair<float, std::shared_ptr<specula::Objct>> specual::cpu::ray_intersect(const ray& r) {
+std::pair<float, std::shared_ptr<specula::Object>>
+specula::cpu::ray_intersect(const ray &r) {
   float t = 0.0f;
   std::shared_ptr<Object> hit_obj = nullptr;
-  while(t < settings->max_dist) {
+  while (t < settings->max_dist) {
     const glm::vec3 p = r.o + (t * r.d);
     float dt = std::numeric_limits<float>::infinity();
-    for(auto& obj : scene->objects) {
+    for (auto &obj : scene->objects) {
       float obj_dt = std::fabs(obj->distance(p));
+      if (obj_dt < dt) {
+        dt = obj_dt;
+        if (obj_dt < settings->epsilon) {
+          hit_obj = obj;
+        }
+      }
+    }
+    if (dt < settings->epsilon) {
+      break;
+    } else {
+      t += dt;
     }
   }
+  return std::make_pair(t, hit_obj);
 }
 
 specula::ray specula::cpu::camera_sample(const unsigned &px,
@@ -145,22 +170,23 @@ specula::ray specula::cpu::camera_sample(const unsigned &px,
     switch (settings->get_sampler()) {
     case NONE: {
       return ray{glm::vec3(0.0f),
-                 glm::vec3(px - settings->get_width() / 2.0f,
-                           py - settings->get_height() / 2.0f, -filmz)};
+                 glm::normalize(glm::vec3(px - settings->get_width() / 2.0f,
+                                          py - settings->get_height() / 2.0f,
+                                          -filmz))};
     }
     case JITTER: {
       return ray{glm::vec3(0.0f),
-                 glm::vec3(px - settings->get_width() / 2.0f + frand(),
-                           py - settings->get_height() / 2.0f + frand(),
-                           -filmz)};
+                 glm::normalize(glm::vec3(
+                     px - settings->get_width() / 2.0f + frand(),
+                     py - settings->get_height() / 2.0f + frand(), -filmz))};
     }
     case SOBOL: {
-      LWARNING("Sobol Method has not yet been implemented. See: {}",
-               "https://en.wikipedia.org/wiki/Sobol_sequence");
+      LWARN("Sobol Method has not yet been implemented. See: {}",
+            "https://en.wikipedia.org/wiki/Sobol_sequence");
       break;
     }
     case MULTI_JITTER: {
-      LWARNING(
+      LWARN(
           "Multi Jitter Method has not yet been implemented. See: {}",
           "http://graphics.pixar.com/library/MultiJitteredSampling/paper.pdf");
       break;
@@ -171,25 +197,29 @@ specula::ray specula::cpu::camera_sample(const unsigned &px,
   case ORTHOGRAPHIC: {
     switch (settings->get_sampler()) {
     case NONE: {
-      const glm::vec2 camera_space(px - settings->get_width() / 2.0f,
-                                   py - settings->get_height() / 2.0f);
-      return ray{glm::vec3(camera_space, 0.0f),
-                 glm::vec3(camera_space, -filmz)};
+      return ray{
+          glm::vec3(2.0f * (px - settings->get_width() / 2.0f) / settings -
+                        width,
+                    2.0f * (py - settings->get_height() / 2.0f, 0.0f) /
+                        settings->height),
+          glm::vec3(0.0f, 0.0f, -1.0f)};
     }
     case JITTER: {
-      const glm::vec2 camera_space(px - settings->get_width() / 2.0f + frand(),
-                                   py - settings->get_height() / 2.0f +
-                                       frand());
-      return ray{glm::vec3(camera_space, 0.0f),
-                 glm::vec3(camera_space, -filmz)};
+      return ray{
+          glm::vec3(2.0f * (px - settings->get_width() / 2.0f + frand()) /
+                        settings->get_width(),
+                    2.0f * (py - settings->get_height() / 2.0f + frand()) /
+                        settings->get_height(),
+                    0.0f),
+          glm::vec3(0.0f, 0.0f, -1.0f)};
     }
     case SOBOL: {
-      LWARNING("Sobol Method has not yet been implemented. See: {}",
-               "https://en.wikipedia.org/wiki/Sobol_sequence");
+      LWARN("Sobol Method has not yet been implemented. See: {}",
+            "https://en.wikipedia.org/wiki/Sobol_sequence");
       break;
     }
     case MULTI_JITTER: {
-      LWARNING(
+      LWARN(
           "Multi Jitter Method has not yet been implemented. See: {}",
           "http://graphics.pixar.com/library/MultiJitteredSampling/paper.pdf");
       break;
@@ -198,4 +228,5 @@ specula::ray specula::cpu::camera_sample(const unsigned &px,
     break;
   }
   };
+  throw std::domain_error("Attempted to use unsuported render settings");
 }

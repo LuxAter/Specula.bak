@@ -8,6 +8,9 @@
 #include "scene.hpp"
 #include "settings.hpp"
 #include "version.hpp"
+#include "object.hpp"
+#include "primatives.hpp"
+#include "rand.hpp"
 
 namespace specula {
 std::array<unsigned, 3> get_version();
