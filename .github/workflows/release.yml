@@ -3,8 +3,6 @@ on:
   release:
     types: 
     - created
-    - edited
-    - prereleased
     - publish
 
 jobs: 
@@ -17,11 +15,9 @@ jobs:
           - os: ubuntu-latest
             tarball: Specula-Linux.tar.gz
             zipball: Specula-Linux.zip
-        include:
           - os: windows-latest
             tarball: Specula-Windows.tar.gz
             zipball: Specula-Windows.zip
-        include:
           - os: macos-latest
             tarball: Specula-Darwin.tar.gz
             zipball: Specula-Darwin.zip
