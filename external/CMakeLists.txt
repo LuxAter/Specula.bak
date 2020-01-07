@@ -24,8 +24,3 @@ endmacro()
 # ##############################################################################
 option(SPDLOG_BUILD_SHARED "" ${BUILD_SHARED_LIBS})
 load_submodule(spdlog)
-load_submodule(glm)
-load_submodule(glfw)
-load_submodule(imgui-cmake)
-
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/glad EXCLUDE_FROM_ALL)

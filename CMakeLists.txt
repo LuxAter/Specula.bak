@@ -2,7 +2,7 @@
 # PROJECT
 # ##############################################################################
 cmake_minimum_required(VERSION 3.11.0 FATAL_ERROR)
-project(Specula VERSION 2.0.10)
+project(Specula VERSION 2.1.0)
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
   set(MAIN_PROJECT TRUE)
@@ -15,7 +15,6 @@ option(BUILD_BINARY "Compiles binary executable" TRUE)
 option(BUILD_SHARED_LIBS "Compile shared libraries" TRUE)
 option(BUILD_STATIC_LIBS "Compile static libraries" FALSE)
 option(STATIC_ANALYSIS "Use static analysis tools" TRUE)
-option(GPU_OPTIMIZE "Enable GPU optimizations" TRUE)
 option(OPTIMIZE_DEBUG "Enable compile time optimization for debug build" TRUE)
 set(SPECULA_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR})
 set(SPECULA_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
@@ -67,14 +66,6 @@ if(STATIC_ANALYSIS OR CMAKE_BUILD_TYPE STREQUAL "Release")
 endif()
 
 # ##############################################################################
-# GPU
-# ##############################################################################
-find_package(OpenCL QUIET)
-if(GPU_OPTIMIZE AND OpenCL_FOUND)
-  message(STATUS "Using OPENCL")
-endif()
-
-# ##############################################################################
 # DEPENDENCIES
 # ##############################################################################
 add_subdirectory(external)
@@ -90,14 +81,18 @@ add_subdirectory(src)
 add_subdirectory(tools)
 
 # ##############################################################################
-# SCRIPTS
-# ##############################################################################
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/scripts
-     DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/)
-
-# ##############################################################################
 # PACKAGING
 # ##############################################################################
-set(CPACK_PROJECT_NAME ${PROJECT_NAME})
-set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
-include(CPack)
+if(CMAKE_BUILD_TYPE STREQUAL "Release")
+  set(CPACK_GENERATOR "TGZ;ZIP")
+  set(CPACK_PACKAGE_VENDOR "LuxAter")
+  set(CPACK_PACKAGE_NAME "${PROJECT_NAME}")
+  set(CPACK_PACKAGE_VERSION_MAJOR ${PROJECT_VERSION_MAJOR})
+  set(CPACK_PACKAGE_VERSION_MINOR ${PROJECT_VERSION_MINOR})
+  set(CPACK_PACKAGE_VERSION_PATCH ${PROJECT_VERSION_PATCH})
+  set(CPACK_RESOURCE_FILE_README ${CMAKE_CURRENT_SOURCE_DIR}/README.md)
+  set(CPACK_RESOURCE_FILE_LICENSE ${CMAKE_CURRENT_SOURCE_DIR}/LICENSE)
+  set(CPACK_PACKAGE_FILE_NAME "${PROJECT_NAME}-${CMAKE_SYSTEM_NAME}")
+  set(CPACK_MONOLITHIC_INSTALL TRUE)
+  include(CPack)
+endif()

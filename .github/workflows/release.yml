@@ -9,11 +9,19 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest]
+        os: [ubuntu-latest, windows-latest, macos-latest]
         include:
           - os: ubuntu-latest
             tarball: Specula-Linux.tar.gz
             zipball: Specula-Linux.zip
+        include:
+          - os: windows-latest
+            tarball: Specula-Windows.tar.gz
+            zipball: Specula-Windows.zip
+        include:
+          - os: macos-latest
+            tarball: Specula-Darwin.tar.gz
+            zipball: Specula-Darwin.zip
     steps:
       - uses: actions/checkout@v1
       - name: configue
@@ -25,12 +33,12 @@ jobs:
       - name: upload tar.gz 
         uses: JasonEtco/upload-to-release@master
         with:
-          args: Specula-Linux.tar.gz application/zip
+          args: ${{ matrix.tarball }} application/zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: upload zip
         uses: JasonEtco/upload-to-release@master
         with:
-          args: Specula-Linux.zip application/zip
+          args: ${{ matrix.zipball }} application/zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

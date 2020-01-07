@@ -1,12 +1,3 @@
 [submodule "external/spdlog"]
 	path = external/spdlog
 	url = https://github.com/gabime/spdlog
-[submodule "external/glm"]
-	path = external/glm
-	url = https://github.com/g-truc/glm
-[submodule "external/glfw"]
-	path = external/glfw
-	url = https://github.com/glfw/glfw
-[submodule "external/imgui-cmake"]
-	path = external/imgui-cmake
-	url = https://github.com/LuxAter/imgui-cmake
