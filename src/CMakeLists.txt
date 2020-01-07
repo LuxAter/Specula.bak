@@ -38,7 +38,7 @@ if(BUILD_SHARED_LIBS)
     specula_shared
     PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED YES CXX_EXTENSIONS OFF)
   target_link_libraries(specula_shared spdlog)
-  install(TARGETS specula_shared ARCHIVE DESTINATION lib)
+  install(TARGETS specula_shared LIBRARY DESTINATION lib)
 endif()
 
 # ##############################################################################
