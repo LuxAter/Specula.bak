@@ -9,6 +9,8 @@ jobs:
   docs:
     runs-on: ubuntu-latest
     steps:
+      - name: doxygen
+        run: sudo apt-get install doxygen
       - uses: actions/checkout@v1
       - name: clone Submodules
         run: git submodule update --init --recursive --depth 50
