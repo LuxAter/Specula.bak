@@ -31,7 +31,7 @@ jobs:
       - name: upload tar.gz 
         uses: svenstaro/upload-release-action@v1-release
         with:
-          reop_token: ${{ secrets.GITHUB_TOKEN }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: ${{ matrix.package }}.*
           tag: ${{ github.ref }}
           overwrite: true
