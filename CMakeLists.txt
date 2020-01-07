@@ -2,7 +2,7 @@
 # PROJECT
 # ##############################################################################
 cmake_minimum_required(VERSION 3.11.0 FATAL_ERROR)
-project(Specula VERSION 2.1.11)
+project(Specula VERSION 2.1.12)
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
   set(MAIN_PROJECT TRUE)
@@ -11,13 +11,15 @@ endif()
 # ##############################################################################
 # OPTIONS
 # ##############################################################################
-option(BUILD_BINARY "Compiles binary executable" TRUE)
+option(BUILD_TOOL "Compiles binary executable" TRUE)
+option(BUILD_DOCS "Compiles documentation" TRUE)
 if(NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
   option(BUILD_SHARED_LIBS "Compile shared libraries" TRUE)
 else()
   set(BUILD_SHARED_LIBS FALSE)
 endif()
 option(BUILD_STATIC_LIBS "Compile static libraries" TRUE)
+
 option(STATIC_ANALYSIS "Use static analysis tools" TRUE)
 option(OPTIMIZE_DEBUG "Enable compile time optimization for debug build" TRUE)
 set(SPECULA_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR})
@@ -85,7 +87,19 @@ add_subdirectory(src)
 # ##############################################################################
 # EXECUTABLE
 # ##############################################################################
-add_subdirectory(tools)
+if(BUILD_TOOL)
+  add_subdirectory(tools)
+endif()
+
+# ##############################################################################
+# DOCUMENTATION 
+# ##############################################################################
+if(BUILD_DOCS)
+  find_package(Doxygen)
+  if(Doxygen_FOUND)
+    add_subdirectory(docs)
+  endif()
+endif()
 
 # ##############################################################################
 # PACKAGING

@@ -5,7 +5,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${SPECULA_BINARY_DIR})
 # ##############################################################################
 # SOURCE FILES
 # ##############################################################################
-set(SOURCES log.cpp)
+set(SOURCES specula.cpp log.cpp)
 configure_file("${SPECULA_SOURCE_DIR}/include/specula/version.hpp.in"
                "${SPECULA_SOURCE_DIR}/include/specula/version.hpp")
 
@@ -22,6 +22,7 @@ if(BUILD_STATIC_LIBS)
     specula_static
     PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED YES CXX_EXTENSIONS OFF)
   target_link_libraries(specula_static spdlog)
+  install(TARGETS specula_static)
 endif()
 
 # ##############################################################################
@@ -37,6 +38,7 @@ if(BUILD_SHARED_LIBS)
     specula_shared
     PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED YES CXX_EXTENSIONS OFF)
   target_link_libraries(specula_shared spdlog)
+  install(TARGETS specula_shared)
 endif()
 
 # ##############################################################################
