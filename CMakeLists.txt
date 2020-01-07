@@ -2,7 +2,7 @@
 # PROJECT
 # ##############################################################################
 cmake_minimum_required(VERSION 3.11.0 FATAL_ERROR)
-project(Specula VERSION 2.2.2)
+project(Specula VERSION 2.2.3)
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
   set(MAIN_PROJECT TRUE)
@@ -77,7 +77,23 @@ endif()
 # ##############################################################################
 # DEPENDENCIES
 # ##############################################################################
+include(WriteCompilerDetectionHeader)
 add_subdirectory(external)
+write_compiler_detection_header(
+  FILE
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/specula/compiler.hpp
+  PREFIX
+  SPECULA
+  COMPILERS
+  MSVC
+  GNU
+  Clang
+  Intel
+  FEATURES
+  cxx_constexpr
+  cxx_noexcept
+  cxx_static_assert
+  cxx_attribute_deprecated)
 
 # ##############################################################################
 # LIBRARY
