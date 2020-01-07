@@ -12,7 +12,11 @@ endif()
 # OPTIONS
 # ##############################################################################
 option(BUILD_BINARY "Compiles binary executable" TRUE)
-option(BUILD_SHARED_LIBS "Compile shared libraries" TRUE)
+if(NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+  option(BUILD_SHARED_LIBS "Compile shared libraries" TRUE)
+else()
+  set(BUILD_SHARED_LIBS FALSE)
+endif()
 option(BUILD_STATIC_LIBS "Compile static libraries" FALSE)
 option(STATIC_ANALYSIS "Use static analysis tools" TRUE)
 option(OPTIMIZE_DEBUG "Enable compile time optimization for debug build" TRUE)
