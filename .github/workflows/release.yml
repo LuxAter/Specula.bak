@@ -24,7 +24,7 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: clone Submodules
-        run: git submodule update --init --recursive --depth 1
+        run: git submodule update --init --recursive --depth 50
       - name: configue
         run: cmake . -DCMAKE_BUILD_TYPE=Release
       - name: compile
