@@ -6,6 +6,22 @@ on:
     - publish
 
 jobs: 
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: clone Submodules
+        run: git submodule update --init --recursive --depth 50
+      - name: configue
+        run: cmake . -DCMAKE_BUILD_TYPE=Release
+      - name: compile
+        run: cmake --build . -- docs
+      - name: deploy
+        uses: JamesIves/github-pages-deploy-action@releases/v3
+        with:
+          ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+          BRANCH: gh-pages
+          FOLDER: docs/html
   build:
     runs-on: ${{ matrix.os }}
     strategy:
@@ -28,7 +44,7 @@ jobs:
         run: cmake --build .
       - name: package
         run: cmake --build . -- package
-      - name: upload tar.gz 
+      - name: upload 
         uses: svenstaro/upload-release-action@v1-release
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
