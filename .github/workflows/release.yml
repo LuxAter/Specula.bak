@@ -23,7 +23,8 @@ jobs:
             zipball: Specula-Darwin.zip
     steps:
       - uses: actions/checkout@v1
-      - uses: textbook/git-checkout-submodule-action@master
+      - name: clone Submodules
+        run: git submodule update --init --recursive --depth 1
       - name: configue
         run: cmake . -DCMAKE_BUILD_TYPE=Release
       - name: compile
