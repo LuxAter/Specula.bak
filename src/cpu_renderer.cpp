@@ -14,6 +14,7 @@
 #include "specula/scene.hpp"
 #include "specula/settings.hpp"
 
+#include "bsdf.hpp"
 #include "ray.hpp"
 #include "specula/rand.hpp"
 #include "thread.hpp"
@@ -119,13 +120,13 @@ unsigned long specula::cpu::render_tile(const unsigned long &tile_id,
   return tile_id;
 }
 
-glm::vec3 specula::cpu::ray_march(const ray &r, unsigned depth) {
+glm::vec3 specula::cpu::ray_march(const ray &v, unsigned depth) {
   if (depth >= settings->get_bounces()) {
     if (frand() < settings->get_roulette_prob()) {
       return glm::vec3(0.0f);
     }
   }
-  auto [t, obj] = cpu::ray_intersect(r);
+  auto [t, obj] = cpu::ray_intersect(v);
   if (obj == nullptr) {
     return scene->get_sky();
   }
@@ -139,9 +140,17 @@ glm::vec3 specula::cpu::ray_march(const ray &r, unsigned depth) {
   case DEPTH:
     return glm::vec3(t);
   case NORMAL:
-    return obj->normal(r.o + t * r.d, settings->epsilon);
+    return obj->normal(v.o + t * v.d, settings->epsilon);
+  case SHADED: {
+    const glm::vec3 p = v.o + t * v.d;
+    const glm::vec3 normal = obj->normal(p, settings->epsilon);
+    const ray l = bsdf::sample(v, obj->material, normal, settings->epsilon);
+    if (l.d == glm::vec3(0.0f))
+      return glm::vec3(0.0f);
+    return bsdf::evaluate(l.d, -v.d, normal, obj->material) *
+           cpu::ray_march(l, depth + 1) * glm::dot(l.d, normal);
+  }
   };
-  return glm::vec3(1.0f);
 }
 
 std::pair<float, std::shared_ptr<specula::Object>>
