@@ -922,7 +922,7 @@ HTML_EXTRA_STYLESHEET  = "@SPECULA_SOURCE_DIR@/docs/extra.css"
 # files. In the HTML_STYLESHEET file, use the file name only. Also note that
 # the files will be copied as-is; there are no commands or markers available.
 
-HTML_EXTRA_FILES       = "@SPECULA_SOURCE_DIR@/docs/spaces.svg"
+HTML_EXTRA_FILES       = "@SPECULA_SOURCE_DIR@/docs/arrow.png"
 
 # The HTML_COLORSTYLE_HUE tag controls the color of the HTML output.
 # Doxygen will adjust the colors in the style sheet and background images
