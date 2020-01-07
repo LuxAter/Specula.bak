@@ -23,12 +23,7 @@ jobs:
             zipball: Specula-Darwin.zip
     steps:
       - uses: actions/checkout@v1
-      - name: Checkout submodules
-        shell: bash
-        run: |
-          auth_header="$(git config --local --get http.https://github.com/.extraheader)"
-          git submodule sync --recursive
-          git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
+      - uses: textbook/git-checkout-submodule-action@master
       - name: configue
         run: cmake . -DCMAKE_BUILD_TYPE=Release
       - name: compile
