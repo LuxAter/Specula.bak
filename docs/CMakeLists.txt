@@ -1,8 +1,10 @@
 # ##############################################################################
 # SOURCE FILES
 # ##############################################################################
-set(SOURCES "docs/main.dox" "include/specula/specula.hpp"
-            "include/specula/geometry.hpp")
+set(SOURCES
+    "docs/main.dox" "include/specula/specula.hpp"
+    "include/specula/geometry.hpp" "include/specula/geometry/point.hpp"
+    "include/specula/geometry/vector.hpp")
 
 foreach(path IN LISTS SOURCES)
   set(DOXYGEN_INPUT "${DOXYGEN_INPUT} \\\n\"${SPECULA_SOURCE_DIR}/${path}\"")

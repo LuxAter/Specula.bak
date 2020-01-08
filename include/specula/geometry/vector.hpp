@@ -1,3 +1,13 @@
+/**
+ * @file vector.hpp
+ * @author Arden Rasmussen (ardenrasmussen@lclark.edu)
+ * @brief Defines vector class and vector operations
+ * @version 0.1
+ * @date 2020-01-08
+ *
+ * @copyright Copyright (c) 2020
+ *
+ */
 #ifndef SPECULA_VECTOR_HPP_
 #define SPECULA_VECTOR_HPP_
 
@@ -8,6 +18,8 @@ template <typename T> class Vector2 {
 public:
   Vector2() : x(0), y(0) {}
   Vector2(T x, T y) : x(x), y(y) { SPECULA_ASSERT(!has_nan()); }
+  explicit Vector2(const Point2<T> &p);
+  explicit Vector2(const Point3<T> &p);
 
   inline bool has_nan() const { return std::isnan(x) || std::isnan(y); }
   inline Float length_squared() const { return x * x + y * y; }
@@ -42,25 +54,30 @@ public:
     y -= v.y;
     return *this;
   }
-  Vector2<T> operator*(T s) const { return Vector2<T>(s * x, s * y); }
-  Vector2<T> *operator*=(T s) {
+  template <typename U> Vector2<T> operator*(U s) const {
+    return Vector2<T>(s * x, s * y);
+  }
+  template <typename U> Vector2<T> *operator*=(U s) {
     x *= s;
     y *= s;
     return *this;
   }
-  Vector2<T> operator/(T f) const {
+  template <typename U> Vector2<T> operator/(U f) const {
     SPECULA_ASSERT(f != 0);
-    Float inv = (Float)1 / f;
+    Float inv = Float(1) / f;
     return Vector2<T>(x * inv, y * inv);
   }
-  Vector2<T> *operator/=(T f) {
+  template <typename U> Vector2<T> *operator/=(U f) {
     SPECULA_ASSERT(f != 0);
-    Float inv = (Float)1 / f;
+    Float inv = Float(1) / f;
     x *= inv;
     y *= inv;
     return *this;
   }
   Vector2<T> operator-() const { return Vector2<T>(-x, -y); }
+
+  bool operator==(const Vector2<T> &v) const { return x = v.x && y == v.y; }
+  bool operator!=(const Vector2<T> &v) const { return x != v.x || y != v.y; }
 
   T x, y;
 };
@@ -68,6 +85,8 @@ template <typename T> class Vector3 {
 public:
   Vector3() : x(0), y(0), z(0) {}
   Vector3(T x, T y, T z) : x(x), y(y), z(z) { SPECULA_ASSERT(!has_nan()); }
+  explicit Vector3(const Point3<T> &p);
+  explicit Vector3(const Normal3<T> &n);
 
   inline bool has_nan() const {
     return std::isnan(x) || std::isnan(y) || std::isnan(z);
@@ -111,27 +130,36 @@ public:
     z -= v.z;
     return *this;
   }
-  Vector3<T> operator*(T s) const { return Vector3<T>(s * x, s * y, s * z); }
-  Vector3<T> *operator*=(T s) {
+  template <typename U> Vector3<T> operator*(U s) const {
+    return Vector3<T>(s * x, s * y, s * z);
+  }
+  template <typename U> Vector3<T> *operator*=(U s) {
     x *= s;
     y *= s;
     z *= s;
     return *this;
   }
-  Vector3<T> operator/(T f) const {
+  template <typename U> Vector3<T> operator/(U f) const {
     SPECULA_ASSERT(f != 0);
-    Float inv = (Float)1 / f;
+    Float inv = Float(1) / f;
     return Vector3<T>(x * inv, y * inv, z * inv);
   }
-  Vector3<T> *operator/=(T f) {
+  template <typename U> Vector3<T> *operator/=(U f) {
     SPECULA_ASSERT(f != 0);
-    Float inv = (Float)1 / f;
+    Float inv = Float(1) / f;
     x *= inv;
     y *= inv;
     z *= inv;
     return *this;
   }
   Vector3<T> operator-() const { return Vector3<T>(-x, -y, -z); }
+
+  bool operator==(const Vector3<T> &v) const {
+    return x == v.x && y == v.y && z == v.z;
+  }
+  bool operator!=(const Vector3<T> &v) const {
+    return x != v.x || y != v.y || z != v.z;
+  }
 
   T x, y, z;
 };
@@ -141,10 +169,12 @@ typedef Vector2<Int> Vector2i;
 typedef Vector3<Float> Vector3f;
 typedef Vector3<Int> Vector3i;
 
-template <typename T> inline Vector2<T> operator*(T s, const Vector2<T> &v) {
+template <typename T, typename U>
+inline Vector2<T> operator*(U s, const Vector2<T> &v) {
   return v * s;
 }
-template <typename T> inline Vector3<T> operator*(T s, const Vector3<T> &v) {
+template <typename T, typename U>
+inline Vector3<T> operator*(U s, const Vector3<T> &v) {
   return v * s;
 }
 
@@ -215,23 +245,23 @@ template <typename T> inline std::size_t max_dimension(const Vector3<T> &v) {
 }
 
 template <typename T>
-inline Vector2<T> min(const Vector2<T> &p1, const Vector2<T> &p2) {
-  return Vector3<T>(std::min(p1.x, p2.x), std::min(p1.y, p2.y));
+inline Vector2<T> min(const Vector2<T> &v1, const Vector2<T> &v2) {
+  return Vector3<T>(std::min(v1.x, v2.x), std::min(v1.y, v2.y));
 }
 template <typename T>
-inline Vector3<T> min(const Vector3<T> &p1, const Vector3<T> &p2) {
-  return Vector3<T>(std::min(p1.x, p2.x), std::min(p1.y, p2.y),
-                    std::min(p1.z, p2.z));
+inline Vector3<T> min(const Vector3<T> &v1, const Vector3<T> &v2) {
+  return Vector3<T>(std::min(v1.x, v2.x), std::min(v1.y, v2.y),
+                    std::min(v1.z, v2.z));
 }
 
 template <typename T>
-inline Vector2<T> max(const Vector2<T> &p1, const Vector2<T> &p2) {
-  return Vector3<T>(std::max(p1.x, p2.x), std::max(p1.y, p2.y));
+inline Vector2<T> max(const Vector2<T> &v1, const Vector2<T> &v2) {
+  return Vector3<T>(std::max(v1.x, v2.x), std::max(v1.y, v2.y));
 }
 template <typename T>
-inline Vector3<T> max(const Vector3<T> &p1, const Vector3<T> &p2) {
-  return Vector3<T>(std::max(p1.x, p2.x), std::max(p1.y, p2.y),
-                    std::max(p1.z, p2.z));
+inline Vector3<T> max(const Vector3<T> &v1, const Vector3<T> &v2) {
+  return Vector3<T>(std::max(v1.x, v2.x), std::max(v1.y, v2.y),
+                    std::max(v1.z, v2.z));
 }
 
 template <typename T>
@@ -271,6 +301,15 @@ inline void coordinate_system(const Vector3<T> &v1, Vector3<T> *v2,
   else
     *v2 = Vector3<T>(0, v1.z, -v1.y) / std::sqrt(v1.y * v1.y + v1.z * v1.z);
   *v3 = cross(v1, *v2);
+}
+
+template <typename T>
+inline std::ostream &operator<<(std::ostream &os, const Vector2<T> &v) {
+  return os << "[ " << v.x << ", " << v.y << " ]";
+}
+template <typename T>
+inline std::ostream &operator<<(std::ostream &os, const Vector3<T> &v) {
+  return os << "[ " << v.x << ", " << v.y << ", " << v.z << " ]";
 }
 
 } // namespace specula

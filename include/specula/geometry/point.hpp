@@ -1,3 +1,13 @@
+/**
+ * @file point.hpp
+ * @author Arden Rasmussen (ardenrasmussen@lclark.edu)
+ * @brief Defines point class, and point operations
+ * @version 0.1
+ * @date 2020-01-08
+ *
+ * @copyright Copyright (c) 2020
+ *
+ */
 #ifndef SPECULA_POINT_HPP_
 #define SPECULA_POINT_HPP_
 
@@ -10,10 +20,16 @@ template <typename T> class Point2 {
 public:
   Point2() : x(0), y(0) {}
   Point2(T x, T y) : x(x), y(y) { SPECULA_ASSERT(!has_nan()); }
+  explicit Point2(const Point3<T> &p);
 
   template <typename U>
   explicit Point2(const Point2<U> &p)
       : x(static_cast<T>(p.x)), y(static_cast<T>(p.y)) {
+    SPECULA_ASSERT(!has_nan());
+  }
+  template <typename U>
+  explicit Point2(const Vector2<U> &v)
+      : x(static_cast<T>(v.x)), y(static_cast<T>(v.y)) {
     SPECULA_ASSERT(!has_nan());
   }
 
@@ -23,8 +39,16 @@ public:
     return Vector2<U>(static_cast<U>(x), static_cast<U>(y));
   }
 
+  Point2<T> operator+(const Point2<T> &p) const {
+    return Point2<T>(x + p.x, y + p.y);
+  }
   Point2<T> operator+(const Vector2<T> &v) const {
     return Point2<T>(x + v.x, y + v.y);
+  }
+  Point2<T> &operator+=(const Point2<T> &p) {
+    x += p.x;
+    y += p.y;
+    return *this;
   }
   Point2<T> &operator+=(const Vector2<T> &v) {
     x += v.x;
@@ -42,6 +66,30 @@ public:
     y -= v.y;
     return *this;
   }
+  template <typename U> Point2<T> operator*(U s) const {
+    return Point2<T>(s * x, s * y);
+  }
+  template <typename U> Point2<T> &operator*=(U s) {
+    x *= s;
+    y *= s;
+    return *this;
+  }
+  template <typename U> Point2<T> operator/(U f) const {
+    SPECULA_ASSERT(f != 0);
+    Float inv = Float(1) / f;
+    return Point2<T>(inv * x, inv * y);
+  }
+  template <typename U> Point2<T> &operator/=(U f) {
+    SPECULA_ASSERT(f != 0);
+    Float inv = Float(1) / f;
+    x *= inv;
+    y *= inv;
+    return *this;
+  }
+  Point2<T> operator-() const { return Point2<T>(-x, -y); }
+
+  bool operator==(const Point2<T> &p) const { return x == p.x && y == p.y; }
+  bool operator!=(const Point2<T> &p) const { return x != p.x || y != p.y; }
 
   T x, y;
 };
@@ -52,6 +100,11 @@ public:
   template <typename U>
   explicit Point3(const Point3<U> &p)
       : x(static_cast<T>(p.x)), y(static_cast<T>(p.y)), z(static_cast<T>(p.z)) {
+    SPECULA_ASSERT(!has_nan());
+  }
+  template <typename U>
+  explicit Point3(const Vector3<U> &v)
+      : x(static_cast<T>(v.x)), y(static_cast<T>(v.y)), z(static_cast<T>(v.z)) {
     SPECULA_ASSERT(!has_nan());
   }
 
@@ -66,8 +119,17 @@ public:
     return Point2<U>(static_cast<U>(x), static_cast<U>(y));
   }
 
+  Point3<T> operator+(const Point3<T> &p) const {
+    return Point3<T>(x + p.x, y + p.y, z + p.z);
+  }
   Point3<T> operator+(const Vector3<T> &v) const {
     return Point3<T>(x + v.x, y + v.y, z + v.z);
+  }
+  Point3<T> &operator+=(const Point3<T> &p) {
+    x += p.x;
+    y += p.y;
+    z += p.z;
+    return *this;
   }
   Point3<T> &operator+=(const Vector3<T> &v) {
     x += v.x;
@@ -87,6 +149,36 @@ public:
     y -= v.y;
     z -= v.z;
     return *this;
+  }
+  template <typename U> Point3<T> operator*(U s) const {
+    return Point3<T>(s * x, s * y, s * z);
+  }
+  template <typename U> Point3<T> &operator*=(U s) {
+    x *= s;
+    y *= s;
+    z *= s;
+    return *this;
+  }
+  template <typename U> Point3<T> operator/(U f) const {
+    SPECULA_ASSERT(f != 0);
+    Float inv = Float(1) / f;
+    return Point3<T>(inv * x, inv * y, inv * z);
+  }
+  template <typename U> Point3<T> &operator/=(U f) {
+    SPECULA_ASSERT(f != 0);
+    Float inv = Float(1) / f;
+    x *= inv;
+    y *= inv;
+    z *= inv;
+    return *this;
+  }
+  Point3<T> operator-() const { return Point3<T>(-x, -y, -z); }
+
+  bool operator==(const Point3<T> &p) const {
+    return x == p.x && y == p.y && z == p.z;
+  }
+  bool operator!=(const Point3<T> &p) const {
+    return x != p.x || y != p.y || z != p.z;
   }
 
   T x, y, z;
@@ -167,6 +259,15 @@ template <typename T>
 Point3<T> permute(const Point3<T> &p, std::size_t x, std::size_t y,
                   std::size_t z) {
   return Point3<T>(p[x], p[y], p[z]);
+}
+
+template <typename T>
+inline std::ostream &operator<<(std::ostream &os, const Point2<T> &p) {
+  return os << "[ " << p.x << ", " << p.y << " ]";
+}
+template <typename T>
+inline std::ostream &operator<<(std::ostream &os, const Point3<T> &p) {
+  return os << "[ " << p.x << ", " << p.y << ", " << p.z << " ]";
 }
 
 } // namespace specula
