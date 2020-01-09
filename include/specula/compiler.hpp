@@ -336,6 +336,46 @@
 #      define SPECULA_COMPILER_CXX_ATTRIBUTE_DEPRECATED 0
 #    endif
 
+#  elif SPECULA_COMPILER_IS_AppleClang
+
+#    if !(((__clang_major__ * 100) + __clang_minor__) >= 400)
+#      error Unsupported compiler version
+#    endif
+
+# define SPECULA_COMPILER_VERSION_MAJOR (__clang_major__)
+# define SPECULA_COMPILER_VERSION_MINOR (__clang_minor__)
+# define SPECULA_COMPILER_VERSION_PATCH (__clang_patchlevel__)
+# if defined(_MSC_VER)
+   /* _MSC_VER = VVRR */
+#  define SPECULA_SIMULATE_VERSION_MAJOR (_MSC_VER / 100)
+#  define SPECULA_SIMULATE_VERSION_MINOR (_MSC_VER % 100)
+# endif
+# define SPECULA_COMPILER_VERSION_TWEAK (__apple_build_version__)
+
+#    if ((__clang_major__ * 100) + __clang_minor__) >= 400 && __has_feature(cxx_constexpr)
+#      define SPECULA_COMPILER_CXX_CONSTEXPR 1
+#    else
+#      define SPECULA_COMPILER_CXX_CONSTEXPR 0
+#    endif
+
+#    if ((__clang_major__ * 100) + __clang_minor__) >= 400 && __has_feature(cxx_noexcept)
+#      define SPECULA_COMPILER_CXX_NOEXCEPT 1
+#    else
+#      define SPECULA_COMPILER_CXX_NOEXCEPT 0
+#    endif
+
+#    if ((__clang_major__ * 100) + __clang_minor__) >= 400 && __has_feature(cxx_static_assert)
+#      define SPECULA_COMPILER_CXX_STATIC_ASSERT 1
+#    else
+#      define SPECULA_COMPILER_CXX_STATIC_ASSERT 0
+#    endif
+
+#    if ((__clang_major__ * 100) + __clang_minor__) >= 501 && __cplusplus > 201103L
+#      define SPECULA_COMPILER_CXX_ATTRIBUTE_DEPRECATED 1
+#    else
+#      define SPECULA_COMPILER_CXX_ATTRIBUTE_DEPRECATED 0
+#    endif
+
 #  else
 #    error Unsupported compiler
 #  endif
