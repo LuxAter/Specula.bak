@@ -8,12 +8,24 @@
 #include "../preprocessor.hpp"
 
 namespace specula {
+template <typename T> struct Point3;
+template <typename T> struct Normal3;
+
 template <typename T> struct Vector3 {
   typedef T value_type;
   typedef std::size_t size_type;
 
   Vector3() : x(), y(), z() {}
-  template <typename U> Vector3(U x, U y, U z) : x(x), y(y), z(z) {}
+  template <typename U>
+  Vector3(const Vector3<U> &v)
+      : x(static_cast<T>(v.x)), y(static_cast<T>(v.y)), z(static_cast<T>(v.z)) {
+  }
+  template <typename U>
+  Vector3(U x, U y, U z)
+      : x(static_cast<T>(x)), y(static_cast<T>(y)), z(static_cast<T>(z)) {}
+
+  explicit Vector3(const Point3<T> &p);
+  explicit Vector3(const Normal3<T> &n);
 
   static SPECULA_CONSTEXPR size_type size() { return 3; }
 

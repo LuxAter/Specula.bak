@@ -5,9 +5,12 @@
 #include "vector3.hpp"
 
 namespace specula {
-template <typename T>
-inline Vector2<T> dot(const Vector2<T> &v1, const Vector2<T> &v2) {
+template <typename T> inline T dot(const Vector2<T> &v1, const Vector2<T> &v2) {
   return v1.x * v2.x + v1.y * v2.y;
+}
+template <typename T>
+inline T abs_dot(const Vector2<T> &v1, const Vector2<T> &v2) {
+  return std::abs(v1.x * v2.x + v1.y * v2.y);
 }
 template <typename T> inline Vector2<T> normalize(const Vector2<T> &v) {
   return v / v.length();
@@ -18,12 +21,29 @@ Vector2<T> permute(const Vector2<T> &v, typename Vector2<T>::size_type x,
   return Vector2<T>(v[x], v[y]);
 }
 
-template <typename T>
-inline Vector3<T> dot(const Vector3<T> &v1, const Vector3<T> &v2) {
+template <typename T> inline T dot(const Vector3<T> &v1, const Vector3<T> &v2) {
   return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
 }
 template <typename T>
+inline T abs_dot(const Vector3<T> &v1, const Vector3<T> &v2) {
+  return std::abs(v1.x * v2.x + v1.y * v2.y + v1.z * v2.z);
+}
+template <typename T>
 inline Vector3<T> cross(const Vector3<T> &v1, const Vector3<T> &v2) {
+  double v1x = v1.x, v1y = v1.y, v1z = v1.z;
+  double v2x = v2.x, v2y = v2.y, v2z = v2.z;
+  return Vector3<T>((v1y * v2z) - (v1z * v2y), (v1z * v2x) - (v1x * v2z),
+                    (v1x * v2y) - (v1y * v2x));
+}
+template <typename T>
+inline Vector3<T> cross(const Vector3<T> &v1, const Normal3<T> &v2) {
+  double v1x = v1.x, v1y = v1.y, v1z = v1.z;
+  double v2x = v2.x, v2y = v2.y, v2z = v2.z;
+  return Vector3<T>((v1y * v2z) - (v1z * v2y), (v1z * v2x) - (v1x * v2z),
+                    (v1x * v2y) - (v1y * v2x));
+}
+template <typename T>
+inline Vector3<T> cross(const Normal3<T> &v1, const Vector3<T> &v2) {
   double v1x = v1.x, v1y = v1.y, v1z = v1.z;
   double v2x = v2.x, v2y = v2.y, v2z = v2.z;
   return Vector3<T>((v1y * v2z) - (v1z * v2y), (v1z * v2x) - (v1x * v2z),
@@ -65,6 +85,81 @@ Vector3<T> permute(const Vector3<T> &v, typename Vector3<T>::size_type x,
                    typename Vector3<T>::size_type y,
                    typename Vector3<T>::size_type z) {
   return Vector3<T>(v[x], v[y], v[z]);
+}
+
+template <typename T> T distance(const Point2<T> &p1, const Point2<T> &p2) {
+  return (p1 - p2).length();
+}
+template <typename T>
+T distance_squared(const Point2<T> &p1, const Point2<T> &p2) {
+  return (p1 - p2).length_squared();
+}
+template <typename T>
+Point2<T> permute(const Point2<T> &v, typename Point2<T>::size_type x,
+                  typename Point2<T>::size_type y) {
+  return Point2<T>(v[x], v[y]);
+}
+
+template <typename T> T distance(const Point3<T> &p1, const Point3<T> &p2) {
+  return (p1 - p2).length();
+}
+template <typename T>
+T distance_squared(const Point3<T> &p1, const Point3<T> &p2) {
+  return (p1 - p2).length_squared();
+}
+template <typename T>
+Point3<T> permute(const Point3<T> &v, typename Point3<T>::size_type x,
+                  typename Point3<T>::size_type y,
+                  typename Point3<T>::size_type z) {
+  return Point3<T>(v[x], v[y], v[z]);
+}
+
+template <typename T> inline T dot(const Normal3<T> &v1, const Normal3<T> &v2) {
+  return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
+}
+template <typename T>
+inline T abs_dot(const Normal3<T> &v1, const Normal3<T> &v2) {
+  return std::abs(v1.x * v2.x + v1.y * v2.y + v1.z * v2.z);
+}
+template <typename T> inline T dot(const Vector3<T> &v, const Normal3<T> &n) {
+  return v.x * n.x + v.y * n.y + v.z * n.z;
+}
+template <typename T>
+inline T abs_dot(const Vector3<T> &v, const Normal3<T> &n) {
+  return std::abs(v.x * n.x + v.y * n.y + v.z * n.z);
+}
+template <typename T> inline T dot(const Normal3<T> &n, const Vector3<T> &v) {
+  return v.x * n.x + v.y * n.y + v.z * n.z;
+}
+template <typename T>
+inline T abs_dot(const Normal3<T> &n, const Vector3<T> &v) {
+  return std::abs(v.x * n.x + v.y * n.y + v.z * n.z);
+}
+template <typename T> inline Normal3<T> normalize(const Normal3<T> &v) {
+  return v / v.length();
+}
+template <typename T>
+Normal3<T> permute(const Normal3<T> &v, typename Normal3<T>::size_type x,
+                   typename Normal3<T>::size_type y,
+                   typename Normal3<T>::size_type z) {
+  return Normal3<T>(v[x], v[y], v[z]);
+}
+
+template <typename T>
+inline Normal3<T> faceforward(const Normal3<T> &n, const Normal3<T> &v) {
+  return (dot(v, n) < 0.0f) ? -n : n;
+}
+template <typename T>
+inline Normal3<T> faceforward(const Normal3<T> &n, const Vector3<T> &v) {
+  return (dot(v, n) < 0.0f) ? -n : n;
+}
+template <typename T>
+inline Vector3<T> faceforward(const Vector3<T> &n, const Normal3<T> &v) {
+  return (dot(v, n) < 0.0f) ? -n : n;
+}
+template <typename T>
+inline Vector3<T> faceforward(const Vector3<T> &n, const Vector3<T> &v) {
+  return (dot(v, n) < 0.0f) ? -n : n;
 }
 } // namespace specula
 

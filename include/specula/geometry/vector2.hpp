@@ -4,16 +4,25 @@
 #include <cmath>
 #include <cstdlib>
 
-#include "../preprocessor.hpp"
 #include "../compiler.hpp"
+#include "../preprocessor.hpp"
 
 namespace specula {
+template <typename T> struct Point2;
+template <typename T> struct Point3;
+
 template <typename T> struct Vector2 {
   typedef T value_type;
   typedef std::size_t size_type;
 
   Vector2() : x(), y() {}
-  template <typename U> Vector2(U x, U y) : x(x), y(y) {}
+  template <typename U>
+  Vector2(const Vector2<U> &v)
+      : x(static_cast<T>(v.x)), y(static_cast<T>(v.y)) {}
+  template <typename U>
+  Vector2(U x, U y) : x(static_cast<T>(x)), y(static_cast<T>(y)) {}
+  explicit Vector2(const Point2<T> &p);
+  explicit Vector2(const Point3<T> &p);
 
   static SPECULA_CONSTEXPR size_type size() { return 2; }
 
