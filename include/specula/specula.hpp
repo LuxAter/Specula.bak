@@ -13,12 +13,6 @@
 
 namespace specula {
 
-#ifdef SPECULA_DOUBLE_PERCISION
-typedef double Float;
-#else
-typedef float Float;
-#endif
-typedef int Int;
 /**
  * @brief Get the current version of Specula
  *

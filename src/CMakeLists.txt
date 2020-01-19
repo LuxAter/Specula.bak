@@ -13,6 +13,8 @@ set(SOURCES
     geometry/point3.cpp
     geometry/common.cpp
     geometry/geometric.cpp
+    geometry/ray.cpp
+    geometry/ray_differential.cpp
     log.cpp)
 configure_file("${SPECULA_SOURCE_DIR}/include/specula/version.hpp.in"
                "${SPECULA_SOURCE_DIR}/include/specula/version.hpp")

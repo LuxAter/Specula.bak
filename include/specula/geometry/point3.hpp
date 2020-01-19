@@ -133,6 +133,9 @@ template <typename T> struct Point3 {
   T x, y, z;
 };
 
+typedef Point3<Float> Point3f;
+typedef Point3<Int> Point3i;
+
 template <typename T>
 Vector2<T>::Vector2(const Point3<T> &p) : x(p.x), y(p.y) {}
 template <typename T>

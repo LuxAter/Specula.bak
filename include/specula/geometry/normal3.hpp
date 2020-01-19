@@ -7,6 +7,8 @@
 #include "../compiler.hpp"
 #include "../preprocessor.hpp"
 
+#include "vector3.hpp"
+
 namespace specula {
 template <typename T> struct Normal3 {
   typedef T value_type;
@@ -110,6 +112,9 @@ template <typename T> struct Normal3 {
 
   T x, y, z;
 };
+
+typedef Normal3<Float> Normal3f;
+typedef Normal3<Int> Normal3i;
 
 template <typename T>
 Vector3<T>::Vector3(const Normal3<T> &n) : x(n.x), y(n.y), z(n.z) {}

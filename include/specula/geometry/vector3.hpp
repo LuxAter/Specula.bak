@@ -113,6 +113,9 @@ template <typename T> struct Vector3 {
   T x, y, z;
 };
 
+typedef Vector3<Float> Vector3f;
+typedef Vector3<Int> Vector3i;
+
 template <typename T>
 SPECULA_CONSTEXPR Vector3<T> operator-(const Vector3<T> &v) {
   return Vector3<T>(-v.x, -v.y, -v.z);
