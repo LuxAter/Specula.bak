@@ -1,6 +1,11 @@
 #ifndef SPECULA_MATH_COMMON_HPP_
 #define SPECULA_MATH_COMMON_HPP_
 
+#include <cmath>
+
+#include "normal3.hpp"
+#include "point2.hpp"
+#include "point3.hpp"
 #include "vector2.hpp"
 #include "vector3.hpp"
 
