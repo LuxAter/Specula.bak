@@ -1,3 +1,12 @@
+/**
+ * @file ray.hpp
+ * @brief Ray class declaration
+ * @version 0.1
+ * @date 2020-01-20
+ *
+ * @copyright Copyright (c) 2020
+ *
+ */
 #ifndef SPECULA_GEOMETRY_RAY_HPP_
 #define SPECULA_GEOMETRY_RAY_HPP_
 
@@ -11,6 +20,13 @@
 
 namespace specula {
 
+/**
+ * @addtogroup Geometry
+ * @{
+ */
+/**
+ * @brief Ray class
+ */
 class Ray {
 public:
   Ray()
@@ -29,8 +45,12 @@ public:
   Float time;
 
   // TODO Change to const Medium* once Medium has been implemented
+  /**
+   * @todo Replace with the actual Medium class when it is implemented.
+   */
   const void *medium;
 };
+/**@}*/
 } // namespace specula
 
 #endif // SPECULA_GEOMETRY_RAY_HPP_

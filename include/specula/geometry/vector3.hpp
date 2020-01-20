@@ -1,3 +1,11 @@
+/**
+ * @file vector3.hpp
+ * @brief Vector 3 definitions and operations
+ * @version 0.1
+ * @date 2020-01-20
+ *
+ * @copyright Copyright (c) 2020
+ */
 #ifndef SPECULA_MATH_VECTOR3_HPP_
 #define SPECULA_MATH_VECTOR3_HPP_
 
@@ -11,6 +19,12 @@ namespace specula {
 template <typename T> struct Point3;
 template <typename T> struct Normal3;
 
+/**
+ * @brief Vector3 class
+ *
+ * @tparam T value type of elements
+ * @ingroup Geometry
+ */
 template <typename T> struct Vector3 {
   typedef T value_type;
   typedef std::size_t size_type;

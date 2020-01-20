@@ -1,3 +1,12 @@
+/**
+ * @file ray_differential.hpp
+ * @brief RayDifferential class declaration
+ * @version 0.1
+ * @date 2020-01-20
+ *
+ * @copyright Copyright (c) 2020
+ *
+ */
 #ifndef SPECULA_RAY_DIFFERENTIAL_HPP_
 #define SPECULA_RAY_DIFFERENTIAL_HPP_
 

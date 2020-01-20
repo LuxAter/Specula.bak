@@ -3,6 +3,8 @@
 
 #include "log.hpp"
 
+#include "compiler.hpp"
+
 #ifdef __DEBUG__
 #define SPECULA_ASSERT(expr)                                                   \
   ((expr) ? (void)0 : LCRITICAL("Assertion \"{}\" failed", #expr))

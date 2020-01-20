@@ -1,5 +1,6 @@
 ### Custom
 build/
+.clangd/
 
 ### C++
 # Prerequisites

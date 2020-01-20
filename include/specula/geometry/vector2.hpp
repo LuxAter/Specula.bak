@@ -1,3 +1,12 @@
+/**
+ * @file vector2.hpp
+ * @brief Vector 2 definitions and operations
+ * @version 0.1
+ * @date 2020-01-20
+ *
+ * @copyright Copyright (c) 2020
+ *
+ */
 #ifndef SPECULA_MATH_VECTOR2_HPP_
 #define SPECULA_MATH_VECTOR2_HPP_
 
@@ -11,6 +20,12 @@ namespace specula {
 template <typename T> struct Point2;
 template <typename T> struct Point3;
 
+/**
+ * @brief Vector2 class
+ *
+ * @tparam T value type of elements
+ * @ingroup Geometry
+ */
 template <typename T> struct Vector2 {
   typedef T value_type;
   typedef std::size_t size_type;
