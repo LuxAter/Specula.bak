@@ -1,3 +1,12 @@
+/**
+ * @file bounds2.hpp
+ * @brief Bounds2 definitions and operations
+ * @version 0.1
+ * @date 2020-01-20
+ *
+ * @copyright Copyright (c) 2020
+ *
+ */
 #ifndef SPECULA_BOUNDS2_HPP_
 #define SPECULA_BOUNDS2_HPP_
 
@@ -12,6 +21,12 @@
 #include "geometric.hpp"
 
 namespace specula {
+/**
+ * @brief Bounds2 class
+ *
+ * @tparam T value type of elements
+ * @ingroup Geometry
+ */
 template <typename T> class Bounds2 {
 public:
   class Iterator : public std::forward_iterator_tag {

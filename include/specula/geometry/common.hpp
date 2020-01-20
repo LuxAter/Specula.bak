@@ -1,3 +1,12 @@
+/**
+ * @file common.hpp
+ * @brief Common mathematical operations and functions
+ * @version 0.1
+ * @date 2020-01-20
+ *
+ * @copyright Copyright (c) 2020
+ *
+ */
 #ifndef SPECULA_MATH_COMMON_HPP_
 #define SPECULA_MATH_COMMON_HPP_
 
@@ -10,6 +19,17 @@
 #include "vector3.hpp"
 
 namespace specula {
+/**
+ * @defgroup Common
+ * @brief Common mathematical operations and functions
+ *
+ * This collection contains a set of common functions that use the geometric
+ * classes defined.
+ *
+ * @see Vector2, Vector3, Point2, Point3, Normal3
+ * @ingroup Geometry
+ * @{
+ */
 template <typename T> inline SPECULA_CONSTEXPR T abs(const T &v) {
   return std::abs(v);
 }
@@ -339,6 +359,8 @@ template <typename T>
 inline typename Normal3<T>::size_type max_dimension(const Normal3<T> &v) {
   return (v.x > v.y) ? ((v.x > v.z) ? 0 : 2) : ((v.y > v.z) ? 1 : 2);
 }
+
+/**@}*/
 
 } // namespace specula
 

@@ -1,3 +1,12 @@
+/**
+ * @file bounds.hpp
+ * @brief Operations and functions involving `Boundsn`
+ * @version 0.1
+ * @date 2020-01-20
+ *
+ * @copyright Copyright (c) 2020
+ *
+ */
 #ifndef SPECULA_BOUNDS_HPP_
 #define SPECULA_BOUNDS_HPP_
 
@@ -11,14 +20,25 @@
 #include "vector3.hpp"
 
 namespace specula {
+/**
+ * @defgroup Bounds 
+ * @brief Common bounding box operations and functions
+ *
+ * This collection contains a set of common functions that use the bounding box 
+ * classes defined.
+ *
+ * @see Bounds2, Bounds3
+ * @ingroup Geometry
+ * @{
+ */
 template <typename T>
-Bounds2<T> union(const Bounds3<T> &b, const Point3<T> &p) {
+Bounds2<T> Union(const Bounds3<T> &b, const Point3<T> &p) {
   return Bounds2<T>(
       Point2<T>(std::min(b.p_min.x, p.x), std::min(b.p_min.y, p.y)),
       Point2<T>(std::max(b.p_max.x, p.x), std::max(b.p_max.y, p.y)));
 }
 template <typename T>
-Bounds2<T> union(const Bounds2<T> &b1, const Bounds2<T> &b2) {
+Bounds2<T> Union(const Bounds2<T> &b1, const Bounds2<T> &b2) {
   return Bounds2<T>(Point2<T>(std::min(b1.p_min.x, b2.p_min.x),
                               std::min(b1.p_min.y, b2.p_min.y)),
                     Point2<T>(std::max(b1.p_max.x, b2.p_max.x),

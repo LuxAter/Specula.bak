@@ -1,3 +1,12 @@
+/**
+ * @file point2.hpp
+ * @brief Point2 definitions and operations
+ * @version 0.1
+ * @date 2020-01-20
+ *
+ * @copyright Copyright (c) 2020
+ *
+ */
 #ifndef SPECULA_MATH_POINT2_HPP_
 #define SPECULA_MATH_POINT2_HPP_
 
