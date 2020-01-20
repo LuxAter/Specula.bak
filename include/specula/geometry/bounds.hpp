@@ -12,6 +12,47 @@
 
 namespace specula {
 template <typename T>
+Bounds2<T> union(const Bounds3<T> &b, const Point3<T> &p) {
+  return Bounds2<T>(
+      Point2<T>(std::min(b.p_min.x, p.x), std::min(b.p_min.y, p.y)),
+      Point2<T>(std::max(b.p_max.x, p.x), std::max(b.p_max.y, p.y)));
+}
+template <typename T>
+Bounds2<T> union(const Bounds2<T> &b1, const Bounds2<T> &b2) {
+  return Bounds2<T>(Point2<T>(std::min(b1.p_min.x, b2.p_min.x),
+                              std::min(b1.p_min.y, b2.p_min.y)),
+                    Point2<T>(std::max(b1.p_max.x, b2.p_max.x),
+                              std::max(b1.p_max.y, b2.p_max.y)));
+}
+template <typename T>
+Bounds2<T> intersect(const Bounds2<T> &b1, const Bounds2<T> &b2) {
+  return Bounds2<T>(Point2<T>(std::max(b1.p_min.x, b2.p_min.x),
+                              std::max(b1.p_min.y, b2.p_min.y)),
+                    Point2<T>(std::min(b1.p_max.x, b2.p_max.x),
+                              std::min(b1.p_max.y, b2.p_max.y)));
+}
+template <typename T>
+bool overlaps(const Bounds2<T> &b1, const Bounds2<T> &b2) {
+  bool x = (b1.p_max.x >= b2.p_min.x) && (b1.p_min.x <= b2.p_max.x);
+  bool y = (b1.p_max.y >= b2.p_min.y) && (b1.p_min.y <= b2.p_max.y);
+  return (x && y);
+}
+template <typename T> bool inside(const Point2<T> &p, const Bounds2<T> &b) {
+  return (p.x >= b.p_min.x && p.x <= b.p_max.x && p.y >= b.p_min.y &&
+          p.y <= b.p_max.y);
+}
+template <typename T>
+bool inside_exclusive(const Point2<T> &p, const Bounds2<T> &b) {
+  return (p.x >= b.p_min.x && p.x < b.p_max.x && p.y >= b.p_min.y &&
+          p.y < b.p_max.y);
+}
+template <typename T, typename U>
+inline Bounds2<T> expand(const Bounds2<T> &b, const U &delta) {
+  return Bounds2<T>(b.p_min - Vector2<T>(delta, delta),
+                    b.p_max + Vector2<T>(delta, delta));
+}
+
+template <typename T>
 Bounds3<T> union(const Bounds3<T> &b, const Point3<T> &p) {
   return Bounds3<T>(
       Point3<T>(std::min(b.p_min.x, p.x), std::min(b.p_min.y, p.y),
