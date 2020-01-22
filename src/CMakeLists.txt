@@ -8,7 +8,11 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${SPECULA_BINARY_DIR})
 set(SOURCES
     specula.cpp
     log.cpp
+    math/matrix/matrix2x2.cpp
+    math/matrix/matrix3x3.cpp
     math/matrix/matrix4x4.cpp
+    math/matrix/matrixnxm.cpp
+    math/matrix/matrixnxn.cpp
     math/vector/vector2.cpp
     math/vector/vector3.cpp
     math/vector/vector4.cpp

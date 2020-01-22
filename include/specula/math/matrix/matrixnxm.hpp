@@ -1,5 +1,5 @@
-#ifndef SPECULA_MATRIXNXN_HPP_
-#define SPECULA_MATRIXNXN_HPP_
+#ifndef SPECULA_MATRIXNXM_HPP_
+#define SPECULA_MATRIXNXM_HPP_
 
 #include <memory>
 #include <stdexcept>
@@ -8,8 +8,12 @@
 #include "../../fmt.hpp"
 #include "../../types.hpp"
 
+#include "../../log.hpp"
+
+#include <iostream>
+
 namespace specula {
-template <typename T, std::size_t N> class MatrixNxN {
+template <typename T, std::size_t N, std::size_t M> class MatrixNxM {
 public:
   typedef T value_type;
   typedef T &reference;
@@ -27,9 +31,9 @@ public:
     typedef std::random_access_iterator_tag iterator_category;
 
     iterator() SPECULA_NOEXCEPT : r(0), c(0), base(nullptr) {}
-    iterator(const typename MatrixNxN::size_type &r,
-             const typename MatrixNxN::size_type &c,
-             MatrixNxN *base) SPECULA_NOEXCEPT : r(r),
+    iterator(const typename MatrixNxM::size_type &r,
+             const typename MatrixNxM::size_type &c,
+             MatrixNxM *base) SPECULA_NOEXCEPT : r(r),
                                                  c(c),
                                                  base(base) {}
     iterator(const iterator &it) SPECULA_NOEXCEPT : r(it.r),
@@ -87,8 +91,8 @@ public:
 
     reference operator*() const { return base[r][c]; }
     pointer operator->() const { return *(base[r][c]); }
-    typename MatrixNxN::size_type r, c;
-    MatrixNxN *base;
+    typename MatrixNxM::size_type r, c;
+    MatrixNxM *base;
   };
   class const_iterator {
     typedef T value_type;
@@ -98,9 +102,9 @@ public:
     typedef std::random_access_iterator_tag iterator_category;
 
     const_iterator() SPECULA_NOEXCEPT : r(0), c(0), base(nullptr) {}
-    const_iterator(const typename MatrixNxN::size_type &r,
-                   const typename MatrixNxN::size_type &c,
-                   const MatrixNxN *base) SPECULA_NOEXCEPT : r(r),
+    const_iterator(const typename MatrixNxM::size_type &r,
+                   const typename MatrixNxM::size_type &c,
+                   const MatrixNxM *base) SPECULA_NOEXCEPT : r(r),
                                                              c(c),
                                                              base(base) {}
     const_iterator(const const_iterator &it) SPECULA_NOEXCEPT : r(it.r),
@@ -126,7 +130,7 @@ public:
     }
     const_iterator &operator++() SPECULA_NOEXCEPT {
       ++c;
-      if (c == N) {
+      if (c == M) {
         c = 0;
         ++r;
       }
@@ -135,7 +139,7 @@ public:
     const_iterator operator++(int) SPECULA_NOEXCEPT {
       const_iterator old = *this;
       ++c;
-      if (c == N) {
+      if (c == M) {
         c = 0;
         ++r;
       }
@@ -144,7 +148,7 @@ public:
     const_iterator &operator--() SPECULA_NOEXCEPT {
       if (c == 0) {
         --r;
-        c = N;
+        c = M;
       }
       --c;
       return *this;
@@ -153,7 +157,7 @@ public:
       const_iterator old = *this;
       if (c == 0) {
         --r;
-        c = N;
+        c = M;
       }
       --c;
       return old;
@@ -161,8 +165,8 @@ public:
 
     reference operator*() const { return base[r][c]; }
     pointer operator->() const { return *(base[r][c]); }
-    typename MatrixNxN::size_type r, c;
-    const MatrixNxN *base;
+    typename MatrixNxM::size_type r, c;
+    const MatrixNxM *base;
   };
 
   class row_iterator {
@@ -173,8 +177,8 @@ public:
     typedef std::random_access_iterator_tag iterator_category;
 
     row_iterator() SPECULA_NOEXCEPT : r(0), base(nullptr) {}
-    row_iterator(const typename MatrixNxN::size_type &r,
-                 MatrixNxN *base) SPECULA_NOEXCEPT : r(r),
+    row_iterator(const typename MatrixNxM::size_type &r,
+                 MatrixNxM *base) SPECULA_NOEXCEPT : r(r),
                                                      base(base) {}
     row_iterator(const iterator &it) SPECULA_NOEXCEPT : r(it.r),
                                                         base(it.base) {}
@@ -213,8 +217,8 @@ public:
 
     reference operator*() const { return base[r]; }
     pointer operator->() const { return *(base[r]); }
-    typename MatrixNxN::size_type r;
-    MatrixNxN *base;
+    typename MatrixNxM::size_type r;
+    MatrixNxM *base;
   };
   class const_row_iterator {
     typedef T value_type;
@@ -224,8 +228,8 @@ public:
     typedef std::random_access_iterator_tag iterator_category;
 
     const_row_iterator() SPECULA_NOEXCEPT : r(0), base(nullptr) {}
-    const_row_iterator(const typename MatrixNxN::size_type &r,
-                       const MatrixNxN *base) SPECULA_NOEXCEPT : r(r),
+    const_row_iterator(const typename MatrixNxM::size_type &r,
+                       const MatrixNxM *base) SPECULA_NOEXCEPT : r(r),
                                                                  base(base) {}
     const_row_iterator(const const_row_iterator &it) SPECULA_NOEXCEPT
         : r(it.r),
@@ -269,8 +273,8 @@ public:
 
     reference operator*() const { return base[r]; }
     pointer operator->() const { return *(base[r]); }
-    typename MatrixNxN::size_type r;
-    const MatrixNxN *base;
+    typename MatrixNxM::size_type r;
+    const MatrixNxM *base;
   };
 
   typedef std::reverse_iterator<iterator> reverse_iterator;
@@ -278,35 +282,35 @@ public:
   typedef std::reverse_iterator<row_iterator> reverse_row_iterator;
   typedef std::reverse_iterator<const_row_iterator> const_reverse_row_iterator;
 
-  MatrixNxN() SPECULA_NOEXCEPT {
+  MatrixNxM() SPECULA_NOEXCEPT {
     std::fill(&data[0][0], &data[0][0] + this->size(), T());
-    for (size_type d = 0; d < this->rows(); ++d) {
+    for (size_type d = 0; d < std::min(this->rows(), this->columns()); ++d) {
       data[d][d] = T(1);
     }
   }
-  MatrixNxN(const T &s) {
+  MatrixNxM(const T &s) {
     std::fill(&data[0][0], &data[0][0] + this->size(), T());
-    for (size_type d = 0; d < this->rows(); ++d) {
+    for (size_type d = 0; d < std::min(this->rows(), this->columns()); ++d) {
       data[d][d] = s;
     }
   }
   template <typename... Args,
-            typename = typename std::enable_if<sizeof...(Args) == N * N>::type>
-  MatrixNxN(const Args &... args) SPECULA_NOEXCEPT {
+            typename = typename std::enable_if<sizeof...(Args) == N * M>::type>
+  MatrixNxM(const Args &... args) SPECULA_NOEXCEPT {
     std::fill(&data[0][0], &data[0][0] + this->size(), T());
     initialize<0>(args...);
   }
-  MatrixNxN(const MatrixNxN &m) SPECULA_NOEXCEPT {
+  MatrixNxM(const MatrixNxM &m) SPECULA_NOEXCEPT {
     std::copy(&m.data[0][0], &m.data[0][0] + this->size(), &data[0][0]);
   }
-  ~MatrixNxN() SPECULA_NOEXCEPT {}
+  ~MatrixNxM() SPECULA_NOEXCEPT {}
 
-  MatrixNxN &operator=(const MatrixNxN &m) SPECULA_NOEXCEPT {
+  MatrixNxM &operator=(const MatrixNxM &m) SPECULA_NOEXCEPT {
     std::copy(&m.data[0][0], &m.data[0][0] + this->size(), &data[0][0]);
     return *this;
   }
 
-  bool operator==(const MatrixNxN &m) const SPECULA_NOEXCEPT {
+  bool operator==(const MatrixNxM &m) const SPECULA_NOEXCEPT {
     for (size_type r = 0; r < this->rows(); ++r) {
       for (size_type c = 0; c < this->columns(); ++c) {
         if (data[r][c] != m.data[r][c])
@@ -315,7 +319,7 @@ public:
     }
     return true;
   }
-  bool operator!=(const MatrixNxN &m) const SPECULA_NOEXCEPT {
+  bool operator!=(const MatrixNxM &m) const SPECULA_NOEXCEPT {
     for (size_type r = 0; r < this->rows(); ++r) {
       for (size_type c = 0; c < this->columns(); ++c) {
         if (data[r][c] != m.data[r][c])
@@ -360,23 +364,23 @@ public:
 
   reference front() SPECULA_NOEXCEPT { return data[0][0]; }
   const_reference front() const SPECULA_NOEXCEPT { return data[0][0]; }
-  reference back() SPECULA_NOEXCEPT { return data[N - 1][N - 1]; }
-  const_reference back() const SPECULA_NOEXCEPT { return data[N - 1][N - 1]; }
-  reference operator[](size_type r) { return data[r]; }
-  const_reference operator[](size_type r) const { return data[r]; }
-  reference at(size_type r) {
+  reference back() SPECULA_NOEXCEPT { return data[N - 1][M - 1]; }
+  const_reference back() const SPECULA_NOEXCEPT { return data[N - 1][M - 1]; }
+  pointer operator[](size_type r) { return data[r]; }
+  const_pointer operator[](size_type r) const { return data[r]; }
+  pointer at(size_type r) {
     if (r < 0 || r >= N)
       throw std::out_of_range(
-          "specula::MatrixNxN::_M_range_check: __n (which is " +
+          "specula::MatrixNxM::_M_range_check: __n (which is " +
               std::to_string(r)
           << ") >= this->rows() (which is " + std::to_string(this->rows()) +
                  ")");
     return data[r];
   }
-  const_reference at(size_type r) const {
+  const_pointer at(size_type r) const {
     if (r < 0 || r >= N)
       throw std::out_of_range(
-          "specula::MatrixNxN::_M_range_check: __n (which is " +
+          "specula::MatrixNxM::_M_range_check: __n (which is " +
               std::to_string(r)
           << ") >= this->rows() (which is " + std::to_string(this->rows()) +
                  ")");
@@ -385,13 +389,13 @@ public:
   reference at(size_type r, size_type c) {
     if (r < 0 || r >= N)
       throw std::out_of_range(
-          "specula::MatrixNxN::_M_range_check: __n (which is " +
+          "specula::MatrixNxM::_M_range_check: __n (which is " +
               std::to_string(r)
           << ") >= this->rows() (which is " + std::to_string(this->rows()) +
                  ")");
-    else if (c < 0 || c >= N) {
+    else if (c < 0 || c >= M) {
       throw std::out_of_range(
-          "specula::MatrixNxN::_M_range_check: __c (which is " +
+          "specula::MatrixNxM::_M_range_check: __c (which is " +
               std::to_string(c)
           << ") >= this->columns() (which is " +
                  std::to_string(this->columns()) + ")");
@@ -401,13 +405,13 @@ public:
   const_reference at(size_type r, size_type c) const {
     if (r < 0 || r >= N)
       throw std::out_of_range(
-          "specula::MatrixNxN::_M_range_check: __n (which is " +
+          "specula::MatrixNxM::_M_range_check: __n (which is " +
               std::to_string(r)
           << ") >= this->rows() (which is " + std::to_string(this->rows()) +
                  ")");
-    else if (c < 0 || c >= N) {
+    else if (c < 0 || c >= M) {
       throw std::out_of_range(
-          "specula::MatrixNxN::_M_range_check: __c (which is " +
+          "specula::MatrixNxM::_M_range_check: __c (which is " +
               std::to_string(c)
           << ") >= this->columns() (which is " +
                  std::to_string(this->columns()) + ")");
@@ -419,17 +423,17 @@ public:
     std::fill(&data[0][0], &data[0][0] + this->size(), T());
   }
 
-  void swap(MatrixNxN &m) SPECULA_NOEXCEPT { std::swap(data, m.data); }
-  SPECULA_CONSTEXPR size_type size() const SPECULA_NOEXCEPT { return N * N; }
+  void swap(MatrixNxM &m) SPECULA_NOEXCEPT { std::swap(data, m.data); }
+  SPECULA_CONSTEXPR size_type size() const SPECULA_NOEXCEPT { return N * M; }
   SPECULA_CONSTEXPR size_type rows() const SPECULA_NOEXCEPT { return N; }
-  SPECULA_CONSTEXPR size_type columns() const SPECULA_NOEXCEPT { return N; }
+  SPECULA_CONSTEXPR size_type columns() const SPECULA_NOEXCEPT { return M; }
   SPECULA_CONSTEXPR size_type max_size() const SPECULA_NOEXCEPT {
-    return N * N;
+    return N * M;
   }
   SPECULA_CONSTEXPR bool empty() const SPECULA_NOEXCEPT { return false; }
 
-  MatrixNxN<T, N> operator+(const T &s) const SPECULA_NOEXCEPT {
-    MatrixNxN<T, N> out;
+  MatrixNxM<T, N, M> operator+(const T &s) const SPECULA_NOEXCEPT {
+    MatrixNxM<T, N, M> out;
     for (size_type r = 0; r < this->rows(); ++r) {
       for (size_type c = 0; c < this->columns(); ++c) {
         out[r][c] = data[r][c] + s;
@@ -437,8 +441,8 @@ public:
     }
     return out;
   }
-  MatrixNxN operator+(const MatrixNxN &m) const SPECULA_NOEXCEPT {
-    MatrixNxN<T, N> out;
+  MatrixNxM operator+(const MatrixNxM &m) const SPECULA_NOEXCEPT {
+    MatrixNxM<T, N, M> out;
     for (size_type r = 0; r < this->rows(); ++r) {
       for (size_type c = 0; c < this->columns(); ++c) {
         out[r][c] = data[r][c] + m.data[r][c];
@@ -446,7 +450,7 @@ public:
     }
     return out;
   }
-  MatrixNxN &operator+=(const T &s) SPECULA_NOEXCEPT {
+  MatrixNxM &operator+=(const T &s) SPECULA_NOEXCEPT {
     for (size_type r = 0; r < this->rows(); ++r) {
       for (size_type c = 0; c < this->columns(); ++c) {
         data[r][c] += s;
@@ -454,7 +458,7 @@ public:
     }
     return *this;
   }
-  MatrixNxN &operator+=(const MatrixNxN &m) SPECULA_NOEXCEPT {
+  MatrixNxM &operator+=(const MatrixNxM &m) SPECULA_NOEXCEPT {
     for (size_type r = 0; r < this->rows(); ++r) {
       for (size_type c = 0; c < this->columns(); ++c) {
         data[r][c] += m.data[r][c];
@@ -462,8 +466,8 @@ public:
     }
     return *this;
   }
-  MatrixNxN operator-(const T &s) const SPECULA_NOEXCEPT {
-    MatrixNxN<T, N> out;
+  MatrixNxM operator-(const T &s) const SPECULA_NOEXCEPT {
+    MatrixNxM<T, N, M> out;
     for (size_type r = 0; r < this->rows(); ++r) {
       for (size_type c = 0; c < this->columns(); ++c) {
         out[r][c] = data[r][c] - s;
@@ -471,8 +475,8 @@ public:
     }
     return out;
   }
-  MatrixNxN operator-(const MatrixNxN &m) const SPECULA_NOEXCEPT {
-    MatrixNxN<T, N> out;
+  MatrixNxM operator-(const MatrixNxM &m) const SPECULA_NOEXCEPT {
+    MatrixNxM<T, N, M> out;
     for (size_type r = 0; r < this->rows(); ++r) {
       for (size_type c = 0; c < this->columns(); ++c) {
         out[r][c] = data[r][c] - m.data[r][c];
@@ -480,7 +484,7 @@ public:
     }
     return out;
   }
-  MatrixNxN &operator-=(const T &s) SPECULA_NOEXCEPT {
+  MatrixNxM &operator-=(const T &s) SPECULA_NOEXCEPT {
     for (size_type r = 0; r < this->rows(); ++r) {
       for (size_type c = 0; c < this->columns(); ++c) {
         data[r][c] -= s;
@@ -488,7 +492,7 @@ public:
     }
     return *this;
   }
-  MatrixNxN &operator-=(const MatrixNxN &m) SPECULA_NOEXCEPT {
+  MatrixNxM &operator-=(const MatrixNxM &m) SPECULA_NOEXCEPT {
     for (size_type r = 0; r < this->rows(); ++r) {
       for (size_type c = 0; c < this->columns(); ++c) {
         data[r][c] -= m.data[r][c];
@@ -496,8 +500,8 @@ public:
     }
     return *this;
   }
-  MatrixNxN operator*(const T &s) const SPECULA_NOEXCEPT {
-    MatrixNxN<T, N> out;
+  MatrixNxM operator*(const T &s) const SPECULA_NOEXCEPT {
+    MatrixNxM<T, N, M> out;
     for (size_type r = 0; r < this->rows(); ++r) {
       for (size_type c = 0; c < this->columns(); ++c) {
         out[r][c] = data[r][c] * s;
@@ -505,8 +509,21 @@ public:
     }
     return *this;
   }
-  MatrixNxN operator*(const MatrixNxN &m) const SPECULA_NOEXCEPT {}
-  MatrixNxN &operator*=(const T &s) SPECULA_NOEXCEPT {
+  template <std::size_t R, std::size_t C,
+            typename = typename std::enable_if<M == R>::type>
+  MatrixNxM<T, N, C>
+  operator*(const MatrixNxM<T, R, C> &m) const SPECULA_NOEXCEPT {
+    MatrixNxM<T, N, C> out(T(0));
+    for (size_type r = 0; r < this->rows(); ++r) {
+      for (size_type c = 0; c < m.columns(); ++c) {
+        for (size_type k = 0; k < this->columns(); ++k) {
+          out[r][c] += data[r][k] * m.data[k][c];
+        }
+      }
+    }
+    return out;
+  }
+  MatrixNxM &operator*=(const T &s) SPECULA_NOEXCEPT {
     for (size_type r = 0; r < this->rows(); ++r) {
       for (size_type c = 0; c < this->columns(); ++c) {
         data[r][c] *= s;
@@ -514,10 +531,9 @@ public:
     }
     return *this;
   }
-  MatrixNxN &operator*=(const MatrixNxN &m) SPECULA_NOEXCEPT { return *this; }
-  MatrixNxN operator/(const T &s) const SPECULA_NOEXCEPT {
+  MatrixNxM operator/(const T &s) const SPECULA_NOEXCEPT {
     T inv = T(1) / s;
-    MatrixNxN<T, N> out;
+    MatrixNxM<T, N, M> out;
     for (size_type r = 0; r < this->rows(); ++r) {
       for (size_type c = 0; c < this->columns(); ++c) {
         out[r][c] = data[r][c] * inv;
@@ -525,8 +541,8 @@ public:
     }
     return out;
   }
-  MatrixNxN operator/(const MatrixNxN &m) const SPECULA_NOEXCEPT {
-    MatrixNxN<T, N> out;
+  MatrixNxM operator/(const MatrixNxM &m) const SPECULA_NOEXCEPT {
+    MatrixNxM<T, N, M> out;
     for (size_type r = 0; r < this->rows(); ++r) {
       for (size_type c = 0; c < this->columns(); ++c) {
         out[r][c] = data[r][c] / m.data[r][c];
@@ -534,7 +550,7 @@ public:
     }
     return out;
   }
-  MatrixNxN &operator/=(const T &s) SPECULA_NOEXCEPT {
+  MatrixNxM &operator/=(const T &s) SPECULA_NOEXCEPT {
     T inv = T(1) / s;
     for (size_type r = 0; r < this->rows(); ++r) {
       for (size_type c = 0; c < this->columns(); ++c) {
@@ -543,7 +559,7 @@ public:
     }
     return *this;
   }
-  MatrixNxN &operator/=(const MatrixNxN &m) SPECULA_NOEXCEPT {
+  MatrixNxM &operator/=(const MatrixNxM &m) SPECULA_NOEXCEPT {
     for (size_type r = 0; r < this->rows(); ++r) {
       for (size_type c = 0; c < this->columns(); ++c) {
         data[r][c] /= m.data[r][c];
@@ -557,39 +573,39 @@ public:
     for (size_type r = 0; r < this->rows(); ++r) {
       result += '[';
       for (size_type c = 0; c < this->columns(); ++c) {
-        result += fmt::format("{}", data[r][c]) + ((c == N - 1) ? ']' : ',');
+        result += fmt::format("{}", data[r][c]) +
+                  ((c == this->columns() - 1) ? ']' : ',');
       }
       result += ((r == this->rows() - 1) ? "]" : ",");
     }
     return result;
   }
 
-  T data[N][N];
+  T data[N][M];
 
 private:
   template <std::size_t I>
-  typename std::enable_if<(I < N * N)>::type initialize(const T &v) {
-    const size_type c = I % N;
-    const size_type r = I / N;
+  typename std::enable_if<(I < N * M)>::type initialize(const T &v) {
+    const size_type c = I % M;
+    const size_type r = I / M;
     data[r][c] = v;
   }
   template <std::size_t I, typename... Args>
-  typename std::enable_if<(I < N * N)>::type initialize(const T &v,
+  typename std::enable_if<(I < N * M)>::type initialize(const T &v,
                                                         const Args &... args) {
-    const size_type c = I % N;
-    const size_type r = I / N;
+    const size_type c = I % M;
+    const size_type r = I / M;
     data[r][c] = v;
     initialize<I + 1>(args...);
   }
 };
 
-template <std::size_t N> using MatrixNxNf = MatrixNxN<Float, N>;
-template <std::size_t N> using MatrixNxNi = MatrixNxN<Int, N>;
+template <std::size_t N, std::size_t M>
+using MatrixNxMf = MatrixNxM<Float, N, M>;
+template <std::size_t N, std::size_t M> using MatrixNxMi = MatrixNxM<Int, N, M>;
 
-template <typename T, std::size_t N> using MatrixN = MatrixNxN<T, N>;
-
-template <typename T, std::size_t N>
-std::ostream &operator<<(std::ostream &out, const MatrixNxN<T, N> &m) {
+template <typename T, std::size_t N, std::size_t M>
+std::ostream &operator<<(std::ostream &out, const MatrixNxM<T, N, M> &m) {
   return out << m.fmt();
 }
 } // namespace specula
