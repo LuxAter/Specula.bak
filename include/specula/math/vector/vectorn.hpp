@@ -6,6 +6,7 @@
 #include <stdexcept>
 
 #include "../../compiler.hpp"
+#include "../../fmt.hpp"
 #include "../../types.hpp"
 
 namespace specula {
@@ -129,7 +130,7 @@ public:
 
   VectorN() SPECULA_NOEXCEPT { std::fill(data, data + sizeof(data), T()); }
   template <typename... ARGS> VectorN(const ARGS &... args) SPECULA_NOEXCEPT {
-    initalize<0>(args...);
+    initialize<0>(args...);
   }
   VectorN(const VectorN &v) SPECULA_NOEXCEPT {
     memcpy(data, v.data, sizeof(data));
@@ -325,23 +326,36 @@ public:
     return *this;
   }
 
+  std::string fmt() const {
+    std::string result = "<";
+    for (size_type i = 0; i < N; ++i) {
+      result += fmt::format("{}", data[i]) + ((i == N - 1) ? '>' : ',');
+    }
+    return result;
+  }
+
   T data[N];
 
 private:
   template <std::size_t I>
-  typename std::enable_if<(I < N)>::type initalize(const T &v) {
+  typename std::enable_if<(I < N)>::type initialize(const T &v) {
     data[I] = v;
   }
   template <std::size_t I, typename... ARGS>
-  typename std::enable_if<(I < N)>::type initalize(const T &v,
-                                                   const ARGS &... args) {
+  typename std::enable_if<(I < N)>::type initialize(const T &v,
+                                                    const ARGS &... args) {
     data[I] = v;
-    initalize<I + 1>(args...);
+    initialize<I + 1>(args...);
   }
 };
 
 template <std::size_t N> using VectorNf = VectorN<Float, N>;
 template <std::size_t N> using VectorNi = VectorN<Int, N>;
+
+template <typename T, std::size_t N>
+std::ostream &operator<<(std::ostream &out, const VectorN<T, N> &v) {
+  return out << v.fmt();
+}
 } // namespace specula
 
 #endif // SPECULA_VECTORN_HPP_

@@ -75,8 +75,8 @@ public:
   class const_iterator {
     typedef std::ptrdiff_t difference_type;
     typedef T value_type;
-    typedef T &reference;
-    typedef T *pointer;
+    typedef const T &reference;
+    typedef const T *pointer;
     typedef std::random_access_iterator_tag iterator_category;
 
     const_iterator() SPECULA_NOEXCEPT : i(0), base(nullptr) {}
