@@ -27,27 +27,27 @@ namespace specula {
 bool initalize_logger(const std::size_t &verbosity);
 namespace logger {
 template <typename... _ARGS>
-inline void trace(std::string_view fmt, const _ARGS &... args) {
+inline void trace(std::string fmt, const _ARGS &... args) {
   spdlog::trace(fmt, args...);
 }
 template <typename... _ARGS>
-inline void debug(std::string_view fmt, const _ARGS &... args) {
+inline void debug(std::string fmt, const _ARGS &... args) {
   spdlog::debug(fmt, args...);
 }
 template <typename... _ARGS>
-inline void info(std::string_view fmt, const _ARGS &... args) {
+inline void info(std::string fmt, const _ARGS &... args) {
   spdlog::info(fmt, args...);
 }
 template <typename... _ARGS>
-inline void warn(std::string_view fmt, const _ARGS &... args) {
+inline void warn(std::string fmt, const _ARGS &... args) {
   spdlog::warn(fmt, args...);
 }
 template <typename... _ARGS>
-inline void error(std::string_view fmt, const _ARGS &... args) {
+inline void error(std::string fmt, const _ARGS &... args) {
   spdlog::error(fmt, args...);
 }
 template <typename... _ARGS>
-inline void critical(std::string_view fmt, const _ARGS &... args) {
+inline void critical(std::string fmt, const _ARGS &... args) {
   spdlog::critical(fmt, args...);
 }
 } // namespace logger
