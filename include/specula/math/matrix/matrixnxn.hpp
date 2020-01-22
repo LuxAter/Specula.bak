@@ -8,6 +8,8 @@
 #include "../../fmt.hpp"
 #include "../../types.hpp"
 
+#include "../vector/vectorn.hpp"
+
 namespace specula {
 template <typename T, std::size_t N> class MatrixNxN {
 public:
@@ -362,9 +364,9 @@ public:
   const_reference front() const SPECULA_NOEXCEPT { return data[0][0]; }
   reference back() SPECULA_NOEXCEPT { return data[N - 1][N - 1]; }
   const_reference back() const SPECULA_NOEXCEPT { return data[N - 1][N - 1]; }
-  reference operator[](size_type r) { return data[r]; }
-  const_reference operator[](size_type r) const { return data[r]; }
-  reference at(size_type r) {
+  pointer operator[](size_type r) { return data[r]; }
+  const_pointer operator[](size_type r) const { return data[r]; }
+  pointer at(size_type r) {
     if (r < 0 || r >= N)
       throw std::out_of_range(
           "specula::MatrixNxN::_M_range_check: __n (which is " +
@@ -373,7 +375,7 @@ public:
                  ")");
     return data[r];
   }
-  const_reference at(size_type r) const {
+  const_pointer at(size_type r) const {
     if (r < 0 || r >= N)
       throw std::out_of_range(
           "specula::MatrixNxN::_M_range_check: __n (which is " +
@@ -516,6 +518,15 @@ public:
     }
     return out;
   }
+  VectorN<T, N> operator*(const VectorN<T, N> &v) const SPECULA_NOEXCEPT {
+    VectorN<T, N> out;
+    for(size_type r = 0; r < this->rows(); ++r) {
+      for(size_type c = 0; c < this->columns(); ++c) {
+        out[r] += data[r][c] * v[c];
+      }
+    }
+    return out;
+  }
   MatrixNxN &operator*=(const T &s) SPECULA_NOEXCEPT {
     for (size_type r = 0; r < this->rows(); ++r) {
       for (size_type c = 0; c < this->columns(); ++c) {
@@ -604,6 +615,8 @@ private:
   }
 };
 
+template <std::size_t N> using MatrixNf = MatrixNxN<Float, N>;
+template <std::size_t N> using MatrixNi = MatrixNxN<Int, N>;
 template <std::size_t N> using MatrixNxNf = MatrixNxN<Float, N>;
 template <std::size_t N> using MatrixNxNi = MatrixNxN<Int, N>;
 

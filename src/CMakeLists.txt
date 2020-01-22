@@ -11,12 +11,9 @@ set(SOURCES
     math/matrix/matrix2x2.cpp
     math/matrix/matrix3x3.cpp
     math/matrix/matrix4x4.cpp
-    math/matrix/matrixnxm.cpp
-    math/matrix/matrixnxn.cpp
     math/vector/vector2.cpp
     math/vector/vector3.cpp
-    math/vector/vector4.cpp
-    math/vector/vectorn.cpp)
+    math/vector/vector4.cpp)
 configure_file("${SPECULA_SOURCE_DIR}/include/specula/version.hpp.in"
                "${SPECULA_SOURCE_DIR}/include/specula/version.hpp")
 

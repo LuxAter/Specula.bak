@@ -1,5 +1,5 @@
-#ifndef SPECULA_VECTOR3_HPP_
-#define SPECULA_VECTOR3_HPP_
+#ifndef SPECULA_VECTOR_VECTOR3_HPP_
+#define SPECULA_VECTOR_VECTOR3_HPP_
 
 #include <cmath>
 #include <memory>
@@ -10,7 +10,7 @@
 #include "../../types.hpp"
 
 namespace specula {
-template <typename T, class A = std::allocator<T>> class Vector3 {
+template <typename T, class A = std::allocator<T>> class Vector3Base {
 public:
   typedef A allocator_type;
   typedef typename A::value_type value_type;
@@ -27,8 +27,8 @@ public:
     typedef std::random_access_iterator_tag iterator_category;
 
     iterator() SPECULA_NOEXCEPT : i(0), base(nullptr) {}
-    iterator(const typename Vector3::size_type &i,
-             Vector3 *base) SPECULA_NOEXCEPT : i(i),
+    iterator(const typename Vector3Base::size_type &i,
+             Vector3Base *base) SPECULA_NOEXCEPT : i(i),
                                                base(base) {}
     iterator(const iterator &other) SPECULA_NOEXCEPT : i(other.i),
                                                        base(other.base) {}
@@ -68,8 +68,8 @@ public:
 
     reference operator*() const { return base->at(i); }
     pointer operator->() const { return *(base->at(i)); }
-    typename Vector3::size_type i;
-    Vector3 *base;
+    typename Vector3Base::size_type i;
+    Vector3Base *base;
   };
   class const_iterator {
     typedef typename A::difference_type difference_type;
@@ -79,8 +79,8 @@ public:
     typedef std::random_access_iterator_tag iterator_category;
 
     const_iterator() SPECULA_NOEXCEPT : i(0), base(nullptr) {}
-    const_iterator(const typename Vector3::size_type &i,
-                   const Vector3 *base) SPECULA_NOEXCEPT : i(i),
+    const_iterator(const typename Vector3Base::size_type &i,
+                   const Vector3Base *base) SPECULA_NOEXCEPT : i(i),
                                                            base(base) {}
     const_iterator(const const_iterator &it) SPECULA_NOEXCEPT : i(it.i),
                                                                 base(it.base) {}
@@ -121,30 +121,30 @@ public:
 
     reference operator*() const { return base->at(i); }
     pointer operator->() const { return *(base->at(i)); }
-    typename Vector3::size_type i;
-    const Vector3 *base;
+    typename Vector3Base::size_type i;
+    const Vector3Base *base;
   };
   typedef std::reverse_iterator<iterator> reverse_iterator;
   typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
 
-  Vector3() SPECULA_NOEXCEPT : x(), y(), z() {}
-  Vector3(const T &x, const T &y, const T &z) SPECULA_NOEXCEPT : x(x),
+  Vector3Base() SPECULA_NOEXCEPT : x(), y(), z() {}
+  Vector3Base(const T &x, const T &y, const T &z) SPECULA_NOEXCEPT : x(x),
                                                                  y(y),
                                                                  z(z) {}
-  Vector3(const Vector3 &v) SPECULA_NOEXCEPT : x(v.x), y(v.y), z(v.z) {}
-  ~Vector3() SPECULA_NOEXCEPT {}
+  Vector3Base(const Vector3Base &v) SPECULA_NOEXCEPT : x(v.x), y(v.y), z(v.z) {}
+  ~Vector3Base() SPECULA_NOEXCEPT {}
 
-  Vector3 &operator=(const Vector3 &v) SPECULA_NOEXCEPT {
+  Vector3Base &operator=(const Vector3Base &v) SPECULA_NOEXCEPT {
     x = v.x;
     y = v.y;
     z = v.z;
     return *this;
   }
 
-  bool operator==(const Vector3 &v) const SPECULA_NOEXCEPT {
+  bool operator==(const Vector3Base &v) const SPECULA_NOEXCEPT {
     return x == v.x && y == v.y && z == v.z;
   }
-  bool operator!=(const Vector3 &v) const SPECULA_NOEXCEPT {
+  bool operator!=(const Vector3Base &v) const SPECULA_NOEXCEPT {
     return x != v.x || y != v.y || z != v.z;
   }
 
@@ -193,7 +193,7 @@ public:
       return z;
     default:
       throw std::out_of_range(
-          "specula::Vector3::_M_range_check: __n (which is " + std::to_string(i)
+          "specula::Vector3Base::_M_range_check: __n (which is " + std::to_string(i)
           << ") >= this->size() (which is " + std::to_string(this->size()) +
                  ")");
     }
@@ -208,7 +208,7 @@ public:
       return z;
     default:
       throw std::out_of_range(
-          "specula::Vector3::_M_range_check: __n (which is " + std::to_string(i)
+          "specula::Vector3Base::_M_range_check: __n (which is " + std::to_string(i)
           << ") >= this->size() (which is " + std::to_string(this->size()) +
                  ")");
     }
@@ -223,7 +223,7 @@ public:
       return z;
     default:
       throw std::out_of_range(
-          "specula::Vector3::_M_range_check: __n (which is " + std::to_string(i)
+          "specula::Vector3Base::_M_range_check: __n (which is " + std::to_string(i)
           << ") >= this->size() (which is " + std::to_string(this->size()) +
                  ")");
     }
@@ -238,7 +238,7 @@ public:
       return z;
     default:
       throw std::out_of_range(
-          "specula::Vector3::_M_range_check: __n (which is " + std::to_string(i)
+          "specula::Vector3Base::_M_range_check: __n (which is " + std::to_string(i)
           << ") >= this->size() (which is " + std::to_string(this->size()) +
                  ")");
     }
@@ -246,7 +246,7 @@ public:
 
   void clear() SPECULA_NOEXCEPT { x = y = z = T(); }
 
-  void swap(Vector3 &v) SPECULA_NOEXCEPT {
+  void swap(Vector3Base &v) SPECULA_NOEXCEPT {
     std::swap(x, v.x);
     std::swap(y, v.y);
     std::swap(z, v.z);
@@ -255,79 +255,83 @@ public:
   SPECULA_CONSTEXPR size_type max_size() const SPECULA_NOEXCEPT { return 3; }
   SPECULA_CONSTEXPR bool empty() const SPECULA_NOEXCEPT { return false; }
 
-  Vector3<T> operator+(const T &s) const SPECULA_NOEXCEPT {
-    return Vector3<T>(x + s, y + s, z + s);
+  Vector3Base<T> operator+(const T &s) const SPECULA_NOEXCEPT {
+    return Vector3Base<T>(x + s, y + s, z + s);
   }
-  Vector3<T> operator+(const Vector3<T> &v) const SPECULA_NOEXCEPT {
-    return Vector3<T>(x + v.x, y + v.y, z + v.z);
+  Vector3Base<T> operator+(const Vector3Base<T> &v) const SPECULA_NOEXCEPT {
+    return Vector3Base<T>(x + v.x, y + v.y, z + v.z);
   }
-  Vector3<T> &operator+=(const T &s) SPECULA_NOEXCEPT {
+  Vector3Base<T> &operator+=(const T &s) SPECULA_NOEXCEPT {
     x += s;
     y += s;
     z += s;
     return *this;
   }
-  Vector3<T> &operator+=(const Vector3<T> &v) SPECULA_NOEXCEPT {
+  Vector3Base<T> &operator+=(const Vector3Base<T> &v) SPECULA_NOEXCEPT {
     x += v.x;
     y += v.y;
     z += v.z;
     return *this;
   }
-  Vector3<T> operator-(const T &s) const SPECULA_NOEXCEPT {
-    return Vector3<T>(x - s, y - s, z - s);
+  Vector3Base<T> operator-(const T &s) const SPECULA_NOEXCEPT {
+    return Vector3Base<T>(x - s, y - s, z - s);
   }
-  Vector3<T> operator-(const Vector3<T> &v) const SPECULA_NOEXCEPT {
-    return Vector3<T>(x - v.x, y - v.y, z - v.z);
+  Vector3Base<T> operator-(const Vector3Base<T> &v) const SPECULA_NOEXCEPT {
+    return Vector3Base<T>(x - v.x, y - v.y, z - v.z);
   }
-  Vector3<T> &operator-=(const T &s) SPECULA_NOEXCEPT {
+  Vector3Base<T> &operator-=(const T &s) SPECULA_NOEXCEPT {
     x -= s;
     y -= s;
     z -= s;
     return *this;
   }
-  Vector3<T> &operator-=(const Vector3<T> &v) SPECULA_NOEXCEPT {
+  Vector3Base<T> &operator-=(const Vector3Base<T> &v) SPECULA_NOEXCEPT {
     x -= v.x;
     y -= v.y;
     z -= v.z;
     return *this;
   }
-  Vector3<T> operator*(const T &s) const SPECULA_NOEXCEPT {
-    return Vector3<T>(x * s, y * s, z * s);
+  Vector3Base<T> operator*(const T &s) const SPECULA_NOEXCEPT {
+    return Vector3Base<T>(x * s, y * s, z * s);
   }
-  Vector3<T> operator*(const Vector3<T> &v) const SPECULA_NOEXCEPT {
-    return Vector3<T>(x * v.x, y * v.y, z * v.z);
+  Vector3Base<T> operator*(const Vector3Base<T> &v) const SPECULA_NOEXCEPT {
+    return Vector3Base<T>(x * v.x, y * v.y, z * v.z);
   }
-  Vector3<T> &operator*=(const T &s) SPECULA_NOEXCEPT {
+  Vector3Base<T> &operator*=(const T &s) SPECULA_NOEXCEPT {
     x *= s;
     y *= s;
     z *= s;
     return *this;
   }
-  Vector3<T> &operator*=(const Vector3<T> &v) SPECULA_NOEXCEPT {
+  Vector3Base<T> &operator*=(const Vector3Base<T> &v) SPECULA_NOEXCEPT {
     x *= v.x;
     y *= v.y;
     z *= v.z;
     return *this;
   }
-  Vector3<T> operator/(const T &s) const SPECULA_NOEXCEPT {
+  Vector3Base<T> operator/(const T &s) const SPECULA_NOEXCEPT {
     T inv = T(1) / s;
-    return Vector3<T>(x * inv, y * inv, z * inv);
+    return Vector3Base<T>(x * inv, y * inv, z * inv);
   }
-  Vector3<T> operator/(const Vector3<T> &v) const SPECULA_NOEXCEPT {
-    return Vector3<T>(x / v.x, y / v.y, z / v.z);
+  Vector3Base<T> operator/(const Vector3Base<T> &v) const SPECULA_NOEXCEPT {
+    return Vector3Base<T>(x / v.x, y / v.y, z / v.z);
   }
-  Vector3<T> &operator/=(const T &s) SPECULA_NOEXCEPT {
+  Vector3Base<T> &operator/=(const T &s) SPECULA_NOEXCEPT {
     T inv = T(1) / s;
     x *= inv;
     y *= inv;
     z *= inv;
     return *this;
   }
-  Vector3<T> &operator/=(const Vector3<T> &v) SPECULA_NOEXCEPT {
+  Vector3Base<T> &operator/=(const Vector3Base<T> &v) SPECULA_NOEXCEPT {
     x /= v.x;
     y /= v.y;
     z /= v.z;
     return *this;
+  }
+
+  Vector3Base<T> operator-() const SPECULA_NOEXCEPT{
+    return Vector3Base<T>(-x, -y, -z);
   }
 
   std::string fmt() const { return fmt::format("<{},{},{}>", x, y, z); }
@@ -335,13 +339,13 @@ public:
   T x, y, z;
 };
 
-typedef Vector3<Float> Vector3f;
-typedef Vector3<Int> Vector3i;
+typedef Vector3Base<Float> Vector3Basef;
+typedef Vector3Base<Int> Vector3Basei;
 
 template <typename T>
-std::ostream &operator<<(std::ostream &out, const Vector3<T> &v) {
+std::ostream &operator<<(std::ostream &out, const Vector3Base<T> &v) {
   return out << v.fmt();
 }
 } // namespace specula
 
-#endif // SPECULA_VECTOR3_HPP_
+#endif // SPECULA_VECTOR_VECTOR3_HPP_

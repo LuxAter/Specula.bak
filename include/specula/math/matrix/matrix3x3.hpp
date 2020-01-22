@@ -8,6 +8,9 @@
 #include "../../fmt.hpp"
 #include "../../types.hpp"
 
+#include "../vector/vector3.hpp"
+#include "../vector/vectorn.hpp"
+
 namespace specula {
 template <typename T> class Matrix3x3 {
 public:
@@ -547,6 +550,18 @@ public:
                             data[2][2] * m.data[2][1],
                         data[2][0] * m.data[0][2] + data[2][1] * m.data[1][2] +
                             data[2][2] * m.data[2][2]);
+  }
+  Vector3<T> operator*(const Vector3<T> &v) const SPECULA_NOEXCEPT {
+    return Vector3<T>(data[0][0] * v.x + data[0][1] * v.y + data[0][2] * v.z,
+                      data[1][0] * v.x + data[1][1] * v.y + data[1][2] * v.z,
+                      data[2][0] * v.x + data[2][1] * v.y + data[2][2] * v.z);
+  }
+  template <std::size_t N, typename = typename std::enable_if<N == 3>::type>
+  VectorN<T, N> operator*(const VectorN<T, N> &v) const SPECULA_NOEXCEPT {
+    return Vector3<T>(data[0][0] * v[0] + data[0][1] * v[1] + data[0][2] * v[2],
+                      data[1][0] * v[0] + data[1][1] * v[1] + data[1][2] * v[2],
+                      data[2][0] * v[0] + data[2][1] * v[1] +
+                          data[2][2] * v[2]);
   }
   Matrix3x3 &operator*=(const T &s) SPECULA_NOEXCEPT {
     data[0][0] *= s;

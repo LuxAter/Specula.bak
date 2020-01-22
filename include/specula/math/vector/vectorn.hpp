@@ -9,6 +9,10 @@
 #include "../../fmt.hpp"
 #include "../../types.hpp"
 
+#include "vector2.hpp"
+#include "vector3.hpp"
+#include "vector4.hpp"
+
 namespace specula {
 template <typename T, std::size_t N, class A = std::allocator<T>>
 class VectorN {
@@ -132,13 +136,31 @@ public:
   template <typename... ARGS> VectorN(const ARGS &... args) SPECULA_NOEXCEPT {
     initialize<0>(args...);
   }
+  // template <typename _Void = void, typename = typename std::enable_if<N == 2>::type>
+  // VectorN(const Vector2<T> &v) SPECULA_NOEXCEPT {
+  //   data[0] = v.x;
+  //   data[1] = v.y;
+  // }
+  // template <typename _Void = void, typename = typename std::enable_if<N == 3>::type>
+  // VectorN(const Vector3<T> &v) SPECULA_NOEXCEPT {
+  //   data[0] = v.x;
+  //   data[1] = v.y;
+  //   data[2] = v.z;
+  // }
+  // template <typename _Void = void, typename = typename std::enable_if<N == 4>::type>
+  // VectorN(const Vector4<T> &v) SPECULA_NOEXCEPT {
+  //   data[0] = v.x;
+  //   data[1] = v.y;
+  //   data[2] = v.z;
+  //   data[3] = v.w;
+  // }
   VectorN(const VectorN &v) SPECULA_NOEXCEPT {
-    memcpy(data, v.data, sizeof(data));
+    std::copy(&v.data[0], &v.data[0] + this->size(), &data[0]);
   }
   ~VectorN() SPECULA_NOEXCEPT {}
 
   VectorN &operator=(const VectorN &v) SPECULA_NOEXCEPT {
-    memcpy(data, v.data, sizeof(data));
+    std::copy(&v.data[0], &v.data[0] + this->size(), &data[0]);
     return *this;
   }
 

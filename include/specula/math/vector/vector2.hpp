@@ -1,5 +1,5 @@
-#ifndef SPECULA_VECTOR2_HPP_
-#define SPECULA_VECTOR2_HPP_
+#ifndef SPECULA_VECTOR_VECTOR2_HPP_
+#define SPECULA_VECTOR_VECTOR2_HPP_
 
 #include <cmath>
 #include <memory>
@@ -10,7 +10,7 @@
 #include "../../types.hpp"
 
 namespace specula {
-template <typename T, class A = std::allocator<T>> class Vector2 {
+template <typename T, class A = std::allocator<T>> class Vector2Base {
 public:
   typedef A allocator_type;
   typedef typename A::value_type value_type;
@@ -27,8 +27,8 @@ public:
     typedef std::random_access_iterator_tag iterator_category;
 
     iterator() SPECULA_NOEXCEPT : i(0), base(nullptr) {}
-    iterator(const typename Vector2::size_type &i,
-             Vector2 *base) SPECULA_NOEXCEPT : i(i),
+    iterator(const typename Vector2Base::size_type &i,
+             Vector2Base *base) SPECULA_NOEXCEPT : i(i),
                                                base(base) {}
     iterator(const iterator &other) SPECULA_NOEXCEPT : i(other.i),
                                                        base(other.base) {}
@@ -68,8 +68,8 @@ public:
 
     reference operator*() const { return base->at(i); }
     pointer operator->() const { return *(base->at(i)); }
-    typename Vector2::size_type i;
-    Vector2 *base;
+    typename Vector2Base::size_type i;
+    Vector2Base *base;
   };
   class const_iterator {
     typedef typename A::difference_type difference_type;
@@ -79,8 +79,8 @@ public:
     typedef std::random_access_iterator_tag iterator_category;
 
     const_iterator() SPECULA_NOEXCEPT : i(0), base(nullptr) {}
-    const_iterator(const typename Vector2::size_type &i,
-                   const Vector2 *base) SPECULA_NOEXCEPT : i(i),
+    const_iterator(const typename Vector2Base::size_type &i,
+                   const Vector2Base *base) SPECULA_NOEXCEPT : i(i),
                                                            base(base) {}
     const_iterator(const const_iterator &it) SPECULA_NOEXCEPT : i(it.i),
                                                                 base(it.base) {}
@@ -121,27 +121,27 @@ public:
 
     reference operator*() const { return base->at(i); }
     pointer operator->() const { return *(base->at(i)); }
-    typename Vector2::size_type i;
-    const Vector2 *base;
+    typename Vector2Base::size_type i;
+    const Vector2Base *base;
   };
   typedef std::reverse_iterator<iterator> reverse_iterator;
   typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
 
-  Vector2() SPECULA_NOEXCEPT : x(), y() {}
-  Vector2(const T &x, const T &y) SPECULA_NOEXCEPT : x(x), y(y) {}
-  Vector2(const Vector2 &v) SPECULA_NOEXCEPT : x(v.x), y(v.y) {}
-  ~Vector2() SPECULA_NOEXCEPT {}
+  Vector2Base() SPECULA_NOEXCEPT : x(), y() {}
+  Vector2Base(const T &x, const T &y) SPECULA_NOEXCEPT : x(x), y(y) {}
+  Vector2Base(const Vector2Base &v) SPECULA_NOEXCEPT : x(v.x), y(v.y) {}
+  ~Vector2Base() SPECULA_NOEXCEPT {}
 
-  Vector2 &operator=(const Vector2 &v) SPECULA_NOEXCEPT {
+  Vector2Base &operator=(const Vector2Base &v) SPECULA_NOEXCEPT {
     x = v.x;
     y = v.y;
     return *this;
   }
 
-  bool operator==(const Vector2 &v) const SPECULA_NOEXCEPT {
+  bool operator==(const Vector2Base &v) const SPECULA_NOEXCEPT {
     return x == v.x && y == v.y;
   }
-  bool operator!=(const Vector2 &v) const SPECULA_NOEXCEPT {
+  bool operator!=(const Vector2Base &v) const SPECULA_NOEXCEPT {
     return x != v.x || y != v.y;
   }
 
@@ -188,7 +188,7 @@ public:
       return y;
     default:
       throw std::out_of_range(
-          "specula::Vector2::_M_range_check: __n (which is " + std::to_string(i)
+          "specula::Vector2Base::_M_range_check: __n (which is " + std::to_string(i)
           << ") >= this->size() (which is " + std::to_string(this->size()) +
                  ")");
     }
@@ -201,7 +201,7 @@ public:
       return y;
     default:
       throw std::out_of_range(
-          "specula::Vector2::_M_range_check: __n (which is " + std::to_string(i)
+          "specula::Vector2Base::_M_range_check: __n (which is " + std::to_string(i)
           << ") >= this->size() (which is " + std::to_string(this->size()) +
                  ")");
     }
@@ -214,7 +214,7 @@ public:
       return y;
     default:
       throw std::out_of_range(
-          "specula::Vector2::_M_range_check: __n (which is " + std::to_string(i)
+          "specula::Vector2Base::_M_range_check: __n (which is " + std::to_string(i)
           << ") >= this->size() (which is " + std::to_string(this->size()) +
                  ")");
     }
@@ -227,7 +227,7 @@ public:
       return y;
     default:
       throw std::out_of_range(
-          "specula::Vector2::_M_range_check: __n (which is " + std::to_string(i)
+          "specula::Vector2Base::_M_range_check: __n (which is " + std::to_string(i)
           << ") >= this->size() (which is " + std::to_string(this->size()) +
                  ")");
     }
@@ -235,7 +235,7 @@ public:
 
   void clear() SPECULA_NOEXCEPT { x = y = T(); }
 
-  void swap(Vector2 &v) SPECULA_NOEXCEPT {
+  void swap(Vector2Base &v) SPECULA_NOEXCEPT {
     std::swap(x, v.x);
     std::swap(y, v.y);
   }
@@ -243,71 +243,74 @@ public:
   SPECULA_CONSTEXPR size_type max_size() const SPECULA_NOEXCEPT { return 2; }
   SPECULA_CONSTEXPR bool empty() const SPECULA_NOEXCEPT { return false; }
 
-  Vector2<T> operator+(const T &s) const SPECULA_NOEXCEPT {
-    return Vector2<T>(x + s, y + s);
+  Vector2Base<T> operator+(const T &s) const SPECULA_NOEXCEPT {
+    return Vector2Base<T>(x + s, y + s);
   }
-  Vector2<T> operator+(const Vector2<T> &v) const SPECULA_NOEXCEPT {
-    return Vector2<T>(x + v.x, y + v.y);
+  Vector2Base<T> operator+(const Vector2Base<T> &v) const SPECULA_NOEXCEPT {
+    return Vector2Base<T>(x + v.x, y + v.y);
   }
-  Vector2<T> &operator+=(const T &s) SPECULA_NOEXCEPT {
+  Vector2Base<T> &operator+=(const T &s) SPECULA_NOEXCEPT {
     x += s;
     y += s;
     return *this;
   }
-  Vector2<T> &operator+=(const Vector2<T> &v) SPECULA_NOEXCEPT {
+  Vector2Base<T> &operator+=(const Vector2Base<T> &v) SPECULA_NOEXCEPT {
     x += v.x;
     y += v.y;
     return *this;
   }
-  Vector2<T> operator-(const T &s) const SPECULA_NOEXCEPT {
-    return Vector2<T>(x - s, y - s);
+  Vector2Base<T> operator-(const T &s) const SPECULA_NOEXCEPT {
+    return Vector2Base<T>(x - s, y - s);
   }
-  Vector2<T> operator-(const Vector2<T> &v) const SPECULA_NOEXCEPT {
-    return Vector2<T>(x - v.x, y - v.y);
+  Vector2Base<T> operator-(const Vector2Base<T> &v) const SPECULA_NOEXCEPT {
+    return Vector2Base<T>(x - v.x, y - v.y);
   }
-  Vector2<T> &operator-=(const T &s) SPECULA_NOEXCEPT {
+  Vector2Base<T> &operator-=(const T &s) SPECULA_NOEXCEPT {
     x -= s;
     y -= s;
     return *this;
   }
-  Vector2<T> &operator-=(const Vector2<T> &v) SPECULA_NOEXCEPT {
+  Vector2Base<T> &operator-=(const Vector2Base<T> &v) SPECULA_NOEXCEPT {
     x -= v.x;
     y -= v.y;
     return *this;
   }
-  Vector2<T> operator*(const T &s) const SPECULA_NOEXCEPT {
-    return Vector2<T>(x * s, y * s);
+  Vector2Base<T> operator*(const T &s) const SPECULA_NOEXCEPT {
+    return Vector2Base<T>(x * s, y * s);
   }
-  Vector2<T> operator*(const Vector2<T> &v) const SPECULA_NOEXCEPT {
-    return Vector2<T>(x * v.x, y * v.y);
+  Vector2Base<T> operator*(const Vector2Base<T> &v) const SPECULA_NOEXCEPT {
+    return Vector2Base<T>(x * v.x, y * v.y);
   }
-  Vector2<T> &operator*=(const T &s) SPECULA_NOEXCEPT {
+  Vector2Base<T> &operator*=(const T &s) SPECULA_NOEXCEPT {
     x *= s;
     y *= s;
     return *this;
   }
-  Vector2<T> &operator*=(const Vector2<T> &v) SPECULA_NOEXCEPT {
+  Vector2Base<T> &operator*=(const Vector2Base<T> &v) SPECULA_NOEXCEPT {
     x *= v.x;
     y *= v.y;
     return *this;
   }
-  Vector2<T> operator/(const T &s) const SPECULA_NOEXCEPT {
+  Vector2Base<T> operator/(const T &s) const SPECULA_NOEXCEPT {
     T inv = T(1) / s;
-    return Vector2<T>(x * inv, y * inv);
+    return Vector2Base<T>(x * inv, y * inv);
   }
-  Vector2<T> operator/(const Vector2<T> &v) const SPECULA_NOEXCEPT {
-    return Vector2<T>(x / v.x, y / v.y);
+  Vector2Base<T> operator/(const Vector2Base<T> &v) const SPECULA_NOEXCEPT {
+    return Vector2Base<T>(x / v.x, y / v.y);
   }
-  Vector2<T> &operator/=(const T &s) SPECULA_NOEXCEPT {
+  Vector2Base<T> &operator/=(const T &s) SPECULA_NOEXCEPT {
     T inv = T(1) / s;
     x *= inv;
     y *= inv;
     return *this;
   }
-  Vector2<T> &operator/=(const Vector2<T> &v) SPECULA_NOEXCEPT {
+  Vector2Base<T> &operator/=(const Vector2Base<T> &v) SPECULA_NOEXCEPT {
     x /= v.x;
     y /= v.y;
     return *this;
+  }
+  Vector2Base<T> operator-() const SPECULA_NOEXCEPT{
+    return Vector2Base<T>(-x, -y);
   }
 
   std::string fmt() const { return fmt::format("<{},{}>", x, y); }
@@ -315,13 +318,13 @@ public:
   T x, y;
 };
 
-typedef Vector2<Float> Vector2f;
-typedef Vector2<Int> Vector2i;
+typedef Vector2Base<Float> Vector2Basef;
+typedef Vector2Base<Int> Vector2Basei;
 
 template <typename T>
-std::ostream &operator<<(std::ostream &out, const Vector2<T> &v) {
+std::ostream &operator<<(std::ostream &out, const Vector2Base<T> &v) {
   return out << v.fmt();
 }
 } // namespace specula
 
-#endif // SPECULA_VECTOR2_HPP_
+#endif // SPECULA_VECTOR_VECTOR2_HPP_

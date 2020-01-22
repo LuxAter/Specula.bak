@@ -8,6 +8,9 @@
 #include "../../fmt.hpp"
 #include "../../types.hpp"
 
+#include "../vector/vector4.hpp"
+#include "../vector/vectorn.hpp"
+
 namespace specula {
 template <typename T> class Matrix4x4 {
 public:
@@ -637,6 +640,27 @@ public:
             data[3][2] * m.data[2][2] + data[3][0] * m.data[3][2],
         data[3][0] * m.data[0][3] + data[3][1] * m.data[1][3] +
             data[3][2] * m.data[2][3] + data[3][0] * m.data[3][3]);
+  }
+  Vector4<T> operator*(const Vector4<T> &v) const SPECULA_NOEXCEPT {
+    return Vector4<T>(data[0][0] * v.x + data[0][1] * v.y + data[0][2] * v.z +
+                          data[0][3] * v.w,
+                      data[1][0] * v.x + data[1][1] * v.y + data[1][2] * v.z +
+                          data[1][3] * v.w,
+                      data[2][0] * v.x + data[2][1] * v.y + data[2][2] * v.z +
+                          data[2][3] * v.w,
+                      data[3][0] * v.x + data[3][1] * v.y + data[3][2] * v.z +
+                          data[3][3] * v.w);
+  }
+  template <std::size_t N, typename = typename std::enable_if<N == 4>::type>
+  VectorN<T, N> operator*(const VectorN<T, N> &v) const SPECULA_NOEXCEPT {
+    return VectorN<T, N>(data[0][0] * v[0] + data[0][1] * v[1] +
+                             data[0][2] * v[2] + data[0][3] * v[3],
+                         data[1][0] * v[0] + data[1][1] * v[1] +
+                             data[1][2] * v[2] + data[1][3] * v[3],
+                         data[2][0] * v[0] + data[2][1] * v[1] +
+                             data[2][2] * v[2] + data[2][3] * v[3],
+                         data[3][0] * v[0] + data[3][1] * v[1] +
+                             data[3][2] * v[2] + data[3][3] * v[3]);
   }
   Matrix4x4 &operator*=(const T &s) SPECULA_NOEXCEPT {
     data[0][0] *= s;

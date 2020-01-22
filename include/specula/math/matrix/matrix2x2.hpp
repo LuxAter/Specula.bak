@@ -8,6 +8,9 @@
 #include "../../fmt.hpp"
 #include "../../types.hpp"
 
+#include "../vector/vector2.hpp"
+#include "../vector/vectorn.hpp"
+
 namespace specula {
 template <typename T> class Matrix2x2 {
 public:
@@ -474,9 +477,17 @@ public:
   Matrix2x2 operator*(const Matrix2x2 &m) const SPECULA_NOEXCEPT {
     return Matrix2x2<T>(data[0][0] * m.data[0][0] + data[0][1] * m.data[1][0],
                         data[0][0] * m.data[0][1] + data[0][1] * m.data[1][1],
-                        data[0][0] * m.data[0][2] + data[0][1] * m.data[1][2],
                         data[1][0] * m.data[0][0] + data[1][1] * m.data[1][0],
                         data[1][0] * m.data[0][1] + data[1][1] * m.data[1][1]);
+  }
+  Vector2<T> operator*(const Vector2<T> &v) const SPECULA_NOEXCEPT {
+    return Vector2<T>(data[0][0] * v.x + data[0][1] * v.y,
+                      data[1][0] * v.x + data[1][1] * v.y);
+  }
+  template <std::size_t N, typename = typename std::enable_if<N == 2>::type>
+  VectorN<T, 2> operator*(const VectorN<T, 2> &v) const SPECULA_NOEXCEPT {
+    return Vector2<T>(data[0][0] * v[0] + data[0][1] * v[1],
+                      data[1][0] * v[0] + data[1][1] * v[1]);
   }
   Matrix2x2 &operator*=(const T &s) SPECULA_NOEXCEPT {
     data[0][0] *= s;
