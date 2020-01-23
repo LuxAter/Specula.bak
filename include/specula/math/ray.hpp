@@ -17,11 +17,10 @@ public:
       Float t_max = std::numeric_limits<Float>::infinity(), Float time = 0.0f,
       const void *medium = nullptr)
       : o(o), d(d), t_max(t_max), time(time), medium(medium) {}
-  Point3f operator()(Float t) const { return o + d * t; }
+  inline Point3f operator()(Float t) const { return o + d * t; }
 
-  std::string fmt() const {
-    return fmt::format("[o={}, d={}, t_max={}, time={}]", o, d, t_max,
-                       time);
+  inline std::string fmt() const {
+    return fmt::format("[o={}, d={}, t_max={}, time={}]", o, d, t_max, time);
   }
 
   Point3f o;
@@ -32,7 +31,7 @@ public:
   const void *medium;
 };
 
-std::ostream &operator<<(std::ostream &out, const Ray &r) {
+inline std::ostream &operator<<(std::ostream &out, const Ray &r) {
   return out << r.fmt();
 }
 } // namespace specula

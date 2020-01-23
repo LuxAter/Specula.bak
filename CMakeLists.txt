@@ -18,10 +18,10 @@ if(NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
 else()
   set(BUILD_SHARED_LIBS FALSE)
 endif()
-option(BUILD_STATIC_LIBS "Compile static libraries" TRUE)
+option(BUILD_STATIC_LIBS "Compile static libraries" FALSE)
 
 option(STATIC_ANALYSIS "Use static analysis tools" TRUE)
-option(OPTIMIZE_DEBUG "Enable compile time optimization for debug build" TRUE)
+option(OPTIMIZE_DEBUG "Enable compile time optimization for debug build" FALSE)
 set(SPECULA_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR})
 set(SPECULA_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 

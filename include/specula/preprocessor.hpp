@@ -9,6 +9,8 @@
 #ifdef __DEBUG__
 #define SPECULA_ASSERT(expr)                                                   \
   ((expr) ? (void)0 : LCRITICAL("Assertion \"{}\" failed", #expr))
+#define CHECK_NE(expr, v)                                                   \
+  (((expr) != 0) ? (void)0 : LCRITICAL("Assertion \"{}\" failed", #expr))
 #else
 #define SPECULA_ASSERT(expr) ((void)0)
 #endif
