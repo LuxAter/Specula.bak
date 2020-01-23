@@ -46,9 +46,9 @@ public:
       return y;
     default:
       throw std::out_of_range(
-          "specula::Vector2::_M_range_check: __n (which is " + std::to_string(i)
-          << ") >= this->size() (which is " + std::to_string(this->size()) +
-                 ")");
+          "specula::Vector2::_M_range_check: __n (which is " +
+          std::to_string(i) + ") >= this->size() (which is " +
+          std::to_string(this->size()) + ")");
     }
   }
   const_reference operator[](size_type i) const {
@@ -59,9 +59,9 @@ public:
       return y;
     default:
       throw std::out_of_range(
-          "specula::Vector2::_M_range_check: __n (which is " + std::to_string(i)
-          << ") >= this->size() (which is " + std::to_string(this->size()) +
-                 ")");
+          "specula::Vector2::_M_range_check: __n (which is " +
+          std::to_string(i) + ") >= this->size() (which is " +
+          std::to_string(this->size()) + ")");
     }
   }
   reference at(size_type i) {
@@ -72,9 +72,9 @@ public:
       return y;
     default:
       throw std::out_of_range(
-          "specula::Vector2::_M_range_check: __n (which is " + std::to_string(i)
-          << ") >= this->size() (which is " + std::to_string(this->size()) +
-                 ")");
+          "specula::Vector2::_M_range_check: __n (which is " +
+          std::to_string(i) + ") >= this->size() (which is " +
+          std::to_string(this->size()) + ")");
     }
   }
   const_reference at(size_type i) const {
@@ -85,9 +85,9 @@ public:
       return y;
     default:
       throw std::out_of_range(
-          "specula::Vector2::_M_range_check: __n (which is " + std::to_string(i)
-          << ") >= this->size() (which is " + std::to_string(this->size()) +
-                 ")");
+          "specula::Vector2::_M_range_check: __n (which is " +
+          std::to_string(i) + ") >= this->size() (which is " +
+          std::to_string(this->size()) + ")");
     }
   }
 
@@ -168,6 +168,9 @@ public:
   Vector2<T> operator-() const SPECULA_NOEXCEPT { return Vector2<T>(-x, -y); }
 
   std::string fmt() const { return fmt::format("<{},{}>", x, y); }
+
+  T length_squared() const { return x * x + y * y; }
+  T length() const { return std::sqrt(length_squared()); }
 
   T x, y;
 };

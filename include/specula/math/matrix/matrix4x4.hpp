@@ -118,33 +118,29 @@ public:
     if (r < 0 || r >= 4)
       throw std::out_of_range(
           "specula::Matrix4x4::_M_range_check: __n (which is " +
-              std::to_string(r)
-          << ") >= this->rows() (which is " + std::to_string(this->rows()) +
-                 ")");
+          std::to_string(r) + ") >= this->rows() (which is " +
+          std::to_string(this->rows()) + ")");
     return data[r];
   }
   const_pointer at(size_type r) const {
     if (r < 0 || r >= 4)
       throw std::out_of_range(
           "specula::Matrix4x4::_M_range_check: __n (which is " +
-              std::to_string(r)
-          << ") >= this->rows() (which is " + std::to_string(this->rows()) +
-                 ")");
+          std::to_string(r) + ") >= this->rows() (which is " +
+          std::to_string(this->rows()) + ")");
     return data[r];
   }
   reference at(size_type r, size_type c) {
     if (r < 0 || r >= 4)
       throw std::out_of_range(
           "specula::Matrix4x4::_M_range_check: __n (which is " +
-              std::to_string(r)
-          << ") >= this->rows() (which is " + std::to_string(this->rows()) +
-                 ")");
+          std::to_string(r) + ") >= this->rows() (which is " +
+          std::to_string(this->rows()) + ")");
     else if (c < 0 || c >= 4) {
       throw std::out_of_range(
           "specula::Matrix4x4::_M_range_check: __c (which is " +
-              std::to_string(c)
-          << ") >= this->columns() (which is " +
-                 std::to_string(this->columns()) + ")");
+          std::to_string(c) + ") >= this->columns() (which is " +
+          std::to_string(this->columns()) + ")");
     }
     return data[r][c];
   }
@@ -152,15 +148,13 @@ public:
     if (r < 0 || r >= 4)
       throw std::out_of_range(
           "specula::Matrix4x4::_M_range_check: __n (which is " +
-              std::to_string(r)
-          << ") >= this->rows() (which is " + std::to_string(this->rows()) +
-                 ")");
+          std::to_string(r) + ") >= this->rows() (which is " +
+          std::to_string(this->rows()) + ")");
     else if (c < 0 || c >= 4) {
       throw std::out_of_range(
           "specula::Matrix4x4::_M_range_check: __c (which is " +
-              std::to_string(c)
-          << ") >= this->columns() (which is " +
-                 std::to_string(this->columns()) + ")");
+          std::to_string(c) + ") >= this->columns() (which is " +
+          std::to_string(this->columns()) + ")");
     }
     return data[r][c];
   }
