@@ -221,6 +221,11 @@ public:
 typedef Vector4<Float> Vector4f;
 typedef Vector4<Int> Vector4i;
 
+template <typename T, typename U>
+inline Vector4<T> operator*(U s, const Vector4<T> &v) {
+  return v * s;
+}
+
 template <typename T>
 std::ostream &operator<<(std::ostream &out, const Vector4<T> &v) {
   return out << v.fmt();

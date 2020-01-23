@@ -1,5 +1,5 @@
-#ifndef SPECULA_MATH_EASING_HPP_
-#define SPECULA_MATH_EASING_HPP_
+#ifndef SPECULA_MATH_INTERP_HPP_
+#define SPECULA_MATH_INTERP_HPP_
 
 #include "../types.hpp"
 
@@ -9,4 +9,4 @@ template <typename T> inline T lerp(const T &a, const T &b, const Float &t) {
 }
 } // namespace specula
 
-#endif // SPECULA_MATH_EASING_HPP_
+#endif // SPECULA_MATH_INTERP_HPP_

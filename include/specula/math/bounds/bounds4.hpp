@@ -1,7 +1,7 @@
 #ifndef SPECULA_BOUNDS_BOUNDS4_HPP_
 #define SPECULA_BOUNDS_BOUNDS4_HPP_
 
-#include "../easing.hpp"
+#include "../interp.hpp"
 #include "../point/point4.hpp"
 #include "../vector/vector4.hpp"
 

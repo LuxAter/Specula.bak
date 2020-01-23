@@ -1,8 +1,9 @@
 #ifndef SPECULA_BOUNDS_BOUNDS3_HPP_
 #define SPECULA_BOUNDS_BOUNDS3_HPP_
 
-#include "../easing.hpp"
+#include "../interp.hpp"
 #include "../point/point3.hpp"
+#include "../ray.hpp"
 #include "../vector/vector3.hpp"
 
 namespace specula {
@@ -187,6 +188,56 @@ public:
     Point3<T> center = (p_min + p_max) / 2;
     return std::make_pair(center,
                           inside(center, *this) ? distance(center, p_max) : 0);
+  }
+
+  inline bool IntersectP(const Ray &ray, Float *hitt0 = nullptr,
+                         Float *hitt1 = nullptr) const {
+    Float t0 = 0, t1 = ray.t_max;
+    for (size_type i = 0; i < 3; ++i) {
+      Float inv_ray_dir = 1 / ray.d[i];
+      Float t_near = (p_min[i] - ray.o[i]) * inv_ray_dir;
+      Float t_far = (p_max[i] - ray.o[i]) * inv_ray_dir;
+      if (t_near > t_far)
+        std::swap(t_near, t_far);
+      // TODO: Determine what this gamma function is
+      t_far *= 1 + 2 * gamma(3);
+      t0 = t_near > t0 ? t_near : t0;
+      t1 = t_far < t1 ? t_far : t1;
+      if (t0 > t1)
+        return false;
+    }
+    if (hitt0)
+      *hitt0 = t0;
+    if (hitt1)
+      *hitt1 = t1;
+    return true;
+  }
+  inline bool IntersectP(const Ray &ray, const Vector3f &&inv_dir,
+                         const Int dir_is_neg[3]) const {
+    Float tx_min = (at(dir_is_neg[0]).x - ray.o.x) * inv_dir.x;
+    Float tx_max = (at(1 - dir_is_neg[0]).x - ray.o.x) * inv_dir.x;
+    Float ty_min = (at(dir_is_neg[1]).y - ray.o.y) * inv_dir.y;
+    Float ty_max = (at(1 - dir_is_neg[1]).y - ray.o.y) * inv_dir.y;
+
+    tx_max *= 1 + 2 * gamma(3);
+    ty_max *= 1 + 2 * gamma(3);
+    if (tx_min > ty_max || ty_min > tx_max)
+      return false;
+    if (ty_min > tx_min)
+      tx_min = ty_min;
+    if (ty_max < tx_max)
+      tx_max = ty_max;
+    Float tz_min = (at(dir_is_neg[2]).z - ray.o.z) * inv_dir.z;
+    Float tz_max = (at(1 - dir_is_neg[2]).z - ray.o.z) * inv_dir.z;
+
+    tz_max *= 1 + 2 * gamma(3);
+    if (tx_min > tz_max || tz_min > tx_max)
+      return false;
+    if (tz_min > tx_min)
+      tx_min = tz_min;
+    if (tz_max < tx_max)
+      tx_max = tz_max;
+    return (tx_min < ray.t_max) && (tx_max > 0);
   }
 
   std::string fmt() const { return fmt::format("[{} - {}]", p_min, p_max); }

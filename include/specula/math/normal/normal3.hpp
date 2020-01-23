@@ -211,6 +211,11 @@ public:
 typedef Normal3<Float> Normal3f;
 typedef Normal3<Int> Normal3i;
 
+template <typename T, typename U>
+inline Normal3<T> operator*(U s, const Normal3<T> &v) {
+  return v * s;
+}
+
 template <typename T>
 std::ostream &operator<<(std::ostream &out, const Normal3<T> &v) {
   return out << v.fmt();

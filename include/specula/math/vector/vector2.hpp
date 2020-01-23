@@ -178,6 +178,11 @@ public:
 typedef Vector2<Float> Vector2f;
 typedef Vector2<Int> Vector2i;
 
+template <typename T, typename U>
+inline Vector2<T> operator*(U s, const Vector2<T> &v) {
+  return v * s;
+}
+
 template <typename T>
 std::ostream &operator<<(std::ostream &out, const Vector2<T> &v) {
   return out << v.fmt();

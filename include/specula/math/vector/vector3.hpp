@@ -201,6 +201,11 @@ public:
 typedef Vector3<Float> Vector3f;
 typedef Vector3<Int> Vector3i;
 
+template <typename T, typename U>
+inline Vector3<T> operator*(U s, const Vector3<T> &v) {
+  return v * s;
+}
+
 template <typename T>
 std::ostream &operator<<(std::ostream &out, const Vector3<T> &v) {
   return out << v.fmt();

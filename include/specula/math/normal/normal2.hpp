@@ -187,6 +187,11 @@ public:
 typedef Normal2<Float> Normal2f;
 typedef Normal2<Int> Normal2i;
 
+template <typename T, typename U>
+inline Normal2<T> operator*(U s, const Normal2<T> &v) {
+  return v * s;
+}
+
 template <typename T>
 std::ostream &operator<<(std::ostream &out, const Normal2<T> &v) {
   return out << v.fmt();

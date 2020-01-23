@@ -232,6 +232,11 @@ public:
 typedef Normal4<Float> Normal4f;
 typedef Normal4<Int> Normal4i;
 
+template <typename T, typename U>
+inline Normal4<T> operator*(U s, const Normal4<T> &v) {
+  return v * s;
+}
+
 template <typename T>
 std::ostream &operator<<(std::ostream &out, const Normal4<T> &v) {
   return out << v.fmt();
