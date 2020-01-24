@@ -6,18 +6,27 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${SPECULA_BINARY_DIR})
 # SOURCE FILES
 # ##############################################################################
 set(SOURCES
-    specula.cpp
-    geometry/vector2.cpp
-    geometry/vector3.cpp
-    geometry/point2.cpp
-    geometry/point3.cpp
-    geometry/common.cpp
-    geometry/geometric.cpp
-    geometry/ray.cpp
-    geometry/ray_differential.cpp
-    geometry/bounds2.cpp
-    geometry/bounds3.cpp
-    log.cpp)
+    log.cpp
+    math/bounds.cpp
+    math/common.cpp
+    math/geometric.cpp
+    math/ray.cpp
+    math/ray_differential.cpp
+    math/bounds/bounds2.cpp
+    math/bounds/bounds3.cpp
+    math/bounds/bounds4.cpp
+    math/matrix/matrix2x2.cpp
+    math/matrix/matrix3x3.cpp
+    math/matrix/matrix4x4.cpp
+    math/normal/normal2.cpp
+    math/normal/normal3.cpp
+    math/normal/normal4.cpp
+    math/point/point2.cpp
+    math/point/point3.cpp
+    math/point/point4.cpp
+    math/vector/vector2.cpp
+    math/vector/vector3.cpp
+    math/vector/vector4.cpp)
 configure_file("${SPECULA_SOURCE_DIR}/include/specula/version.hpp.in"
                "${SPECULA_SOURCE_DIR}/include/specula/version.hpp")
 
@@ -32,8 +41,8 @@ if(BUILD_STATIC_LIBS)
 
   set_target_properties(
     specula_static
-    PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED YES CXX_EXTENSIONS OFF)
-  target_link_libraries(specula_static spdlog)
+    PROPERTIES CXX_STANDARD 11 CXX_STANDARD_REQUIRED YES CXX_EXTENSIONS OFF)
+  target_link_libraries(specula_static PUBLIC spdlog fmt::fmt)
   install(TARGETS specula_static ARCHIVE DESTINATION lib)
 endif()
 
@@ -48,8 +57,8 @@ if(BUILD_SHARED_LIBS)
 
   set_target_properties(
     specula_shared
-    PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED YES CXX_EXTENSIONS OFF)
-  target_link_libraries(specula_shared spdlog)
+    PROPERTIES CXX_STANDARD 11 CXX_STANDARD_REQUIRED YES CXX_EXTENSIONS OFF)
+  target_link_libraries(specula_shared PUBLIC spdlog fmt::fmt)
   install(TARGETS specula_shared LIBRARY DESTINATION lib)
 endif()
 
