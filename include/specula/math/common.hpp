@@ -251,10 +251,10 @@ template <typename T> Point2<T> min(const Point2<T> &v1, const Point2<T> &v2) {
   return Point2<T>(min(v1.x, v2.x), min(v1.y, v2.y));
 }
 template <typename T> Point3<T> min(const Point3<T> &v1, const Point3<T> &v2) {
-  return Point2<T>(min(v1.x, v2.x), min(v1.y, v2.y), min(v1.z, v2.z));
+  return Point3<T>(min(v1.x, v2.x), min(v1.y, v2.y), min(v1.z, v2.z));
 }
 template <typename T> Point4<T> min(const Point4<T> &v1, const Point4<T> &v2) {
-  return Point2<T>(min(v1.x, v2.x), min(v1.y, v2.y), min(v1.z, v2.z),
+  return Point4<T>(min(v1.x, v2.x), min(v1.y, v2.y), min(v1.z, v2.z),
                    min(v1.w, v2.w));
 }
 template <typename T>
@@ -263,11 +263,11 @@ Normal2<T> min(const Normal2<T> &v1, const Normal2<T> &v2) {
 }
 template <typename T>
 Normal3<T> min(const Normal3<T> &v1, const Normal3<T> &v2) {
-  return Normal2<T>(min(v1.x, v2.x), min(v1.y, v2.y), min(v1.z, v2.z));
+  return Normal3<T>(min(v1.x, v2.x), min(v1.y, v2.y), min(v1.z, v2.z));
 }
 template <typename T>
 Normal4<T> min(const Normal4<T> &v1, const Normal4<T> &v2) {
-  return Normal2<T>(min(v1.x, v2.x), min(v1.y, v2.y), min(v1.z, v2.z),
+  return Normal4<T>(min(v1.x, v2.x), min(v1.y, v2.y), min(v1.z, v2.z),
                     min(v1.w, v2.w));
 }
 
@@ -278,21 +278,21 @@ Vector2<T> max(const Vector2<T> &v1, const Vector2<T> &v2) {
 }
 template <typename T>
 Vector3<T> max(const Vector3<T> &v1, const Vector3<T> &v2) {
-  return Vector2<T>(max(v1.x, v2.x), max(v1.y, v2.y), max(v1.z, v2.z));
+  return Vector3<T>(max(v1.x, v2.x), max(v1.y, v2.y), max(v1.z, v2.z));
 }
 template <typename T>
 Vector4<T> max(const Vector4<T> &v1, const Vector4<T> &v2) {
-  return Vector2<T>(max(v1.x, v2.x), max(v1.y, v2.y), max(v1.z, v2.z),
+  return Vector4<T>(max(v1.x, v2.x), max(v1.y, v2.y), max(v1.z, v2.z),
                     max(v1.w, v2.w));
 }
 template <typename T> Point2<T> max(const Point2<T> &v1, const Point2<T> &v2) {
   return Point2<T>(max(v1.x, v2.x), max(v1.y, v2.y));
 }
 template <typename T> Point3<T> max(const Point3<T> &v1, const Point3<T> &v2) {
-  return Point2<T>(max(v1.x, v2.x), max(v1.y, v2.y), max(v1.z, v2.z));
+  return Point3<T>(max(v1.x, v2.x), max(v1.y, v2.y), max(v1.z, v2.z));
 }
 template <typename T> Point4<T> max(const Point4<T> &v1, const Point4<T> &v2) {
-  return Point2<T>(max(v1.x, v2.x), max(v1.y, v2.y), max(v1.z, v2.z),
+  return Point4<T>(max(v1.x, v2.x), max(v1.y, v2.y), max(v1.z, v2.z),
                    max(v1.w, v2.w));
 }
 template <typename T>
@@ -301,11 +301,11 @@ Normal2<T> max(const Normal2<T> &v1, const Normal2<T> &v2) {
 }
 template <typename T>
 Normal3<T> max(const Normal3<T> &v1, const Normal3<T> &v2) {
-  return Normal2<T>(max(v1.x, v2.x), max(v1.y, v2.y), max(v1.z, v2.z));
+  return Normal3<T>(max(v1.x, v2.x), max(v1.y, v2.y), max(v1.z, v2.z));
 }
 template <typename T>
 Normal4<T> max(const Normal4<T> &v1, const Normal4<T> &v2) {
-  return Normal2<T>(max(v1.x, v2.x), max(v1.y, v2.y), max(v1.z, v2.z),
+  return Normal4<T>(max(v1.x, v2.x), max(v1.y, v2.y), max(v1.z, v2.z),
                     max(v1.w, v2.w));
 }
 

@@ -78,7 +78,7 @@ public:
         m.data[2][0] * x + m.data[2][1] * y + m.data[2][2] * z + m.data[2][3];
     T wp =
         m.data[3][0] * x + m.data[3][1] * y + m.data[3][2] * z + m.data[3][3];
-    SPECULA_ASSERT(wp != 0);
+    CHECK_NE(wp, 0);
     if (wp == 1)
       return Point3<T>(xp, yp, zp);
     else
@@ -124,7 +124,7 @@ public:
     T z_abs_sum = std::abs(m.data[2][0] * x) + std::abs(m.data[2][1] * y) +
                   std::abs(m.data[2][2] * z) + std::abs(m.data[2][3]);
     *p_error = gamma(3) * Vector3<T>(x_abs_sum, y_abs_sum, z_abs_sum);
-    SPECULA_ASSERT(wp != 0);
+    CHECK_NE(wp, 0);
     if (wp == 1)
       return Point3<T>(xp, yp, zp);
     else
@@ -138,6 +138,7 @@ public:
 
 private:
   Matrix4x4f m, inv;
+  friend class Quaternion;
 };
 } // namespace specula
 

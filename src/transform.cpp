@@ -1,5 +1,7 @@
 #include "specula/transform.hpp"
 
+#include "specula/global.hpp"
+
 #include "specula/math/common.hpp"
 #include "specula/math/geometric.hpp"
 #include "specula/math/matrix/matrix4x4.hpp"
@@ -8,8 +10,6 @@
 #include "specula/math/ray.hpp"
 #include "specula/math/ray_differential.hpp"
 #include "specula/math/vector/vector3.hpp"
-#include "specula/preprocessor.hpp"
-#include "specula/types.hpp"
 
 specula::Transform::Transform() : m(), inv() {}
 specula::Transform::Transform(const Float mat[4][4])
@@ -35,14 +35,79 @@ specula::Transform specula::Transform::scale(Float x, Float y, Float z) {
 specula::Transform specula::Transform::rotate_x(Float theta) {
   Float sin_theta = std::sin(radians(theta));
   Float cos_theta = std::cos(radians(theta));
+  Matrix4x4f m(1, 0, 0, 0, 0, cos_theta, -sin_theta, 0, 0, sin_theta, cos_theta,
+               0, 0, 0, 0, 1);
+  return Transform(m, transpose(m));
 }
-specula::Transform specula::Transform::rotate_y(Float theta) {}
-specula::Transform specula::Transform::rotate_z(Float theta) {}
+specula::Transform specula::Transform::rotate_y(Float theta) {
+  Float sin_theta = std::sin(radians(theta));
+  Float cos_theta = std::cos(radians(theta));
+  Matrix4x4f m(cos_theta, 0, sin_theta, 0, 0, 1, 0, 0, -sin_theta, 0, cos_theta,
+               0, 0, 0, 0, 1);
+  return Transform(m, transpose(m));
+}
+specula::Transform specula::Transform::rotate_z(Float theta) {
+  Float sin_theta = std::sin(radians(theta));
+  Float cos_theta = std::cos(radians(theta));
+  Matrix4x4f m(cos_theta, -sin_theta, 0, 0, sin_theta, cos_theta, 0, 0, 0, 0, 1,
+               0, 0, 0, 0, 1);
+  return Transform(m, transpose(m));
+}
 specula::Transform specula::Transform::rotate(Float theta,
-                                              const Vector3f &axis) {}
+                                              const Vector3f &axis) {
+  Vector3f a = normalize(axis);
+  Float sin_theta = std::sin(radians(theta));
+  Float cos_theta = std::cos(radians(theta));
+  Matrix4x4f m;
+  m.data[0][0] = a.x * a.x + (1 - a.x * a.x) * cos_theta;
+  m.data[0][1] = a.x * a.y * (1 - cos_theta) - a.z * sin_theta;
+  m.data[0][2] = a.x * a.z * (1 - cos_theta) + a.y * sin_theta;
+  m.data[0][3] = 0;
+
+  m.data[1][0] = a.x * a.y * (1 - cos_theta) + a.z * sin_theta;
+  m.data[1][1] = a.y * a.y + (1 - a.y * a.y) * cos_theta;
+  m.data[1][2] = a.y * a.z * (1 - cos_theta) - a.x * sin_theta;
+  m.data[1][3] = 0;
+
+  m.data[2][0] = a.x * a.z * (1 - cos_theta) - a.y * sin_theta;
+  m.data[2][1] = a.y * a.z * (1 - cos_theta) + a.x * sin_theta;
+  m.data[2][2] = a.z * a.z + (1 - a.z * a.z) * cos_theta;
+  m.data[2][3] = 0;
+  return Transform(m, transpose(m));
+}
 specula::Transform specula::Transform::look_at(const Point3f &pos,
                                                const Point3f &look,
-                                               const Vector3f &up) {}
+                                               const Vector3f &up) {
+  Matrix4x4f camera_to_world;
+  camera_to_world.data[0][3] = pos.x;
+  camera_to_world.data[1][3] = pos.y;
+  camera_to_world.data[2][3] = pos.z;
+  camera_to_world.data[3][3] = 1;
+
+  Vector3f dir = normalize(look - pos);
+  if (cross(normalize(up), dir).length() == 0) {
+    LERROR(
+        "\"up\" vector ({}) and viewing direction ({}) passed to look_at are "
+        "pointing in the same direction. Using the identity transformation.",
+        up, dir);
+    return Transform();
+  }
+  Vector3f right = normalize(cross(normalize(up), dir));
+  Vector3f new_up = cross(dir, right);
+  camera_to_world.data[0][0] = right.x;
+  camera_to_world.data[1][0] = right.y;
+  camera_to_world.data[2][0] = right.z;
+  camera_to_world.data[3][0] = 0.0f;
+  camera_to_world.data[0][1] = new_up.x;
+  camera_to_world.data[1][1] = new_up.y;
+  camera_to_world.data[2][1] = new_up.z;
+  camera_to_world.data[3][1] = 0.0f;
+  camera_to_world.data[0][2] = dir.x;
+  camera_to_world.data[1][2] = dir.y;
+  camera_to_world.data[2][2] = dir.z;
+  camera_to_world.data[3][2] = 0.0f;
+  return Transform(inverse(camera_to_world), camera_to_world);
+}
 specula::Transform specula::Transform::orthographic(Float znear, Float zfar) {}
 specula::Transform specula::Transform::perspective(Float fov, Float znear,
                                                    Float zfar) {}
@@ -85,3 +150,5 @@ specula::Bounds3f specula::Transform::operator()(const Bounds3f &b) const {
 specula::Transform specula::Transform::operator*(const Transform &t2) const {
   return Transform(m * t2.m, t2.inv * inv);
 }
+
+bool specula::Transform::swaps_handedness() const { return determinant(m) < 0; }

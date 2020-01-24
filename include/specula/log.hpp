@@ -46,40 +46,40 @@
   SPECULA_LOGGER_SOURCE_CALL(logger, spdlog::level::critical, __VA_ARGS__)
 
 #define SPECULA_CORE_TRACE(...)                                                \
-  SPECULA_LOGGER_TRACE(ludus::logger::get_logger(), __VA_ARGS__)
+  SPECULA_LOGGER_TRACE(specula::logger::get_logger(), __VA_ARGS__)
 #define SPECULA_CORE_DEBUG(...)                                                \
-  SPECULA_LOGGER_DEBUG(ludus::logger::get_logger(), __VA_ARGS__)
+  SPECULA_LOGGER_DEBUG(specula::logger::get_logger(), __VA_ARGS__)
 #define SPECULA_CORE_INFO(...)                                                 \
-  SPECULA_LOGGER_INFO(ludus::logger::get_logger(), __VA_ARGS__)
+  SPECULA_LOGGER_INFO(specula::logger::get_logger(), __VA_ARGS__)
 #define SPECULA_CORE_WARN(...)                                                 \
-  SPECULA_LOGGER_WARN(ludus::logger::get_logger(), __VA_ARGS__)
+  SPECULA_LOGGER_WARN(specula::logger::get_logger(), __VA_ARGS__)
 #define SPECULA_CORE_ERROR(...)                                                \
-  SPECULA_LOGGER_ERROR(ludus::logger::get_logger(), __VA_ARGS__)
+  SPECULA_LOGGER_ERROR(specula::logger::get_logger(), __VA_ARGS__)
 #define SPECULA_CORE_CRITICAL(...)                                             \
-  SPECULA_LOGGER_CRITICAL(ludus::logger::get_logger(), __VA_ARGS__)
+  SPECULA_LOGGER_CRITICAL(specula::logger::get_logger(), __VA_ARGS__)
 #define SPECULA_CORE_FATAL(...)                                                \
-  SPECULA_LOGGER_FATAL(ludus::logger::get_logger(), __VA_ARGS__)
+  SPECULA_LOGGER_FATAL(specula::logger::get_logger(), __VA_ARGS__)
 
 #define SPECULA_CORE_SOURCE_TRACE(file, line, function, ...)                   \
-  SPECULA_LOGGER_SOURCE_TRACE(ludus::logger::get_logger(), file, line,         \
+  SPECULA_LOGGER_SOURCE_TRACE(specula::logger::get_logger(), file, line,       \
                               function, __VA_ARGS__)
 #define SPECULA_CORE_SOURCE_DEBUG(file, line, function, ...)                   \
-  SPECULA_LOGGER_SOURCE_DEBUG(ludus::logger::get_logger(), file, line,         \
+  SPECULA_LOGGER_SOURCE_DEBUG(specula::logger::get_logger(), file, line,       \
                               function, __VA_ARGS__)
 #define SPECULA_CORE_SOURCE_INFO(file, line, function, ...)                    \
-  SPECULA_LOGGER_SOURCE_INFO(ludus::logger::get_logger(), file, line,          \
+  SPECULA_LOGGER_SOURCE_INFO(specula::logger::get_logger(), file, line,        \
                              function, __VA_ARGS__)
 #define SPECULA_CORE_SOURCE_WARN(file, line, function, ...)                    \
-  SPECULA_LOGGER_SOURCE_WARN(ludus::logger::get_logger(), file, line,          \
+  SPECULA_LOGGER_SOURCE_WARN(specula::logger::get_logger(), file, line,        \
                              function, __VA_ARGS__)
 #define SPECULA_CORE_SOURCE_ERROR(file, line, function, ...)                   \
-  SPECULA_LOGGER_SOURCE_ERROR(ludus::logger::get_logger(), file, line,         \
+  SPECULA_LOGGER_SOURCE_ERROR(specula::logger::get_logger(), file, line,       \
                               function, __VA_ARGS__)
 #define SPECULA_CORE_SOURCE_CRITICAL(file, line, function, ...)                \
-  SPECULA_LOGGER_SOURCE_CRITICAL(ludus::logger::get_logger(), file, line,      \
+  SPECULA_LOGGER_SOURCE_CRITICAL(specula::logger::get_logger(), file, line,    \
                                  function, __VA_ARGS__)
 #define SPECULA_CORE_SOURCE_FATAL(file, line, function, ...)                   \
-  SPECULA_LOGGER_SOURCE_FATAL(ludus::logger::get_logger(), file, line,         \
+  SPECULA_LOGGER_SOURCE_FATAL(specula::logger::get_logger(), file, line,       \
                               function, __VA_ARGS__)
 
 #define LTRACE(...) SPECULA_CORE_TRACE(__VA_ARGS__)

@@ -1,0 +1,1 @@
+#include "specula/animated_transform.hpp"

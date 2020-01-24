@@ -11,11 +11,12 @@ template <typename T> class Point4;
 template <typename T> class Normal2;
 template <typename T> class Normal3;
 template <typename T> class Normal4;
-class Ray;
-class RayDifferential;
 template <typename T> class Bounds2;
 template <typename T> class Bounds3;
 template <typename T> class Bounds4;
+class Quaternion;
+class Ray;
+class RayDifferential;
 class Transform;
 } // namespace specula
 
