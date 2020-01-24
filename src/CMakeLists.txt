@@ -7,14 +7,15 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${SPECULA_BINARY_DIR})
 # ##############################################################################
 set(SOURCES
     log.cpp
-    transform.cpp
-    animated_transform.cpp
-    quaternion.cpp
+    transform/transform.cpp
+    transform/animated_transform.cpp
+    math/quaternion.cpp
     math/bounds.cpp
     math/common.cpp
     math/geometric.cpp
     math/ray.cpp
     math/ray_differential.cpp
+    math/interval.cpp
     math/bounds/bounds2.cpp
     math/bounds/bounds3.cpp
     math/bounds/bounds4.cpp

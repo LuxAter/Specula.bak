@@ -1,29 +1,28 @@
-#ifndef SPECULA_ANIMATED_TRANSFORM_HPP_
-#define SPECULA_ANIMATED_TRANSFORM_HPP_
+#ifndef SPECULA_TRANSFORM_ANIMATED_TRANSFORM_HPP_
+#define SPECULA_TRANSFORM_ANIMATED_TRANSFORM_HPP_
 
-#include <tuple>
+#include "../global.hpp"
 
-#include "global.hpp"
-
-#include "math/common.hpp"
-#include "math/geometric.hpp"
-#include "math/matrix/matrix4x4.hpp"
-#include "math/normal/normal3.hpp"
-#include "math/point/point3.hpp"
-#include "math/ray.hpp"
-#include "math/ray_differential.hpp"
-#include "math/vector/vector3.hpp"
-#include "quaternion.hpp"
+#include "../math/common.hpp"
+#include "../math/geometric.hpp"
+#include "../math/matrix/matrix4x4.hpp"
+#include "../math/normal/normal3.hpp"
+#include "../math/point/point3.hpp"
+#include "../math/quaternion.hpp"
+#include "../math/ray.hpp"
+#include "../math/ray_differential.hpp"
+#include "../math/vector/vector3.hpp"
 #include "transform.hpp"
 
+namespace specula {
 class AnimatedTransform {
 public:
   AnimatedTransform(const Transform *start_transform, Float start_time,
-                    const Float *end_transform, Float end_time);
-  static std::tuple<Vector3f, Quaternion, Matrix4x4f>
-  Decompose(const Matrix4x4f &m);
+                    const Transform *end_transform, Float end_time);
+  static void Decompose(const Matrix4x4f &m, Vector3f *T, Quaternion *R,
+                        Matrix4x4f *S);
   void interpolate(Float time, Transform *t) const;
-  Ray operator())(const Ray &r) const;
+  Ray operator()(const Ray &r) const;
   RayDifferential operator()(const RayDifferential &r) const;
   Point3f operator()(Float time, const Point3f &p) const;
   Vector3f operator()(Float time, const Vector3f &v) const;
@@ -31,7 +30,7 @@ public:
     return start_transform->has_scale() || end_transform->has_scale();
   }
   Bounds3f motion_bounds(const Bounds3f &b) const;
-  Bounds3f bound_point_motion(cosnt Point3f &p) const;
+  Bounds3f bound_point_motion(const Point3f &p) const;
 
 private:
   struct DerivativeTerm {
@@ -49,9 +48,10 @@ private:
   const bool actually_animated;
   Vector3f T[2];
   Quaternion R[2];
-  Matrix4x4 S[2];
+  Matrix4f S[2];
   bool has_rotation;
   DerivativeTerm c1[3], c2[3], c3[3], c4[4], c5[3];
 };
+} // namespace specula
 
-#endif // SPECULA_ANIMATED_TRANSFORM_HPP_
+#endif // SPECULA_TRANSFORM_ANIMATED_TRANSFORM_HPP_

@@ -1,9 +1,9 @@
-#include "specula/quaternion.hpp"
+#include "specula/math/quaternion.hpp"
 
 #include "specula/global.hpp"
 
 #include "specula/math/matrix/matrix4x4.hpp"
-#include "specula/transform.hpp"
+#include "specula/transform/transform.hpp"
 
 specula::Quaternion::Quaternion(const Transform &t) {
   const Matrix4x4f &m = t.m;

@@ -5,7 +5,7 @@
 #include <iterator>
 #include <stdexcept>
 
-#include "global.hpp"
+#include "../global.hpp"
 
 namespace specula {
 class Quaternion {
@@ -139,7 +139,7 @@ inline Quaternion normalize(const Quaternion &q) { return q / q.length(); }
 
 inline Quaternion operator*(Float s, const Quaternion &v) { return v * s; }
 
-std::ostream &operator<<(std::ostream &out, const Quaternion &v) {
+inline std::ostream &operator<<(std::ostream &out, const Quaternion &v) {
   return out << v.fmt();
 }
 } // namespace specula

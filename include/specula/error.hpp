@@ -15,8 +15,13 @@
 #define CHECK_EXPR_ERROR(expr) CHECK_EXPR(spdlog::level::error, expr)
 #define CHECK_EXPR_CRITICAL(expr) CHECK_EXPR(spdlog::level::critical, expr)
 
-#define CHECK_EQ(a, b) CHECK_EXPR_CRITICAL(a == b)
-#define CHECK_NE(a, b) CHECK_EXPR_CRITICAL(a != b)
+#define CHECK(expr) CHECK_EXPR_CRITICAL((expr))
+#define CHECK_EQ(a, b) CHECK(a == b)
+#define CHECK_NE(a, b) CHECK(a != b)
+#define CHECK_LT(a, b) CHECK(a < b)
+#define CHECK_GT(a, b) CHECK(a > b)
+#define CHECK_LE(a, b) CHECK(a <= b)
+#define CHECK_GE(a, b) CHECK(a >= b)
 #else
 #define CHECK_EQ(a, b)
 #define CHECK_NE(a, b)

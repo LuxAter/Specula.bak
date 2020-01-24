@@ -1,4 +1,4 @@
-#include "specula/transform.hpp"
+#include "specula/transform/transform.hpp"
 
 #include "specula/global.hpp"
 
@@ -108,9 +108,17 @@ specula::Transform specula::Transform::look_at(const Point3f &pos,
   camera_to_world.data[3][2] = 0.0f;
   return Transform(inverse(camera_to_world), camera_to_world);
 }
-specula::Transform specula::Transform::orthographic(Float znear, Float zfar) {}
+specula::Transform specula::Transform::orthographic(Float znear, Float zfar) {
+  return Transform::scale(1, 1, 1 / (zfar - znear)) *
+         Transform::translate(Vector3f(0, 0, -znear));
+}
 specula::Transform specula::Transform::perspective(Float fov, Float znear,
-                                                   Float zfar) {}
+                                                   Float zfar) {
+  Matrix4x4f persp(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, fov / (fov - znear),
+                   -fov * znear / (fov - znear), 0, 0, 1, 0);
+  Float inv_tan_ang = 1 / std::tan(radians(fov) / 2);
+  return Transform::scale(inv_tan_ang, inv_tan_ang, 1) * Transform(persp);
+}
 
 specula::Ray specula::Transform::operator()(const Ray &r) const {
   Vector3f o_error;
