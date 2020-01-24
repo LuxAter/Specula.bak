@@ -2,46 +2,30 @@
 
 #include <iostream>
 #include <memory>
+#include <string>
 
 #include <spdlog/fmt/ostr.h>
 #include <spdlog/sinks/basic_file_sink.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/spdlog.h>
 
-bool specula::initalize_logger(const std::size_t &verbosity) {
+static std::shared_ptr<spdlog::logger> logger;
+
+bool specula::logger::initalize_logger(const LogLevel &console_level,
+                                       const LogLevel &file_level) {
   try {
-    auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
-    switch (verbosity) {
-    case 6:
-      console_sink->set_level(spdlog::level::trace);
-      break;
-    case 5:
-      console_sink->set_level(spdlog::level::debug);
-      break;
-    case 4:
-      console_sink->set_level(spdlog::level::info);
-      break;
-    case 3:
-      console_sink->set_level(spdlog::level::warn);
-      break;
-    case 2:
-      console_sink->set_level(spdlog::level::err);
-      break;
-    case 1:
-      console_sink->set_level(spdlog::level::critical);
-      break;
-    case 0:
-      console_sink->set_level(spdlog::level::off);
-      break;
-    }
-
-    auto file_sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>(
-        "specula.log", true);
-    file_sink->set_level(spdlog::level::trace);
-
-    spdlog::set_default_logger(std::make_shared<spdlog::logger>(
-        "specula", spdlog::sinks_init_list({console_sink, file_sink})));
-    spdlog::set_level(spdlog::level::trace);
+    std::vector<spdlog::sink_ptr> sinks;
+    sinks.push_back(std::make_shared<spdlog::sinks::stdout_color_sink_mt>());
+    sinks.back()->set_level(
+        static_cast<spdlog::level::level_enum>(console_level));
+    sinks.push_back(std::make_shared<spdlog::sinks::basic_file_sink_mt>(
+        "specula.log", true));
+    sinks.back()->set_level(static_cast<spdlog::level::level_enum>(file_level));
+    logger =
+        std::make_shared<spdlog::logger>("specula", begin(sinks), end(sinks));
+    logger->set_level(static_cast<spdlog::level::level_enum>(
+        std::min(static_cast<uint8_t>(console_level),
+                 static_cast<uint8_t>(file_level))));
 
     return true;
   } catch (const spdlog::spdlog_ex &ex) {
@@ -49,3 +33,5 @@ bool specula::initalize_logger(const std::size_t &verbosity) {
     return false;
   }
 }
+
+std::shared_ptr<spdlog::logger> specula::logger::get_logger() { return logger; }

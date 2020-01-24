@@ -5,9 +5,7 @@
 #include <memory>
 #include <stdexcept>
 
-#include "../../compiler.hpp"
-#include "../../fmt.hpp"
-#include "../../types.hpp"
+#include "../../global.hpp"
 
 namespace specula {
 template <typename T, class A = std::allocator<T>> class Vector3 {

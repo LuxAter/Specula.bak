@@ -1,13 +1,11 @@
 #ifndef SPECULA_RAY_DIFFERENTIAL_HPP_
 #define SPECULA_RAY_DIFFERENTIAL_HPP_
 
+#include "../global.hpp"
 #include "ray.hpp"
 
 #include "point/point3.hpp"
 #include "vector/vector3.hpp"
-
-#include "../fmt.hpp"
-#include "../types.hpp"
 
 namespace specula {
 class RayDifferential : public Ray {

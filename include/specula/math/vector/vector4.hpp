@@ -5,9 +5,7 @@
 #include <iterator>
 #include <stdexcept>
 
-#include "../../compiler.hpp"
-#include "../../fmt.hpp"
-#include "../../types.hpp"
+#include "../../global.hpp"
 
 namespace specula {
 template <typename T> class Vector4 {

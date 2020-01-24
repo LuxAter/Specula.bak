@@ -1,7 +1,7 @@
 #ifndef SPECULA_MATH_COMMON_HPP_
 #define SPECULA_MATH_COMMON_HPP_
 
-#include <cmath>
+#include "../global.hpp"
 
 #include "bounds.hpp"
 #include "matrix.hpp"
@@ -372,12 +372,14 @@ Vector2<T> permute(const Vector2<T> &v, typename Vector2<T>::size_type x,
 }
 template <typename T>
 Vector3<T> permute(const Vector3<T> &v, typename Vector3<T>::size_type x,
-                   typename Vector3<T>::size_type y, typename Vector3<T>::size_type z) {
+                   typename Vector3<T>::size_type y,
+                   typename Vector3<T>::size_type z) {
   return Vector3<T>(v[x], v[y], v[z]);
 }
 template <typename T>
 Vector4<T> permute(const Vector4<T> &v, typename Vector4<T>::size_type x,
-                   typename Vector4<T>::size_type y, typename Vector4<T>::size_type z,
+                   typename Vector4<T>::size_type y,
+                   typename Vector4<T>::size_type z,
                    typename Vector4<T>::size_type w) {
   return Vector4<T>(v[x], v[y], v[z], v[w]);
 }
@@ -388,12 +390,14 @@ Point2<T> permute(const Point2<T> &v, typename Point2<T>::size_type x,
 }
 template <typename T>
 Point3<T> permute(const Point3<T> &v, typename Point3<T>::size_type x,
-                  typename Point3<T>::size_type y, typename Point3<T>::size_type z) {
+                  typename Point3<T>::size_type y,
+                  typename Point3<T>::size_type z) {
   return Point3<T>(v[x], v[y], v[z]);
 }
 template <typename T>
 Point4<T> permute(const Point4<T> &v, typename Point4<T>::size_type x,
-                  typename Point4<T>::size_type y, typename Point4<T>::size_type z,
+                  typename Point4<T>::size_type y,
+                  typename Point4<T>::size_type z,
                   typename Point4<T>::size_type w) {
   return Point4<T>(v[x], v[y], v[z], v[w]);
 }
@@ -404,12 +408,14 @@ Normal2<T> permute(const Normal2<T> &v, typename Normal2<T>::size_type x,
 }
 template <typename T>
 Normal3<T> permute(const Normal3<T> &v, typename Normal3<T>::size_type x,
-                   typename Normal3<T>::size_type y, typename Normal3<T>::size_type z) {
+                   typename Normal3<T>::size_type y,
+                   typename Normal3<T>::size_type z) {
   return Normal3<T>(v[x], v[y], v[z]);
 }
 template <typename T>
 Normal4<T> permute(const Normal4<T> &v, typename Normal4<T>::size_type x,
-                   typename Normal4<T>::size_type y, typename Normal4<T>::size_type z,
+                   typename Normal4<T>::size_type y,
+                   typename Normal4<T>::size_type z,
                    typename Normal4<T>::size_type w) {
   return Normal4<T>(v[x], v[y], v[z], v[w]);
 }

@@ -1,6 +1,8 @@
 #ifndef SPECULA_BOUNDS_HPP_
 #define SPECULA_BOUNDS_HPP_
 
+#include "../global.hpp"
+
 #include "bounds/bounds2.hpp"
 #include "bounds/bounds3.hpp"
 #include "bounds/bounds4.hpp"

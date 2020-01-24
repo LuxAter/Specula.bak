@@ -1,7 +1,7 @@
 #ifndef SPECULA_GEOMETRIC_HPP_
 #define SPECULA_GEOMETRIC_HPP_
 
-#include <cmath>
+#include "../global.hpp"
 
 #include "bounds.hpp"
 #include "common.hpp"

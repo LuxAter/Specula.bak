@@ -9,6 +9,7 @@
 #include "math/ray.hpp"
 #include "math/ray_differential.hpp"
 #include "math/vector/vector3.hpp"
+#include "preprocessor.hpp"
 #include "types.hpp"
 
 namespace specula {
@@ -18,6 +19,17 @@ public:
   Transform(const Float mat[4][4]);
   Transform(const Matrix4x4f &m);
   Transform(const Matrix4x4f &m, const Matrix4x4f &inv);
+
+  static Transform translate(const Vector3f &delta);
+  static Transform scale(Float x, Float y, Float z);
+  static Transform rotate_x(Float theta);
+  static Transform rotate_y(Float theta);
+  static Transform rotate_z(Float theta);
+  static Transform rotate(Float theta, const Vector3f &axis);
+  static Transform look_at(const Point3f &pos, const Point3f &look,
+                           const Vector3f &up);
+  static Transform orthographic(Float znear, Float zfar);
+  static Transform perspective(Float fov, Float znear, Float zfar);
 
   inline bool operator==(const Transform &t) const {
     return t.m == m && t.inv == inv;
@@ -87,38 +99,46 @@ public:
         inv.data[0][1] * x + inv.data[1][1] * y + inv.data[2][1] * z,
         inv.data[0][2] * x + inv.data[1][2] * y + inv.data[2][2] * z);
   }
-  inline Ray operator()(const Ray &r) const {
-    Vector3f o_error;
-    Point3f o = (*this)(r.o, &o_error);
-    Vector3f d = (*this)(r.d);
-    Float length_squared = d.length_squared();
-    Float t_max = r.t_max;
-    if (length_squared > 0) {
-      Float dt = dot(abs(d), o_error) / length_squared;
-      o += d * dt;
-      t_max -= dt;
-    }
-    return Ray(o, d, t_max, r.time, r.medium);
-  }
-  inline RayDifferential operator()(const RayDifferential &r) const {
-    Ray tr = (*this)(Ray(r));
-    RayDifferential ret(tr.o, tr.d, tr.t_max, tr.time, tr.medium);
-    ret.has_differentials = r.has_differentials;
-    ret.rx_origin = (*this)(r.rx_origin);
-    ret.ry_origin = (*this)(r.ry_origin);
-    ret.rx_direction = (*this)(r.rx_direction);
-    ret.ry_direction = (*this)(r.ry_direction);
-    return ret;
-  }
+  Ray operator()(const Ray &r) const;
+  RayDifferential operator()(const RayDifferential &r) const;
+  Bounds3f operator()(const Bounds3f &b) const;
+  Transform operator*(const Transform &t2) const;
+  bool swaps_handedness() const;
+
   template <typename T>
-  inline Point3<T> operator()(const Point3<T> &p, Vector3<T> *p_error) const {}
+  inline Point3<T> operator()(const Point3<T> &p, Vector3<T> *p_error) const {
+    T x = p.x, y = p.y, z = p.z;
+    T xp =
+        m.data[0][0] * x + m.data[0][1] * y + m.data[0][2] * z + m.data[0][3];
+    T yp =
+        m.data[1][0] * x + m.data[1][1] * y + m.data[1][2] * z + m.data[1][3];
+    T zp =
+        m.data[2][0] * x + m.data[2][1] * y + m.data[2][2] * z + m.data[2][3];
+    T wp =
+        m.data[3][0] * x + m.data[3][1] * y + m.data[3][2] * z + m.data[3][3];
+
+    T x_abs_sum = std::abs(m.data[0][0] * x) + std::abs(m.data[0][1] * y) +
+                  std::abs(m.data[0][2] * z) + std::abs(m.data[0][3]);
+    T y_abs_sum = std::abs(m.data[1][0] * x) + std::abs(m.data[1][1] * y) +
+                  std::abs(m.data[1][2] * z) + std::abs(m.data[1][3]);
+    T z_abs_sum = std::abs(m.data[2][0] * x) + std::abs(m.data[2][1] * y) +
+                  std::abs(m.data[2][2] * z) + std::abs(m.data[2][3]);
+    *p_error = gamma(3) * Vector3<T>(x_abs_sum, y_abs_sum, z_abs_sum);
+    SPECULA_ASSERT(wp != 0);
+    if (wp == 1)
+      return Point3<T>(xp, yp, zp);
+    else
+      return Point3<T>(xp, yp, zp) / wp;
+  }
+
+  friend Transform inverse(const Transform &t) { return Transform(t.inv, t.m); }
+  friend Transform transpose(const Transform &t) {
+    return Transform(transpose(t.m), transpose(t.inv));
+  }
 
 private:
   Matrix4x4f m, inv;
 };
-
-Transform inverse(const Transform &t);
-Transform transpose(const Transform &t);
 } // namespace specula
 
 #endif // SPECULA_TRANSFORM_HPP_

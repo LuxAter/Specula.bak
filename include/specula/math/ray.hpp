@@ -1,11 +1,10 @@
 #ifndef SPECULA_RAY_HPP_
 #define SPECULA_RAY_HPP_
 
+#include "../global.hpp"
+
 #include "point/point3.hpp"
 #include "vector/vector3.hpp"
-
-#include "../fmt.hpp"
-#include "../types.hpp"
 
 namespace specula {
 class Ray {
