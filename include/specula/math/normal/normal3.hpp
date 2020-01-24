@@ -5,14 +5,12 @@
 #include <memory>
 #include <stdexcept>
 
-#include "../../compiler.hpp"
-#include "../../fmt.hpp"
-#include "../../types.hpp"
+#include "../../global.hpp"
 
 #include "../vector/vector3.hpp"
 
 namespace specula {
-template <typename T, class A = std::allocator<T>> class Normal3 {
+template <typename T> class Normal3 {
 public:
   typedef T value_type;
   typedef T &reference;

@@ -128,7 +128,7 @@
 #define LCSFATAL(file, line, function, ...)                                    \
   SPECULA_CLIENT_SOURCE_FATAL(file, line, function, __VA_ARGS__)
 
-namespace ludus {
+namespace specula {
 namespace logger {
 enum LogLevel {
   TRACE = spdlog::level::trace,
@@ -176,6 +176,6 @@ inline void critical(std::string fmt, const _ARGS &... args) {
 }
 } // namespace logger
 
-} // namespace ludus
+} // namespace specula
 
 #endif // SPECULA_LOG_HPP_

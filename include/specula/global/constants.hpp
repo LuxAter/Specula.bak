@@ -2,6 +2,7 @@
 #define SPECULA_GLOBAL_CONSTANTS_HPP_
 
 #include "compiler.hpp"
+#include "includes.hpp"
 #include "types.hpp"
 
 namespace specula {
@@ -10,8 +11,7 @@ namespace specula {
 #define INFINITY std::numeric_limits<Float>::infinity();
 #else
 static SPECULA_CONSTEXPR Float MAX_FLOAT = std::numeric_limits<Float>::max();
-static SPECULA_CONSTEXPR Float INFINITY =
-    std::numeric_limits<Float>::infinity();
+static SPECULA_CONSTEXPR Float INFTY = std::numeric_limits<Float>::infinity();
 #endif
 #ifdef _MSC_VER
 #define MACHINE_EPSILON (std::numeric_limits<Float>::epsilon() * 0.5)

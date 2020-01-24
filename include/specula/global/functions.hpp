@@ -76,21 +76,21 @@ inline double next_float_down(double v, int delta = 1) {
   return bits_to_float(ui);
 }
 
-SPECULA_CONSTXPR inline Float gamma(int n) {
+SPECULA_CONSTEXPR inline Float gamma(int n) {
   return (n * MACHINE_EPSILON) / (1 - n * MACHINE_EPSILON);
 }
-SPECULA_CONSTEXPR inline Float gamma_correct(Float value) {
+inline Float gamma_correct(Float value) {
   if (value <= 0.0031308f)
     return 12.92f * value;
   return 1.055f * std::pow(value, static_cast<Float>(1.f / 2.4f)) - 0.055f;
 }
-SPECULA_CONSTEXPR inline Float inverse_gamma_correct(Float value) {
+inline Float inverse_gamma_correct(Float value) {
   if (value <= 0.04045f)
     return value * 1.f / 12.92f;
   return std::pow((value + 0.055f) * 1.f / 1.055f, static_cast<Float>(2.4f));
 }
 template <typename T, typename U, typename V>
-SPECULA_CONSTEXPR inline T clamp(T val, U low, V high) {
+inline T clamp(T val, U low, V high) {
   if (val < low)
     return low;
   else if (val > high)
@@ -107,11 +107,11 @@ template <> SPECULA_CONSTEXPR Float mod(Float a, Float b) {
 }
 SPECULA_CONSTEXPR inline Float radians(Float deg) { return (PI / 180.f) * deg; }
 SPECULA_CONSTEXPR inline Float degrees(Float rad) { return (180.f / PI) * rad; }
-SPECULA_CONSTEXPR inline Float log2(Float x) {
+inline Float log2(Float x) {
   const Float inv_log2 = 1.442695040888963387004650940071;
   return std::log(x) * inv_log2;
 }
-SPECULA_CONSTEXPR inline int log2_int(uint32_t v) {
+inline int log2_int(uint32_t v) {
 #if defined(SPECULA_IS_MSVC)
   unsigned long lz = 0;
   if (_BitScanReverse(&lz, v))
@@ -121,7 +121,7 @@ SPECULA_CONSTEXPR inline int log2_int(uint32_t v) {
   return 31 - __builtin_clz(v);
 #endif
 }
-SPECULA_CONSTEXPR inline int log2_int(uint64_t v) {
+inline int log2_int(uint64_t v) {
 #if defined(PBRT_IS_MSVC)
   unsigned long lz = 0;
 #if defined(_WIN64)
@@ -133,21 +133,17 @@ SPECULA_CONSTEXPR inline int log2_int(uint64_t v) {
 #endif
   return lz;
 #else
-  return 63 - __buildin_clzll(v);
+  return 63 - __builtin_clzll(v);
 #endif
 }
-SPECULA_CONSTEXPR inline int log2_int(int32_t v) {
-  return log2_int(static_cast<uint32_t>(v));
-}
-SPECULA_CONSTEXPR inline int log2_int(int64_t v) {
-  return log2_int(static_cast<uint64_t>(v));
-}
+inline int log2_int(int32_t v) { return log2_int(static_cast<uint32_t>(v)); }
+inline int log2_int(int64_t v) { return log2_int(static_cast<uint64_t>(v)); }
 
 template <typename T> SPECULA_CONSTEXPR inline bool is_power_of2(T v) {
   return v && !(v & (v - 1));
 }
 
-SPECULA_CONSTEXPR inline int32_t round_up_pow2(int32_t v) {
+inline int32_t round_up_pow2(int32_t v) {
   v--;
   v |= v >> 1;
   v |= v >> 2;
@@ -156,7 +152,7 @@ SPECULA_CONSTEXPR inline int32_t round_up_pow2(int32_t v) {
   v |= v >> 16;
   return v + 1;
 }
-SPECULA_CONSTEXPR inline int32_t round_up_pow2(int64_t v) {
+inline int32_t round_up_pow2(int64_t v) {
   v--;
   v |= v >> 1;
   v |= v >> 2;
@@ -174,12 +170,12 @@ SPECULA_CONSTEXPR inline int count_trailing_zeros(uint32_t v) {
   else
     return 32;
 #else
-  return __buildit_ctz(v);
+  return __builtin_ctz(v);
 #endif
 }
 
 template <typename Predicate>
-SPECULA_CONSTEXPR int find_inverval(int size, const Predicate &pred) {
+int find_inverval(int size, const Predicate &pred) {
   int first = 0, len = size;
   while (len > 0) {
     int half = len >> 1, middel = first + half;
@@ -192,17 +188,16 @@ SPECULA_CONSTEXPR int find_inverval(int size, const Predicate &pred) {
   }
   return clamp(first - 1, 0, size - 2);
 }
-template <typename T> SPECULA_CONSTEXPR inline lerp(T v1, T v2, Float t) {
+template <typename T> SPECULA_CONSTEXPR inline T lerp(T v1, T v2, Float t) {
   return (1 - t) * v1 + t * v2;
 }
-SPECULA_CONSTEXPR inline bool quadratic(Float a, Float b, Float c, Float *t0,
-                                        Float *t1) {
+inline bool quadratic(Float a, Float b, Float c, Float *t0, Float *t1) {
   double discrim = static_cast<double>(b) * static_cast<double>(b) -
                    4 * static_cast<double>(a) * static_cast<double>(c);
   if (discrim < 0)
     return false;
   double root_discrim = std::sqrt(discrim);
-  double q;
+  double q = 0;
   if (b < 0)
     q = -0.5 * (b - root_discrim);
   else
@@ -214,7 +209,7 @@ SPECULA_CONSTEXPR inline bool quadratic(Float a, Float b, Float c, Float *t0,
   return true;
 }
 
-SPECULA_CONSTEXPR inline Float erf_inv(Float x) {
+inline Float erf_inv(Float x) {
   Float w, p;
   x = clamp(x, -0.99999f, 0.99999f);
   w = -std::log((1 - x) * (1 + x));
@@ -243,7 +238,7 @@ SPECULA_CONSTEXPR inline Float erf_inv(Float x) {
   }
   return p * x;
 }
-SPECULA_CONSTEXPR inline Float erf(Float x) {
+inline Float erf(Float x) {
   Float a1 = 0.254829592f;
   Float a2 = -0.284496736f;
   Float a3 = 1.421413741f;

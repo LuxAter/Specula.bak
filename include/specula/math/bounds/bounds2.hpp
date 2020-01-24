@@ -1,7 +1,8 @@
 #ifndef SPECULA_BOUNDS_BOUNDS2_HPP_
 #define SPECULA_BOUNDS_BOUNDS2_HPP_
 
-#include "../interp.hpp"
+#include "../../global.hpp"
+
 #include "../point/point2.hpp"
 #include "../vector/vector2.hpp"
 
@@ -16,9 +17,6 @@ public:
   typedef std::size_t size_type;
   typedef std::ptrdiff_t difference_type;
 
-  template <typename U = T,
-            typename =
-                typename std::enable_if<std::is_same<U, Int>::value>::type>
   class iterator : public std::forward_iterator_tag {
   public:
     iterator(const Bounds2<T> *b, const Point2<T> &pt) : p(pt), bounds(b) {}
@@ -62,16 +60,12 @@ public:
   template <typename U> explicit operator Bounds2<U>() const {
     return Bounds2<U>(Point2<U>(p_min), Point2<U>(p_max));
   }
-  typename std::enable_if<std::is_same<T, Int>::value, iterator<T>>::type
-  begin() const {
-    return iterator<T>(this, p_min);
-  }
-  typename std::enable_if<std::is_same<T, Int>::value, iterator<T>>::type
-  end() const {
+  iterator begin() const { return iterator(this, p_min); }
+  iterator end() const {
     Point2<T> p_end(p_min.x, p_min.y);
     if (p_min.x >= p_max.x || p_min.y >= p_max.y)
       p_end = p_min;
-    return iterator<T>(this, p_end);
+    return iterator(this, p_end);
   }
   bool operator==(const Bounds2<T> &b) const {
     return p_min == b.p_min && p_max == b.p_max;

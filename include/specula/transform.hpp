@@ -1,6 +1,8 @@
 #ifndef SPECULA_TRANSFORM_HPP_
 #define SPECULA_TRANSFORM_HPP_
 
+#include "global.hpp"
+
 #include "math/common.hpp"
 #include "math/geometric.hpp"
 #include "math/matrix/matrix4x4.hpp"
@@ -9,8 +11,6 @@
 #include "math/ray.hpp"
 #include "math/ray_differential.hpp"
 #include "math/vector/vector3.hpp"
-#include "preprocessor.hpp"
-#include "types.hpp"
 
 namespace specula {
 class Transform {

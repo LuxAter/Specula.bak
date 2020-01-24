@@ -6,12 +6,10 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${SPECULA_BINARY_DIR})
 # SOURCE FILES
 # ##############################################################################
 set(SOURCES
-    specula.cpp
     log.cpp
     math/bounds.cpp
     math/common.cpp
     math/geometric.cpp
-    math/interp.cpp
     math/ray.cpp
     math/ray_differential.cpp
     math/bounds/bounds2.cpp

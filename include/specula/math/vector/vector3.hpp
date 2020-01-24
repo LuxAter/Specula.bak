@@ -8,7 +8,7 @@
 #include "../../global.hpp"
 
 namespace specula {
-template <typename T, class A = std::allocator<T>> class Vector3 {
+template <typename T> class Vector3 {
 public:
   typedef T value_type;
   typedef T &reference;

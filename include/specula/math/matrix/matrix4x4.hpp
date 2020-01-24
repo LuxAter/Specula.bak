@@ -4,9 +4,7 @@
 #include <memory>
 #include <stdexcept>
 
-#include "../../compiler.hpp"
-#include "../../fmt.hpp"
-#include "../../types.hpp"
+#include "../../global.hpp"
 
 #include "../vector/vector4.hpp"
 
