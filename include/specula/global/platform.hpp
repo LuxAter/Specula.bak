@@ -2,7 +2,7 @@
 #define SPECULA_GLOBALS_PLATFORM_HPP_
 
 #if defined(_WIN32) || defined(_WIN64)
-#defined SPECULA_IS_WINDOWS
+#define SPECULA_IS_WINDOWS
 #endif
 
 #if defined(_MSC_VER)
