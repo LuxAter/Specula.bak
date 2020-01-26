@@ -98,11 +98,11 @@ inline T clamp(T val, U low, V high) {
   else
     return val;
 }
-template <typename T> SPECULA_CONSTEXPR T mod(T a, T b) {
+template <typename T> T inline mod(T a, T b) {
   T result = a - (a / b) * b;
   return static_cast<T>((result < 0) ? result + b : result);
 }
-template <> SPECULA_CONSTEXPR Float mod(Float a, Float b) {
+template <> inline Float mod(Float a, Float b) {
   return std::fmod(a, b);
 }
 SPECULA_CONSTEXPR inline Float radians(Float deg) { return (PI / 180.f) * deg; }
