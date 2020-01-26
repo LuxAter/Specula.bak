@@ -114,8 +114,8 @@ specula::Transform specula::Transform::orthographic(Float znear, Float zfar) {
 }
 specula::Transform specula::Transform::perspective(Float fov, Float znear,
                                                    Float zfar) {
-  Matrix4x4f persp(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, fov / (fov - znear),
-                   -fov * znear / (fov - znear), 0, 0, 1, 0);
+  Matrix4x4f persp(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, zfar / (zfar - znear),
+                   -zfar * znear / (zfar - znear), 0, 0, 1, 0);
   Float inv_tan_ang = 1 / std::tan(radians(fov) / 2);
   return Transform::scale(inv_tan_ang, inv_tan_ang, 1) * Transform(persp);
 }
