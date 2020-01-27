@@ -9,6 +9,16 @@
 
 #include "common.hpp"
 
+/**
+ * @defgroup Bounds
+ * @ingroup Math
+ * @brief Standard `Bounds` classes and operations
+ *
+ * This module implements standard bounding box classes, and operations to use
+ * these classes. Specifically it implements 2D, 3D, and 4D bounding boxes.
+ *
+ */
+
 namespace specula {
 template <typename T>
 Bounds2<T> Union(const Bounds2<T> &b, const Point2<T> &p) {

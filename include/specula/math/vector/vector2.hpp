@@ -8,6 +8,15 @@
 #include "../../global.hpp"
 
 namespace specula {
+/**
+ * @brief Vector with two elements
+ * @ingroup Vector
+ *
+ * This vector class implements a vector with two elements, the elements are
+ * accessed using `v.x` and `v.y`.
+ *
+ * @tparam T Element type for vector
+ */
 template <typename T> class Vector2 {
 public:
   typedef T value_type;

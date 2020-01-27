@@ -7,6 +7,21 @@
 #include "matrix/matrix3x3.hpp"
 #include "matrix/matrix4x4.hpp"
 
+/**
+ * @defgroup Matrix
+ * @ingroup Math
+ * @brief Standard `Matrix` classes and operations
+ *
+ * This module implements standard Matrix classes, and operations to use
+ * these classes. Specifically it implements `Matrix2x2<T>`, `Matrix3x3<T>`, and
+ * `Matrix4x4<T>`. Other more generalized matricies have been omited from the
+ * implementation, as they are unneccessary for the use of the renderer.
+ *
+ * These matrix implementations are primarily used in the Transformation
+ * classes, as the internal data of the transformation.
+ *
+ */
+
 namespace specula {
 template <typename T> T determinant(const Matrix2x2<T> &m) {
   return m.data[0][0] * m.data[1][1] - m.data[0][1] * m.data[1][0];

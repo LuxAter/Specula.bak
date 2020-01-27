@@ -37,8 +37,15 @@ set(SOURCES
     "include/specula/math/vector/vector3.hpp"
     "include/specula/math/vector/vector4.hpp")
 
+set(RESOURCES
+    arrow.png
+    folder-open-solid.svg)
+
 foreach(path IN LISTS SOURCES)
   set(DOXYGEN_INPUT "${DOXYGEN_INPUT} \\\n\"${SPECULA_SOURCE_DIR}/${path}\"")
+endforeach()
+foreach(path IN LISTS RESOURCES)
+  set(DOXYGEN_RESOURCES "${DOXYGEN_RESOURCES} \\\n\"${SPECULA_SOURCE_DIR}/docs/${path}\"")
 endforeach()
 configure_file(Doxyfile.in Doxyfile @ONLY)
 
