@@ -102,9 +102,7 @@ template <typename T> T inline mod(T a, T b) {
   T result = a - (a / b) * b;
   return static_cast<T>((result < 0) ? result + b : result);
 }
-template <> inline Float mod(Float a, Float b) {
-  return std::fmod(a, b);
-}
+template <> inline Float mod(Float a, Float b) { return std::fmod(a, b); }
 SPECULA_CONSTEXPR inline Float radians(Float deg) { return (PI / 180.f) * deg; }
 SPECULA_CONSTEXPR inline Float degrees(Float rad) { return (180.f / PI) * rad; }
 inline Float log2(Float x) {
@@ -112,7 +110,7 @@ inline Float log2(Float x) {
   return std::log(x) * inv_log2;
 }
 inline int log2_int(uint32_t v) {
-#if defined(SPECULA_IS_MSVC)
+#if SPECULA_COMPILER_IS_MSVC
   unsigned long lz = 0;
   if (_BitScanReverse(&lz, v))
     return lz;
@@ -122,14 +120,15 @@ inline int log2_int(uint32_t v) {
 #endif
 }
 inline int log2_int(uint64_t v) {
-#if defined(PBRT_IS_MSVC)
+#if SPECULA_COMPILER_IS_MSVC
   unsigned long lz = 0;
 #if defined(_WIN64)
   _BitScanReverse64(&lz, v);
 #else
   if (_BitScanReverse(&lz, v >> 32))
     lz += 32;
-  else_BitScanReverse(&lz, v & 0xffffffff);
+  else
+    _BitScanReverse(&lz, v & 0xffffffff);
 #endif
   return lz;
 #else
@@ -162,8 +161,8 @@ inline int32_t round_up_pow2(int64_t v) {
   v |= v >> 32;
   return v + 1;
 }
-SPECULA_CONSTEXPR inline int count_trailing_zeros(uint32_t v) {
-#if defined(SPECULA_IS_MSVC)
+inline int count_trailing_zeros(uint32_t v) {
+#if SPECULA_COMPILER_IS_MSVC
   unsigned long index;
   if (_BitScanForward(&index, v))
     return index;

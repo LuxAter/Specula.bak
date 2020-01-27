@@ -1,18 +1,9 @@
 #ifndef SPECULA_GLOBALS_PLATFORM_HPP_
 #define SPECULA_GLOBALS_PLATFORM_HPP_
 
-#if defined(_WIN32) || defined(_WIN64)
-#define SPECULA_IS_WINDOWS
-#endif
+#include "compiler.hpp"
 
-#if defined(_MSC_VER)
-#define SPECULA_IS_MSCV
-#if _MSC_VER == 1800
-#define snprintf _snprintf
-#endif
-#endif
-
-#if defined(SPECULA_IS_MSVC)
+#if SPECULA_COMPILER_IS_MSVC
 #pragma warning(disable : 4305)
 #pragma warning(disable : 4244)
 #pragma warning(disable : 4843)
