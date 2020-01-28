@@ -14,9 +14,12 @@
  * that act on these types. Specifically this module implements `Point2<T>`,
  * `Point3<T>`, and `Point4<T>`.
  *
- * Implementing points distinctly form the vector class, as points are treated
- * differently by transformations than vectors. For example points are effected
- * by the translational component of transformations, while vectors will not be.
+ * A point is a zero-dimensional location in 2D, 3D or 4D space. The Point2,
+ * Point3, and Point4 classes represent points in the obcious way: using \f$x,
+ * y, z, w\f$(in 4D) coordinates with respect to a coordinate system. Although
+ * the same representation is used for vectors, hte fact that a point represents
+ * a position wheras a vector represents a direction leads to a number of
+ * important differences in how they are treated.
  *
  */
 

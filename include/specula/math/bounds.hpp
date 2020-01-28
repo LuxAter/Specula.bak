@@ -14,8 +14,14 @@
  * @ingroup Math
  * @brief Standard `Bounds` classes and operations
  *
- * This module implements standard bounding box classes, and operations to use
- * these classes. Specifically it implements 2D, 3D, and 4D bounding boxes.
+ * Many parts of the system operate on axis-aligned regions of space. The
+ * `Bounds2`, `Bounds3`, and `Bounds4` template classes are used to represent
+ * the extent of these sorts of regions. All are parametrized by a type `T`
+ * that is used to represent the coordinates of its extents.
+ *
+ * There are a few possible representations for these sorts of bounding boxes,
+ * this project uses axis-aligned bounding boxes, where the box edges are
+ * mutually perpendicular and aligned with the coordinate system axes.
  *
  */
 

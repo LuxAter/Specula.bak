@@ -10,6 +10,15 @@
 #include "../vector/vector3.hpp"
 
 namespace specula {
+/**
+ * @brief Normal with three elements
+ * @ingroup Normal 
+ *
+ * This normal class implements a normal with three elements, the elements are
+ * accessed using `v.x`, `v.y`, and `v.z`.
+ *
+ * @tparam T Element type for normal 
+ */
 template <typename T> class Normal3 {
 public:
   typedef T value_type;

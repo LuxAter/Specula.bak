@@ -10,6 +10,15 @@
 #include "../vector/vector4.hpp"
 
 namespace specula {
+/**
+ * @brief Normal with four elements
+ * @ingroup Normal 
+ *
+ * This normal class implements a normal with four elements, the elements are
+ * accessed using `v.x`, `v.y`, `v.z`, and `v.w`.
+ *
+ * @tparam T Element type for normal 
+ */
 template <typename T> class Normal4 {
 public:
   typedef T value_type;

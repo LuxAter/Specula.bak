@@ -4,6 +4,16 @@
 #include "../global.hpp"
 
 namespace specula {
+  /**
+   * @ingroup Math
+   * @brief Numeric interval class
+   *
+   * This class provides a generic interval class, allowing for specification
+   * of ranges of values. Common operations with other intervals are aso
+   * defined.
+   *
+   * @tparam T Value type of interval
+   */
 template <typename T> class Interval {
 public:
   Interval(T v) : low(v), high(v) {}

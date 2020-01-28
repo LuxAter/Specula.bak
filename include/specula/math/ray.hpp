@@ -15,9 +15,25 @@
  * rendering. The ray consists of both an origin which is a `Point3<T>`, and a
  * direction which is stored as a `Vector3<T>`.
  *
+ * A *ray* is a semi-infinite line specified by its origin and direction. We
+ * represent a Ray with a `Point3f` for the origin and a `Vector3f` for the
+ * direction. We only need rays with floating-point origins and directions, so
+ * `Ray` isn't a template class parametrized by an arbitrary type, as points,
+ * vectors anre normals were.
+ *
  */
 
 namespace specula {
+/**
+ * @ingroup Ray
+ * @brief Core ray class
+ *
+ * This class implements the primary ray class, and is used for all ray tracing
+ * and ray marching metods. The `Ray` also includes a member variable that
+ * limits the ray to a segment along its infinite extent. Each ray also records
+ * the medium containing its origin.
+ *
+ */
 class Ray {
 public:
   Ray()
@@ -37,7 +53,9 @@ public:
   Vector3f d;
   mutable Float t_max;
   Float time;
-  // TODO: Update to medium class
+  /**
+   * @todo Update this pointer to be the Medium class.
+   */
   const void *medium;
 };
 

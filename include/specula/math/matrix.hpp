@@ -17,8 +17,8 @@
  * `Matrix4x4<T>`. Other more generalized matricies have been omited from the
  * implementation, as they are unneccessary for the use of the renderer.
  *
- * These matrix implementations are primarily used in the Transformation
- * classes, as the internal data of the transformation.
+ * The `Matrix` structure provies a low-level representation of square
+ * matricies. It is an integral part of the `Transform` class.
  *
  */
 

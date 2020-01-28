@@ -7,6 +7,15 @@
 #include "../vector/vector2.hpp"
 
 namespace specula {
+/**
+ * @brief Bounds in 2D
+ * @ingroup Bounds
+ *
+ * This bounds class implements a bounding box in 2D, represented by two
+ * `Point2`s.
+ *
+ * @tparam T Element type of bounding points.
+ */
 template <typename T> class Bounds2 {
 public:
   typedef Point2<T> value_type;

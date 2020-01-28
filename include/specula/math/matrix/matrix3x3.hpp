@@ -9,6 +9,22 @@
 #include "../vector/vector3.hpp"
 
 namespace specula {
+/**
+ * @brief \f$3\times 3\f$ Matrix
+ * @ingroup Matrix
+ *
+ * This matrix class implements a \f$3\times 3\f$ square matrix. The elements
+ * are stored in row major order, so they are stored in the following format:
+ * \f[
+ * \begin{pmatrix}
+ * m_{00} & m_{01} & m_{02}\\
+ * m_{10} & m_{11} & m_{12}\\
+ * m_{20} & m_{21} & m_{22}
+ * \end{pmatrix}
+ * \f]
+ *
+ * @tparam T Element type for matrix
+ */
 template <typename T> class Matrix3x3 {
 public:
   typedef T value_type;

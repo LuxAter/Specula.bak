@@ -9,6 +9,23 @@
 #include "../vector/vector4.hpp"
 
 namespace specula {
+/**
+ * @brief \f$4\times 4\f$ Matrix
+ * @ingroup Matrix
+ *
+ * This matrix class implements a \f$4\times 4\f$ square matrix. The elements
+ * are stored in row major order, so they are stored in the following format:
+ * \f[
+ * \begin{pmatrix}
+ * m_{00} & m_{01} & m_{02} & m_{03}\\
+ * m_{10} & m_{11} & m_{12} & m_{13}\\
+ * m_{20} & m_{21} & m_{22} & m_{23}\\
+ * m_{30} & m_{31} & m_{32} & m_{33}
+ * \end{pmatrix}
+ * \f]
+ *
+ * @tparam T Element type for matrix
+ */
 template <typename T> class Matrix4x4 {
 public:
   typedef T value_type;

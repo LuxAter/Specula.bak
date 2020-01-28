@@ -8,6 +8,15 @@
 #include "../vector/vector3.hpp"
 
 namespace specula {
+/**
+ * @brief Bounds in 3D
+ * @ingroup Bounds
+ *
+ * This bounds class implements a bounding box in 3D, represented by two
+ * `Point3`s.
+ *
+ * @tparam T Element type of bounding points.
+ */
 template <typename T> class Bounds3 {
 public:
   typedef Point3<T> value_type;

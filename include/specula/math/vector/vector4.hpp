@@ -8,6 +8,15 @@
 #include "../../global.hpp"
 
 namespace specula {
+/**
+ * @brief Vector with four elements
+ * @ingroup Vector
+ *
+ * This vector class implements a vector with four elements, the elements are
+ * accessed using `v.x`, `v.y`, `v.z`, `v.w`.
+ *
+ * @tparam T Element type for vector
+ */
 template <typename T> class Vector4 {
 public:
   typedef T value_type;

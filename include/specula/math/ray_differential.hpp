@@ -8,6 +8,16 @@
 #include "vector/vector3.hpp"
 
 namespace specula {
+/**
+ * @ingroup Ray
+ * @brief Implements a ray along with the differential from adjacent rays
+ *
+ * This is a subclass of `Ray` that contains additional information about two
+ * auxiliary rays. These extra rays represent camera rays offest by one sample
+ * in the \f$x\f$ and \f$y\f$ direction form the main ray on the film plane. By
+ * determining the area that these rays project to on an object being shaeded,
+ * the `Texture` can be estimated an area to average over proper antialising.
+ */
 class RayDifferential : public Ray {
 public:
   RayDifferential()

@@ -7,6 +7,15 @@
 #include "../vector/vector4.hpp"
 
 namespace specula {
+/**
+ * @brief Bounds in 4D
+ * @ingroup Bounds
+ *
+ * This bounds class implements a bounding box in 4D, represented by two
+ * `Point4`s.
+ *
+ * @tparam T Element type of bounding points.
+ */
 template <typename T> class Bounds4 {
 public:
   typedef Point4<T> value_type;

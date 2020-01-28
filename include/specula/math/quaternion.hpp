@@ -9,6 +9,26 @@
 
 namespace specula {
 
+/**
+ * @ingroup Math
+ * @brief Optimized Quaternion representation
+ *
+ * This class implements quaternions. Quaternions are a generalization of
+ * complex numbers. A quaternion is described by \f$ 4\f$ elements instead of
+ * \f$2\f$.
+ *
+ * \f[
+ * a + bi + cj + dk
+ * \f]
+ * where
+ * \f[
+ * i\cdot i=j\cdot j=k\cdot k = -1
+ * \f]
+ *
+ * Quaternions are freqently useful for representations of 3D rotations, and
+ * that is their primary use in the renderer. They are used by the
+ * AnimatedTransform to interpolate between different transformations.
+ */
 class Quaternion {
 public:
   typedef Float value_type;

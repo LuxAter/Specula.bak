@@ -9,6 +9,21 @@
 #include "../vector/vector2.hpp"
 
 namespace specula {
+/**
+ * @brief \f$2\times 2\f$ Matrix
+ * @ingroup Matrix
+ *
+ * This matrix class implements a \f$2\times 2\f$ square matrix. The elements
+ * are stored in row major order, so they are stored in the following format:
+ * \f[
+ * \begin{pmatrix}
+ * m_{00} & m_{01}\\
+ * m_{10} & m_{11}
+ * \end{pmatrix}
+ * \f]
+ *
+ * @tparam T Element type for matrix
+ */
 template <typename T> class Matrix2x2 {
 public:
   typedef T value_type;

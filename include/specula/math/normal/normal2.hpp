@@ -10,6 +10,15 @@
 #include "../vector/vector2.hpp"
 
 namespace specula {
+/**
+ * @brief Normal with two elements
+ * @ingroup Normal 
+ *
+ * This normal class implements a normal with two elements, the elements are
+ * accessed using `v.x` and `v.y`.
+ *
+ * @tparam T Element type for normal 
+ */
 template <typename T> class Normal2 {
 public:
   typedef T value_type;

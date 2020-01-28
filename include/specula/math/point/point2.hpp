@@ -10,6 +10,15 @@
 #include "../vector/vector2.hpp"
 
 namespace specula {
+/**
+ * @brief Point with two elements
+ * @ingroup Point 
+ *
+ * This point class implements a point with two elements, the elements are
+ * accessed using `v.x` and `v.y`.
+ *
+ * @tparam T Element type for point 
+ */
 template <typename T> class Point2 {
 public:
   typedef T value_type;

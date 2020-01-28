@@ -10,6 +10,15 @@
 #include "../vector/vector4.hpp"
 
 namespace specula {
+/**
+ * @brief Point with four elements
+ * @ingroup Point 
+ *
+ * This point class implements a point with four elements, the elements are
+ * accessed using `v.x`, `v.y`, `v.z`, and `v.w`.
+ *
+ * @tparam T Element type for point 
+ */
 template <typename T> class Point4 {
 public:
   typedef T value_type;
