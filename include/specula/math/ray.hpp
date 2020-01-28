@@ -6,6 +6,17 @@
 #include "point/point3.hpp"
 #include "vector/vector3.hpp"
 
+/**
+ * @addtogroup Ray
+ * @ingroup Math
+ * @brief Ray classes and operations
+ *
+ * This module implements a `Ray` class that is commonly used throught
+ * rendering. The ray consists of both an origin which is a `Point3<T>`, and a
+ * direction which is stored as a `Vector3<T>`.
+ *
+ */
+
 namespace specula {
 class Ray {
 public:

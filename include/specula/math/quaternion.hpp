@@ -8,6 +8,7 @@
 #include "../global.hpp"
 
 namespace specula {
+
 class Quaternion {
 public:
   typedef Float value_type;
