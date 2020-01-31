@@ -6,13 +6,68 @@
 #include <cstdio>
 #include <fmt/format.h>
 #include <thread>
-#endif // ENABLE_PROF
+
+#define PROF_STRINGIFY_IMPL(x) #x
+#define PROF_STRINGIFY(x) PROF_STRINGIFY_IMPL(x)
+#define PROF_CONCAT4_IMPL(a, b, c, d) a##b##c##d
+#define PROF_CONCAT4(a, b, c, d) PROF_CONCAT4_IMPL(a, b, c, d)
+
+#define PROF_FE0(func, obj, ...)
+#define PROF_FE1(func, obj, x, ...)                                            \
+  func(obj, x) PROF_FE0(func, obj, __VA_ARGS__)
+#define PROF_FE2(func, obj, x, ...)                                            \
+  func(obj, x) PROF_FE1(func, obj, __VA_ARGS__)
+#define PROF_FE3(func, obj, x, ...)                                            \
+  func(obj, x) PROF_FE2(func, obj, __VA_ARGS__)
+#define PROF_FE4(func, obj, x, ...)                                            \
+  func(obj, x) PROF_FE3(func, obj, __VA_ARGS__)
+#define PROF_FE5(func, obj, x, ...)                                            \
+  func(obj, x) PROF_FE4(func, obj, __VA_ARGS__)
+#define PROF_FE6(func, obj, x, ...)                                            \
+  func(obj, x) PROF_FE5(func, obj, __VA_ARGS__)
+#define PROF_FE7(func, obj, x, ...)                                            \
+  func(obj, x) PROF_FE6(func, obj, __VA_ARGS__)
+#define PROF_FE8(func, obj, x, ...)                                            \
+  func(obj, x) PROF_FE7(func, obj, __VA_ARGS__)
+#define PROF_FE10(func, obj, x, ...)                                           \
+  func(obj, x) PROF_FE9(func, obj, __VA_ARGS__)
+#define PROF_GET_FE(_0, _1, _2, _3, _4, _5, _6, _7, _8, _9, NAME, ...) NAME
+#define PROF_FOR_EACH(action, obj, ...)                                        \
+  PROF_GET_FE(__VA_ARGS__, PROF_FE10, PROF_FE9, PROF_FE8, PROF_FE7, PROF_FE6,  \
+              PROF_FE5, PROF_FE4, PROF_FE3, PROF_FE2, PROF_FE1, PROF_FE0)      \
+  (action, obj, __VA_ARGS__)
+
+#define PROF_SCOPED_NAME                                                       \
+  PROF_CONCAT4(__ProfilerScoped_, __LINE__, _, __COUNTER__)
+#define PROF_SCOPED_NAME_STR PROF_STRINGIFY(PROF_SCOPED_NAME)
+#define PROF_FUNCTION __PRETTY_FUNCTION__
+
+#define PROF_SCOPED(...)                                                       \
+  specula::prof::ScopedProfiler PROF_SCOPED_NAME =                             \
+      specula::prof::ScopedProfiler(__VA_ARGS__);
+#define PROF_FUNC(...) PROF_SCOPED(PROF_FUNCTION)
+#define PROF_FUNC_KEY(_0, val) , #val, val
+#define PROF_FUNC_ARGS(...)                                                    \
+  PROF_SCOPED(PROF_FUNCTION PROF_FOR_EACH(PROF_FUNC_KEY, obj, __VA_ARGS__));
+
+#define PROF_BEGIN(...) specula::prof::event_begin(__VA_ARGS__);
+#define PROF_END(...) specula::prof::event_end(__VA_ARGS__);
+#define PROF_INST(...) specula::prof::event_instant(__VA_ARGS__);
+#define PROF_COUNT(...) specula::prof::event_counter(__VA_ARGS__);
+
+#define PROF_KEY_VAL(obj, key) , #key, (obj)->key
+#define PROF_SNAPSHOT(obj, ...)                                                \
+  specula::prof::event_object_snapshot(                                        \
+      obj PROF_FOR_EACH(PROF_KEY_VAL, obj, __VA_ARGS__));
 
 #ifdef ENABLE_FILE_STREAM
-#define STREAM_FILE(file) open_stream_file(file);
+#define PROF_STREAM_FILE(file) specula::prof::fs::open_stream_file(file);
+#define PROF_CLOSE_STREAM() specula::prof::fs::close_stream_file();
 #else
-#define STREAM_FILE(file)
+#define PROF_STREAM_FILE(file)
+#define PROF_CLOSE_STREAM()
 #endif // ENABLE_FILE_STREAM
+#endif // ENABLE_PROF
 
 namespace specula {
 namespace prof {
@@ -64,6 +119,10 @@ extern FILE* file_stream;
 inline void open_stream_file(const char* file) {
   file_stream = std::fopen(file, "w");
   std::fprintf(file_stream, "[");
+}
+inline void close_stream_file() {
+  if (file_stream)
+    std::fclose(file_stream);
 }
 inline void handle_event(const Event& event) {
   if (!file_stream)
@@ -190,15 +249,25 @@ template <typename T> inline void event_object_destroy(const T* obj) {
 template <typename T, typename... ARGS>
 inline void event_object_snapshot(const T* obj, const ARGS&... args) {
   std::string pretty_func(__PRETTY_FUNCTION__);
-  Event event{
-      Event::EventType::OBJECT_SNAPSHOT,
-      pretty_func.substr(79, pretty_func.find(';', 79) - 79),
-      "",
-      fmt::format("\"snapshot\":{{{}}}", fmt_args(args...)),
-      thread_hasher(std::this_thread::get_id()),
-      pointer_hasher(reinterpret_cast<const void*>(obj))};
+  Event event{Event::EventType::OBJECT_SNAPSHOT,
+              pretty_func.substr(79, pretty_func.find(';', 79) - 79),
+              "",
+              fmt::format("\"snapshot\":{{{}}}", fmt_args(args...)),
+              thread_hasher(std::this_thread::get_id()),
+              pointer_hasher(reinterpret_cast<const void*>(obj))};
   handle_event(event);
 }
+struct ScopedProfiler {
+  template <typename... ARGS>
+  ScopedProfiler(const std::string& name, const ARGS&... args) {
+    specula::prof::event_begin(name, args...);
+  }
+  ~ScopedProfiler() { specula::prof::event_end(); }
+};
+template <std::string key> struct ObjectProfiler {
+  ObjectProfiler() { specula::prof::event_object_construct(key, this); }
+  ~ObjectProfiler() { specula::prof::event_object_destroy(key, this); }
+};
 #endif // ENABLE_PROF
 } // namespace prof
 } // namespace specula

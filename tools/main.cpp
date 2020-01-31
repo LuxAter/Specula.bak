@@ -1,53 +1,53 @@
 #define ENABLE_PROF
 #define ENABLE_FILE_STREAM
 #include <specula/prof.hpp>
-#include <specula/specula.hpp>
+// #include <specula/specula.hpp>
 
 #include <chrono>
+#include <vector>
 #include <iostream>
 #include <thread>
 
-struct MyObj {
+struct MyObj : PROF_OBJ(MyObj) {
   MyObj(int i) : i(i) { specula::prof::event_object_construct(this); }
   ~MyObj() { specula::prof::event_object_destroy(this); }
   int i;
 };
 
-void foo() {
-  specula::prof::event_begin("void foo()", "time", 100.0f / 1000.0f);
-  std::this_thread::sleep_for(std::chrono::milliseconds(100));
-  specula::prof::event_end();
+void foo(int ms) {
+  PROF_FUNC_ARGS(ms);
+  std::this_thread::sleep_for(std::chrono::milliseconds(ms));
 }
 
 int main(int argc, char const* argv[]) {
-  specula::logger::initalize_core_logger();
-  specula::prof::event_begin("Testing 1");
+  PROF_BEGIN("Testing 1");
   std::size_t j = 0;
   std::vector<MyObj> objs;
   for (std::size_t f = 0; f < 5; ++f) {
     objs.push_back(MyObj(f * 2));
   }
   for (std::size_t f = 0; f < 5; ++f) {
-    specula::prof::event_object_snapshot(&(objs[f]), "int", objs[f].i);
-    specula::prof::event_begin("Milli");
+    PROF_SNAPSHOT(&(objs[f]), i);
+    PROF_BEGIN("Milli");
     for (std::size_t i = 0; i < objs[f].i; ++i) {
-      foo();
-      specula::prof::event_counter("vals", "rand", rand(), "inc", ++j);
+      foo(100);
+      PROF_COUNT("vals", "rand", rand(), "inc", ++j);
     }
-    specula::prof::event_end();
-    specula::prof::event_begin("Micro");
+    PROF_END();
+    PROF_BEGIN("Micro");
     for (std::size_t i = 0; i < objs[f].i; ++i) {
-      specula::prof::event_begin("sleep2", "time", 100.0f / 1000000.0f);
+      PROF_SCOPED("Sleep 2", "time", 100.0f / 1000000.0f);
       std::this_thread::sleep_for(std::chrono::microseconds(100));
-      specula::prof::event_end();
-      specula::prof::event_counter("vals", "rand", rand(), "inc", ++j);
+      PROF_COUNT("vals", "rand", rand(), "inc", ++j);
     }
-    specula::prof::event_end();
-    specula::prof::event_instant("Loop", "count", f);
+    PROF_END();
+    PROF_INST("Loop", "count", f);
   }
-  specula::prof::event_end();
+  PROF_END();
   objs.clear();
-  foo();
+  foo(50);
+
+  PROF_CLOSE_STREAM();
 
   return 0;
 }

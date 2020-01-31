@@ -20,7 +20,7 @@ if(BUILD_STATIC_LIBS)
 
   set_target_properties(
     specula_static
-    PROPERTIES CXX_STANDARD 11 CXX_STANDARD_REQUIRED YES CXX_EXTENSIONS OFF)
+    PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED YES CXX_EXTENSIONS OFF)
   target_link_libraries(specula_static PUBLIC spdlog fmt::fmt)
   install(TARGETS specula_static ARCHIVE DESTINATION lib)
 endif()
@@ -36,7 +36,7 @@ if(BUILD_SHARED_LIBS)
 
   set_target_properties(
     specula_shared
-    PROPERTIES CXX_STANDARD 11 CXX_STANDARD_REQUIRED YES CXX_EXTENSIONS OFF)
+    PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED YES CXX_EXTENSIONS OFF)
   target_link_libraries(specula_shared PUBLIC spdlog fmt::fmt)
   install(TARGETS specula_shared LIBRARY DESTINATION lib)
 endif()
