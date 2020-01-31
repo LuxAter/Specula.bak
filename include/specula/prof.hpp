@@ -1,227 +1,205 @@
 #ifndef SPECULA_PROF_HPP_
 #define SPECULA_PROF_HPP_
 
+#ifdef ENABLE_PROF
 #include <chrono>
-#include <stack>
+#include <cstdio>
+#include <fmt/format.h>
 #include <thread>
-#include <unordered_map>
-#include <vector>
-#include <exception>
+#endif // ENABLE_PROF
 
-#define PROF_STRINGIFY_IMPL(x) #x
-#define PROF_STRINGIFY(x) PROF_STRINGIFY_IMPL(x)
-#define PROF_CONCAT4_IMPL(a, b, c, d) a##b##c##d
-#define PROF_CONCAT4(a, b, c, d) PROF_CONCAT4_IMPL(a, b, c, d)
-#define PROF_SCOPE_NAME                                                        \
-  PROF_CONCAT4(__profiler_scoped_, __LINE__, _, __COUNTER__)
-#define PROF_SCOPE_NAME_STR PROF_STRINGIFY(PROF_SCOPE_NAME)
-#define PROF_FUNCTION __PRETTY_FUNCTION__
-
-#define PROF_GET_3TH_ARGS(arg1, arg2, arg3, ...) arg3
-
-#define PROF_FUNC_0(...)                                                       \
-  specula::prof::scoped_profiler PROF_SCOPE_NAME =                             \
-      specula::prof::scoped_profiler(PROF_FUNCTION);
-#define PROF_FUNC_1(a, ...)                                                    \
-  specula::prof::scoped_profiler PROF_SCOPE_NAME =                             \
-      specula::prof::scoped_profiler(PROF_FUNCTION, a);
-#define PROF_FUNC_2(a, b, ...)                                                 \
-  specula::prof::scoped_profiler PROF_SCOPE_NAME =                             \
-      specula::prof::scoped_profiler(PROF_FUNCTION, a, b);
-
-#define PROF_FUNC_SELECT(x, A, B, FUNC, ...) FUNC
-
-#define PROF_FUNC(...)                                                         \
-  PROF_FUNC_SELECT(__VA_ARGS__, PROF_FUNC_2, PROF_FUNC_1, PROF_FUNC_0)         \
-  (__VA_ARGS__)
-#define PROF_SCOPED(...)                                                       \
-  specula::prof::scoped_profiler PROF_SCOPE_NAME =                             \
-      specula::prof::scoped_profiler(__VA_ARGS__);
-#define PROF_BEGIN(...) specula::prof::push_scope(__VA_ARGS__);
-#define PROF_END() specula::prof::pop_scope();
-
-#define PROF_WRITE(file) specula::prof::write_to_file(file);
-#define PROF_DUMP(file) specula::prof::dump_to_file(file);
-// #define PROF_FUNC(...)
-// #define PROF_SCOPED(...)
-// #define PROF_BEGIN(...)
-// #define PROF_END()
+#ifdef ENABLE_FILE_STREAM
+#define STREAM_FILE(file) open_stream_file(file);
+#else
+#define STREAM_FILE(file)
+#endif // ENABLE_FILE_STREAM
 
 namespace specula {
 namespace prof {
-struct profile_data {
-  profile_data(const std::string& name, const std::string& category,
-               const std::uint32_t& color, const std::uint32_t& tid)
-      : name(name), category(category), color(color), tid(tid), time_points(),
-        children() {}
-  profile_data(const std::string& name, const std::string& category,
-               const std::uint32_t& color, const std::uint32_t& tid,
-               const std::chrono::high_resolution_clock::time_point& tp)
-      : name(name), category(category), color(color), tid(tid),
-        time_points({tp}), children() {}
+#ifdef ENABLE_PROF
+struct Event {
+  enum EventType {
+    BEGIN,
+    END,
+    INSTANCE,
+    COUNTER,
+    OBJECT_CONSTRUCT,
+    OBJECT_DESTROY,
+    OBJECT_SNAPSHOT
+  };
+
+  inline static char get_type_char(const EventType& type) {
+    switch (type) {
+    case BEGIN:
+    default:
+      return 'B';
+    case END:
+      return 'E';
+    case INSTANCE:
+      return 'I';
+    case COUNTER:
+      return 'C';
+    case OBJECT_CONSTRUCT:
+      return 'N';
+    case OBJECT_DESTROY:
+      return 'D';
+    case OBJECT_SNAPSHOT:
+      return 'O';
+    }
+  }
+
+  EventType type;
   const std::string name;
-  const std::string category;
-  const std::uint32_t color;
-  const std::uint32_t tid;
-  std::vector<std::chrono::high_resolution_clock::time_point> time_points;
-  std::unordered_map<std::size_t, std::shared_ptr<profile_data>> children;
+  const std::string cat;
+  const std::string args;
+  const std::size_t tid;
+  const std::size_t id;
 };
-extern std::unordered_map<std::thread::id,
-                          std::stack<std::shared_ptr<profile_data>>>
-    profile_stack;
-extern std::unordered_map<
-    std::thread::id,
-    std::unordered_map<std::size_t, std::shared_ptr<profile_data>>>
-    profile_store;
 extern std::hash<std::thread::id> thread_hasher;
-extern std::hash<std::string> key_hasher;
+extern std::hash<const void*> pointer_hasher;
 
-inline void push_scope(const std::string& name, std::uint32_t color,
-                       std::string category = std::string()) {
-  const std::thread::id tid = std::this_thread::get_id();
-  const std::size_t key_hash =
-      key_hasher(name + category + std::to_string(color));
-  std::unordered_map<std::size_t, std::shared_ptr<profile_data>>* data_ptr =
-      nullptr;
-
-  std::unordered_map<
-      std::thread::id,
-      std::unordered_map<std::size_t, std::shared_ptr<profile_data>>>::iterator
-      store_iter;
-  std::unordered_map<std::thread::id,
-                     std::stack<std::shared_ptr<profile_data>>>::iterator
-      stack_iter = profile_stack.find(tid);
-  if (stack_iter != profile_stack.end() && !stack_iter->second.empty()) {
-    data_ptr = &(stack_iter->second.top()->children);
-  } else if ((store_iter = profile_store.find(tid)) != profile_store.end()) {
-    data_ptr = &(store_iter->second);
-  } else {
-    data_ptr =
-        &(profile_store
-              .insert(std::make_pair(
-                  tid, std::unordered_map<std::size_t,
-                                          std::shared_ptr<profile_data>>()))
-              .first->second);
-  }
-
-  std::unordered_map<std::size_t, std::shared_ptr<profile_data>>::iterator
-      data_iter = data_ptr->find(key_hash);
-  if (data_iter != data_ptr->end()) {
-    if (data_iter->second->time_points.size() % 2 != 0)
-      throw std::logic_error("Pushing to profiler that is already active");
-    data_iter->second->time_points.push_back(
-        std::chrono::high_resolution_clock::now());
-  } else {
-    data_iter =
-        data_ptr
-            ->insert(std::make_pair(
-                key_hash, std::make_shared<profile_data>(
-                              name, category, color, thread_hasher(tid),
-                              std::chrono::high_resolution_clock::now())))
-            .first;
-  }
-  if (stack_iter != profile_stack.end()) {
-    stack_iter->second.push(data_iter->second);
-  } else {
-    stack_iter = profile_stack
-                     .insert(std::make_pair(
-                         tid, std::stack<std::shared_ptr<profile_data>>()))
-                     .first;
-    stack_iter->second.push(data_iter->second);
-  }
+#ifdef ENABLE_FILE_STREAM
+namespace fs {
+extern FILE* file_stream;
+inline void open_stream_file(const char* file) {
+  file_stream = std::fopen(file, "w");
+  std::fprintf(file_stream, "[");
 }
-inline void push_scope(const std::string& name,
-                       std::string category = std::string(),
-                       std::uint32_t color = 0xFFFFFF) {
-  const std::thread::id tid = std::this_thread::get_id();
-  const std::size_t key_hash =
-      key_hasher(name + category + std::to_string(color));
-  std::unordered_map<std::size_t, std::shared_ptr<profile_data>>* data_ptr =
-      nullptr;
-
-  std::unordered_map<
-      std::thread::id,
-      std::unordered_map<std::size_t, std::shared_ptr<profile_data>>>::iterator
-      store_iter;
-  std::unordered_map<std::thread::id,
-                     std::stack<std::shared_ptr<profile_data>>>::iterator
-      stack_iter = profile_stack.find(tid);
-  if (stack_iter != profile_stack.end() && !stack_iter->second.empty()) {
-    data_ptr = &(stack_iter->second.top()->children);
-  } else if ((store_iter = profile_store.find(tid)) != profile_store.end()) {
-    data_ptr = &(store_iter->second);
-  } else {
-    data_ptr =
-        &(profile_store
-              .insert(std::make_pair(
-                  tid, std::unordered_map<std::size_t,
-                                          std::shared_ptr<profile_data>>()))
-              .first->second);
-  }
-
-  std::unordered_map<std::size_t, std::shared_ptr<profile_data>>::iterator
-      data_iter = data_ptr->find(key_hash);
-  if (data_iter != data_ptr->end()) {
-    if (data_iter->second->time_points.size() % 2 != 0)
-      throw std::logic_error("Pushing to profiler that is already active");
-    data_iter->second->time_points.push_back(
-        std::chrono::high_resolution_clock::now());
-  } else {
-    data_iter =
-        data_ptr
-            ->insert(std::make_pair(
-                key_hash, std::make_shared<profile_data>(
-                              name, category, color, thread_hasher(tid),
-                              std::chrono::high_resolution_clock::now())))
-            .first;
-  }
-  if (stack_iter != profile_stack.end()) {
-    stack_iter->second.push(data_iter->second);
-  } else {
-    stack_iter = profile_stack
-                     .insert(std::make_pair(
-                         tid, std::stack<std::shared_ptr<profile_data>>()))
-                     .first;
-    stack_iter->second.push(data_iter->second);
-  }
+inline void handle_event(const Event& event) {
+  if (!file_stream)
+    open_stream_file("profile.json");
+  fmt::print(
+      file_stream, "{{{}{}\"ph\":\"{}\",\"ts\":{},\"pid\":1,\"tid\":{}{}{}}},",
+      (event.name.size() == 0) ? ""
+                               : fmt::format("\"name\":\"{}\",", event.name),
+      (event.cat.size() == 0) ? "" : fmt::format("\"cat\":\"{}\",", event.cat),
+      Event::get_type_char(event.type),
+      std::chrono::duration_cast<std::chrono::microseconds>(
+          std::chrono::high_resolution_clock::now().time_since_epoch())
+          .count(),
+      event.tid,
+      (event.id == 0) ? "" : fmt::format(",\"id\":\"0x{:X}\"", event.id),
+      (event.args.size() == 0) ? ""
+                               : fmt::format(",\"args\":{{{}}}", event.args));
 }
-inline void pop_scope() {
-  std::unordered_map<std::thread::id,
-                     std::stack<std::shared_ptr<profile_data>>>::iterator
-      stack_iter = profile_stack.find(std::this_thread::get_id());
-  if (stack_iter == profile_stack.end())
-    throw std::logic_error("Poping profiler from unprofiled thread");
-  if (stack_iter->second.empty())
-    throw std::logic_error("Poping from thread with no active profiler");
-  stack_iter->second.top()->time_points.push_back(
-      std::chrono::high_resolution_clock::now());
-  stack_iter->second.pop();
+} // namespace fs
+#endif // ENABLE_FILE_STREAM
+
+inline std::string fmt_args() { return ""; }
+template <typename T>
+inline std::string fmt_args(const std::string& key, const T& v) {
+  return fmt::format("\"{}\": {}", key, v);
+}
+template <>
+inline std::string fmt_args(const std::string& key, const std::string& v) {
+  return fmt::format("\"{}\": \"{}\"", key, v);
+}
+template <typename T, typename... ARGS>
+inline std::string fmt_args(const std::string& key, const T& v,
+                            const ARGS&... args) {
+  return fmt::format("{}, \"{}\": {}", fmt_args(args...), key, v);
+}
+template <typename... ARGS>
+inline std::string fmt_args(const std::string& key, const std::string& v,
+                            const ARGS&... args) {
+  return fmt::format("{}, \"{}\": \"{}\"", fmt_args(args...), key, v);
+}
+inline std::pair<std::string, std::string> split_cat_args() {
+  return std::make_pair("", "");
+}
+template <typename... ARGS>
+inline typename std::enable_if<(sizeof...(ARGS)) % 2 == 0,
+                               std::pair<std::string, std::string>>::type
+split_cat_args(const std::string& cat, const ARGS&... args) {
+  return std::make_pair(cat, fmt_args(args...));
+}
+template <typename... ARGS>
+inline typename std::enable_if<(sizeof...(ARGS)) % 2 != 0,
+                               std::pair<std::string, std::string>>::type
+split_cat_args(const std::string& cat, const ARGS&... args) {
+  return std::make_pair("", fmt_args(cat, args...));
 }
 
-void dump_to_file(const std::string& file);
-void dump_to_txt(const std::string& file);
-void dump_to_csv(const std::string& file);
-void dump_to_json(const std::string& file);
-void write_to_file(const std::string& file);
-void write_to_txt(const std::string& file);
-void write_to_csv(const std::string& file);
-void write_to_json(const std::string& file);
-void write_profile_data_txt(FILE* out, const std::shared_ptr<profile_data>& data);
-void write_profile_data_csv(FILE* out, const std::shared_ptr<profile_data>& data);
-void write_profile_data_json(FILE* out, const std::shared_ptr<profile_data>& data);
+inline void handle_event(const Event& event) {
+#ifdef ENABLE_FILE_STREAM
+  fs::handle_event(event);
+#endif // ENABLE_FILE_STREAM
+}
 
-void print_profile_data(const std::shared_ptr<profile_data>&,
-                        std::size_t indent = 0, bool formatting = true);
-void print_report(bool formatting = true);
-
-struct scoped_profiler {
-  scoped_profiler(const std::string& name, std::string category = std::string(),
-                  std::uint32_t color = 0xFFFFFF) {
-    specula::prof::push_scope(name, category, color);
-  }
-  ~scoped_profiler() { specula::prof::pop_scope(); }
-};
-
+template <typename... ARGS>
+inline void event_begin(const std::string& name, const ARGS&... args) {
+  auto cat_args = split_cat_args(args...);
+  Event event{Event::EventType::BEGIN,
+              name,
+              cat_args.first,
+              cat_args.second,
+              thread_hasher(std::this_thread::get_id()),
+              0};
+  handle_event(event);
+}
+template <typename... ARGS> inline void event_end(const ARGS&... args) {
+  Event event{Event::EventType::END,
+              "",
+              "",
+              fmt_args(args...),
+              thread_hasher(std::this_thread::get_id()),
+              0};
+  handle_event(event);
+}
+template <typename... ARGS>
+inline void event_instant(const std::string& name, const ARGS&... args) {
+  auto cat_args = split_cat_args(args...);
+  Event event{Event::EventType::INSTANCE,
+              name,
+              cat_args.first,
+              cat_args.second,
+              thread_hasher(std::this_thread::get_id()),
+              0};
+  handle_event(event);
+}
+template <typename... ARGS>
+inline void event_counter(const std::string& name, const ARGS&... args) {
+  Event event{Event::EventType::COUNTER,
+              name,
+              "",
+              fmt_args(args...),
+              thread_hasher(std::this_thread::get_id()),
+              0};
+  handle_event(event);
+}
+template <typename T> inline void event_object_construct(const T* obj) {
+  std::string pretty_func(__PRETTY_FUNCTION__);
+  Event event{Event::EventType::OBJECT_CONSTRUCT,
+              pretty_func.substr(63, pretty_func.length() - 64),
+              "",
+              "",
+              thread_hasher(std::this_thread::get_id()),
+              pointer_hasher(reinterpret_cast<const void*>(obj))};
+  handle_event(event);
+}
+template <typename T> inline void event_object_destroy(const T* obj) {
+  std::string pretty_func(__PRETTY_FUNCTION__);
+  Event event{Event::EventType::OBJECT_DESTROY,
+              pretty_func.substr(61, pretty_func.length() - 62),
+              "",
+              "",
+              thread_hasher(std::this_thread::get_id()),
+              pointer_hasher(reinterpret_cast<const void*>(obj))};
+  handle_event(event);
+}
+template <typename T, typename... ARGS>
+inline void event_object_snapshot(const T* obj, const ARGS&... args) {
+  std::string pretty_func(__PRETTY_FUNCTION__);
+  Event event{
+      Event::EventType::OBJECT_SNAPSHOT,
+      pretty_func.substr(79, pretty_func.find(';', 79) - 79),
+      "",
+      fmt::format("\"snapshot\":{{{}}}", fmt_args(args...)),
+      thread_hasher(std::this_thread::get_id()),
+      pointer_hasher(reinterpret_cast<const void*>(obj))};
+  handle_event(event);
+}
+#endif // ENABLE_PROF
 } // namespace prof
 } // namespace specula
 
