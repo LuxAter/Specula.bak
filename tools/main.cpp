@@ -2,11 +2,8 @@
 
 #include <iostream>
 
-#include <specula/math/matrix.hpp>
-#include <specula/math/vector.hpp>
-
 int main(int argc, char const *argv[]) {
-  specula::logger::initalize_logger();
+  specula::logger::initalize_core_logger();
 
   return 0;
 }

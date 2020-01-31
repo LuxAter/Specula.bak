@@ -23,8 +23,13 @@
 #define CHECK_LE(a, b) CHECK(a <= b)
 #define CHECK_GE(a, b) CHECK(a >= b)
 #else
+#define CHECK(expr)
 #define CHECK_EQ(a, b)
 #define CHECK_NE(a, b)
+#define CHECK_LT(a, b)
+#define CHECK_GT(a, b)
+#define CHECK_LE(a, b)
+#define CHECK_GE(a, b)
 #endif
 
 #endif // SPECULA_ERROR_HPP_
