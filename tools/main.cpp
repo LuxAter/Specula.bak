@@ -1,29 +1,37 @@
+#define ENABLE_PROF
 #include <specula/prof.hpp>
 #include <specula/specula.hpp>
 
 #include <iostream>
+#include <thread>
+#include <chrono>
+
+void foo() {
+  PROF_FUNC();
+  std::this_thread::sleep_for(std::chrono::milliseconds(100));
+}
 
 int main(int argc, char const* argv[]) {
   specula::logger::initalize_core_logger();
-  specula::prof::push_scope("Sleep Test");
-  for (std::size_t f = 00; f < 1000; ++f) {
-    specula::prof::push_scope("Milli");
-    for (std::size_t i = 00; i < 100; ++i) {
-      specula::prof::push_scope("Sleep 1");
-      std::this_thread::sleep_for(std::chrono::milliseconds(100));
-      specula::prof::pop_scope();
+  PROF_FUNC();
+  for (std::size_t f = 0; f < 1; ++f) {
+    PROF_BEGIN("Milli", 0xff0000);
+    for (std::size_t i = 0; i < 10; ++i) {
+      PROF_SCOPED("Sleep 1");
+      foo();
     }
-    specula::prof::pop_scope();
-    specula::prof::push_scope("Micro");
-    for (std::size_t i = 00; i < 100; ++i) {
-      specula::prof::push_scope("Sleep 2");
+    PROF_END();
+    PROF_BEGIN("Micro", 0x00ff00);
+    for (std::size_t i = 0; i < 10; ++i) {
+      PROF_SCOPED("Sleep 2");
       std::this_thread::sleep_for(std::chrono::microseconds(100));
-      specula::prof::pop_scope();
     }
-    specula::prof::pop_scope();
+    PROF_END();
   }
-  specula::prof::pop_scope();
 
+  specula::prof::write_to_file("specula.prof.txt");
+  specula::prof::write_to_file("specula.prof.csv");
+  specula::prof::write_to_file("specula.prof.json");
   specula::prof::print_report();
 
   return 0;
