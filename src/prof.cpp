@@ -51,6 +51,7 @@ void specula::prof::write_to_txt(const std::string& file) {
       write_profile_data_txt(out, prof_data.second);
     }
   }
+  std::fclose(out);
 }
 void specula::prof::write_to_csv(const std::string& file) {
   FILE* out = std::fopen(file.c_str(), "w");
@@ -60,6 +61,7 @@ void specula::prof::write_to_csv(const std::string& file) {
       write_profile_data_csv(out, prof_data.second);
     }
   }
+  std::fclose(out);
 }
 void specula::prof::write_to_json(const std::string& file) {
   FILE* out = std::fopen(file.c_str(), "w");
@@ -69,7 +71,7 @@ void specula::prof::write_to_json(const std::string& file) {
       write_profile_data_json(out, prof_data.second);
     }
   }
-  std::fprintf(out, "]");
+  std::fclose(out);
 }
 
 void specula::prof::write_profile_data_txt(
@@ -113,22 +115,37 @@ void specula::prof::write_profile_data_csv(
 void specula::prof::write_profile_data_json(
     FILE* out, const std::shared_ptr<profile_data>& data) {
   for (std::size_t i = 0; i < data->time_points.size(); i += 2) {
-    std::fprintf(
-        out,
-        "{\"pid\": 1, \"tid\":%u,\"name\":\"%s\",\"cat\":\"%s\",\"ph\":\"B\", "
-        "\"ts\": %lu},{\"pid\": 1, \"tid\":%u,\"name\":\"%s\",\"cat\":\"%s\", "
-        "\"ph\": \"E\", \"ts\":%lu},",
-        data->tid, data->name.c_str(), data->category.c_str(),
-        std::chrono::duration_cast<std::chrono::milliseconds>(
-            data->time_points[i].time_since_epoch())
-            .count(),
-        data->tid, data->name.c_str(), data->category.c_str(),
-        std::chrono::duration_cast<std::chrono::milliseconds>(
-            ((i != data->time_points.size() - 1)
-                 ? data->time_points[i + 1]
-                 : std::chrono::high_resolution_clock::now())
-                .time_since_epoch())
-            .count());
+    std::fprintf(out,
+                 "{\"pid\":1,\"tid\":%u,\"name\":\"%s\",\"cat\":\"%s\",\"ph\":"
+                 "\"X\",\"ts\":%lu,\"dur\":%lu},",
+                 data->tid, data->name.c_str(), data->category.c_str(),
+                 std::chrono::duration_cast<std::chrono::microseconds>(
+                     data->time_points[i].time_since_epoch())
+                     .count(),
+                 std::chrono::duration_cast<std::chrono::microseconds>(
+                     ((i != data->time_points.size() - 1)
+                          ? data->time_points[i + 1]
+                          : std::chrono::high_resolution_clock::now()) -
+                     data->time_points[i])
+                     .count());
+    // std::fprintf(
+    //     out,
+    //     "{\"pid\": 1, \"tid\":%u,\"name\":\"%s\",\"cat\":\"%s\",\"ph\":\"B\",
+    //     "
+    //     "\"ts\": %lu},{\"pid\": 1, \"tid\":%u,\"name\":\"%s\",\"cat\":\"%s\",
+    //     "
+    //     "\"ph\": \"E\", \"ts\":%lu},",
+    //     data->tid, data->name.c_str(), data->category.c_str(),
+    //     std::chrono::duration_cast<std::chrono::milliseconds>(
+    //         data->time_points[i].time_since_epoch())
+    //         .count(),
+    //     data->tid, data->name.c_str(), data->category.c_str(),
+    //     std::chrono::duration_cast<std::chrono::milliseconds>(
+    //         ((i != data->time_points.size() - 1)
+    //              ? data->time_points[i + 1]
+    //              : std::chrono::high_resolution_clock::now())
+    //             .time_since_epoch())
+    //         .count());
   }
   for (auto& child_data : data->children) {
     write_profile_data_json(out, child_data.second);

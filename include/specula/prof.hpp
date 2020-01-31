@@ -6,6 +6,7 @@
 #include <thread>
 #include <unordered_map>
 #include <vector>
+#include <exception>
 
 #define PROF_STRINGIFY_IMPL(x) #x
 #define PROF_STRINGIFY(x) PROF_STRINGIFY_IMPL(x)
@@ -196,6 +197,7 @@ inline void pop_scope() {
       std::chrono::high_resolution_clock::now());
   stack_iter->second.pop();
 }
+
 void dump_to_file(const std::string& file);
 void dump_to_txt(const std::string& file);
 void dump_to_csv(const std::string& file);

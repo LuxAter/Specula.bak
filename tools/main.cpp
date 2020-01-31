@@ -14,7 +14,7 @@ void foo() {
 int main(int argc, char const* argv[]) {
   specula::logger::initalize_core_logger();
   PROF_FUNC();
-  for (std::size_t f = 0; f < 1; ++f) {
+  for (std::size_t f = 0; f < 2; ++f) {
     PROF_BEGIN("Milli", 0xff0000);
     for (std::size_t i = 0; i < 10; ++i) {
       PROF_SCOPED("Sleep 1");
