@@ -41,7 +41,7 @@
 #define PROF_SCOPED_NAME                                                       \
   PROF_CONCAT4(__ProfilerScoped_, __LINE__, _, __COUNTER__)
 #define PROF_SCOPED_NAME_STR PROF_STRINGIFY(PROF_SCOPED_NAME)
-#if SPECULA_COMPILER_IS_AppleClang == 1
+#if SPECULA_COMPILER_IS_MSVC == 1
 #define PROF_FUNCTION __FUNCTION__
 #else
 #define PROF_FUNCTION __PRETTY_FUNCTION__
