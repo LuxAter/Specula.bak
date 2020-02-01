@@ -13,6 +13,7 @@ endif()
 # ##############################################################################
 option(BUILD_TOOL "Compiles binary executable" TRUE)
 option(BUILD_DOCS "Compiles documentation" TRUE)
+option(ENABLE_PROFILING "Enable profiling" TRUE)
 if(NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
   option(BUILD_SHARED_LIBS "Compile shared libraries" TRUE)
   option(BUILD_STATIC_LIBS "Compile static libraries" FALSE)
@@ -47,6 +48,9 @@ endif()
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D__DEBUG__")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3")
+if(ENABLE_PROFILING)
+  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DENABLE_PROF")
+endif()
 if(OPTIMIZE_DEBUG)
   set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O3")
 endif()
@@ -83,7 +87,7 @@ add_subdirectory(external)
 set(SPECULA_COMPILERS MSVC GNU Clang Intel AppleClang)
 write_compiler_detection_header(
   FILE
-  ${CMAKE_CURRENT_SOURCE_DIR}/include/specula/compiler.hpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/specula/std/compiler.hpp
   PREFIX
   SPECULA
   COMPILERS

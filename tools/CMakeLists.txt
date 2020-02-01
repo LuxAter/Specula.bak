@@ -5,7 +5,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${SPECULA_BINARY_DIR})
 # ##############################################################################
 # SOURCE FILES
 # ##############################################################################
-set(SOURCES main.cpp)
+set(SOURCES main.cpp argparse.cpp)
 
 # ##############################################################################
 # TARGET
@@ -13,7 +13,7 @@ set(SOURCES main.cpp)
 add_executable(specula ${SOURCES})
 target_include_directories(specula PUBLIC ${SPECULA_SOURCE_DIR}/tools)
 
-set_target_properties(specula PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED
+set_target_properties(specula PROPERTIES CXX_STANDARD 11 CXX_STANDARD_REQUIRED
                                                          YES CXX_EXTENSIONS OFF)
-target_link_libraries(specula specula::specula)
+target_link_libraries(specula specula::specula cxxopts::cxxopts)
 install(TARGETS specula RUNTIME DESTINATION bin)

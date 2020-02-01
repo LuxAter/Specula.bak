@@ -1,8 +1,9 @@
 #ifndef SPECULA_HPP_
 #define SPECULA_HPP_
 
-#include "error.hpp"
-#include "log.hpp"
-#include "prof.hpp"
+#include "debug.hpp"
+#include "std.hpp"
+#include "variable.hpp"
+#include "version.hpp"
 
 #endif // SPECULA_HPP_

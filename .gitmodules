@@ -13,3 +13,9 @@
 [submodule "external/cxxopts"]
 	path = external/cxxopts
 	url = https://github.com/jarro2783/cxxopts
+[submodule "external/filesystem"]
+	path = external/filesystem
+	url = https://github.com/gulrak/filesystem
+[submodule "external/variant"]
+	path = external/variant
+	url = https://github.com/mpark/variant
