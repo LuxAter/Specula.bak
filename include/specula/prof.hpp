@@ -2,6 +2,7 @@
 #define SPECULA_PROF_HPP_
 
 #ifdef ENABLE_PROF
+#include "compiler.hpp"
 #include <chrono>
 #include <cstdio>
 #include <fmt/format.h>
@@ -40,7 +41,11 @@
 #define PROF_SCOPED_NAME                                                       \
   PROF_CONCAT4(__ProfilerScoped_, __LINE__, _, __COUNTER__)
 #define PROF_SCOPED_NAME_STR PROF_STRINGIFY(PROF_SCOPED_NAME)
+#if SPECULA_COMPILER_IS_AppleClang == 1
+#define PROF_FUNCTION __FUNCTION__
+#else
 #define PROF_FUNCTION __PRETTY_FUNCTION__
+#endif
 
 #define PROF_SCOPED(...)                                                       \
   specula::prof::ScopedProfiler PROF_SCOPED_NAME =                             \
@@ -65,13 +70,35 @@
   specula::prof::event_object_snapshot<type>(                                  \
       #type, obj PROF_FOR_EACH(PROF_KEY_VAL, obj, __VA_ARGS__));
 
-#ifdef ENABLE_FILE_STREAM
+// #ifdef ENABLE_FILE_STREAM
 #define PROF_STREAM_FILE(file) specula::prof::fs::open_stream_file(file);
 #define PROF_CLOSE_STREAM() specula::prof::fs::close_stream_file();
+// #else
+// #define PROF_STREAM_FILE(file)
+// #define PROF_CLOSE_STREAM()
+// #endif // ENABLE_FILE_STREAM
 #else
+#define PROF_SCOPED_NAME
+#define PROF_SCOPED_NAME_STR
+#define PROF_FUNCTION
+
+#define PROF_SCOPED(...)
+#define PROF_FUNC(...)
+#define PROF_FUNC_KEY(_0, val)
+#define PROF_FUNC_ARGS(...)
+
+#define PROF_BEGIN(...)
+#define PROF_END(...)
+#define PROF_INST(...)
+#define PROF_COUNT(...)
+
+#define PROF_OBJ_CONSTRUCT(type, ptr)
+#define PROF_OBJECT_DESTRUCT(type, ptr)
+
+#define PROF_KEY_VAL(obj, key)
+#define PROF_SNAPSHOT(type, obj, ...)
 #define PROF_STREAM_FILE(file)
 #define PROF_CLOSE_STREAM()
-#endif // ENABLE_FILE_STREAM
 #endif // ENABLE_PROF
 
 namespace specula {
@@ -118,7 +145,7 @@ struct Event {
 extern std::hash<std::thread::id> thread_hasher;
 extern std::hash<const void*> pointer_hasher;
 
-#ifdef ENABLE_FILE_STREAM
+// #ifdef ENABLE_FILE_STREAM
 namespace fs {
 extern FILE* file_stream;
 inline void open_stream_file(const char* file) {
@@ -147,7 +174,7 @@ inline void handle_event(const Event& event) {
                                : fmt::format(",\"args\":{{{}}}", event.args));
 }
 } // namespace fs
-#endif // ENABLE_FILE_STREAM
+// #endif // ENABLE_FILE_STREAM
 
 inline std::string fmt_args() { return ""; }
 template <typename T>
@@ -185,9 +212,9 @@ split_cat_args(const std::string& cat, const ARGS&... args) {
 }
 
 inline void handle_event(const Event& event) {
-#ifdef ENABLE_FILE_STREAM
+  // #ifdef ENABLE_FILE_STREAM
   fs::handle_event(event);
-#endif // ENABLE_FILE_STREAM
+  // #endif // ENABLE_FILE_STREAM
 }
 
 template <typename... ARGS>

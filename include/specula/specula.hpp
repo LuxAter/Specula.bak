@@ -3,5 +3,6 @@
 
 #include "error.hpp"
 #include "log.hpp"
+#include "prof.hpp"
 
 #endif // SPECULA_HPP_

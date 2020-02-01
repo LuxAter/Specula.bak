@@ -1,5 +1,4 @@
 #define ENABLE_PROF
-#define ENABLE_FILE_STREAM
 #include <specula/prof.hpp>
 // #include <specula/specula.hpp>
 
@@ -23,10 +22,10 @@ int main(int argc, char const* argv[]) {
   PROF_BEGIN("Testing 1");
   std::size_t j = 0;
   std::vector<MyObj> objs;
-  for (std::size_t f = 0; f < 5; ++f) {
+  for (std::size_t f = 0; f < 20; ++f) {
     objs.push_back(MyObj(f * 2));
   }
-  for (std::size_t f = 0; f < 5; ++f) {
+  for (std::size_t f = 0; f < 20; ++f) {
     PROF_SNAPSHOT(MyObj, &(objs[f]), i);
     PROF_BEGIN("Milli");
     for (std::size_t i = 0; i < objs[f].i; ++i) {
