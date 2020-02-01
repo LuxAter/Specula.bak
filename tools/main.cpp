@@ -4,13 +4,13 @@
 // #include <specula/specula.hpp>
 
 #include <chrono>
-#include <vector>
 #include <iostream>
 #include <thread>
+#include <vector>
 
-struct MyObj : PROF_OBJ(MyObj) {
-  MyObj(int i) : i(i) { specula::prof::event_object_construct(this); }
-  ~MyObj() { specula::prof::event_object_destroy(this); }
+struct MyObj {
+  MyObj(int i) : i(i) { PROF_OBJ_CONSTRUCT(MyObj, this); }
+  ~MyObj() { PROF_OBJECT_DESTRUCT(MyObj, this); }
   int i;
 };
 
@@ -27,7 +27,7 @@ int main(int argc, char const* argv[]) {
     objs.push_back(MyObj(f * 2));
   }
   for (std::size_t f = 0; f < 5; ++f) {
-    PROF_SNAPSHOT(&(objs[f]), i);
+    PROF_SNAPSHOT(MyObj, &(objs[f]), i);
     PROF_BEGIN("Milli");
     for (std::size_t i = 0; i < objs[f].i; ++i) {
       foo(100);

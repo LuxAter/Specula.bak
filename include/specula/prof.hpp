@@ -55,10 +55,15 @@
 #define PROF_INST(...) specula::prof::event_instant(__VA_ARGS__);
 #define PROF_COUNT(...) specula::prof::event_counter(__VA_ARGS__);
 
+#define PROF_OBJ_CONSTRUCT(type, ptr)                                          \
+  specula::prof::event_object_construct<type>(#type, ptr);
+#define PROF_OBJECT_DESTRUCT(type, ptr)                                        \
+  specula::prof::event_object_destroy<type>(#type, ptr);
+
 #define PROF_KEY_VAL(obj, key) , #key, (obj)->key
-#define PROF_SNAPSHOT(obj, ...)                                                \
-  specula::prof::event_object_snapshot(                                        \
-      obj PROF_FOR_EACH(PROF_KEY_VAL, obj, __VA_ARGS__));
+#define PROF_SNAPSHOT(type, obj, ...)                                          \
+  specula::prof::event_object_snapshot<type>(                                  \
+      #type, obj PROF_FOR_EACH(PROF_KEY_VAL, obj, __VA_ARGS__));
 
 #ifdef ENABLE_FILE_STREAM
 #define PROF_STREAM_FILE(file) specula::prof::fs::open_stream_file(file);
@@ -226,20 +231,20 @@ inline void event_counter(const std::string& name, const ARGS&... args) {
               0};
   handle_event(event);
 }
-template <typename T> inline void event_object_construct(const T* obj) {
-  std::string pretty_func(__PRETTY_FUNCTION__);
+template <typename T>
+inline void event_object_construct(const std::string& key, const T* obj) {
   Event event{Event::EventType::OBJECT_CONSTRUCT,
-              pretty_func.substr(63, pretty_func.length() - 64),
+              key,
               "",
               "",
               thread_hasher(std::this_thread::get_id()),
               pointer_hasher(reinterpret_cast<const void*>(obj))};
   handle_event(event);
 }
-template <typename T> inline void event_object_destroy(const T* obj) {
-  std::string pretty_func(__PRETTY_FUNCTION__);
+template <typename T>
+inline void event_object_destroy(const std::string& key, const T* obj) {
   Event event{Event::EventType::OBJECT_DESTROY,
-              pretty_func.substr(61, pretty_func.length() - 62),
+              key,
               "",
               "",
               thread_hasher(std::this_thread::get_id()),
@@ -247,10 +252,10 @@ template <typename T> inline void event_object_destroy(const T* obj) {
   handle_event(event);
 }
 template <typename T, typename... ARGS>
-inline void event_object_snapshot(const T* obj, const ARGS&... args) {
-  std::string pretty_func(__PRETTY_FUNCTION__);
+inline void event_object_snapshot(const std::string& key, const T* obj,
+                                  const ARGS&... args) {
   Event event{Event::EventType::OBJECT_SNAPSHOT,
-              pretty_func.substr(79, pretty_func.find(';', 79) - 79),
+              key,
               "",
               fmt::format("\"snapshot\":{{{}}}", fmt_args(args...)),
               thread_hasher(std::this_thread::get_id()),
@@ -263,10 +268,6 @@ struct ScopedProfiler {
     specula::prof::event_begin(name, args...);
   }
   ~ScopedProfiler() { specula::prof::event_end(); }
-};
-template <std::string key> struct ObjectProfiler {
-  ObjectProfiler() { specula::prof::event_object_construct(key, this); }
-  ~ObjectProfiler() { specula::prof::event_object_destroy(key, this); }
 };
 #endif // ENABLE_PROF
 } // namespace prof
