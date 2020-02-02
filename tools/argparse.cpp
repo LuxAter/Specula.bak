@@ -1,6 +1,6 @@
 #include "argparse.hpp"
 
-#include <specula/debug.hpp>
+#include <specula/dev.hpp>
 
 #include <memory>
 

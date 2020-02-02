@@ -7,6 +7,7 @@
 #include <cstdio>
 #include <fmt/format.h>
 #include <thread>
+#include <typeinfo>
 
 #define PROF_STRINGIFY_IMPL(x) #x
 #define PROF_STRINGIFY(x) PROF_STRINGIFY_IMPL(x)
@@ -60,15 +61,14 @@
 #define PROF_INST(...) specula::prof::event_instant(__VA_ARGS__);
 #define PROF_COUNT(...) specula::prof::event_counter(__VA_ARGS__);
 
-#define PROF_OBJ_CONSTRUCT(type, ptr)                                          \
-  specula::prof::event_object_construct<type>(#type, ptr);
-#define PROF_OBJECT_DESTRUCT(type, ptr)                                        \
-  specula::prof::event_object_destroy<type>(#type, ptr);
+#define PROF_OBJ(type) specula::prof::ObjectProfiler<type>
+#define PROF_OBJ_CONSTRUCT(ptr) specula::prof::event_object_construct(ptr);
+#define PROF_OBJECT_DESTRUCT(ptr) specula::prof::event_object_destroy(ptr);
 
 #define PROF_KEY_VAL(obj, key) , #key, (obj)->key
-#define PROF_SNAPSHOT(type, obj, ...)                                          \
-  specula::prof::event_object_snapshot<type>(                                  \
-      #type, obj PROF_FOR_EACH(PROF_KEY_VAL, obj, __VA_ARGS__));
+#define PROF_SNAPSHOT(obj, ...)                                                \
+  specula::prof::event_object_snapshot(                                        \
+      obj PROF_FOR_EACH(PROF_KEY_VAL, obj, __VA_ARGS__));
 
 // #ifdef ENABLE_FILE_STREAM
 #define PROF_STREAM_FILE(file) specula::prof::fs::open_stream_file(file);
@@ -258,20 +258,24 @@ inline void event_counter(const std::string& name, const ARGS&... args) {
               0};
   handle_event(event);
 }
-template <typename T>
-inline void event_object_construct(const std::string& key, const T* obj) {
+template <typename T> inline void event_object_construct(const T* obj) {
+  std::string type_str = typeid(&obj).name();
+  type_str = type_str.substr(type_str.find_first_not_of(
+      "0123456789", type_str.find_first_of("0123456789")));
   Event event{Event::EventType::OBJECT_CONSTRUCT,
-              key,
+              type_str,
               "",
               "",
               thread_hasher(std::this_thread::get_id()),
               pointer_hasher(reinterpret_cast<const void*>(obj))};
   handle_event(event);
 }
-template <typename T>
-inline void event_object_destroy(const std::string& key, const T* obj) {
+template <typename T> inline void event_object_destroy(const T* obj) {
+  std::string type_str = typeid(&obj).name();
+  type_str = type_str.substr(type_str.find_first_not_of(
+      "0123456789", type_str.find_first_of("0123456789")));
   Event event{Event::EventType::OBJECT_DESTROY,
-              key,
+              type_str,
               "",
               "",
               thread_hasher(std::this_thread::get_id()),
@@ -279,10 +283,12 @@ inline void event_object_destroy(const std::string& key, const T* obj) {
   handle_event(event);
 }
 template <typename T, typename... ARGS>
-inline void event_object_snapshot(const std::string& key, const T* obj,
-                                  const ARGS&... args) {
+inline void event_object_snapshot(const T* obj, const ARGS&... args) {
+  std::string type_str = typeid(&obj).name();
+  type_str = type_str.substr(type_str.find_first_not_of(
+      "0123456789", type_str.find_first_of("0123456789")));
   Event event{Event::EventType::OBJECT_SNAPSHOT,
-              key,
+              type_str,
               "",
               fmt::format("\"snapshot\":{{{}}}", fmt_args(args...)),
               thread_hasher(std::this_thread::get_id()),
@@ -295,6 +301,15 @@ struct ScopedProfiler {
     specula::prof::event_begin(name, args...);
   }
   ~ScopedProfiler() { specula::prof::event_end(); }
+};
+template <typename T> struct ObjectProfiler {
+  ObjectProfiler(const T* ptr) : ptr(ptr) {
+    specula::prof::event_object_construct(ptr);
+  }
+  ~ObjectProfiler() { specula::prof::event_object_destroy(ptr); }
+
+private:
+  const T* ptr;
 };
 #endif // ENABLE_PROF
 } // namespace prof

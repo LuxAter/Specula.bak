@@ -1,7 +1,7 @@
 #ifndef SPECULA_HPP_
 #define SPECULA_HPP_
 
-#include "debug.hpp"
+#include "dev.hpp"
 #include "std.hpp"
 #include "variable.hpp"
 #include "version.hpp"

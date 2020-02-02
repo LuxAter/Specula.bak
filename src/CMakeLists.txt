@@ -5,7 +5,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${SPECULA_BINARY_DIR})
 # ##############################################################################
 # SOURCE FILES
 # ##############################################################################
-set(SOURCES dbg/log.cpp dbg/prof.cpp)
+set(SOURCES dev/log.cpp dev/prof.cpp std/fwatch.cpp)
 configure_file("${SPECULA_SOURCE_DIR}/include/specula/version.hpp.in"
                "${SPECULA_SOURCE_DIR}/include/specula/version.hpp")
 
@@ -21,7 +21,9 @@ if(BUILD_STATIC_LIBS)
   set_target_properties(
     specula_static
     PROPERTIES CXX_STANDARD 11 CXX_STANDARD_REQUIRED YES CXX_EXTENSIONS OFF)
-  target_link_libraries(specula_static PUBLIC spdlog fmt::fmt glm::glm ghc_filesystem mpark_variant)
+  target_link_libraries(
+    specula_static PUBLIC spdlog fmt::fmt glm::glm ghc_filesystem mpark_variant
+                          re2::re2)
   install(TARGETS specula_static ARCHIVE DESTINATION lib)
 endif()
 
@@ -37,7 +39,9 @@ if(BUILD_SHARED_LIBS)
   set_target_properties(
     specula_shared
     PROPERTIES CXX_STANDARD 11 CXX_STANDARD_REQUIRED YES CXX_EXTENSIONS OFF)
-  target_link_libraries(specula_shared PUBLIC spdlog fmt::fmt glm::glm ghc_filesystem mpark_variant)
+  target_link_libraries(
+    specula_shared PUBLIC spdlog fmt::fmt glm::glm ghc_filesystem mpark_variant
+                          re2::re2)
   install(TARGETS specula_shared LIBRARY DESTINATION lib)
 endif()
 

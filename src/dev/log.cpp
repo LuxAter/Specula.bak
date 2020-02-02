@@ -1,4 +1,4 @@
-#include "specula/dbg/log.hpp"
+#include "specula/dev/log.hpp"
 
 #include <iostream>
 #include <memory>
