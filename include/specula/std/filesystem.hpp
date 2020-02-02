@@ -4,6 +4,7 @@
 #include <functional>
 
 #include <ghc/fs_std.hpp>
+
 namespace specula {
 namespace fs {
 using namespace ghc::filesystem;

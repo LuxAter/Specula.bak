@@ -179,15 +179,15 @@ enum LogLevel {
 };
 
 #ifdef __DEBUG__
-bool initalize_core_logger(const LogLevel &console_level = DEBUG,
+bool initialize_core_logger(const LogLevel &console_level = DEBUG,
                            const LogLevel &file_level = TRACE);
-bool initalize_logger(const std::string &name,
+bool initialize_logger(const std::string &name,
                       const LogLevel &console_level = DEBUG,
                       const LogLevel &file_level = TRACE);
 #else
-bool initalize_core_logger(const LogLevel &console_level = OFF,
+bool initialize_core_logger(const LogLevel &console_level = OFF,
                            const LogLevel &file_lavel = INFO);
-bool initalize_logger(const std::string &name,
+bool initialize_logger(const std::string &name,
                       const LogLevel &console_level = OFF,
                       const LogLevel &file_lavel = INFO);
 #endif

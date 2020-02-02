@@ -15,7 +15,7 @@ static std::shared_ptr<spdlog::logger> core_logger;
 static std::unordered_map<std::string, std::shared_ptr<spdlog::logger>>
     client_logger;
 
-bool specula::logger::initalize_core_logger(const LogLevel& console_level,
+bool specula::logger::initialize_core_logger(const LogLevel& console_level,
                                             const LogLevel& file_level) {
   try {
     core_file_sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>(
@@ -40,7 +40,7 @@ bool specula::logger::initalize_core_logger(const LogLevel& console_level,
   }
 }
 
-bool specula::logger::initalize_logger(const std::string& name,
+bool specula::logger::initialize_logger(const std::string& name,
                                        const LogLevel& console_level,
                                        const LogLevel& file_level) {
   try {

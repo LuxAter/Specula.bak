@@ -9,68 +9,136 @@
 #include <vector>
 
 #include "filesystem.hpp"
+#include "regex.hpp"
 
 namespace specula {
 namespace fs {
-class WatchedFileSystemExc : public std::exception {
+/**
+ * @brief File/Path watcher
+ *
+ * This class implements a file/directory watcher. Every time a file matching
+ * the regular expression provided, a callback is called with the updated file.
+ * This is done through creating a thread that sleeps for a given delay, then
+ * recursively checks all files in the base path. If a file satisfies the
+ * regular expression, then it retrieves the updated file time.
+ *
+ * This is very inefficient as every check all files in the direction must be
+ * recursively checked.
+ *
+ * @todo Implement an alternative that method that does not check for new files,
+ * but will message when an existing file is modified or deleted.
+ */
+class Watcher {
 public:
-  WatchedFileSystemExc(const fs::path& path);
-  virtual const char* what() const throw();
-  char message[4096];
-};
-class FileWatch {
-public:
-  ~FileWatch();
-  static void watch(const fs::path& path,
-                    const std::function<void(const fs::path&)>& callback);
-  static void
-  watch(const fs::path& path,
-        const std::function<void(const std::vector<fs::path>&)>& callback);
-  static void unwatch(const fs::path& path);
-  static void unwatch_all();
-  static void
-  touch(const fs::path& path,
-        fs::file_time_type time = fs::file_time_type::clock::now());
-
-protected:
-  class Watcher {
-  public:
-    Watcher();
-    Watcher(
-        const fs::path& path, const std::string& filter,
-        const std::function<void(const fs::path&)>& callback,
-        const std::function<void(const std::vector<fs::path>&)>& list_callback);
-    void watch();
-    bool has_changed(const fs::path& path);
-
-  protected:
-    fs::path path;
-    std::string filter;
-    std::function<void(const fs::path&)> callback;
-    std::function<void(const std::vector<fs::path>&)> list_callback;
-    std::unordered_map<std::size_t, fs::file_time_type> modification_times;
+  /**
+   * @brief File update event that occurred.
+   */
+  enum Event {
+    MODIFIED, //!< Existing file was modified
+    CREATED,  //!< New file was created
+    DELETED   //!< Existing file was deleted
   };
+  /**
+   * @brief Creates a file watcher with a general callback
+   *
+   * Constructs a file watcher from the regular expression, and checks for
+   * updates every `delay`, if any file is created, modified, or deleted, then
+   * the callback function is called.
+   *
+   * @param watch_path File path regular expression
+   * @param callback General callback function
+   * @param delay Delay between checking for updates
+   */
+  Watcher(std::string watch_path,
+          const std::function<void(const fs::path&, const Event&)>& callback,
+          fs::file_time_type::duration delay = std::chrono::milliseconds(5000));
+  /**
+   * @brief Creates a file watcher with a modified callback
+   *
+   * Constructs a file watcher from the regular expression, and checks for
+   * updates every `delay`, if any file is modified, then the callback function
+   * is called.
+   *
+   * @param watch_path File path regular expression
+   * @param modified_callback File modified callback function
+   * @param delay Delay between checking for updates
+   */
+  Watcher(std::string watch_path,
+          const std::function<void(const fs::path&)>& modified_callback,
+          fs::file_time_type::duration delay = std::chrono::milliseconds(5000));
+  /**
+   * @brief Creates a file watcher with specific event callbacks
+   *
+   * Constructs a file watcher from the regular expression, and checks for
+   * updates every `delay`, if any file is created, then the `created_callback`
+   * function is called, if any file is modified, then the `modified_callback`
+   * function is called, and if any file is deleted, then the
+   * `deleted_callback` function is called.
+   *
+   * @param watch_path File path regular expression
+   * @param created_callback File created callback function
+   * @param modified_callback File modified callback function
+   * @param deleted_callback File deleted callback function
+   * @param delay Delay between checking for updates
+   */
+  Watcher(std::string watch_path,
+          const std::function<void(const fs::path&)>& created_callback,
+          const std::function<void(const fs::path&)>& modified_callback,
+          const std::function<void(const fs::path&)>& deleted_callback,
+          fs::file_time_type::duration delay = std::chrono::milliseconds(5000));
+  /**
+   * @brief Destroys and stops file watcher
+   *
+   * If file watcher is active, then it is first stooped before destruction is
+   * finished.
+   */
+  ~Watcher();
 
-  FileWatch();
-  void close();
+  /**
+   * @brief Update delay between update checks
+   *
+   * This updates the delay between file checks in a safe manner.
+   *
+   * @param new_delay New duration to sleep between file update checks.
+   */
+  void set_delay(fs::file_time_type::duration new_delay);
+
+  /**
+   * @brief Starts the file watcher
+   *
+   * This function creates the new thread that will occasionally check for
+   * updates to the tracked files.
+   *
+   * This function is called by the constructor.
+   */
   void start();
-  static void watch_impl(
-      const fs::path& path,
-      const std::function<void(const fs::path&)>& callback =
-          std::function<void(const fs::path&)>(),
-      const std::function<void(const std::vector<fs::path>&)> list_callback =
-          std::function<void(const std::vector<fs::path>&)>());
-  static std::pair<fs::path, std::string>
-  get_path_filter_pair(const fs::path& path);
-  static std::pair<fs::path, std::string>
-  visit_wild_card_path(const fs::path& path,
-                       const std::function<bool(const fs::path&)>& visitor);
+  /**
+   * @brief Stops the file watcher
+   *
+   * This function stops the thread that checks for file updates, and joins it
+   * if applicable.
+   *
+   * This function is called by the destructor.
+   */
+  void stop();
 
-  static std::hash<fs::path> path_hash;
+private:
+  void generate_filter(std::string watch_path);
+
+  fs::path root_path;
+  std::unique_ptr<regex::Regex> filter;
+
+  fs::file_time_type::duration delay;
+  std::function<void(const fs::path&, const Event&)> callback;
+  std::function<void(const fs::path&)> created_callback;
+  std::function<void(const fs::path&)> modified_callback;
+  std::function<void(const fs::path&)> deleted_callback;
+
   std::mutex mutex;
   std::atomic<bool> watching;
-  std::unique_ptr<std::thread> thread;
-  std::unordered_map<std::size_t, Watcher> file_watchers;
+  std::unique_ptr<std::thread> watcher_thread;
+
+  std::unordered_map<fs::path, fs::file_time_type> modified_times;
 };
 } // namespace fs
 } // namespace specula
