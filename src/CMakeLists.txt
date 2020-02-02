@@ -24,6 +24,8 @@ if(BUILD_STATIC_LIBS)
   target_link_libraries(
     specula_static PUBLIC spdlog fmt::fmt glm::glm ghc_filesystem mpark_variant
                           re2::re2)
+  target_include_directories(specula_static
+                             PUBLIC ${SPECULA_SOURCE_DIR}/external/re2/)
   install(TARGETS specula_static ARCHIVE DESTINATION lib)
 endif()
 
@@ -42,6 +44,8 @@ if(BUILD_SHARED_LIBS)
   target_link_libraries(
     specula_shared PUBLIC spdlog fmt::fmt glm::glm ghc_filesystem mpark_variant
                           re2::re2)
+  target_include_directories(specula_shared
+                             PUBLIC ${SPECULA_SOURCE_DIR}/external/re2/)
   install(TARGETS specula_shared LIBRARY DESTINATION lib)
 endif()
 
