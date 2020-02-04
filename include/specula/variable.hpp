@@ -5,7 +5,7 @@
 
 #include <glm/glm.hpp>
 
-#include "std/variant.hpp"
+#include "extern/variant.hpp"
 
 namespace specula {
 typedef variant<bool, glm::bvec2, glm::bvec3, glm::bvec4, int, glm::ivec2,

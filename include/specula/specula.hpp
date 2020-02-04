@@ -2,7 +2,9 @@
 #define SPECULA_HPP_
 
 #include "dev.hpp"
+#include "extern.hpp"
 #include "std.hpp"
+
 #include "variable.hpp"
 #include "version.hpp"
 

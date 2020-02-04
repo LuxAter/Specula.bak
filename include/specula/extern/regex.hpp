@@ -5,9 +5,8 @@
 
 namespace specula {
 namespace regex {
-typedef re2::RE2 Regex;
-typedef re2::Prog Prog;
-typedef re2::Regexp Regexp;
+  using namespace re2;
+  typedef re2::RE2 Regex;
 } // namespace regex
 } // namespace specula
 

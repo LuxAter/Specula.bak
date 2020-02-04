@@ -1,4 +1,4 @@
-#include "specula/std/fwatch.hpp"
+#include "specula/extern/fwatch.hpp"
 
 #include <atomic>
 #include <mutex>
@@ -7,9 +7,11 @@
 #include <unordered_map>
 #include <vector>
 
-#include "specula/dev.hpp"
-#include "specula/std/filesystem.hpp"
-#include "specula/std/regex.hpp"
+#include "specula/dev/log.hpp"
+#include "specula/dev/prof.hpp"
+#include "specula/dev/error.hpp"
+#include "specula/extern/filesystem.hpp"
+#include "specula/extern/regex.hpp"
 
 specula::fs::Watcher::Watcher(
     std::string watch_path,

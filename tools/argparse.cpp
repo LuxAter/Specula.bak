@@ -15,6 +15,7 @@ void args::parse_args(int argc, char* argv[]) {
   cxxopts::Options options("Specula", "Ray Marching Path Tracer");
   options.allow_unrecognised_options();
   options.add_options()("h,help", "Display help message");
+  options.add_options("Interface")("gui", "Enables graphical user interface");
   try {
     result = std::unique_ptr<cxxopts::ParseResult>(
         new cxxopts::ParseResult(options.parse(argc, argv)));
