@@ -9,9 +9,9 @@ int main(int argc, char* argv[]) {
   specula::logger::initialize_core_logger();
   args::parse_args(argc, argv);
 
-  auto a = specula::iter::make_progressbar(360);
-  auto b = specula::iter::make_progressbar(64);
-  auto c = specula::iter::make_progressbar(128);
+  auto a = specula::iter::make_progressbar(10);
+  auto b = specula::iter::make_progressbar(10);
+  auto c = specula::iter::make_progressbar(10);
   a.set_description("Frames");
   b.set_description("Tiles");
   c.set_description("Samples");
