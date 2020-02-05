@@ -3,7 +3,7 @@
 
 #include <functional>
 
-#include <ghc/fs_std.hpp>
+#include <ghc/filesystem.hpp>
 
 namespace specula {
 namespace fs {
