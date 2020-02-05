@@ -5,7 +5,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${SPECULA_BINARY_DIR})
 # ##############################################################################
 # SOURCE FILES
 # ##############################################################################
-set(SOURCES dev/log.cpp dev/prof.cpp std/filesystem.cpp)
+set(SOURCES dev/log.cpp dev/prof.cpp std/filesystem.cpp geometry/sdf.cpp)
 configure_file("${SPECULA_SOURCE_DIR}/include/specula/version.hpp.in"
                "${SPECULA_SOURCE_DIR}/include/specula/version.hpp")
 
