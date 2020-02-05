@@ -25,7 +25,9 @@ if(BUILD_STATIC_LIBS)
     specula_static
     PUBLIC spdlog
            fmt::fmt
-           glm::glm)
+           glm::glm
+           nlohmann_json::nlohmann_json
+           ghc_filesystem)
   target_include_directories(specula_static
                              PUBLIC ${SPECULA_SOURCE_DIR}/external/re2/)
   install(TARGETS specula_static ARCHIVE DESTINATION lib)
@@ -47,7 +49,9 @@ if(BUILD_SHARED_LIBS)
     specula_shared
     PUBLIC spdlog
            fmt::fmt
-           glm::glm)
+           glm::glm
+           nlohmann_json::nlohmann_json
+           ghc_filesystem)
   target_include_directories(specula_shared
                              PUBLIC ${SPECULA_SOURCE_DIR}/external/re2/)
   install(TARGETS specula_shared LIBRARY DESTINATION lib)
