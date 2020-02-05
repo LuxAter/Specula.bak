@@ -7,8 +7,7 @@
 
 #include <fmt/format.h>
 
-#include "extern/regex.hpp"
-#include "extern/variant.hpp"
+#include "std/regex.hpp"
 
 namespace specula {
 namespace iter {
@@ -382,79 +381,117 @@ public:
     float percentage = frac * 100;
 
     std::string meter = format_spec;
-    regex::StringPiece perc_match;
-    int fmt_width = -1, fmt_precision = -1;
-    std::string fmt_color = "__";
-    regex::Regex::PartialMatch(meter,
-                               "(\\{percentage(\\:([0-9]+)?(\\.([0-9]+))?)?(;["
-                               "krgybmcwKRGYBMCW*_])?\\})",
-                               &perc_match, (void*)nullptr, &fmt_width,
-                               (void*)nullptr, &fmt_precision, &fmt_color);
-    if (perc_match.data() - meter.data() != 0 &&
-        perc_match.data() - meter.data() < static_cast<long>(meter.size())) {
-      std::string perc_format =
-          (fmt_width != -1 && fmt_precision != -1)
-              ? fmt::format("{{:{}.{}f}}", fmt_width, fmt_precision)
-              : ((fmt_width != -1)
-                     ? fmt::format("{{:{}f}}", fmt_width)
-                     : ((fmt_precision != -1)
-                            ? fmt::format("{{:.{}f}}", fmt_precision)
-                            : "{:f}"));
-      meter.replace(
-          perc_match.data() - meter.data(), perc_match.size(),
-          format_color(fmt_color[1], fmt::format(perc_format, percentage)));
+    std::smatch results;
+    try {
+      std::regex tmp("\\{percentage\\}");
+    } catch (std::regex_error& e) {
+      LERROR("REGEX: {}", e.what());
     }
-    for (auto&& key :
+    meter = std::regex_replace(
+        meter,
+        std::regex("\\{percentage(:([0-9]+)?(\\.([0-9]+))?)?(;(["
+                   "krgybmcwKRGYBMCW\\*_]+))?\\}"),
+        [percentage](const std::smatch& match) {
+          std::string fmt_spec =
+              "{:" + (match[2].matched ? match[2].str() : "") +
+              (match[4].matched ? "." + match[4].str() : "") + "}";
+          return format_color(match[5].matched ? match[5].str()[0] : '_',
+                              fmt::format(fmt_spec, percentage));
+        });
+    for (std::string&& key :
          {"n", "total", "elapsed", "remaining", "rate", "bar", "desc"}) {
-      std::string align = "";
-      fmt_width = -1;
-      fmt_color = "__";
-      regex::StringPiece match;
-      regex::StringPiece a, b, c, d;
-      regex::Regex::PartialMatch(
+      meter = std::regex_replace(
           meter,
-          "({" + std::string(key) +
-              "(:(<|^|>)?([0-9]+)?)?(;[krgybmcKRGYBMCW\\*_]+)?})",
-          &match, &a, &b, &c, &d);
-      if (match.data() != nullptr &&
-          match.data() - meter.data() < static_cast<long>(meter.size())) {
-        align = b.size() != 0 ? b.as_string() : ">";
-        fmt_width = c.size() != 0 ? std::stoi(c.as_string()) : -1;
-        fmt_color = d.size() != 0 ? d.as_string().substr(1) : "_";
-        std::string value;
-        if (std::string(key) == "n") {
-          value = n_str;
-        } else if (std::string(key) == "total") {
-          value = total_str;
-        } else if (std::string(key) == "elapsed") {
-          value = elapsed_str;
-        } else if (std::string(key) == "remaining") {
-          value = remaining_str;
-        } else if (std::string(key) == "rate") {
-          value = rate_str;
-        } else if (std::string(key) == "bar") {
-          if (fmt_color.size() != 5)
-            fmt_color = "_____";
-          value = format_bar(frac, fmt_width != -1 ? fmt_width : 20, bar_chars,
-                             fmt_color);
-          fmt_width = -1;
-        } else if (std::string(key) == "desc") {
-          value = desc;
-        }
-        if (fmt_width != -1 && static_cast<int>(value.size()) < fmt_width) {
-          if (align == "<") {
-            value = value + std::string(fmt_width - value.size(), ' ');
-          } else if (align == "^") {
-            value = std::string((fmt_width - value.size()) / 2, ' ') + value +
-                    std::string((fmt_width - value.size()) / 2, ' ');
+          std::regex("\\{" + key +
+                     "(:(<|^|>)?([0-9]+)?)?(;([krgybmcKRGYBMCW\\*_]+))?\\}"),
+          [key, n_str, total_str, elapsed_str, remaining_str, rate_str, frac,
+           bar_chars, desc](const std::smatch& match) {
+            std::string val = "";
+            char align = match[2].matched ? match[2].str()[0] : '>';
+            int fmt_width = match[3].matched ? std::stoi(match[3]) : -1;
+            std::string fmt_color = match[5].matched ? match[5].str() : "_____";
+            if (key == "n") {
+              val = n_str;
+            } else if (key == "total") {
+              val = total_str;
+            } else if (key == "elapsed") {
+              val = elapsed_str;
+            } else if (key == "remaining") {
+              val = remaining_str;
+            } else if (key == "rate") {
+              val = rate_str;
+            } else if (key == "bar") {
+              if (fmt_color.size() < 5) {
+                fmt_color +=
+                    std::string(5 - fmt_color.size(), fmt_color.back());
+              }
+              val = format_bar(frac, fmt_width != -1 ? fmt_width : 20,
+                               bar_chars, fmt_color);
+            } else if (key == "desc") {
+              val = desc;
+            }
+            if (fmt_width != -1 &&
+                static_cast<int>(display_len(val)) < fmt_width) {
+              std::size_t str_disp_len = display_len(val);
+              if (align == '<') {
+                val = val + std::string(fmt_width - str_disp_len, ' ');
+              } else if (align == '^') {
+                val = std::string((fmt_width - str_disp_len) / 2, ' ') + val +
+                      std::string((fmt_width - str_disp_len) / 2, ' ');
 
-          } else {
-            value = std::string(fmt_width - value.size(), ' ') + value;
-          }
-        }
-        meter.replace(match.data() - meter.data(), match.size(),
-                      format_color(fmt_color[0], value));
-      }
+              } else {
+                val = std::string(fmt_width - str_disp_len, ' ') + val;
+              }
+            }
+            return format_color(fmt_color[0], val);
+          });
+      //   std::smatch match;
+      //   if (std::regex_search(
+      //           meter, match,
+      //           std::regex(
+      //               "{" + key +
+      //               "(:(<|^|>)?([0-9]+)?)?(;([krgybmcKRGYBMCW\\*_]+))?}"))) {
+      //     char align = match[2].matched ? match[2][0] : '>';
+      //     int fmt_width = match[3].matched ? std::stoi(match[3]) : -1;
+      //     std::string fmt_color = match[5].matched ? match[5] : "_____";
+      //     if (key == "n") {
+      //       value = n_str;
+      //     } else if (key == "total") {
+      //       value = total_str;
+      //     } else if (key == "elapsed") {
+      //       value = elapsed_str;
+      //     } else if (key == "remaining") {
+      //       value = remaining_str;
+      //     } else if (key == "rate") {
+      //       value = rate_str;
+      //     } else if (key == "bar") {
+      //       if (fmt_color.size() < 5) {
+      //         fmt_color += std::string(5 - fmt_color.size(),
+      //         fmt_color.back());
+      //       }
+      //       value = format_bar(frac, fmt_width != -1 ? fmt_width : 20,
+      //       bar_chars,
+      //                          fmt_color);
+      //     } else if (key == "desc") {
+      //       vlaue = desc;
+      //     }
+      //     if (fmt_width != -1 && static_cast<int>(display_len(value) <
+      //     fmt_width) {
+      //       std::size_t str_disp_len = display_len(value);
+      //       if (align == "<") {
+      //         value = value + std::string(fmt_width - str_disp_len, ' ');
+      //       } else if (align == "^") {
+      //         value = std::string((fmt_width - str_disp_len) / 2, ' ') +
+      //         value +
+      //                 std::string((fmt_width - str_disp_len) / 2, ' ');
+
+      //       } else {
+      //         value = std::string(fmt_width - str_disp_len, ' ') + value;
+      //       }
+      //     }
+      //     meter.replace(match[0].first, match[0].second - match[0].first,
+      //                   format_color(fmt_color[0], value));
+      //   }
     }
     return meter;
   }
@@ -492,7 +529,7 @@ protected:
   bool unit_scale = false;
 
   std::size_t base_offset = 0;
-};
+}; // namespace iter
 
 template <typename T, typename Enabled = void>
 class ProgressBar : public ProgressBarBase {};

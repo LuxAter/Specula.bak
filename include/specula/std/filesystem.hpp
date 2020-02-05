@@ -2,17 +2,16 @@
 #define SPECULA_FWATCH_HPP_
 
 #include <atomic>
+#include <filesystem>
+#include <map>
 #include <mutex>
+#include <regex>
 #include <string>
 #include <thread>
-#include <unordered_map>
 #include <vector>
 
-#include "filesystem.hpp"
-#include "regex.hpp"
-
-namespace specula {
-namespace fs {
+namespace std {
+namespace filesystem {
 /**
  * @brief File/Path watcher
  *
@@ -50,8 +49,10 @@ public:
    * @param delay Delay between checking for updates
    */
   Watcher(std::string watch_path,
-          const std::function<void(const fs::path&, const Event&)>& callback,
-          fs::file_time_type::duration delay = std::chrono::milliseconds(5000));
+          const std::function<void(const std::filesystem::path&, const Event&)>&
+              callback,
+          std::filesystem::file_time_type::duration delay =
+              std::chrono::milliseconds(5000));
   /**
    * @brief Creates a file watcher with a modified callback
    *
@@ -64,8 +65,10 @@ public:
    * @param delay Delay between checking for updates
    */
   Watcher(std::string watch_path,
-          const std::function<void(const fs::path&)>& modified_callback,
-          fs::file_time_type::duration delay = std::chrono::milliseconds(5000));
+          const std::function<void(const std::filesystem::path&)>&
+              modified_callback,
+          std::filesystem::file_time_type::duration delay =
+              std::chrono::milliseconds(5000));
   /**
    * @brief Creates a file watcher with specific event callbacks
    *
@@ -81,11 +84,14 @@ public:
    * @param deleted_callback File deleted callback function
    * @param delay Delay between checking for updates
    */
-  Watcher(std::string watch_path,
-          const std::function<void(const fs::path&)>& created_callback,
-          const std::function<void(const fs::path&)>& modified_callback,
-          const std::function<void(const fs::path&)>& deleted_callback,
-          fs::file_time_type::duration delay = std::chrono::milliseconds(5000));
+  Watcher(
+      std::string watch_path,
+      const std::function<void(const std::filesystem::path&)>& created_callback,
+      const std::function<void(const std::filesystem::path&)>&
+          modified_callback,
+      const std::function<void(const std::filesystem::path&)>& deleted_callback,
+      std::filesystem::file_time_type::duration delay =
+          std::chrono::milliseconds(5000));
   /**
    * @brief Destroys and stops file watcher
    *
@@ -101,7 +107,7 @@ public:
    *
    * @param new_delay New duration to sleep between file update checks.
    */
-  void set_delay(fs::file_time_type::duration new_delay);
+  void set_delay(std::filesystem::file_time_type::duration new_delay);
 
   /**
    * @brief Starts the file watcher
@@ -125,22 +131,23 @@ public:
 private:
   void generate_filter(std::string watch_path);
 
-  fs::path root_path;
-  std::unique_ptr<regex::Regex> filter;
+  std::filesystem::path root_path;
+  std::unique_ptr<std::regex> filter;
 
-  fs::file_time_type::duration delay;
-  std::function<void(const fs::path&, const Event&)> callback;
-  std::function<void(const fs::path&)> created_callback;
-  std::function<void(const fs::path&)> modified_callback;
-  std::function<void(const fs::path&)> deleted_callback;
+  std::filesystem::file_time_type::duration delay;
+  std::function<void(const std::filesystem::path&, const Event&)> callback;
+  std::function<void(const std::filesystem::path&)> created_callback;
+  std::function<void(const std::filesystem::path&)> modified_callback;
+  std::function<void(const std::filesystem::path&)> deleted_callback;
 
   std::mutex mutex;
   std::atomic<bool> watching;
   std::unique_ptr<std::thread> watcher_thread;
 
-  std::unordered_map<fs::path, fs::file_time_type> modified_times;
+  std::map<std::filesystem::path, std::filesystem::file_time_type>
+      modified_times;
 };
-} // namespace fs
-} // namespace specula
+} // namespace filesystem
+} // namespace std
 
 #endif // SPECULA_FWATCH_HPP_

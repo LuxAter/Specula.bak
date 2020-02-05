@@ -2,20 +2,20 @@ name: Development
 on:
   push:
     branches:
-      - '*'
-      - '!master'
+      - "*"
+      - "!master"
 
-jobs: 
+jobs:
   build:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ ubuntu-latest, windows-latest, macos-latest ]
+        os: [ubuntu-latest, windows-latest, macos-latest]
     steps:
       - uses: actions/checkout@v2
       - name: clone Submodules
         run: git submodule update --init --recursive --depth 50
       - name: configue
-        run: mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=Debug ..
+        run: -DCMAKE_BUILD_TYPE=Debug .
       - name: compile
-        run: cmake --build build
+        run: cmake --build .
