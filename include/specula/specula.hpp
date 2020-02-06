@@ -2,11 +2,10 @@
 #define SPECULA_HPP_
 
 #include "error.hpp"
-#include "global.hpp"
 #include "log.hpp"
-#include "version.hpp"
 
+#include "compiler.hpp"
 #include "math.hpp"
-#include "transform.hpp"
+#include "version.hpp"
 
 #endif // SPECULA_HPP_

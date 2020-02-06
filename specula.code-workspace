@@ -8,6 +8,7 @@
 		"files.associations": {
 			"future": "cpp",
 			"cmath": "cpp"
-		}
+		},
+		"cSpell.enabled": false
 	}
 }

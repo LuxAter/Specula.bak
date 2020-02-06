@@ -1,3 +1,4 @@
+ 
 # ##############################################################################
 # PROJECT
 # ##############################################################################
@@ -13,6 +14,7 @@ endif()
 # ##############################################################################
 option(BUILD_TOOL "Compiles binary executable" TRUE)
 option(BUILD_DOCS "Compiles documentation" TRUE)
+option(ENABLE_PROFILING "Enable profiling" FALSE)
 if(NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
   option(BUILD_SHARED_LIBS "Compile shared libraries" TRUE)
   option(BUILD_STATIC_LIBS "Compile static libraries" FALSE)
@@ -21,10 +23,26 @@ else()
   set(BUILD_SHARED_LIBS FALSE)
 endif()
 
-option(STATIC_ANALYSIS "Use static analysis tools" TRUE)
+option(STATIC_ANALYSIS "Use static analysis tools" FALSE)
 option(OPTIMIZE_DEBUG "Enable compile time optimization for debug build" FALSE)
+option(ENABLE_GPU "Enables GPU computation" TRUE)
 set(SPECULA_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR})
 set(SPECULA_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+
+# ##############################################################################
+# GPU COMPUTE
+# ##############################################################################
+find_package(OpenCL QUIET)
+if(OpenCL_FOUND AND ENABLE_GPU)
+  message(STATUS "Found OpenCL: ${OpenCL_VERSION_STRING}")
+  set(SPECULA_GPU_LIBRARIES ${OpenCL_LIBRARIES})
+  set(SPECULA_GPU_INCLUDE_DIRS ${OpenCL_INCLUDE_DIRS})
+  set(SPECULA_GPU_FLAGS -DSPECULA_GPU)
+else()
+  set(SPECULA_GPU_LIBRARIES)
+  set(SPECULA_GPU_INCLUDE_DIRS)
+  set(SPECULA_GPU_FLAGS)
+endif()
 
 # ##############################################################################
 # BUILD MODE
@@ -47,11 +65,16 @@ endif()
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D__DEBUG__")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3")
+if(ENABLE_PROFILING)
+  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DENABLE_PROF")
+endif()
 if(OPTIMIZE_DEBUG)
   set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O3")
 endif()
 if(NOT MSVC)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wextra")
+else()
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DNOMINMAX")
 endif()
 
 # ##############################################################################
@@ -83,7 +106,7 @@ add_subdirectory(external)
 set(SPECULA_COMPILERS MSVC GNU Clang Intel AppleClang)
 write_compiler_detection_header(
   FILE
-  ${CMAKE_CURRENT_SOURCE_DIR}/include/specula/global/compiler.hpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/specula/compiler.hpp
   PREFIX
   SPECULA
   COMPILERS
