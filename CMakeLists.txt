@@ -24,8 +24,24 @@ endif()
 
 option(STATIC_ANALYSIS "Use static analysis tools" TRUE)
 option(OPTIMIZE_DEBUG "Enable compile time optimization for debug build" FALSE)
+option(ENABLE_GPU "Enables GPU computation" TRUE)
 set(SPECULA_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR})
 set(SPECULA_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+
+# ##############################################################################
+# GPU COMPUTE
+# ##############################################################################
+find_package(OpenCL QUIET)
+if(OpenCL_FOUND AND ENABLE_GPU)
+  message(STATUS "Found OpenCL: ${OpenCL_VERSION_STRING}")
+  set(SPECULA_GPU_LIBRARIES ${OpenCL_LIBRARIES})
+  set(SPECULA_GPU_INCLUDE_DIRS ${OpenCL_INCLUDE_DIRS})
+  set(SPECULA_GPU_FLAGS -DSPECULA_GPU)
+else()
+  set(SPECULA_GPU_LIBRARIES)
+  set(SPECULA_GPU_INCLUDE_DIRS)
+  set(SPECULA_GPU_FLAGS)
+endif()
 
 # ##############################################################################
 # BUILD MODE

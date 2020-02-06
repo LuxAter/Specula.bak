@@ -3,7 +3,7 @@
 #include "argparse.hpp"
 
 int main(int argc, char* argv[]) {
-  specula::logger::initialize_core_logger();
+  specula::initialize();
   args::parse_args(argc, argv);
 
   return 0;

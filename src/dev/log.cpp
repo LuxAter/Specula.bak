@@ -11,6 +11,8 @@
 #include <spdlog/spdlog.h>
 
 static std::shared_ptr<spdlog::sinks::basic_file_sink_mt> core_file_sink;
+static std::shared_ptr<spdlog::sinks::stdout_color_sink_mt> core_stdout_sink;
+
 static std::shared_ptr<spdlog::logger> core_logger;
 static std::unordered_map<std::string, std::shared_ptr<spdlog::logger>>
     client_logger;
@@ -22,10 +24,10 @@ bool specula::logger::initialize_core_logger(const LogLevel& console_level,
         "specula.log", true);
     core_file_sink->set_level(
         static_cast<spdlog::level::level_enum>(file_level));
+    core_stdout_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
+    core_stdout_sink->set_level(static_cast<spdlog::level::level_enum>(console_level));
     std::vector<spdlog::sink_ptr> sinks;
-    sinks.push_back(std::make_shared<spdlog::sinks::stdout_color_sink_mt>());
-    sinks.back()->set_level(
-        static_cast<spdlog::level::level_enum>(console_level));
+    sinks.push_back(core_stdout_sink);
     sinks.push_back(core_file_sink);
     core_logger =
         std::make_shared<spdlog::logger>("specula", begin(sinks), end(sinks));
@@ -45,12 +47,7 @@ bool specula::logger::initialize_logger(const std::string& name,
                                        const LogLevel& file_level) {
   try {
     std::vector<spdlog::sink_ptr> sinks;
-    sinks.push_back(std::make_shared<spdlog::sinks::stdout_color_sink_mt>());
-    sinks.back()->set_level(
-        static_cast<spdlog::level::level_enum>(console_level));
-    sinks.push_back(std::make_shared<spdlog::sinks::basic_file_sink_mt>(
-        name + ".log", true));
-    sinks.back()->set_level(static_cast<spdlog::level::level_enum>(file_level));
+    sinks.push_back(core_stdout_sink);
     sinks.push_back(core_file_sink);
     client_logger[name] =
         std::make_shared<spdlog::logger>(name, begin(sinks), end(sinks));

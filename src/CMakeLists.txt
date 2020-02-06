@@ -5,7 +5,8 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${SPECULA_BINARY_DIR})
 # ##############################################################################
 # SOURCE FILES
 # ##############################################################################
-set(SOURCES dev/log.cpp dev/prof.cpp std/filesystem.cpp geometry/sdf.cpp)
+set(SOURCES core.cpp gpu.cpp image.cpp dev/log.cpp dev/prof.cpp
+            std/filesystem.cpp)
 configure_file("${SPECULA_SOURCE_DIR}/include/specula/version.hpp.in"
                "${SPECULA_SOURCE_DIR}/include/specula/version.hpp")
 
@@ -20,16 +21,13 @@ if(BUILD_STATIC_LIBS)
 
   set_target_properties(
     specula_static
-    PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED YES CXX_EXTENSIONS OFF)
+    PROPERTIES CXX_STANDARD 11 CXX_STANDARD_REQUIRED YES CXX_EXTENSIONS OFF)
   target_link_libraries(
-    specula_static
-    PUBLIC spdlog
-           fmt::fmt
-           glm::glm
-           nlohmann_json::nlohmann_json
-           ghc_filesystem)
-  target_include_directories(specula_static
-                             PUBLIC ${SPECULA_SOURCE_DIR}/external/re2/)
+    specula_static PUBLIC spdlog fmt::fmt glm::glm nlohmann_json::nlohmann_json
+                          ghc_filesystem)
+  target_include_directories(specula_static PUBLIC ${SPECULA_GPU_INCLUDE_DIRS})
+  target_link_libraries(specula_static PUBLIC ${SPECULA_GPU_LIBRARIES})
+  target_compile_options(specula_static PUBLIC ${SPECULA_GPU_FLAGS})
   install(TARGETS specula_static ARCHIVE DESTINATION lib)
 endif()
 
@@ -44,16 +42,13 @@ if(BUILD_SHARED_LIBS)
 
   set_target_properties(
     specula_shared
-    PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED YES CXX_EXTENSIONS OFF)
+    PROPERTIES CXX_STANDARD 11 CXX_STANDARD_REQUIRED YES CXX_EXTENSIONS OFF)
   target_link_libraries(
-    specula_shared
-    PUBLIC spdlog
-           fmt::fmt
-           glm::glm
-           nlohmann_json::nlohmann_json
-           ghc_filesystem)
-  target_include_directories(specula_shared
-                             PUBLIC ${SPECULA_SOURCE_DIR}/external/re2/)
+    specula_shared PUBLIC spdlog fmt::fmt glm::glm nlohmann_json::nlohmann_json
+                          ghc_filesystem)
+  target_include_directories(specula_shared PUBLIC ${SPECULA_GPU_INCLUDE_DIRS})
+  target_link_libraries(specula_shared PUBLIC ${SPECULA_GPU_LIBRARIES})
+  target_compile_options(specula_shared PUBLIC ${SPECULA_GPU_FLAGS})
   install(TARGETS specula_shared LIBRARY DESTINATION lib)
 endif()
 

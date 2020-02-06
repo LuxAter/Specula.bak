@@ -4,7 +4,9 @@
 #include "dev.hpp"
 #include "std.hpp"
 
-#include "variable.hpp"
+#include "core.hpp"
 #include "version.hpp"
+#include "image.hpp"
+#include "gpu.hpp"
 
 #endif // SPECULA_HPP_
