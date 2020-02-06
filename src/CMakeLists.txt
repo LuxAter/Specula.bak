@@ -27,7 +27,7 @@ if(BUILD_STATIC_LIBS)
                           ghc_filesystem)
   target_include_directories(specula_static PUBLIC ${SPECULA_GPU_INCLUDE_DIRS})
   target_link_libraries(specula_static PUBLIC ${SPECULA_GPU_LIBRARIES})
-  target_compile_options(specula_static PUBLIC ${SPECULA_GPU_FLAGS})
+  target_compile_definitions(specula_static PUBLIC ${SPECULA_GPU_FLAGS})
   install(TARGETS specula_static ARCHIVE DESTINATION lib)
 endif()
 
