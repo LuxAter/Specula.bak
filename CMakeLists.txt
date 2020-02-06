@@ -125,6 +125,7 @@ add_subdirectory(src)
 # ##############################################################################
 # EXECUTABLE
 # ##############################################################################
+add_subdirectory(scripts)
 if(BUILD_TOOL)
   add_subdirectory(tools)
 endif()

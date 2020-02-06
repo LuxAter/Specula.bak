@@ -5,7 +5,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${SPECULA_BINARY_DIR})
 # ##############################################################################
 # SOURCE FILES
 # ##############################################################################
-set(SOURCES main.cpp gl.cpp gui.cpp glad/glad.c)
+set(SOURCES main.cpp gl.cpp gui.cpp gui/window.cpp glad/glad.c)
 list(
   APPEND SOURCES
          ${SPECULA_SOURCE_DIR}/external/imgui/imgui_demo.cpp
@@ -14,6 +14,15 @@ list(
          ${SPECULA_SOURCE_DIR}/external/imgui/imgui.cpp
          ${SPECULA_SOURCE_DIR}/external/imgui/examples/imgui_impl_glfw.cpp
          ${SPECULA_SOURCE_DIR}/external/imgui/examples/imgui_impl_opengl3.cpp)
+add_custom_command(
+  OUTPUT ${SPECULA_SOURCE_DIR}/tools/fonts.hpp
+  COMMAND ${SPECULA_BINARY_DIR}/scripts/binary_to_compressed -base85
+          ${SPECULA_SOURCE_DIR}/resources/Roboto-Regular.ttf roboto >>
+          ${SPECULA_SOURCE_DIR}/tools/fonts.hpp
+  COMMAND ${SPECULA_BINARY_DIR}/scripts/binary_to_compressed -base85
+          ${SPECULA_SOURCE_DIR}/resources/FiraCode-Regular.ttf firacode >>
+          ${SPECULA_SOURCE_DIR}/tools/fonts.hpp)
+list(APPEND SOURCES ${SPECULA_SOURCE_DIR}/tools/fonts.hpp)
 
 # ##############################################################################
 # TARGET
