@@ -7,18 +7,3 @@
 [submodule "external/glm"]
 	path = external/glm
 	url = https://github.com/g-truc/glm
-[submodule "external/glfw"]
-	path = external/glfw
-	url = https://github.com/glfw/glfw
-[submodule "external/imgui"]
-	path = external/imgui
-	url = https://github.com/ocornut/imgui
-[submodule "external/ImGuiColorTextEdit"]
-	path = external/ImGuiColorTextEdit
-	url = https://github.com/BalazsJako/ImGuiColorTextEdit
-[submodule "external/ImGuiFileDialog"]
-	path = external/ImGuiFileDialog
-	url = https://github.com/aiekick/ImGuiFileDialog
-[submodule "external/dirent"]
-	path = external/dirent
-	url = https://github.com/tronkko/dirent

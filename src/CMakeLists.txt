@@ -5,7 +5,15 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${SPECULA_BINARY_DIR})
 # ##############################################################################
 # SOURCE FILES
 # ##############################################################################
-set(SOURCES log.cpp)
+set(SOURCES core/geometry/bounds2.cpp 
+core/geometry/bounds.cpp
+core/geometry/bounds3.cpp
+core/geometry/bounds4.cpp
+core/geometry/ray_differential.cpp
+core/geometry/ray.cpp
+core/transform/transform.cpp
+core/transform/animated_transform.cpp
+dev/log.cpp global/math.cpp)
 configure_file("${SPECULA_SOURCE_DIR}/include/specula/version.hpp.in"
                "${SPECULA_SOURCE_DIR}/include/specula/version.hpp")
 
