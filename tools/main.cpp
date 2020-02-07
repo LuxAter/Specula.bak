@@ -14,15 +14,12 @@ int main(int argc, char const *argv[]) {
   gui::register_window(viewport);
   gui::register_window_callback("Editor", "Open", [editor_count]() mutable {
     gui::register_window("Editor",
-                         gui::new_window(std::to_string(editor_count), true));
+                         gui::new_window<gui::FileDialogWindow>(".c;.cpp"));
     editor_count++;
   });
   while (!gl::should_close()) {
     gl::frame();
     gui::frame();
-    if (gl::get_key(GLFW_KEY_ESCAPE)) {
-      gl::set_should_close(true);
-    }
   }
   gui::terminate();
   gl::terminate();

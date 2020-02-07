@@ -1,9 +1,16 @@
 #ifndef SPECULA_GUI_HPP_
 #define SPECULA_GUI_HPP_
 
+#include <imgui.h>
+
 #include "gui/window.hpp"
+#include "gui/editor.hpp"
+#include "gui/file.hpp"
 
 namespace gui {
+  extern ImFont* roboto;
+  extern ImFont* roboto_small;
+  extern ImFont* firacode;
 bool initialize();
 void terminate();
 

@@ -26,6 +26,7 @@ public:
   bool delete_on_close = false;
 
   uint32_t window_flags = ImGuiWindowFlags_None;
+  void draw();
   virtual void render();
   inline std::shared_ptr<Window> get_ptr() { return shared_from_this(); }
 

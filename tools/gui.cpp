@@ -4,6 +4,8 @@
 #include <map>
 #include <vector>
 
+#include <specula/specula.hpp>
+
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
@@ -18,16 +20,25 @@ static std::map<std::string,
                           std::vector<std::shared_ptr<gui::Window>>>>
     windows;
 
+namespace gui {
+ImFont *roboto = nullptr;
+ImFont *roboto_small = nullptr;
+ImFont *firacode = nullptr;
+} // namespace gui
+
 bool gui::initialize() {
+  specula::logger::initialize_logger("GUI");
   IMGUI_CHECKVERSION();
   ImGui::CreateContext();
   ImGuiIO &io = ImGui::GetIO();
   io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
   io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
-  io.Fonts->AddFontFromMemoryCompressedBase85TTF(roboto_compressed_data_base85,
-                                                 20);
-  io.Fonts->AddFontFromMemoryCompressedBase85TTF(
+  roboto = io.Fonts->AddFontFromMemoryCompressedBase85TTF(
+      roboto_compressed_data_base85, 20);
+  roboto_small = io.Fonts->AddFontFromMemoryCompressedBase85TTF(
+      roboto_compressed_data_base85, 20);
+  firacode = io.Fonts->AddFontFromMemoryCompressedBase85TTF(
       firacode_compressed_data_base85, 20);
 
   ImGui_ImplGlfw_InitForOpenGL(gl::window, true);
@@ -53,7 +64,7 @@ void gui::frame() {
     for (auto &window : group.second.second) {
       if (window == nullptr)
         continue;
-      window->render();
+      window->draw();
     }
   }
 
@@ -86,7 +97,11 @@ void gui::render_dockspace() {
 
 void gui::render_menu_bar() {
   if (ImGui::BeginMenuBar()) {
-    ImGui::MenuItem("Specula");
+    if (ImGui::BeginMenu("Specula")) {
+      if (ImGui::MenuItem("Quit"))
+        gl::set_should_close(true);
+      ImGui::EndMenu();
+    }
     if (ImGui::BeginMenu("Windows")) {
       if (windows["_"].first.size() != 0) {
         for (auto &callback : windows["_"].first) {
