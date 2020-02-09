@@ -12,9 +12,6 @@
 #include <type_traits>
 #include <vector>
 
-#include <glm/ext.hpp>
-#include <glm/glm.hpp>
-
 #include "../dev/error.hpp"
 #include "../dev/log.hpp"
 

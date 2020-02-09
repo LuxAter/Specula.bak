@@ -1,49 +1,23 @@
 #ifndef SPECULA_CORE_GEOMETRY_RAY_HPP_
 #define SPECULA_CORE_GEOMETRY_RAY_HPP_
 
-#include "../../global.hpp"
+#include "specula/global.hpp"
 
 #include "point.hpp"
 #include "vector.hpp"
 
-/**
- * @addtogroup Ray
- * @ingroup Math
- * @brief Ray classes and operations
- *
- * This module implements a `Ray` class that is commonly used throught
- * rendering. The ray consists of both an origin which is a `Point3<T>`, and a
- * direction which is stored as a `Vector3<T>`.
- *
- * A *ray* is a semi-infinite line specified by its origin and direction. We
- * represent a Ray with a `Point3f` for the origin and a `Vector3f` for the
- * direction. We only need rays with floating-point origins and directions, so
- * `Ray` isn't a template class parametrized by an arbitrary type, as points,
- * vectors anre normals were.
- *
- */
-
 namespace specula {
-/**
- * @ingroup Ray
- * @brief Core ray class
- *
- * This class implements the primary ray class, and is used for all ray tracing
- * and ray marching metods. The `Ray` also includes a member variable that
- * limits the ray to a segment along its infinite extent. Each ray also records
- * the medium containing its origin.
- *
- */
 class Ray {
 public:
-  Ray()
-      : o(), d(), t_max(std::numeric_limits<Float>::infinity()), time(0.0f),
-        medium(nullptr) {}
-  Ray(const Point3f &o, const Vector3f &d,
-      Float t_max = std::numeric_limits<Float>::infinity(), Float time = 0.0f,
-      const void *medium = nullptr)
+  Ray() : t_max(INFTY), time(0.0f), medium(nullptr) {}
+  Ray(const Point3f &o, const Vector3f &d, Float t_max = INFTY,
+      Float time = 0.0f, const Medium *medium = nullptr)
       : o(o), d(d), t_max(t_max), time(time), medium(medium) {}
-  inline Point3f operator()(Float t) const { return o + d * t; }
+
+  Point3f operator()(Float t) const { return o + d * t; }
+  inline bool has_nans() const SPECULA_NOEXCEPT {
+    return o.has_nans() || d.has_nans() || std::isnan(t_max);
+  }
 
   inline std::string fmt() const {
     return fmt::format("[o={}, d={}, t_max={}, time={}]", o, d, t_max, time);
@@ -53,15 +27,39 @@ public:
   Vector3f d;
   mutable Float t_max;
   Float time;
-  /**
-   * @todo Update this pointer to be the Medium class.
-   */
-  const void *medium;
+  const Medium *medium;
 };
 
-inline std::ostream &operator<<(std::ostream &out, const Ray &r) {
-  return out << r.fmt();
-}
+class RayDifferential : public Ray {
+public:
+  RayDifferential() : has_differentials(false) {}
+  RayDifferential(const Point3f &o, const Vector3f &d, Float t_max = INFTY,
+                  Float time = 0.0f, const Medium *medium = nullptr)
+      : Ray(o, d, t_max, time, medium), has_differentials(false) {}
+  RayDifferential(const Ray &ray) : Ray(ray), has_differentials(false) {}
+  inline bool has_nans() const SPECULA_NOEXCEPT {
+    return Ray::has_nans() ||
+           (has_differentials &&
+            (rx_origin.has_nans() || ry_origin.has_nans() ||
+             rx_direction.has_nans() || ry_direction.has_nans()));
+  }
+  void scale_differentials(Float s) {
+    rx_origin = o + (rx_origin - o) * s;
+    ry_origin = o + (ry_origin - o) * s;
+    rx_direction = d + (rx_direction - d) * s;
+    ry_direction = d + (ry_direction - d) * s;
+  }
+
+  inline std::string fmt() const {
+    return fmt::format("[{}, has_differentials={}, xo={}, xd={}, yo={}, yd={}]",
+                       Ray::fmt(), has_differentials, rx_origin, rx_direction,
+                       ry_origin, ry_direction);
+  }
+
+  bool has_differentials;
+  Point3f rx_origin, ry_origin;
+  Vector3f rx_direction, ry_direction;
+};
 } // namespace specula
 
 #endif // SPECULA_CORE_GEOMETRY_RAY_HPP_

@@ -1,1 +1,0 @@
-#include "specula/core/geometry/trigonometry.hpp"

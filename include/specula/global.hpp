@@ -8,7 +8,6 @@
 #include "global/functions.hpp"
 #include "global/includes.hpp"
 #include "global/macros.hpp"
-#include "global/math.hpp"
 #include "global/platform.hpp"
 #include "global/types.hpp"
 

@@ -7,30 +7,12 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${SPECULA_BINARY_DIR})
 # ##############################################################################
 set(SOURCES
 core/geometry/bounds.cpp
-core/geometry/bounds2.cpp
-core/geometry/bounds3.cpp
-core/geometry/bounds4.cpp
-core/geometry/common.cpp
-core/geometry/epsilon.cpp
-core/geometry/geometric.cpp
-core/geometry/integer.cpp
-core/geometry/interval.cpp
-core/geometry/matrix_access.cpp
-core/geometry/matrix.cpp
-core/geometry/noise.cpp
-core/geometry/norm.cpp
 core/geometry/normal.cpp
 core/geometry/point.cpp
-core/geometry/quaternion.cpp
-core/geometry/random.cpp
-core/geometry/ray_differential.cpp
 core/geometry/ray.cpp
-core/geometry/relational.cpp
-core/geometry/trigonometry.cpp
 core/geometry/vector.cpp
-core/transform/transform.cpp
-core/transform/animated_transform.cpp
-dev/log.cpp global/math.cpp)
+core/geometry/common.cpp
+dev/log.cpp)
 configure_file("${SPECULA_SOURCE_DIR}/include/specula/version.hpp.in"
                "${SPECULA_SOURCE_DIR}/include/specula/version.hpp")
 
@@ -42,6 +24,8 @@ if(BUILD_STATIC_LIBS)
   add_library(specula::static ALIAS specula_static)
   target_include_directories(specula_static
                              PUBLIC ${SPECULA_SOURCE_DIR}/include)
+  target_include_directories(specula_static
+                             PRIVATE ${SPECULA_SOURCE_DIR}/include/specula)
 
   set_target_properties(
     specula_static
@@ -62,6 +46,8 @@ if(BUILD_SHARED_LIBS)
   add_library(specula::shared ALIAS specula_shared)
   target_include_directories(specula_shared
                              PUBLIC ${SPECULA_SOURCE_DIR}/include)
+  target_include_directories(specula_shared
+                             PRIVATE ${SPECULA_SOURCE_DIR}/include/specula)
 
   set_target_properties(
     specula_shared

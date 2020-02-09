@@ -1,22 +1,45 @@
 #ifndef SPECULA_FORWARD_DECLARATIONS_HPP_
 #define SPECULA_FORWARD_DECLARATIONS_HPP_
 
-#include "math.hpp"
-
 namespace specula {
-template <typename T, glm::qualifier Q> class Quaternion;
-template <std::size_t N, typename T, glm::qualifier Q> class Vector;
-template <std::size_t N, typename T, glm::qualifier Q> class Point;
-template <std::size_t N, typename T, glm::qualifier Q> class Normal;
-template <std::size_t R, std::size_t C, typename T, glm::qualifier Q>
-class Matrix;
 
-template <typename T> class Bounds4;
-template <typename T> class Bounds3;
-template <typename T> class Bounds2;
+template <typename T,
+          typename =
+              typename std::enable_if<std::is_arithmetic<T>::value>::type>
+class Vector2;
+template <typename T,
+          typename =
+              typename std::enable_if<std::is_arithmetic<T>::value>::type>
+class Vector3;
+template <typename T,
+          typename =
+              typename std::enable_if<std::is_arithmetic<T>::value>::type>
+class Point2;
+template <typename T,
+          typename =
+              typename std::enable_if<std::is_arithmetic<T>::value>::type>
+class Point3;
+template <typename T,
+          typename =
+              typename std::enable_if<std::is_arithmetic<T>::value>::type>
+class Normal2;
+template <typename T,
+          typename =
+              typename std::enable_if<std::is_arithmetic<T>::value>::type>
+class Normal3;
+
+template <typename T,
+          typename =
+              typename std::enable_if<std::is_arithmetic<T>::value>::type>
+class Bounds2;
+template <typename T,
+          typename =
+              typename std::enable_if<std::is_arithmetic<T>::value>::type>
+class Bounds3;
 
 class Ray;
 class RayDifferential;
+class Medium;
 } // namespace specula
 
 #endif // SPECULA_FORWARD_DECLARATIONS_HPP_

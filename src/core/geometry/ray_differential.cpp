@@ -1,1 +1,0 @@
-#include "specula/core/geometry/ray_differential.hpp"
