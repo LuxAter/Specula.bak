@@ -8,7 +8,7 @@
 namespace specula {
 #ifdef _MSC_VER
 #define MAX_FLOAT std::numeric_limits<Float>::max();
-#define INFINITY std::numeric_limits<Float>::infinity();
+#define INFTY std::numeric_limits<Float>::infinity();
 #else
 static SPECULA_CONSTEXPR Float MAX_FLOAT = std::numeric_limits<Float>::max();
 static SPECULA_CONSTEXPR Float INFTY = std::numeric_limits<Float>::infinity();
