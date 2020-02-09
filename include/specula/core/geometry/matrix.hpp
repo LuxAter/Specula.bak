@@ -2,16 +2,27 @@
 #define SPECULA_CORE_GEOMETRY_MATRIX_HPP_
 
 #include "../../global.hpp"
+#include "inheritance.hpp"
 
 namespace specula {
 template <std::size_t R, std::size_t C, typename T,
           glm::qualifier Q = glm::defaultp>
-class Matrix : public glm::mat<R, C, T, Q> {
+class Matrix : public GlmInheritance, public glm::mat<R, C, T, Q> {
 public:
-  typedef std::size_t size_type;
+  typedef glm::mat<R, C, T, Q> glm_type;
+  typedef glm::length_t size_type;
 
+  Matrix() : glm::mat<R, C, T, Q>(T(1)) {}
   template <typename... Args>
   Matrix(const Args &... args) : glm::mat<R, C, T, Q>(args...) {}
+  // template <std::size_t M = R>
+  // Matrix(const Quaternion<T, Q> &q,
+  //        typename std::enable_if<R == C && R == 3>::type * = nullptr)
+  //     : glm::mat<R, C, T, Q>(glm::mat3_cast(q)) {}
+  // template <std::size_t M = R>
+  // Matrix(const Quaternion<T, Q> &q,
+  //        typename std::enable_if<R == C && R == 4>::type * = nullptr)
+  //     : glm::mat<R, C, T, Q>(glm::mat4_cast(q)) {}
 
   template <std::size_t N = R, std::size_t M = C>
   typename std::enable_if<N == R && M == C && N == 2 && M == 2,
@@ -94,6 +105,13 @@ public:
         (*this)[2][0], (*this)[2][1], (*this)[2][2], (*this)[2][3],
         (*this)[3][0], (*this)[3][1], (*this)[3][2], (*this)[3][3]);
   }
+
+  glm::mat<R, C, T, Q> &get_glm() {
+    return *reinterpret_cast<glm::mat<R, C, T, Q> *>(this);
+  }
+  SPECULA_CONSTEXPR const glm::mat<R, C, T, Q> &get_glm() const {
+    return *reinterpret_cast<const glm::mat<R, C, T, Q> *>(this);
+  }
 };
 
 template <typename T, glm::qualifier Q = glm::defaultp>
@@ -151,7 +169,6 @@ template <std::size_t R, std::size_t C, typename T, glm::qualifier Q>
 std::ostream &operator<<(std::ostream &out, const Matrix<R, C, T, Q> &v) {
   return out << v.fmt();
 }
-
 } // namespace specula
 
 #endif // SPECULA_CORE_GEOMETRY_MATRIX_HPP_

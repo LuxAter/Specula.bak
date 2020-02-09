@@ -1,5 +1,5 @@
-#ifndef SPECULA_BOUNDS_HPP_
-#define SPECULA_BOUNDS_HPP_
+#ifndef SPECULA_CORE_GEOMETRY_BOUNDS_HPP_
+#define SPECULA_CORE_GEOMETRY_BOUNDS_HPP_
 
 #include "../../global.hpp"
 
@@ -151,4 +151,4 @@ inline Bounds4<T> expand(const Bounds4<T> &b, U delta) {
 }
 } // namespace specula
 
-#endif // SPECULA_BOUNDS_HPP_
+#endif // SPECULA_CORE_GEOMETRY_BOUNDS_HPP_

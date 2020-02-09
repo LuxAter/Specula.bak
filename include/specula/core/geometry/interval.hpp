@@ -1,5 +1,5 @@
-#ifndef SPECULA_MATH_INTERVAL_HPP_
-#define SPECULA_MATH_INTERVAL_HPP_
+#ifndef SPECULA_CORE_GEOMETRY_INTERVAL_HPP_
+#define SPECULA_CORE_GEOMETRY_INTERVAL_HPP_
 
 #include "../../global.hpp"
 
@@ -97,4 +97,4 @@ void interval_find_zeros(T c1, T c2, T c3, T c4, T c5, T theta,
 
 } // namespace specula
 
-#endif // SPECULA_MATH_INTERVAL_HPP_
+#endif // SPECULA_CORE_GEOMETRY_INTERVAL_HPP_

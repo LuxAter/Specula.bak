@@ -1,5 +1,5 @@
-#ifndef SPECULA_RAY_DIFFERENTIAL_HPP_
-#define SPECULA_RAY_DIFFERENTIAL_HPP_
+#ifndef SPECULA_CORE_GEOMETRY_RAY_DIFFERENTIAL_HPP_
+#define SPECULA_CORE_GEOMETRY_RAY_DIFFERENTIAL_HPP_
 
 #include "../../global.hpp"
 #include "ray.hpp"
@@ -48,4 +48,4 @@ inline std::ostream &operator<<(std::ostream &out, const RayDifferential &r) {
 }
 } // namespace specula
 
-#endif // SPECULA_RAY_DIFFERENTIAL_HPP_
+#endif // SPECULA_CORE_GEOMETRY_RAY_DIFFERENTIAL_HPP_

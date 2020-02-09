@@ -1,5 +1,5 @@
-#ifndef SPECULA_BOUNDS_BOUNDS4_HPP_
-#define SPECULA_BOUNDS_BOUNDS4_HPP_
+#ifndef SPECULA_CORE_GEOMETRY_BOUNDS_BOUNDS4_HPP_
+#define SPECULA_CORE_GEOMETRY_BOUNDS_BOUNDS4_HPP_
 
 #include "../../global.hpp"
 
@@ -221,4 +221,4 @@ std::ostream &operator<<(std::ostream &out, const Bounds4<T> &v) {
 }
 } // namespace specula
 
-#endif // SPECULA_BOUNDS_BOUNDS4_HPP_
+#endif // SPECULA_CORE_GEOMETRY_BOUNDS_BOUNDS4_HPP_

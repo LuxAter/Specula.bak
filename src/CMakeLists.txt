@@ -5,12 +5,29 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${SPECULA_BINARY_DIR})
 # ##############################################################################
 # SOURCE FILES
 # ##############################################################################
-set(SOURCES core/geometry/bounds2.cpp 
+set(SOURCES
 core/geometry/bounds.cpp
+core/geometry/bounds2.cpp
 core/geometry/bounds3.cpp
 core/geometry/bounds4.cpp
+core/geometry/common.cpp
+core/geometry/epsilon.cpp
+core/geometry/geometric.cpp
+core/geometry/integer.cpp
+core/geometry/interval.cpp
+core/geometry/matrix_access.cpp
+core/geometry/matrix.cpp
+core/geometry/noise.cpp
+core/geometry/norm.cpp
+core/geometry/normal.cpp
+core/geometry/point.cpp
+core/geometry/quaternion.cpp
+core/geometry/random.cpp
 core/geometry/ray_differential.cpp
 core/geometry/ray.cpp
+core/geometry/relational.cpp
+core/geometry/trigonometry.cpp
+core/geometry/vector.cpp
 core/transform/transform.cpp
 core/transform/animated_transform.cpp
 dev/log.cpp global/math.cpp)

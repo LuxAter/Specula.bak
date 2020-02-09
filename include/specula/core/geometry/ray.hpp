@@ -1,5 +1,5 @@
-#ifndef SPECULA_RAY_HPP_
-#define SPECULA_RAY_HPP_
+#ifndef SPECULA_CORE_GEOMETRY_RAY_HPP_
+#define SPECULA_CORE_GEOMETRY_RAY_HPP_
 
 #include "../../global.hpp"
 
@@ -64,4 +64,4 @@ inline std::ostream &operator<<(std::ostream &out, const Ray &r) {
 }
 } // namespace specula
 
-#endif // SPECULA_RAY_HPP_
+#endif // SPECULA_CORE_GEOMETRY_RAY_HPP_
