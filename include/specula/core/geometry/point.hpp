@@ -16,6 +16,16 @@ class Point {
   typedef std::size_t size_type;
 };
 
+/**
+ * @brief Point with two elements
+ * @ingroup Geometry
+ *
+ * Point parametrized by the element type. The elements are accessed using
+ * `p.x` and `p.y`.
+ *
+ * @tparam T Element type for point
+ * @tparam typename SFINAE forces T to be an arithmetic type.
+ */
 template <typename T, typename> class Point2 : public Point<T> {
 public:
   typedef T value_type;
@@ -141,6 +151,16 @@ public:
   T x, y;
 };
 
+/**
+ * @brief Point with three elements
+ * @ingroup Geometry
+ *
+ * Point parametrized by the element type. The elements are accessed using
+ * `p.x`, `p.y`, and `p.z`.
+ *
+ * @tparam T Element type for point
+ * @tparam typename SFINAE forces T to be an arithmetic type.
+ */
 template <typename T, typename> class Point3 : public Point<T> {
 public:
   typedef T value_type;
@@ -282,9 +302,25 @@ public:
   T x, y, z;
 };
 
+/**
+ * @brief Point2 specialization for Floating point types
+ * @ingroup Geometry
+ */
 typedef Point2<Float> Point2f;
+/**
+ * @brief Point2 specialization for Integer types
+ * @ingroup Geometry
+ */
 typedef Point2<Int> Point2i;
+/**
+ * @brief Point3 specialization for Floating point types
+ * @ingroup Geometry
+ */
 typedef Point3<Float> Point3f;
+/**
+ * @brief Point3 specialization for Integer types
+ * @ingroup Geometry
+ */
 typedef Point3<Int> Point3i;
 
 template <typename T, typename U>

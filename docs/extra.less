@@ -208,6 +208,9 @@ tr.even,
 tr.markdownTableBody:nth-child(even),
 .mdescLeft,
 .mdescRight,
+.memTemplParams,
+.memTemplItemLeft,
+.memTemplItemRight,
 .memItemLeft,
 .memItemRight,
 code,
@@ -608,4 +611,28 @@ span.mlabel {
 .icondoc {
   background-image: url("/file-alt-solid.svg");
   background-position: 0px 0px;
+}
+
+table.fieldtable {
+  width: 100%;
+  border: 1px solid @header-footer-link-color;
+  box-shadow: none;
+  border-radius: 6px;
+  background: linear-gradient(
+    to bottom,
+    @toc-background-color2 0%,
+    @toc-background-color1 100%
+  );
+}
+.fieldtable th {
+  background-image: none;
+  background-color: @header-footer-link-color;
+  color: @header-footer-background-color;
+}
+.fieldtable td.fielddoc {
+  border-bottom: 1px solid @header-footer-link-color;
+}
+.fieldtable td.fieldname {
+  border-right: 1px solid @header-footer-link-color;
+  border-bottom: 1px solid @header-footer-link-color;
 }

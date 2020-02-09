@@ -16,6 +16,16 @@ class Normal {
   typedef std::size_t size_type;
 };
 
+/**
+ * @brief Normal with two elements
+ * @ingroup Geometry
+ *
+ * Normal parametrized by the element type. The elements are accessed using
+ * `n.x` and `n.y`.
+ *
+ * @tparam T Element type for normal
+ * @tparam typename SFINAE forces T to be an arithmetic type.
+ */
 template <typename T, typename> class Normal2 : public Normal<T> {
 public:
   typedef T value_type;
@@ -123,6 +133,16 @@ public:
   T x, y;
 };
 
+/**
+ * @brief Normal with three elements
+ * @ingroup Geometry
+ *
+ * Normal parametrized by the element type. The elements are accessed using
+ * `n.x`, `n.y`, and `n.z`.
+ *
+ * @tparam T Element type for normal
+ * @tparam typename SFINAE forces T to be an arithmetic type.
+ */
 template <typename T, typename> class Normal3 : public Normal<T> {
 public:
   typedef T value_type;
@@ -248,9 +268,25 @@ public:
   T x, y, z;
 };
 
+/**
+ * @brief Normal2 specialization for Floating point types
+ * @ingroup Geometry
+ */
 typedef Normal2<Float> Normal2f;
+/**
+ * @brief Normal2 specialization for Integer types
+ * @ingroup Geometry
+ */
 typedef Normal2<Int> Normal2i;
+/**
+ * @brief Normal3 specialization for Floating point types
+ * @ingroup Geometry
+ */
 typedef Normal3<Float> Normal3f;
+/**
+ * @brief Normal3 specialization for Integer types
+ * @ingroup Geometry
+ */
 typedef Normal3<Int> Normal3i;
 
 template <typename T, typename U>

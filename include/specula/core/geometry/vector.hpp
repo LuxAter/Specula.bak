@@ -18,6 +18,16 @@ public:
   typedef std::size_t size_type;
 };
 
+/**
+ * @brief Vector with two elements
+ * @ingroup Geometry
+ *
+ * Vector parametrized by the element type. The elements are accessed using
+ * `v.x` and `v.y`.
+ *
+ * @tparam T Element type for vector
+ * @tparam typename SFINAE forces T to be an arithmetic type.
+ */
 template <typename T, typename> class Vector2 : public Vector<T> {
 public:
   typedef T value_type;
@@ -134,6 +144,16 @@ public:
   T x, y;
 };
 
+/**
+ * @brief Vector with three elements
+ * @ingroup Geometry
+ *
+ * Vector parametrized by the element type. The elements are accessed using
+ * `v.x`, `v.y`, and `v.z`.
+ *
+ * @tparam T Element type for vector
+ * @tparam typename SFINAE forces T to be an arithmetic type.
+ */
 template <typename T, typename> class Vector3 : public Vector<T> {
 public:
   typedef T value_type;
@@ -266,9 +286,25 @@ public:
   T x, y, z;
 };
 
+/**
+ * @brief Vector2 specialization for Floating point types
+ * @ingroup Geometry
+ */
 typedef Vector2<Float> Vector2f;
+/**
+ * @brief Vector2 specialization for Integer types
+ * @ingroup Geometry
+ */
 typedef Vector2<Int> Vector2i;
+/**
+ * @brief Vector3 specialization for Floating point types
+ * @ingroup Geometry
+ */
 typedef Vector3<Float> Vector3f;
+/**
+ * @brief Vector3 specialization for Integer types
+ * @ingroup Geometry
+ */
 typedef Vector3<Int> Vector3i;
 
 template <typename T, typename U>
