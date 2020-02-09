@@ -12,6 +12,7 @@ core/geometry/point.cpp
 core/geometry/ray.cpp
 core/geometry/vector.cpp
 core/geometry/common.cpp
+core/geometry/matrix.cpp
 dev/log.cpp)
 configure_file("${SPECULA_SOURCE_DIR}/include/specula/version.hpp.in"
                "${SPECULA_SOURCE_DIR}/include/specula/version.hpp")
