@@ -45,6 +45,9 @@ class Bounds3;
 class Ray;
 class RayDifferential;
 class Medium;
+class Transform;
+class MediumInterface;
+class Interaction;
 } // namespace specula
 
 #endif // SPECULA_FORWARD_DECLARATIONS_HPP_

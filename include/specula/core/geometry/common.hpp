@@ -12,7 +12,7 @@ template <typename T> inline Vector2<T> abs(const Vector2<T> &v) {
   return Vector2<T>(std::abs(v.x), std::abs(v.y));
 }
 template <typename T> inline Vector3<T> abs(const Vector3<T> &v) {
-  return Vector2<T>(std::abs(v.x), std::abs(v.y), std::abs(v.z));
+  return Vector3<T>(std::abs(v.x), std::abs(v.y), std::abs(v.z));
 }
 
 template <typename T> inline T dot(const Vector2<T> &v1, const Vector2<T> &v2) {
@@ -172,14 +172,14 @@ template <typename T> Point2<T> min(const Point2<T> &p1, const Point2<T> &p2) {
   return Point2<T>(std::min(p1.x, p2.x), std::min(p1.y, p2.y));
 }
 template <typename T> Point3<T> min(const Point3<T> &p1, const Point3<T> &p2) {
-  return Point2<T>(std::min(p1.x, p2.x), std::min(p1.y, p2.y),
+  return Point3<T>(std::min(p1.x, p2.x), std::min(p1.y, p2.y),
                    std::min(p1.z, p2.z));
 }
 template <typename T> Point2<T> max(const Point2<T> &p1, const Point2<T> &p2) {
   return Point2<T>(std::max(p1.x, p2.x), std::max(p1.y, p2.y));
 }
 template <typename T> Point3<T> max(const Point3<T> &p1, const Point3<T> &p2) {
-  return Point2<T>(std::max(p1.x, p2.x), std::max(p1.y, p2.y),
+  return Point3<T>(std::max(p1.x, p2.x), std::max(p1.y, p2.y),
                    std::max(p1.z, p2.z));
 }
 

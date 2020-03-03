@@ -28,23 +28,24 @@ public:
   typedef std::size_t size_type;
 
   Matrix4x4()
-      : data({{1.0, 0.0, 0.0, 0.0},
-              {0.0, 1.0, 0.0, 0.0},
-              {0.0, 0.0, 1.0, 0.0},
-              {0.0, 0.0, 0.0, 1.0}}) {}
-  Matrix4x4(T mat[4][4])
-      : data({{mat[0][0], mat[0][1], mat[0][2], mat[0][3]},
-              {mat[1][0], mat[1][1], mat[1][2], mat[1][3]},
-              {mat[2][0], mat[2][1], mat[2][2], mat[2][3]},
-              {mat[3][0], mat[3][1], mat[3][2], mat[3][3]}}) {}
+      : data({std::array<Float, 4>{1.0, 0.0, 0.0, 0.0},
+              std::array<Float, 4>{0.0, 1.0, 0.0, 0.0},
+              std::array<Float, 4>{0.0, 0.0, 1.0, 0.0},
+              std::array<Float, 4>{0.0, 0.0, 0.0, 1.0}}) {}
+  Matrix4x4(const T mat[4][4])
+      : data({std::array<Float, 4>{mat[0][0], mat[0][1], mat[0][2], mat[0][3]},
+              std::array<Float, 4>{mat[1][0], mat[1][1], mat[1][2], mat[1][3]},
+              std::array<Float, 4>{mat[2][0], mat[2][1], mat[2][2], mat[2][3]},
+              std::array<Float, 4>{mat[3][0], mat[3][1], mat[3][2],
+                                   mat[3][3]}}) {}
   Matrix4x4(const T &m00, const T &m01, const T &m02, const T &m03,
             const T &m10, const T &m11, const T &m12, const T &m13,
             const T &m20, const T &m21, const T &m22, const T &m23,
             const T &m30, const T &m31, const T &m32, const T &m33)
-      : data({{m00, m01, m02, m03},
-              {m10, m11, m12, m13},
-              {m20, m21, m22, m23},
-              {m30, m31, m32, m33}}) {}
+      : data({std::array<Float, 4>{m00, m01, m02, m03},
+              std::array<Float, 4>{m10, m11, m12, m13},
+              std::array<Float, 4>{m20, m21, m22, m23},
+              std::array<Float, 4>{m30, m31, m32, m33}}) {}
 
   bool operator==(const Matrix4x4 &m) const {
     for (size_type i = 0; i < 4; ++i) {
@@ -65,7 +66,7 @@ public:
     return false;
   }
 
-  Matrix4x4 operator*(const Matrix4x4<T> &m) {
+  Matrix4x4 operator*(const Matrix4x4<T> &m) const {
     Matrix4x4 r;
     for (size_type i = 0; i < 4; ++i) {
       for (size_type j = 0; j < 4; ++j) {
@@ -99,7 +100,8 @@ template <typename T> Matrix4x4<T> inverse(const Matrix4x4<T> &m) {
   typename Matrix4x4<T>::size_type indxc[4], indxr[4];
   typename Matrix4x4<T>::size_type ipiv[4] = {0, 0, 0, 0};
   T minv[4][4];
-  memcpy(minv, m.m, 4 * 4 * sizeof(T));
+  memcpy(minv, reinterpret_cast<const void *>(m.data.data()->data()),
+         4 * 4 * sizeof(T));
   for (typename Matrix4x4<T>::size_type i = 0; i < 4; i++) {
     typename Matrix4x4<T>::size_type irow = 0, icol = 0;
     T big = 0.f;

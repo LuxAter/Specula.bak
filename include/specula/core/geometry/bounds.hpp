@@ -215,7 +215,7 @@ public:
   }
   Vector3<T> diagonal() const SPECULA_NOEXCEPT { return p_max - p_min; }
   size_type maximum_extent() const {
-    Vector2<T> d = p_max - p_min;
+    Vector3<T> d = p_max - p_min;
     if (d.x > d.y && d.x > d.z)
       return 0;
     else if (d.y > d.z)
@@ -291,32 +291,32 @@ public:
     return (t_min < ray.t_max) && (t_max > 0);
   }
 
-  inline bool operator==(const Bounds2<T> &b) const {
+  inline bool operator==(const Bounds3<T> &b) const {
     return p_min == b.p_min && p_max == b.p_max;
   }
-  inline bool operator!=(const Bounds2<T> &b) const {
+  inline bool operator!=(const Bounds3<T> &b) const {
     return p_min != b.p_min || p_max != b.p_max;
   }
 
-  Point2<T> &at(size_type i) {
+  Point3<T> &at(size_type i) {
     CHECK(i >= 0 && i <= 1);
     if (i == 0)
       return p_min;
     return p_max;
   }
-  SPECULA_CONSTEXPR const Point2<T> &at(size_type i) const {
+  SPECULA_CONSTEXPR const Point3<T> &at(size_type i) const {
     CHECK(i >= 0 && i <= 1);
     if (i == 0)
       return p_min;
     return p_max;
   }
-  Point2<T> &operator[](size_type i) {
+  Point3<T> &operator[](size_type i) {
     CHECK(i >= 0 && i <= 1);
     if (i == 0)
       return p_min;
     return p_max;
   }
-  SPECULA_CONSTEXPR const Point2<T> &operator[](size_type i) const {
+  SPECULA_CONSTEXPR const Point3<T> &operator[](size_type i) const {
     CHECK(i >= 0 && i <= 1);
     if (i == 0)
       return p_min;
@@ -325,7 +325,7 @@ public:
 
   inline iterator begin() const { return iterator(this, p_min); }
   inline iterator end() const {
-    Point2<T> p_end(p_min.x, p_min.y, p_max.z);
+    Point3<T> p_end(p_min.x, p_min.y, p_max.z);
     if (p_min.x >= p_max.x || p_min.y >= p_max.y || p_min.z >= p_max.z)
       p_end = p_min;
     return iterator(this, end);
@@ -335,8 +335,11 @@ public:
     return fmt::format("[{} - {}]", p_min, p_max);
   }
 
-  Point2<T> p_min, p_max;
+  Point3<T> p_min, p_max;
 };
+
+typedef Bounds2<Float> Bounds2f;
+typedef Bounds3<Float> Bounds3f;
 
 } // namespace specula
 
