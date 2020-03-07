@@ -14,6 +14,7 @@ set(SOURCES
     core/geometry/common.cpp
     core/geometry/matrix.cpp
     core/transform.cpp
+    core/interaction.cpp
     dev/log.cpp)
 configure_file("${SPECULA_SOURCE_DIR}/include/specula/version.hpp.in"
                "${SPECULA_SOURCE_DIR}/include/specula/version.hpp")

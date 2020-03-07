@@ -48,6 +48,7 @@ class Medium;
 class Transform;
 class MediumInterface;
 class Interaction;
+class Shape;
 } // namespace specula
 
 #endif // SPECULA_FORWARD_DECLARATIONS_HPP_

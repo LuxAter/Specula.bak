@@ -1,0 +1,35 @@
+\documentclass[../specula.tex]{subfiles}
+
+\begin{document}
+\section{Mathematics}%
+\label{sec:mathematics}
+
+Before any real work can be done, it is important to develop a strong linear
+algebra and geometry library. This section skims over the details, as many
+tools can be used to implement a linear algebra library, but there are some
+necessities that our implementation depends upon, so we specify the
+implementation details that are required by the reset of the system.
+
+For \texttt{C++} a library that implements almost all of the requirements is
+\texttt{glm}\footnote{https://github.com/g-truc/glm}. Although if one uses
+this, it is important to be careful with the different types of vectors, and
+template overloading can lead to unexpected issues.
+
+\subsection{Real Numbers}%
+\label{sub:Real Numbers}
+
+The first component to implement is the real number type. The real number type
+(or floating point type) defines the maxim accuracy of the renderer. For
+example if the floating point type can only guarantee three digits of
+precision, then any computations will have relatively large errors. We will
+implement this type called \texttt{Float} like so.
+
+\begin{minted}{c++}
+  #ifdef SPECULA_DOUBLE_PRECISION
+    typedef double Float
+  #else
+    typedef float Float
+  #endif
+\end{minted}
+
+\end{document}

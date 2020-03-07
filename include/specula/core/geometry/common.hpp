@@ -66,6 +66,12 @@ template <typename T> inline Vector2<T> normalize(const Vector2<T> &v) {
 template <typename T> inline Vector3<T> normalize(const Vector3<T> &v) {
   return v / v.length();
 }
+template <typename T> inline Normal2<T> normalize(const Normal2<T> &v) {
+  return v / v.length();
+}
+template <typename T> inline Normal3<T> normalize(const Normal3<T> &v) {
+  return v / v.length();
+}
 
 template <typename T> inline T min_component(const Vector2<T> &v) {
   return std::min(v.x, v.y);

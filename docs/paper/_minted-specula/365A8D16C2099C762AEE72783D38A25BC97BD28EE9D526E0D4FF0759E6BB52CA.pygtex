@@ -1,0 +1,7 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+  \PYG{c+cp}{\PYGZsh{}ifdef SPECULA\PYGZus{}DOUBLE\PYGZus{}PRECISION}
+    \PYG{k}{typedef} \PYG{k+kt}{double} \PYG{n}{Float}
+  \PYG{c+cp}{\PYGZsh{}else}
+    \PYG{k}{typedef} \PYG{k+kt}{float} \PYG{n}{Float}
+  \PYG{c+cp}{\PYGZsh{}endif}
+\end{Verbatim}

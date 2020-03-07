@@ -1,0 +1,5 @@
+  #ifdef SPECULA_DOUBLE_PRECISION
+    typedef double Float
+  #else
+    typedef float Float
+  #endif
