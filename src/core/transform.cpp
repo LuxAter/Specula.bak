@@ -253,6 +253,18 @@ specula::Transform specula::orthographic(Float z_near, Float z_far) {
 specula::Transform specula::perspective(Float fov, Float n, Float f) {
   Matrix4x4<Float> persp(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, f / (f - n),
                          -f * n / (f - n), 0, 0, 1, 0);
-  Flaot inv_tan_ang = 1 / std::tan(radians(fov) / 2);
+  Float inv_tan_ang = 1 / std::tan(radians(fov) / 2);
   return scale(inv_tan_ang, inv_tan_ang, 1) * Transform(persp);
+}
+
+bool specula::solve_linear_system2x2(const Float a[2][2], const Float b[2],
+                                     Float *x0, Float *x1) {
+  Float det = a[0][0] * a[1][1] - a[0][1] * a[1][0];
+  if (std::abs(det) < 1e-10f)
+    return false;
+  *x0 = (a[1][1] * b[0] - a[0][1] * b[1]) / det;
+  *x1 = (a[0][0] * b[1] - a[1][0] * b[0]) / det;
+  if (std::isnan(*x0) || std::isnan(*x1))
+    return false;
+  return true;
 }

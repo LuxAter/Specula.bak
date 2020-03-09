@@ -33,7 +33,7 @@ if(BUILD_STATIC_LIBS)
   set_target_properties(
     specula_static
     PROPERTIES CXX_STANDARD 11 CXX_STANDARD_REQUIRED YES CXX_EXTENSIONS OFF)
-  target_link_libraries(specula_static PUBLIC spdlog fmt::fmt glm::glm)
+  target_link_libraries(specula_static PUBLIC spdlog fmt::fmt)
   target_include_directories(specula_static PUBLIC ${SPECULA_GPU_INCLUDE_DIRS})
   target_link_libraries(specula_static PUBLIC ${SPECULA_GPU_LIBRARIES})
   target_compile_definitions(specula_static PUBLIC ${SPECULA_GPU_FLAGS})
@@ -54,7 +54,7 @@ if(BUILD_SHARED_LIBS)
   set_target_properties(
     specula_shared
     PROPERTIES CXX_STANDARD 11 CXX_STANDARD_REQUIRED YES CXX_EXTENSIONS OFF)
-  target_link_libraries(specula_shared PUBLIC spdlog fmt::fmt glm::glm)
+  target_link_libraries(specula_shared PUBLIC spdlog fmt::fmt)
   target_include_directories(specula_shared PUBLIC ${SPECULA_GPU_INCLUDE_DIRS})
   target_link_libraries(specula_shared PUBLIC ${SPECULA_GPU_LIBRARIES})
   target_compile_options(specula_shared PUBLIC ${SPECULA_GPU_FLAGS})

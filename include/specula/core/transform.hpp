@@ -190,6 +190,10 @@ Transform look_at(const Point3f &pos, const Point3f &look, const Vector3f &up);
 
 Transform orthographic(Float z_near, Float z_far);
 Transform perspective(Float fov, Float n, Float f);
+
+bool solve_linear_system2x2(const Float a[2][2], const Float b[2], Float *x0,
+                            Float *x1);
+
 } // namespace specula
 
 #endif // SPECULA_CORE_TRANSFORM_HPP_
