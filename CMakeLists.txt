@@ -12,37 +12,22 @@ endif()
 # ##############################################################################
 # OPTIONS
 # ##############################################################################
-option(BUILD_TOOL "Compiles binary executable" TRUE)
-option(BUILD_DOCS "Compiles documentation" TRUE)
-option(ENABLE_PROFILING "Enable profiling" FALSE)
+option(SPECULA_BUILD_CLI "Compiles CLI executable" TRUE)
+option(SPECULA_BUILD_GUI "Compiles GUI executable" TRUE)
+option(SPECULA_BUILD_DOCS "Compiles documentation" TRUE)
+option(SPECULA_ENABLE_PROFILING "Enable profiling" FALSE)
 if(NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
-  option(BUILD_SHARED_LIBS "Compile shared libraries" TRUE)
-  option(BUILD_STATIC_LIBS "Compile static libraries" FALSE)
+  option(SPECULA_BUILD_SHARED_LIBS "Compile shared libraries" TRUE)
+  option(SPECULA_BUILD_STATIC_LIBS "Compile static libraries" FALSE)
 else()
-  option(BUILD_STATIC_LIBS "Compile static libraries" TRUE)
-  set(BUILD_SHARED_LIBS FALSE)
+  option(SPECULA_BUILD_STATIC_LIBS "Compile static libraries" TRUE)
+  set(SPECULA_BUILD_SHARED_LIBS FALSE)
 endif()
 
-option(STATIC_ANALYSIS "Use static analysis tools" FALSE)
-option(OPTIMIZE_DEBUG "Enable compile time optimization for debug build" FALSE)
-option(ENABLE_GPU "Enables GPU computation" TRUE)
+option(SPECULA_STATIC_ANALYSIS "Use static analysis tools" FALSE)
+option(SPECULA_OPTIMIZE_DEBUG "Enable compile time optimization for debug build" FALSE)
 set(SPECULA_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR})
 set(SPECULA_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
-
-# ##############################################################################
-# GPU COMPUTE
-# ##############################################################################
-find_package(OpenCL QUIET)
-if(OpenCL_FOUND AND ENABLE_GPU)
-  message(STATUS "Found OpenCL: ${OpenCL_VERSION_STRING}")
-  set(SPECULA_GPU_LIBRARIES ${OpenCL_LIBRARIES})
-  set(SPECULA_GPU_INCLUDE_DIRS ${OpenCL_INCLUDE_DIRS})
-  set(SPECULA_GPU_FLAGS -DSPECULA_GPU)
-else()
-  set(SPECULA_GPU_LIBRARIES)
-  set(SPECULA_GPU_INCLUDE_DIRS)
-  set(SPECULA_GPU_FLAGS)
-endif()
 
 # ##############################################################################
 # BUILD MODE
@@ -80,7 +65,7 @@ endif()
 # ##############################################################################
 # STATIC ANALYSIS
 # ##############################################################################
-if(STATIC_ANALYSIS OR CMAKE_BUILD_TYPE STREQUAL "Release")
+if(SPECULA_STATIC_ANALYSIS OR CMAKE_BUILD_TYPE STREQUAL "Release")
   find_program(
     CLANG_TIDY_EXE
     NAMES "clang-tidy"
@@ -120,20 +105,26 @@ write_compiler_detection_header(
 # ##############################################################################
 # LIBRARY
 # ##############################################################################
-add_subdirectory(src)
+add_subdirectory(lib)
 
 # ##############################################################################
-# EXECUTABLE
+# CLI EXECUTABLE 
 # ##############################################################################
-add_subdirectory(scripts)
-if(BUILD_TOOL)
-  add_subdirectory(tools)
+if(SPECULA_BUILD_CLI)
+  add_subdirectory(cli)
+endif()
+
+# ##############################################################################
+# GUI EXECUTABLE 
+# ##############################################################################
+if(SPECULA_BUILD_GUI)
+  add_subdirectory(gui)
 endif()
 
 # ##############################################################################
 # DOCUMENTATION
 # ##############################################################################
-if(BUILD_DOCS)
+if(SPECULA_BUILD_DOCS)
   find_package(Doxygen)
   if(Doxygen_FOUND)
     add_subdirectory(docs)

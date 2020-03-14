@@ -130,7 +130,7 @@ FULL_PATH_NAMES        = YES
 # relative paths, which will be relative from the directory where doxygen is
 # started.
 
-STRIP_FROM_PATH        = @SPECULA_SOURCE_DIR@/include/specula/
+STRIP_FROM_PATH        = @SPECULA_SOURCE_DIR@/lib/include/specula/
 
 # The STRIP_FROM_INC_PATH tag can be used to strip a user-defined part of
 # the path mentioned in the documentation of a class, which tells
@@ -922,7 +922,7 @@ HTML_EXTRA_STYLESHEET  = "@SPECULA_SOURCE_DIR@/docs/extra.css"
 # files. In the HTML_STYLESHEET file, use the file name only. Also note that
 # the files will be copied as-is; there are no commands or markers available.
 
-HTML_EXTRA_FILES       = @DOXYGEN_RESOURCES@
+HTML_EXTRA_FILES       = @DOXYGEN_RESOURCE@
 
 # The HTML_COLORSTYLE_HUE tag controls the color of the HTML output.
 # Doxygen will adjust the colors in the style sheet and background images

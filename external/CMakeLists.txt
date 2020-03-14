@@ -27,6 +27,6 @@ endmacro()
 # ##############################################################################
 # DEPENDENCIES
 # ##############################################################################
-option(SPDLOG_BUILD_SHARED "" ${BUILD_SHARED_LIBS})
+option(SPDLOG_BUILD_SHARED "" ${SPECULA_BUILD_SHARED_LIBS})
 load_submodule(spdlog)
 load_submodule(fmt)
