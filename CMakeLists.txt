@@ -91,7 +91,7 @@ add_subdirectory(external)
 set(SPECULA_COMPILERS MSVC GNU Clang Intel AppleClang)
 write_compiler_detection_header(
   FILE
-  ${CMAKE_CURRENT_SOURCE_DIR}/include/specula/global/compiler.hpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/lib/include/specula/global/compiler.hpp
   PREFIX
   SPECULA
   COMPILERS
