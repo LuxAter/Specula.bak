@@ -197,7 +197,9 @@ int find_interval(int size, const Predicate &pred) {
   return clamp(first - 1, 0, size - 2);
 }
 
-inline Float lerp(Float t, Float v1, Float v2) { return (1 - t) * v1 + t * v2; }
+template <typename T> inline T lerp(Float t, const T &v1, const T &v2) {
+  return (1 - t) * v1 + t * v2;
+}
 inline bool Quadratic(Float a, Float b, Float c, Float *t0, Float *t1) {
   double discrim = static_cast<double>(b) * static_cast<double>(b) -
                    4 * static_cast<double>(a) * static_cast<double>(c);
