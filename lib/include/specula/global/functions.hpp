@@ -117,7 +117,7 @@ inline Float log2(Float x) {
 }
 inline int log2_int(std::uint32_t v) {
 #if SPECULA_COMPILER_IS_MSVC == 1
-  unsigned int lz = 0;
+  unsigned long lz = 0;
   if (_BitScanReverse(&lz, v))
     return lz;
   return 0;
