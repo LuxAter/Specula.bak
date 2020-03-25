@@ -261,7 +261,7 @@ inline void error(std::string fmt, const _ARGS &... args) {
 }
 template <typename... _ARGS>
 inline void critical(std::string fmt, const _ARGS &... args) {
-  get_core()->info(fmt, args...);
+  get_core()->critical(fmt, args...);
 }
 } // namespace core
 namespace client {
@@ -293,7 +293,7 @@ inline void error(const std::string &logger, std::string fmt,
 template <typename... _ARGS>
 inline void critical(const std::string &logger, std::string fmt,
                      const _ARGS &... args) {
-  get_client(logger)->info(fmt, args...);
+  get_client(logger)->critical(fmt, args...);
 }
 } // namespace client
 } // namespace logger

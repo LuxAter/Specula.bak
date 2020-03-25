@@ -179,9 +179,51 @@
 #    endif
 
 #    if _MSC_VER >= 1900
+#      define SPECULA_COMPILER_CXX_DELETED_FUNCTIONS 1
+#    else
+#      define SPECULA_COMPILER_CXX_DELETED_FUNCTIONS 0
+#    endif
+
+#    if _MSC_VER >= 1600
+#      define SPECULA_COMPILER_CXX_EXTERN_TEMPLATES 1
+#    else
+#      define SPECULA_COMPILER_CXX_EXTERN_TEMPLATES 0
+#    endif
+
+#    if _MSC_VER >= 1700
+#      define SPECULA_COMPILER_CXX_FINAL 1
+#    else
+#      define SPECULA_COMPILER_CXX_FINAL 0
+#    endif
+
+#    if _MSC_VER >= 1900
 #      define SPECULA_COMPILER_CXX_NOEXCEPT 1
 #    else
 #      define SPECULA_COMPILER_CXX_NOEXCEPT 0
+#    endif
+
+#    if _MSC_VER >= 1600
+#      define SPECULA_COMPILER_CXX_OVERRIDE 1
+#    else
+#      define SPECULA_COMPILER_CXX_OVERRIDE 0
+#    endif
+
+#    if _MSC_VER >= 1900
+#      define SPECULA_COMPILER_CXX_ALIGNAS 1
+#    else
+#      define SPECULA_COMPILER_CXX_ALIGNAS 0
+#    endif
+
+#    if _MSC_VER >= 1900
+#      define SPECULA_COMPILER_CXX_ALIGNOF 1
+#    else
+#      define SPECULA_COMPILER_CXX_ALIGNOF 0
+#    endif
+
+#    if _MSC_VER >= 1600
+#      define SPECULA_COMPILER_CXX_NULLPTR 1
+#    else
+#      define SPECULA_COMPILER_CXX_NULLPTR 0
 #    endif
 
 #    if _MSC_VER >= 1600
@@ -194,6 +236,12 @@
 #      define SPECULA_COMPILER_CXX_ATTRIBUTE_DEPRECATED 1
 #    else
 #      define SPECULA_COMPILER_CXX_ATTRIBUTE_DEPRECATED 0
+#    endif
+
+#    if _MSC_VER >= 1900
+#      define SPECULA_COMPILER_CXX_THREAD_LOCAL 1
+#    else
+#      define SPECULA_COMPILER_CXX_THREAD_LOCAL 0
 #    endif
 
 #  elif SPECULA_COMPILER_IS_GNU
@@ -220,10 +268,52 @@
 #      define SPECULA_COMPILER_CXX_CONSTEXPR 0
 #    endif
 
+#    if (__GNUC__ * 100 + __GNUC_MINOR__) >= 404 && (__cplusplus >= 201103L || (defined(__GXX_EXPERIMENTAL_CXX0X__) && __GXX_EXPERIMENTAL_CXX0X__))
+#      define SPECULA_COMPILER_CXX_DELETED_FUNCTIONS 1
+#    else
+#      define SPECULA_COMPILER_CXX_DELETED_FUNCTIONS 0
+#    endif
+
+#    if (__GNUC__ * 100 + __GNUC_MINOR__) >= 404 && (__cplusplus >= 201103L || (defined(__GXX_EXPERIMENTAL_CXX0X__) && __GXX_EXPERIMENTAL_CXX0X__))
+#      define SPECULA_COMPILER_CXX_EXTERN_TEMPLATES 1
+#    else
+#      define SPECULA_COMPILER_CXX_EXTERN_TEMPLATES 0
+#    endif
+
+#    if (__GNUC__ * 100 + __GNUC_MINOR__) >= 407 && __cplusplus >= 201103L
+#      define SPECULA_COMPILER_CXX_FINAL 1
+#    else
+#      define SPECULA_COMPILER_CXX_FINAL 0
+#    endif
+
 #    if (__GNUC__ * 100 + __GNUC_MINOR__) >= 406 && (__cplusplus >= 201103L || (defined(__GXX_EXPERIMENTAL_CXX0X__) && __GXX_EXPERIMENTAL_CXX0X__))
 #      define SPECULA_COMPILER_CXX_NOEXCEPT 1
 #    else
 #      define SPECULA_COMPILER_CXX_NOEXCEPT 0
+#    endif
+
+#    if (__GNUC__ * 100 + __GNUC_MINOR__) >= 407 && __cplusplus >= 201103L
+#      define SPECULA_COMPILER_CXX_OVERRIDE 1
+#    else
+#      define SPECULA_COMPILER_CXX_OVERRIDE 0
+#    endif
+
+#    if (__GNUC__ * 100 + __GNUC_MINOR__) >= 408 && __cplusplus >= 201103L
+#      define SPECULA_COMPILER_CXX_ALIGNAS 1
+#    else
+#      define SPECULA_COMPILER_CXX_ALIGNAS 0
+#    endif
+
+#    if (__GNUC__ * 100 + __GNUC_MINOR__) >= 408 && __cplusplus >= 201103L
+#      define SPECULA_COMPILER_CXX_ALIGNOF 1
+#    else
+#      define SPECULA_COMPILER_CXX_ALIGNOF 0
+#    endif
+
+#    if (__GNUC__ * 100 + __GNUC_MINOR__) >= 406 && (__cplusplus >= 201103L || (defined(__GXX_EXPERIMENTAL_CXX0X__) && __GXX_EXPERIMENTAL_CXX0X__))
+#      define SPECULA_COMPILER_CXX_NULLPTR 1
+#    else
+#      define SPECULA_COMPILER_CXX_NULLPTR 0
 #    endif
 
 #    if (__GNUC__ * 100 + __GNUC_MINOR__) >= 404 && (__cplusplus >= 201103L || (defined(__GXX_EXPERIMENTAL_CXX0X__) && __GXX_EXPERIMENTAL_CXX0X__))
@@ -236,6 +326,12 @@
 #      define SPECULA_COMPILER_CXX_ATTRIBUTE_DEPRECATED 1
 #    else
 #      define SPECULA_COMPILER_CXX_ATTRIBUTE_DEPRECATED 0
+#    endif
+
+#    if (__GNUC__ * 100 + __GNUC_MINOR__) >= 408 && __cplusplus >= 201103L
+#      define SPECULA_COMPILER_CXX_THREAD_LOCAL 1
+#    else
+#      define SPECULA_COMPILER_CXX_THREAD_LOCAL 0
 #    endif
 
 #  elif SPECULA_COMPILER_IS_Clang
@@ -259,10 +355,52 @@
 #      define SPECULA_COMPILER_CXX_CONSTEXPR 0
 #    endif
 
+#    if ((__clang_major__ * 100) + __clang_minor__) >= 301 && __has_feature(cxx_deleted_functions)
+#      define SPECULA_COMPILER_CXX_DELETED_FUNCTIONS 1
+#    else
+#      define SPECULA_COMPILER_CXX_DELETED_FUNCTIONS 0
+#    endif
+
+#    if ((__clang_major__ * 100) + __clang_minor__) >= 301 && __cplusplus >= 201103L
+#      define SPECULA_COMPILER_CXX_EXTERN_TEMPLATES 1
+#    else
+#      define SPECULA_COMPILER_CXX_EXTERN_TEMPLATES 0
+#    endif
+
+#    if ((__clang_major__ * 100) + __clang_minor__) >= 301 && __has_feature(cxx_override_control)
+#      define SPECULA_COMPILER_CXX_FINAL 1
+#    else
+#      define SPECULA_COMPILER_CXX_FINAL 0
+#    endif
+
 #    if ((__clang_major__ * 100) + __clang_minor__) >= 301 && __has_feature(cxx_noexcept)
 #      define SPECULA_COMPILER_CXX_NOEXCEPT 1
 #    else
 #      define SPECULA_COMPILER_CXX_NOEXCEPT 0
+#    endif
+
+#    if ((__clang_major__ * 100) + __clang_minor__) >= 301 && __has_feature(cxx_override_control)
+#      define SPECULA_COMPILER_CXX_OVERRIDE 1
+#    else
+#      define SPECULA_COMPILER_CXX_OVERRIDE 0
+#    endif
+
+#    if ((__clang_major__ * 100) + __clang_minor__) >= 301 && __has_feature(cxx_alignas)
+#      define SPECULA_COMPILER_CXX_ALIGNAS 1
+#    else
+#      define SPECULA_COMPILER_CXX_ALIGNAS 0
+#    endif
+
+#    if ((__clang_major__ * 100) + __clang_minor__) >= 301 && __has_feature(cxx_alignas)
+#      define SPECULA_COMPILER_CXX_ALIGNOF 1
+#    else
+#      define SPECULA_COMPILER_CXX_ALIGNOF 0
+#    endif
+
+#    if ((__clang_major__ * 100) + __clang_minor__) >= 301 && __has_feature(cxx_nullptr)
+#      define SPECULA_COMPILER_CXX_NULLPTR 1
+#    else
+#      define SPECULA_COMPILER_CXX_NULLPTR 0
 #    endif
 
 #    if ((__clang_major__ * 100) + __clang_minor__) >= 301 && __has_feature(cxx_static_assert)
@@ -275,6 +413,12 @@
 #      define SPECULA_COMPILER_CXX_ATTRIBUTE_DEPRECATED 1
 #    else
 #      define SPECULA_COMPILER_CXX_ATTRIBUTE_DEPRECATED 0
+#    endif
+
+#    if ((__clang_major__ * 100) + __clang_minor__) >= 301 && __has_feature(cxx_thread_local)
+#      define SPECULA_COMPILER_CXX_THREAD_LOCAL 1
+#    else
+#      define SPECULA_COMPILER_CXX_THREAD_LOCAL 0
 #    endif
 
 #  elif SPECULA_COMPILER_IS_Intel
@@ -318,10 +462,52 @@
 #      define SPECULA_COMPILER_CXX_CONSTEXPR 0
 #    endif
 
+#    if __INTEL_COMPILER >= 1210 && ((__cplusplus >= 201103L) || defined(__INTEL_CXX11_MODE__) || defined(__GXX_EXPERIMENTAL_CXX0X__))
+#      define SPECULA_COMPILER_CXX_DELETED_FUNCTIONS 1
+#    else
+#      define SPECULA_COMPILER_CXX_DELETED_FUNCTIONS 0
+#    endif
+
+#    if __INTEL_COMPILER >= 1210 && ((__cplusplus >= 201103L) || defined(__INTEL_CXX11_MODE__) || defined(__GXX_EXPERIMENTAL_CXX0X__))
+#      define SPECULA_COMPILER_CXX_EXTERN_TEMPLATES 1
+#    else
+#      define SPECULA_COMPILER_CXX_EXTERN_TEMPLATES 0
+#    endif
+
+#    if __INTEL_COMPILER >= 1400 && ((__cplusplus >= 201103L) || defined(__INTEL_CXX11_MODE__) || defined(__GXX_EXPERIMENTAL_CXX0X__))
+#      define SPECULA_COMPILER_CXX_FINAL 1
+#    else
+#      define SPECULA_COMPILER_CXX_FINAL 0
+#    endif
+
 #    if __INTEL_COMPILER >= 1400 && ((__cplusplus >= 201103L) || defined(__INTEL_CXX11_MODE__) || defined(__GXX_EXPERIMENTAL_CXX0X__))
 #      define SPECULA_COMPILER_CXX_NOEXCEPT 1
 #    else
 #      define SPECULA_COMPILER_CXX_NOEXCEPT 0
+#    endif
+
+#    if __INTEL_COMPILER >= 1400 && ((__cplusplus >= 201103L) || defined(__INTEL_CXX11_MODE__) || defined(__GXX_EXPERIMENTAL_CXX0X__))
+#      define SPECULA_COMPILER_CXX_OVERRIDE 1
+#    else
+#      define SPECULA_COMPILER_CXX_OVERRIDE 0
+#    endif
+
+#    if __INTEL_COMPILER >= 1500 && ((__cplusplus >= 201103L) || defined(__INTEL_CXX11_MODE__) || defined(__GXX_EXPERIMENTAL_CXX0X__))
+#      define SPECULA_COMPILER_CXX_ALIGNAS 1
+#    else
+#      define SPECULA_COMPILER_CXX_ALIGNAS 0
+#    endif
+
+#    if __INTEL_COMPILER >= 1500 && ((__cplusplus >= 201103L) || defined(__INTEL_CXX11_MODE__) || defined(__GXX_EXPERIMENTAL_CXX0X__))
+#      define SPECULA_COMPILER_CXX_ALIGNOF 1
+#    else
+#      define SPECULA_COMPILER_CXX_ALIGNOF 0
+#    endif
+
+#    if __INTEL_COMPILER >= 1210 && ((__cplusplus >= 201103L) || defined(__INTEL_CXX11_MODE__) || defined(__GXX_EXPERIMENTAL_CXX0X__))
+#      define SPECULA_COMPILER_CXX_NULLPTR 1
+#    else
+#      define SPECULA_COMPILER_CXX_NULLPTR 0
 #    endif
 
 #    if (__cpp_static_assert >= 200410 || __INTEL_COMPILER >= 1210) && ((__cplusplus >= 201103L) || defined(__INTEL_CXX11_MODE__) || defined(__GXX_EXPERIMENTAL_CXX0X__))
@@ -334,6 +520,12 @@
 #      define SPECULA_COMPILER_CXX_ATTRIBUTE_DEPRECATED 1
 #    else
 #      define SPECULA_COMPILER_CXX_ATTRIBUTE_DEPRECATED 0
+#    endif
+
+#    if __INTEL_COMPILER >= 1500 && ((__cplusplus >= 201103L) || defined(__INTEL_CXX11_MODE__) || defined(__GXX_EXPERIMENTAL_CXX0X__))
+#      define SPECULA_COMPILER_CXX_THREAD_LOCAL 1
+#    else
+#      define SPECULA_COMPILER_CXX_THREAD_LOCAL 0
 #    endif
 
 #  elif SPECULA_COMPILER_IS_AppleClang
@@ -358,10 +550,52 @@
 #      define SPECULA_COMPILER_CXX_CONSTEXPR 0
 #    endif
 
+#    if ((__clang_major__ * 100) + __clang_minor__) >= 400 && __has_feature(cxx_deleted_functions)
+#      define SPECULA_COMPILER_CXX_DELETED_FUNCTIONS 1
+#    else
+#      define SPECULA_COMPILER_CXX_DELETED_FUNCTIONS 0
+#    endif
+
+#    if ((__clang_major__ * 100) + __clang_minor__) >= 400 && __cplusplus >= 201103L
+#      define SPECULA_COMPILER_CXX_EXTERN_TEMPLATES 1
+#    else
+#      define SPECULA_COMPILER_CXX_EXTERN_TEMPLATES 0
+#    endif
+
+#    if ((__clang_major__ * 100) + __clang_minor__) >= 400 && __has_feature(cxx_override_control)
+#      define SPECULA_COMPILER_CXX_FINAL 1
+#    else
+#      define SPECULA_COMPILER_CXX_FINAL 0
+#    endif
+
 #    if ((__clang_major__ * 100) + __clang_minor__) >= 400 && __has_feature(cxx_noexcept)
 #      define SPECULA_COMPILER_CXX_NOEXCEPT 1
 #    else
 #      define SPECULA_COMPILER_CXX_NOEXCEPT 0
+#    endif
+
+#    if ((__clang_major__ * 100) + __clang_minor__) >= 400 && __has_feature(cxx_override_control)
+#      define SPECULA_COMPILER_CXX_OVERRIDE 1
+#    else
+#      define SPECULA_COMPILER_CXX_OVERRIDE 0
+#    endif
+
+#    if ((__clang_major__ * 100) + __clang_minor__) >= 400 && __has_feature(cxx_alignas)
+#      define SPECULA_COMPILER_CXX_ALIGNAS 1
+#    else
+#      define SPECULA_COMPILER_CXX_ALIGNAS 0
+#    endif
+
+#    if ((__clang_major__ * 100) + __clang_minor__) >= 400 && __has_feature(cxx_alignas)
+#      define SPECULA_COMPILER_CXX_ALIGNOF 1
+#    else
+#      define SPECULA_COMPILER_CXX_ALIGNOF 0
+#    endif
+
+#    if ((__clang_major__ * 100) + __clang_minor__) >= 400 && __has_feature(cxx_nullptr)
+#      define SPECULA_COMPILER_CXX_NULLPTR 1
+#    else
+#      define SPECULA_COMPILER_CXX_NULLPTR 0
 #    endif
 
 #    if ((__clang_major__ * 100) + __clang_minor__) >= 400 && __has_feature(cxx_static_assert)
@@ -376,6 +610,12 @@
 #      define SPECULA_COMPILER_CXX_ATTRIBUTE_DEPRECATED 0
 #    endif
 
+#    if ((__clang_major__ * 100) + __clang_minor__) >= 400 && __has_feature(cxx_thread_local)
+#      define SPECULA_COMPILER_CXX_THREAD_LOCAL 1
+#    else
+#      define SPECULA_COMPILER_CXX_THREAD_LOCAL 0
+#    endif
+
 #  else
 #    error Unsupported compiler
 #  endif
@@ -387,12 +627,69 @@
 #  endif
 
 
+#  if defined(SPECULA_COMPILER_CXX_DELETED_FUNCTIONS) && SPECULA_COMPILER_CXX_DELETED_FUNCTIONS
+#    define SPECULA_DELETED_FUNCTION = delete
+#  else
+#    define SPECULA_DELETED_FUNCTION 
+#  endif
+
+
+#  if defined(SPECULA_COMPILER_CXX_EXTERN_TEMPLATES) && SPECULA_COMPILER_CXX_EXTERN_TEMPLATES
+#    define SPECULA_EXTERN_TEMPLATE extern
+#  else
+#    define SPECULA_EXTERN_TEMPLATE 
+#  endif
+
+
+#  if defined(SPECULA_COMPILER_CXX_FINAL) && SPECULA_COMPILER_CXX_FINAL
+#    define SPECULA_FINAL final
+#  else
+#    define SPECULA_FINAL 
+#  endif
+
+
 #  if defined(SPECULA_COMPILER_CXX_NOEXCEPT) && SPECULA_COMPILER_CXX_NOEXCEPT
 #    define SPECULA_NOEXCEPT noexcept
 #    define SPECULA_NOEXCEPT_EXPR(X) noexcept(X)
 #  else
 #    define SPECULA_NOEXCEPT
 #    define SPECULA_NOEXCEPT_EXPR(X)
+#  endif
+
+
+#  if defined(SPECULA_COMPILER_CXX_OVERRIDE) && SPECULA_COMPILER_CXX_OVERRIDE
+#    define SPECULA_OVERRIDE override
+#  else
+#    define SPECULA_OVERRIDE 
+#  endif
+
+
+#  if defined(SPECULA_COMPILER_CXX_ALIGNAS) && SPECULA_COMPILER_CXX_ALIGNAS
+#    define SPECULA_ALIGNAS(X) alignas(X)
+#  elif SPECULA_COMPILER_IS_GNU || SPECULA_COMPILER_IS_Clang || SPECULA_COMPILER_IS_AppleClang
+#    define SPECULA_ALIGNAS(X) __attribute__ ((__aligned__(X)))
+#  elif SPECULA_COMPILER_IS_MSVC
+#    define SPECULA_ALIGNAS(X) __declspec(align(X))
+#  else
+#    define SPECULA_ALIGNAS(X)
+#  endif
+
+
+#  if defined(SPECULA_COMPILER_CXX_ALIGNOF) && SPECULA_COMPILER_CXX_ALIGNOF
+#    define SPECULA_ALIGNOF(X) alignof(X)
+#  elif SPECULA_COMPILER_IS_GNU || SPECULA_COMPILER_IS_Clang || SPECULA_COMPILER_IS_AppleClang
+#    define SPECULA_ALIGNOF(X) __alignof__(X)
+#  elif SPECULA_COMPILER_IS_MSVC
+#    define SPECULA_ALIGNOF(X) __alignof(X)
+#  endif
+
+
+#  if defined(SPECULA_COMPILER_CXX_NULLPTR) && SPECULA_COMPILER_CXX_NULLPTR
+#    define SPECULA_NULLPTR nullptr
+#  elif SPECULA_COMPILER_IS_GNU
+#    define SPECULA_NULLPTR __null
+#  else
+#    define SPECULA_NULLPTR 0
 #  endif
 
 #  if defined(SPECULA_COMPILER_CXX_STATIC_ASSERT) && SPECULA_COMPILER_CXX_STATIC_ASSERT
@@ -422,6 +719,17 @@ template<> struct SPECULAStaticAssert<true>{};
 #      define SPECULA_DEPRECATED
 #      define SPECULA_DEPRECATED_MSG(MSG)
 #    endif
+#  endif
+
+
+#  if defined(SPECULA_COMPILER_CXX_THREAD_LOCAL) && SPECULA_COMPILER_CXX_THREAD_LOCAL
+#    define SPECULA_THREAD_LOCAL thread_local
+#  elif SPECULA_COMPILER_IS_GNU || SPECULA_COMPILER_IS_Clang || SPECULA_COMPILER_IS_AppleClang
+#    define SPECULA_THREAD_LOCAL __thread
+#  elif SPECULA_COMPILER_IS_MSVC
+#    define SPECULA_THREAD_LOCAL __declspec(thread)
+#  else
+// SPECULA_THREAD_LOCAL not defined for this configuration.
 #  endif
 
 #endif

@@ -98,9 +98,17 @@ write_compiler_detection_header(
   ${SPECULA_COMPILERS}
   FEATURES
   cxx_constexpr
+  cxx_deleted_functions
+  cxx_extern_templates
+  cxx_final
   cxx_noexcept
+  cxx_override
+  cxx_alignas
+  cxx_alignof
+  cxx_nullptr
   cxx_static_assert
-  cxx_attribute_deprecated)
+  cxx_attribute_deprecated
+  cxx_thread_local)
 
 # ##############################################################################
 # LIBRARY
