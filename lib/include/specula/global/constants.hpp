@@ -9,8 +9,8 @@ namespace specula {
 typedef float Float;
 
 #if SPECULA_COMPILER_IS_MSVC == 1
-#define MAX_FLOAT std::numeric_limits<Float>::max();
-#define INFTY std::numeric_limits<Float>::infinity();
+#define MAX_FLOAT std::numeric_limits<Float>::max()
+#define INFTY std::numeric_limits<Float>::infinity()
 #define MACHINE_EPSILON (std::numeric_limits<Float>::epsilon() * 0.5)
 #else
 static SPECULA_CONSTEXPR Float MAX_FLOAT = std::numeric_limits<Float>::max();
