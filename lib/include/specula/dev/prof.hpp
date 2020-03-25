@@ -8,6 +8,7 @@
 #ifdef __PROFILER__
 #include <chrono>
 #include <typeinfo>
+#include <vector>
 
 #include <fmt/format.h>
 
