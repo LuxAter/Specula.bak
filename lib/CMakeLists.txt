@@ -1,7 +1,7 @@
 # ##############################################################################
 # SOURCE FILES
 # ##############################################################################
-set(SOURCES src/dev/log.cpp)
+set(SOURCES src/dev/log.cpp src/dev/prof.cpp)
 configure_file("${SPECULA_SOURCE_DIR}/lib/include/specula/version.hpp.in"
   "${SPECULA_SOURCE_DIR}/lib/include/specula/version.hpp")
 
