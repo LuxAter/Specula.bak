@@ -27,11 +27,13 @@ class Integrator;
 struct Interaction;
 class Light;
 class Material;
-struct Matrix4x4;
+template <typename T>
+class Matrix4x4;
 class Medium;
 class MediumInteraction;
 struct MediumInterface;
 class MemoryArena;
+template <typename T> class Normal2;
 template <typename T> class Normal3;
 class ParamSet;
 template <typename T> struct ParamSetItem;
@@ -60,11 +62,13 @@ template <typename T> class Vector2;
 template <typename T> class Vector3;
 class VisibilityTester;
 
+typedef int Int;
 #ifdef SPECULA_DOUBLE_PRECISION
 typedef double Float;
 #else
 typedef float Float;
 #endif
+
 #ifdef SPECULA_SAMPLED_SPECTRUM
 typedef SampledSpectrum Spectrum;
 #else

@@ -3,6 +3,7 @@
 
 #include "global/compiler.hpp"
 #include "global/constants.hpp"
+#include "global/declarations.hpp"
 #include "global/functions.hpp"
 #include "global/include.hpp"
 #include "global/macros.hpp"

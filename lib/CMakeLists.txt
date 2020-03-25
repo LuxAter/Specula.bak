@@ -1,7 +1,7 @@
 # ##############################################################################
 # SOURCE FILES
 # ##############################################################################
-set(SOURCES src/dev/log.cpp src/dev/prof.cpp)
+set(SOURCES src/geometry/ray.cpp src/geometry/point.cpp src/geometry/bounds.cpp src/geometry/common.cpp src/geometry/matrix.cpp src/geometry/normal.cpp src/geometry/vector.cpp src/dev/log.cpp src/dev/prof.cpp)
 configure_file("${SPECULA_SOURCE_DIR}/lib/include/specula/version.hpp.in"
   "${SPECULA_SOURCE_DIR}/lib/include/specula/version.hpp")
 

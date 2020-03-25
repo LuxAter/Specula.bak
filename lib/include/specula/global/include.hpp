@@ -20,6 +20,7 @@
 #endif
 
 #include <fmt/format.h>
+#include <fmt/ostream.h>
 
 #include "../dev.hpp"
 
