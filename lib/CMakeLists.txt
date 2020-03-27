@@ -1,7 +1,12 @@
 # ##############################################################################
 # SOURCE FILES
 # ##############################################################################
-set(SOURCES src/core/geometry/ray.cpp src/core/geometry/point.cpp src/core/geometry/bounds.cpp src/core/geometry/common.cpp src/core/geometry/matrix.cpp src/core/geometry/normal.cpp src/core/geometry/vector.cpp src/core/spectrum/coefficient.cpp src/core/spectrum/common.cpp src/core/spectrum/rgb.cpp src/core/spectrum/sampled.cpp src/dev/log.cpp src/dev/prof.cpp)
+set(SOURCES src/core/geometry/ray.cpp src/core/geometry/point.cpp
+  src/core/geometry/bounds.cpp src/core/geometry/common.cpp
+  src/core/geometry/matrix.cpp src/core/geometry/normal.cpp
+  src/core/geometry/vector.cpp src/core/spectrum/coefficient.cpp
+  src/core/spectrum/common.cpp src/core/spectrum/rgb.cpp
+  src/core/spectrum/sampled.cpp src/dev/log.cpp src/dev/prof.cpp)
 configure_file("${SPECULA_SOURCE_DIR}/lib/include/specula/version.hpp.in"
   "${SPECULA_SOURCE_DIR}/lib/include/specula/version.hpp")
 
@@ -45,3 +50,4 @@ if(SPECULA_BUILD_SHARED_LIBS)
 elseif(SPECULA_BUILD_STATIC_LIBS)
   add_library(specula::specula ALIAS specula-static)
 endif()
+

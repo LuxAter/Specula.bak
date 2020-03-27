@@ -6,28 +6,8 @@ cmake_minimum_required(VERSION 3.11.0 FATAL_ERROR)
 project(Specula VERSION 3.0.0)
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
-  set(MAIN_PROJECT TRUE)
+  set(SPECULA_MAIN_PROJECT TRUE)
 endif()
-
-# ##############################################################################
-# OPTIONS
-# ##############################################################################
-option(SPECULA_BUILD_CLI "Compiles CLI executable" TRUE)
-option(SPECULA_BUILD_GUI "Compiles GUI executable" TRUE)
-option(SPECULA_BUILD_DOCS "Compiles documentation" TRUE)
-option(SPECULA_PROFILING "Enable profiling" TRUE)
-if(NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
-  option(SPECULA_BUILD_SHARED_LIBS "Compile shared libraries" TRUE)
-  option(SPECULA_BUILD_STATIC_LIBS "Compile static libraries" FALSE)
-else()
-  option(SPECULA_BUILD_STATIC_LIBS "Compile static libraries" TRUE)
-  set(SPECULA_BUILD_SHARED_LIBS FALSE)
-endif()
-
-option(SPECULA_STATIC_ANALYSIS "Use static analysis tools" FALSE)
-option(SPECULA_OPTIMIZE_DEBUG "Enable compile time optimization for debug build" FALSE)
-set(SPECULA_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR})
-set(SPECULA_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
 # ##############################################################################
 # BUILD MODE
@@ -47,6 +27,35 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
               ${CMAKE_CURRENT_SOURCE_DIR}/compile_commands.json)
   endif()
 endif()
+
+# ##############################################################################
+# OPTIONS
+# ##############################################################################
+option(SPECULA_BUILD_CLI "Compiles CLI executable" ${SPECULA_MAIN_PROJECT})
+option(SPECULA_BUILD_GUI "Compiles GUI executable" ${SPECULA_MAIN_PROJECT})
+option(SPECULA_BUILD_DOCS "Compiles documentation" ${SPECULA_MAIN_PROJECT})
+option(SPECULA_BUILD_TESTS "Compiles Unit Test exectuable" ${SPECULA_MAIN_PROJECT})
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+  option(SPECULA_PROFILING "Enable profiling" ${SPECULA_MAIN_PROJECT})
+else()
+  option(SPECULA_PROFILING "Enable profiling" FALSE)
+endif()
+if(NOT CMAKE_SYSTEM_NAME STREQUAL "Windows")
+  option(SPECULA_BUILD_SHARED_LIBS "Compile shared libraries" TRUE)
+  option(SPECULA_BUILD_STATIC_LIBS "Compile static libraries" FALSE)
+else()
+  option(SPECULA_BUILD_STATIC_LIBS "Compile static libraries" TRUE)
+  set(SPECULA_BUILD_SHARED_LIBS FALSE)
+endif()
+
+option(SPECULA_STATIC_ANALYSIS "Use static analysis tools" FALSE)
+option(SPECULA_OPTIMIZE_DEBUG "Enable compile time optimization for debug build" FALSE)
+set(SPECULA_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR})
+set(SPECULA_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+
+# ##############################################################################
+# COMPILE FLAGS
+# ##############################################################################
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D__DEBUG__")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3")
@@ -127,6 +136,14 @@ endif()
 # ##############################################################################
 if(SPECULA_BUILD_GUI)
   add_subdirectory(gui)
+endif()
+
+# ##############################################################################
+# TEST EXECUTABLE 
+# ##############################################################################
+if(SPECULA_BUILD_TESTS)
+  enable_testing()
+  add_subdirectory(tests)
 endif()
 
 # ##############################################################################

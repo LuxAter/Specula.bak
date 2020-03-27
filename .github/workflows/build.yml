@@ -19,3 +19,5 @@ jobs:
         run: cmake . -DCMAKE_BUILD_TYPE=Debug -DBUILD_TOOL=OFF
       - name: compile
         run: cmake --build .
+      - name: test
+        run: cmake --build . --target test
