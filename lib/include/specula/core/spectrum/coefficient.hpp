@@ -3,6 +3,7 @@
 
 #include "core/geometry/common.hpp"
 #include "global/compiler.hpp"
+#include "global/declarations.hpp"
 #include "specula/global.hpp"
 
 namespace specula {
@@ -57,28 +58,28 @@ public:
     }
     return *this;
   }
-  CoefficientSpectrum operator+(const CoefficientSpectrum &s2) {
+  CoefficientSpectrum operator+(const CoefficientSpectrum &s2) const {
     CHECK(!s2.has_nans());
     CoefficientSpectrum ret = *this;
     for (size_type i = 0; i < N; ++i)
       ret.c[i] += s2.c[i];
     return ret;
   }
-  CoefficientSpectrum operator-(const CoefficientSpectrum &s2) {
+  CoefficientSpectrum operator-(const CoefficientSpectrum &s2) const {
     CHECK(!s2.has_nans());
     CoefficientSpectrum ret = *this;
     for (size_type i = 0; i < N; ++i)
       ret.c[i] -= s2.c[i];
     return ret;
   }
-  CoefficientSpectrum operator*(const CoefficientSpectrum &s2) {
+  CoefficientSpectrum operator*(const CoefficientSpectrum &s2) const {
     CHECK(!s2.has_nans());
     CoefficientSpectrum ret = *this;
     for (size_type i = 0; i < N; ++i)
       ret.c[i] *= s2.c[i];
     return ret;
   }
-  CoefficientSpectrum operator/(const CoefficientSpectrum &s2) {
+  CoefficientSpectrum operator/(const CoefficientSpectrum &s2) const {
     CHECK(!s2.has_nans());
     CoefficientSpectrum ret = *this;
     for (size_type i = 0; i < N; ++i) {
@@ -94,7 +95,7 @@ public:
     CHECK(!has_nans());
     return *this;
   }
-  CoefficientSpectrum operator*(Float s) {
+  CoefficientSpectrum operator*(Float s) const {
     CoefficientSpectrum ret = *this;
     for (size_type i = 0; i < N; ++i)
       ret.c[i] *= s;
@@ -114,7 +115,7 @@ public:
     CHECK(!has_nans());
     return *this;
   }
-  CoefficientSpectrum operator/(Float s) {
+  CoefficientSpectrum operator/(Float s) const {
     CHECK_NE(s, 0);
     CHECK(!std::isnan(s));
     CoefficientSpectrum ret = *this;
@@ -194,7 +195,7 @@ template <std::size_t N>
 CoefficientSpectrum<N> sqrt(const CoefficientSpectrum<N> &s) {
   CoefficientSpectrum<N> ret;
   for (typename CoefficientSpectrum<N>::size_type i = 0; i < N; ++i)
-    ret.c[i] = std::sqrt(s.c[i]);
+    ret[i] = std::sqrt(s[i]);
   CHECK(!ret.has_nans());
   return ret;
 }
@@ -202,7 +203,7 @@ template <std::size_t N>
 CoefficientSpectrum<N> pow(const CoefficientSpectrum<N> &s, Float e) {
   CoefficientSpectrum<N> ret;
   for (typename CoefficientSpectrum<N>::size_type i = 0; i < N; ++i)
-    ret.c[i] = std::pow(s.c[i], e);
+    ret[i] = std::pow(s[i], e);
   CHECK(!ret.has_nans());
   return ret;
 }
@@ -210,7 +211,7 @@ template <std::size_t N>
 CoefficientSpectrum<N> exp(const CoefficientSpectrum<N> &s) {
   CoefficientSpectrum<N> ret;
   for (typename CoefficientSpectrum<N>::size_type i = 0; i < N; ++i)
-    ret.c[i] = std::exp(s.c[i]);
+    ret[i] = std::exp(s[i]);
   CHECK(!ret.has_nans());
   return ret;
 }
@@ -219,14 +220,14 @@ CoefficientSpectrum<N> clamp(const CoefficientSpectrum<N> &s, Float low = 0,
                              Float high = INFTY) {
   CoefficientSpectrum<N> ret;
   for (typename CoefficientSpectrum<N>::size_type i = 0; i < N; ++i)
-    ret.c[i] = clamp(s.c[i], low, high);
+    ret[i] = clamp(s[i], low, high);
   CHECK(!ret.has_nans());
   return ret;
 }
 template <std::size_t N> Float max_component(const CoefficientSpectrum<N> &s) {
-  Float m = s.c[0];
+  Float m = s[0];
   for (typename CoefficientSpectrum<N>::size_type i = 0; i < N; ++i)
-    m = std::max(m, s.c[i]);
+    m = std::max(m, s[i]);
   return m;
 }
 } // namespace specula
