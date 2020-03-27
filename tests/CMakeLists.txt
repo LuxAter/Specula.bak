@@ -13,5 +13,4 @@ set_target_properties(unit-tests PROPERTIES CXX_STANDARD 11
                       RUNTIME_OUTPUT_DIRECTORY_DEBUG "${SPECULA_BINARY_DIR}")
                     target_link_libraries(unit-tests specula::specula Catch2::Catch2)
 
-enable_testing()
-add_test(NAME unit-tests COMMAND ${SPECULA_BINARY_DIR}/unit-tests)
+add_test(NAME unit-tests COMMAND unit-tests)

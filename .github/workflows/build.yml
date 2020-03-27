@@ -16,7 +16,7 @@ jobs:
       - name: clone Submodules
         run: git submodule update --init --recursive --depth 50
       - name: configue
-        run: cmake . -DCMAKE_BUILD_TYPE=Debug -DBUILD_TOOL=OFF
+        run: cmake . -DCMAKE_BUILD_TYPE=Debug -DSPECULA_BUILD_CLI=OFF -DSPECULA_BUILD_GUI=OFF -DSPECULA_BUILD_DOCS=OFF
       - name: compile
         run: cmake --build .
       - name: test
