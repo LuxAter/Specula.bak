@@ -1,9 +1,6 @@
 #ifndef SPECULA_CORE_TRANSFORM_TRANSFORM_HPP_
 #define SPECULA_CORE_TRANSFORM_TRANSFORM_HPP_
 
-#include "core/geometry/matrix.hpp"
-#include "core/geometry/ray.hpp"
-#include "global/declarations.hpp"
 #include "specula/core/geometry.hpp"
 #include "specula/global.hpp"
 

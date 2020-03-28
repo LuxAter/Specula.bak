@@ -14,6 +14,8 @@
 #include <type_traits>
 #include <vector>
 
+#include <malloc.h>
+
 #if SPECULA_COMPILER_IS_MSVC == 1
 #include <float.h>
 #include <intrin.h>
