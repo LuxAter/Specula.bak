@@ -1,6 +1,9 @@
 #ifndef SPECULA_GLOBAL_INCLUDE_HPP_
 #define SPECULA_GLOBAL_INCLUDE_HPP_
 
+#include "compiler.hpp"
+#include "os.hpp"
+
 #include <algorithm>
 #include <cassert>
 #include <cinttypes>
@@ -14,7 +17,11 @@
 #include <type_traits>
 #include <vector>
 
+#if SPECULA_OS_IS_Windows || SPECULA_OS_IS_BSD || SPECULA_OS_IS_OSX
+#include <stdlib.h>
+#else
 #include <malloc.h>
+#endif
 
 #if SPECULA_COMPILER_IS_MSVC == 1
 #include <float.h>

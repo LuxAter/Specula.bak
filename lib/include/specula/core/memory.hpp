@@ -11,6 +11,7 @@
 #endif
 
 namespace specula {
+// TODO Consider using aligned_alloc or (std::aligned_alloc C++17)
 void *alloc_aligned(size_t size);
 void free_aligned(void *);
 
