@@ -89,6 +89,9 @@ public:
   std::array<std::array<T, 4>, 4> data;
 };
 
+typedef Matrix4x4<Float> Matrix4f;
+typedef Matrix4x4<Float> Matrix4x4f;
+
 template <typename T> Matrix4x4<T> transpose(const Matrix4x4<T> &m) {
   return Matrix4x4<T>(m.data[0][0], m.data[1][0], m.data[2][0], m.data[3][0],
                       m.data[0][1], m.data[1][1], m.data[2][1], m.data[3][1],

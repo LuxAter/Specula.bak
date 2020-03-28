@@ -1,8 +1,8 @@
 #ifndef SPECULA_CORE_EFLOAT_HPP_
 #define SPECULA_CORE_EFLOAT_HPP_
 
-#include "global/constants.hpp"
-#include "global/functions.hpp"
+#include "specula/global.hpp"
+
 namespace specula {
 class EFloat {
 public:

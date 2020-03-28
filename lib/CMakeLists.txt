@@ -6,7 +6,8 @@ set(SOURCES src/core/geometry/ray.cpp src/core/geometry/point.cpp
   src/core/geometry/matrix.cpp src/core/geometry/normal.cpp
   src/core/geometry/vector.cpp src/core/spectrum/coefficient.cpp
   src/core/spectrum/common.cpp src/core/spectrum/rgb.cpp
-  src/core/spectrum/sampled.cpp src/core/efloat.cpp src/dev/log.cpp src/dev/prof.cpp)
+  src/core/spectrum/sampled.cpp src/core/transform/transform.cpp
+  src/core/efloat.cpp src/core/filter.cpp src/dev/log.cpp src/dev/prof.cpp)
 configure_file("${SPECULA_SOURCE_DIR}/lib/include/specula/version.hpp.in"
   "${SPECULA_SOURCE_DIR}/lib/include/specula/version.hpp")
 
