@@ -3,7 +3,7 @@ pipeline {
   stages {
     stage('Build') {
       steps {
-        cmakeBuild buildType: 'Debug', cleanBuild: true, installation: 'InSearchPath' steps: [[withCmake: true]]
+        cmakeBuild buildType: 'Debug', cleanBuild: true, installation: 'InSearchPath', steps: [[withCmake: true]]
       }
     }
     stage('Test') {
