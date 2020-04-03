@@ -16,7 +16,7 @@ public:
     precise = ef.precise;
 #endif // __DEBUG__
   }
-  EFloat(float v, float err = 0.0f) : v(v) {
+  explicit EFloat(float v, float err = 0.0f) : v(v) {
     if (err == 0.0f) {
       low = high = v;
     } else {

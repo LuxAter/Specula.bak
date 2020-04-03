@@ -87,7 +87,7 @@
  * @param expr Expression to evaluate
  * @see CHECK_EXPR
  */
-#define CHECK_EXPR_ERROR(expr) CHECK_EXPR(spdlog::level::error, expr)
+#define CHECK_EXPR_ERROR(expr) CHECK_EXPR(spdlog::level::err, expr)
 /**
  * @brief Evaluates an expression and logs a critical message on failure.
  * @ingroup dev-error
@@ -108,11 +108,59 @@
  * @see CHECK_EXPR_ERROR CHECK_EXPR
  */
 #define CHECK(expr) CHECK_EXPR_ERROR((expr))
+/**
+ * @brief Evalues if ``a == b``, and logs an error message on failure.
+ * @ingroup dev-error
+ *
+ * @param a First expression to evaluate.
+ * @param b Second expression to evaluate.
+ * @see CHECK_EXPR_ERROR CHECK_EXPR CHECK
+ */
 #define CHECK_EQ(a, b) CHECK((a) == (b))
+/**
+ * @brief Evalues if ``a != b``, and logs an error message on failure.
+ * @ingroup dev-error
+ *
+ * @param a First expression to evaluate.
+ * @param b Second expression to evaluate.
+ * @see CHECK_EXPR_ERROR CHECK_EXPR CHECK
+ */
 #define CHECK_NE(a, b) CHECK((a) != (b))
+/**
+ * @brief Evalues if ``a < b``, and logs an error message on failure.
+ * @ingroup dev-error
+ *
+ * @param a First expression to evaluate.
+ * @param b Second expression to evaluate.
+ * @see CHECK_EXPR_ERROR CHECK_EXPR CHECK
+ */
 #define CHECK_LT(a, b) CHECK((a) < (b))
+/**
+ * @brief Evalues if ``a > b``, and logs an error message on failure.
+ * @ingroup dev-error
+ *
+ * @param a First expression to evaluate.
+ * @param b Second expression to evaluate.
+ * @see CHECK_EXPR_ERROR CHECK_EXPR CHECK
+ */
 #define CHECK_GT(a, b) CHECK((a) > (b))
+/**
+ * @brief Evalues if ``a <= b``, and logs an error message on failure.
+ * @ingroup dev-error
+ *
+ * @param a First expression to evaluate.
+ * @param b Second expression to evaluate.
+ * @see CHECK_EXPR_ERROR CHECK_EXPR CHECK
+ */
 #define CHECK_LE(a, b) CHECK((a) <= (b))
+/**
+ * @brief Evalues if ``a >= b``, and logs an error message on failure.
+ * @ingroup dev-error
+ *
+ * @param a First expression to evaluate.
+ * @param b Second expression to evaluate.
+ * @see CHECK_EXPR_ERROR CHECK_EXPR CHECK
+ */
 #define CHECK_GE(a, b) CHECK((a) >= (b))
 #else
 #define CHECK(expr)

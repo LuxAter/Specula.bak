@@ -4,17 +4,28 @@
  * @author Arden Rasmussen
  * @version 1.0
  * @date 2020-03-14
- *
- * This file implements a robust logging system that is used by the specula
- * library. The logging system is derived from
- * [spdlog](https://github.com/gabime/spdlog), and so provides all of the
- * features that that library does. For most cases it is unneccesary to use
- * these commands, but when embeding Specula in a different application it may
- * be useful to incoperate the Specula logs with the third party logging
- * system.
+ * @ingroup dev dev-log
  */
 #ifndef SPECULA_LOG_HPP_
 #define SPECULA_LOG_HPP_
+
+/**
+ * @defgroup dev-log Logging
+ * @ingroup dev
+ *
+ * This module implements a robust logging system that is used by the renderer.
+ * The logging system is derived from
+ * [spdlog](https://github.com/gabime/spdlog), and so provides all of the
+ * features that library provides. For most casses it should be unneccessary to
+ * use these functions, but when embedding Specula into a different application
+ * it may be useful to incorperate the Specula logs with the applications
+ * logging system, or the reverse, where a third party application may want to
+ * use Speculas logging system.
+ *
+ * In either case most calls should be done through the macros, as that also
+ * provides the source locations of the call, and thus improve the debugging
+ * utility of the log messages.
+ */
 
 #include <cstdlib>
 #include <iostream>
@@ -35,6 +46,17 @@
 #include <spdlog/sinks/stdout_sinks.h>
 #include <spdlog/spdlog.h>
 
+/**
+ * @brief Specula logger call
+ * @ingroup dev-log
+ *
+ * @warning This macro should not be called directly by the user, but instead
+ * by other macro functions, that provide the ``logger`` and the ``level``.
+ *
+ * @param logger The ``spdlog`` logger to use.
+ * @param level The log level for this message
+ * @param ... Log message and additional arguments for formatting.
+ */
 #define SPECULA_LOGGER_CALL(logger, level, ...)                                \
   (logger)->log(spdlog::source_loc{__FILE__, __LINE__, SPDLOG_FUNCTION},       \
                 level, __VA_ARGS__)
@@ -226,13 +248,8 @@ template <typename Sink> void register_sink() {
 
 void push_sink(spdlog::sink_ptr sink, const LogLevel &sink_level);
 
-#ifdef __DEBUG__
 bool initialize_core_logger();
 bool initialize_logger(const std::string &name);
-#else
-bool initialize_core_logger();
-bool initialize_logger(const std::string &name);
-#endif
 bool terminate_logger(const std::string &name);
 
 std::shared_ptr<spdlog::logger> get_core();
