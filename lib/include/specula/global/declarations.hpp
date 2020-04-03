@@ -1,5 +1,21 @@
+/**
+ * @file declarations.hpp
+ * @brief Forward declarations for all types.
+ * @author Arden Rasmussen
+ * @version 1.0
+ * @date 2020-03-30
+ * @ingroup global global-declarations
+ */
 #ifndef SPECULA_GLOBAL_DECLARATIONS_HPP_
 #define SPECULA_GLOBAL_DECLARATIONS_HPP_
+
+/**
+ * @defgroup global-declarations Global Declarations
+ * @ingroup global
+ *
+ * All forward declarations and a select few type declarations for specialized
+ * types defined at compile time.
+ */
 
 #include <cstdlib>
 
@@ -27,8 +43,7 @@ class Integrator;
 struct Interaction;
 class Light;
 class Material;
-template <typename T>
-class Matrix4x4;
+template <typename T> class Matrix4x4;
 class Medium;
 class MediumInteraction;
 struct MediumInterface;
@@ -62,16 +77,57 @@ template <typename T> class Vector2;
 template <typename T> class Vector3;
 class VisibilityTester;
 
+/**
+ * @brief Common integer type
+ * @ingroup global-declarations
+ */
 typedef int Int;
+/**
+ * @brief Common unsigned integer type
+ * @ingroup global-declarations
+ */
+typedef unsigned UInt;
 #ifdef SPECULA_DOUBLE_PRECISION
+/**
+ * @brief Common floating point type
+ * @ingroup global-declarations
+ *
+ * If ``SPECULA_DOUBLE_PRECISION`` is defined in the preprocessor, then this
+ * will be  representative of ``double`` otherwise it is ``float``.
+ *
+ */
 typedef double Float;
 #else
+/**
+ * @brief Common floating point type
+ * @ingroup global-declarations
+ *
+ * If ``SPECULA_DOUBLE_PRECISION`` is defined in the preprocessor, then this
+ * will be  representative of ``double`` otherwise it is ``float``.
+ *
+ */
 typedef float Float;
 #endif
 
 #ifdef SPECULA_SAMPLED_SPECTRUM
+/**
+ * @brief General spectrum type.
+ * @ingroup global-declarations
+ *
+ * If ``SPECULA_SAMPLED_SPECTRUM`` is defined in the preprocessor, then this
+ * will be representative of ``SampledSpectrum``, otherwise it is
+ * ``RGBSpectrum``.
+ */
 typedef SampledSpectrum Spectrum;
 #else
+/**
+ * @brief General spectrum type.
+ * @ingroup global-declarations
+ *
+ * If ``SPECULA_SAMPLED_SPECTRUM`` is defined in the preprocessor, then this
+ * will be representative of ``SampledSpectrum``, otherwise it is
+ * ``RGBSpectrum``.
+ */
 typedef RGBSpectrum Spectrum;
 #endif
 

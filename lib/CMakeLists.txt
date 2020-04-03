@@ -1,6 +1,7 @@
 # ##############################################################################
 # SOURCE FILES
 # ##############################################################################
+string(TIMESTAMP YYYYMMDD "%Y-%m-%d")
 set(SOURCES src/core/geometry/ray.cpp src/core/geometry/point.cpp
   src/core/geometry/bounds.cpp src/core/geometry/common.cpp
   src/core/geometry/matrix.cpp src/core/geometry/normal.cpp

@@ -1,3 +1,10 @@
+/**
+ * @file version.hpp
+ * @brief Version declaration
+ * @author Arden Rasmussen
+ * @version 1.0
+ * @date @YYYYMMDD@
+ */
 #ifndef SPECULA_VERSION_HPP_
 #define SPECULA_VERSION_HPP_
 
