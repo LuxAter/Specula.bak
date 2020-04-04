@@ -23,6 +23,7 @@
 #include "core/geometry.hpp"
 #include "core/memory.hpp"
 #include "core/quaternion.hpp"
+#include "core/rng.hpp"
 #include "core/spectrum.hpp"
 #include "core/transform.hpp"
 

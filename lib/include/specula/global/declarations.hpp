@@ -58,7 +58,7 @@ class Primitive;
 class ProgressReporter;
 class ProjectiveCamera;
 class RGBSpectrum;
-class RNG;
+class Rng;
 class Ray;
 class RayDifferential;
 class SampleIntegrator;

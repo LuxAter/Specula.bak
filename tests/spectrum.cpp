@@ -148,6 +148,7 @@ TEST_CASE("Spectrum") {
     for (std::size_t i = 0; i < n_out; ++i) {
       Float t = Float(i) / Float(n_out - 1);
       Float lambda = lerp(t, lambda_min, lambda_max);
+      // TODO: This is not always true, because random numbers are stupid...
       REQUIRE(std::abs(lambda * lambda - new_val[i]) < 0.8);
     }
   }

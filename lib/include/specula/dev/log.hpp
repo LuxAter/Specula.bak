@@ -54,12 +54,27 @@
  * by other macro functions, that provide the ``logger`` and the ``level``.
  *
  * @param logger The ``spdlog`` logger to use.
- * @param level The log level for this message
+ * @param level The log level for this message.
  * @param ... Log message and additional arguments for formatting.
  */
 #define SPECULA_LOGGER_CALL(logger, level, ...)                                \
   (logger)->log(spdlog::source_loc{__FILE__, __LINE__, SPDLOG_FUNCTION},       \
                 level, __VA_ARGS__)
+/**
+ * @brief Specula logger call
+ * @ingroup dev-log
+ *
+ * @warning This macro should not be called directly by the user, but instead
+ * by other macro functions, that provide the ``logger``, ``level``, ``file``,
+ * ``line``, and ``function`` parameters.
+ *
+ * @param logger The ``spdlog`` logger to use.
+ * @param level The log level for this message.
+ * @param file The source file the log message is from.
+ * @param line The line in the source file of the log message.
+ * @param function The function that the log message is from.
+ * @param ... Log message and additional arguments for formatting.
+ */
 #define SPECULA_LOGGER_CALL_SOURCE(logger, level, file, line, function, ...)   \
   (logger)->log(spdlog::source_loc(file, line, function), level, __VA_ARGS__)
 
@@ -165,12 +180,54 @@
   SPECULA_LOGGER_SOURCE_FATAL(specula::logger::get_client(client), file, line, \
                               function, __VA_ARGS__)
 
+/**
+ * @brief Logs a trace message for the core logger
+ * @ingroup dev-log
+ *
+ * @param ... Log message and formatting arguments
+ */
 #define LTRACE(...) SPECULA_CORE_TRACE(__VA_ARGS__)
+/**
+ * @brief Logs a debug message for the core logger
+ * @ingroup dev-log
+ *
+ * @param ... Log message and formatting arguments
+ */
 #define LDEBUG(...) SPECULA_CORE_DEBUG(__VA_ARGS__)
+/**
+ * @brief Logs an info message for the core logger
+ * @ingroup dev-log
+ *
+ * @param ... Log message and formatting arguments
+ */
 #define LINFO(...) SPECULA_CORE_INFO(__VA_ARGS__)
+/**
+ * @brief Logs a warning message for the core logger
+ * @ingroup dev-log
+ *
+ * @param ... Log message and formatting arguments
+ */
 #define LWARN(...) SPECULA_CORE_WARN(__VA_ARGS__)
+/**
+ * @brief Logs an error message for the core logger
+ * @ingroup dev-log
+ *
+ * @param ... Log message and formatting arguments
+ */
 #define LERROR(...) SPECULA_CORE_ERROR(__VA_ARGS__)
+/**
+ * @brief Logs a critical message for the core logger
+ * @ingroup dev-log
+ *
+ * @param ... Log message and formatting arguments
+ */
 #define LCRITICAL(...) SPECULA_CORE_CRITICAL(__VA_ARGS__)
+/**
+ * @brief Logs a fatal message for the core logger
+ * @ingroup dev-log
+ *
+ * @param ... Log message and formatting arguments
+ */
 #define LFATAL(...) SPECULA_CORE_FATAL(__VA_ARGS__)
 
 #define LCTRACE(client, ...) SPECULA_CLIENT_TRACE(client, __VA_ARGS__)
