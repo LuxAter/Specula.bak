@@ -31,9 +31,9 @@ TEST_CASE("Parallel") {
     parallel_for([&](int64_t) { ++counter; }, 0);
     REQUIRE(0 == counter);
 
-    counter = 0;
-    parallel_for([&](Point2i) { ++counter; }, Point2i(0, 0));
-    REQUIRE(0 == counter);
+    // counter = 0;
+    // parallel_for([&](Point2i) { ++counter; }, Point2i(0, 0));
+    // REQUIRE(0 == counter);
 
     parallel_cleanup();
   }

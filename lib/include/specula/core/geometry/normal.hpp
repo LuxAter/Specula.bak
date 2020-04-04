@@ -39,9 +39,7 @@ public:
   Normal2(const T &x, const T &y) : x(x), y(y) { CHECK(!has_nans()); }
   explicit Normal2(const Vector2<T> &v) : x(v.x), y(v.y) { CHECK(!has_nans()); }
 
-  inline bool has_nans() const SPECULA_NOEXCEPT {
-    return std::isnan(x) || std::isnan(y);
-  }
+  inline bool has_nans() const SPECULA_NOEXCEPT { return isnan(x) || isnan(y); }
 
   Normal2<T> operator+(const Normal2<T> &v) const {
     CHECK(!v.has_nans());
@@ -64,23 +62,23 @@ public:
     return *this;
   }
   template <typename U> Normal2<T> operator*(const U &f) const {
-    CHECK(!std::isnan(f));
+    CHECK(!isnan(f));
     return Normal2<T>(x * f, y * f);
   }
   template <typename U> Normal2<T> &operator*=(const U &f) {
-    CHECK(!std::isnan(f));
+    CHECK(!isnan(f));
     x *= f;
     y *= f;
     return *this;
   }
   template <typename U> Normal2<T> operator/(const U &f) const {
-    CHECK(!std::isnan(f));
+    CHECK(!isnan(f));
     CHECK_NE(f, 0);
     Float inv = Float(1) / f;
     return Normal2<T>(x * inv, y * inv);
   }
   template <typename U> Normal2<T> &operator/=(const U &f) {
-    CHECK(!std::isnan(f));
+    CHECK(!isnan(f));
     CHECK_NE(f, 0);
     Float inv = Float(1) / f;
     x *= inv;
@@ -161,7 +159,7 @@ public:
   }
 
   inline bool has_nans() const SPECULA_NOEXCEPT {
-    return std::isnan(x) || std::isnan(y) || std::isnan(z);
+    return isnan(x) || isnan(y) || isnan(z);
   }
 
   Normal3<T> operator+(const Normal3<T> &v) const {
@@ -187,24 +185,24 @@ public:
     return *this;
   }
   template <typename U> Normal3<T> operator*(const U &f) const {
-    CHECK(!std::isnan(f));
+    CHECK(!isnan(f));
     return Normal3<T>(x * f, y * f, z * f);
   }
   template <typename U> Normal3<T> &operator*=(const U &f) {
-    CHECK(!std::isnan(f));
+    CHECK(!isnan(f));
     x *= f;
     y *= f;
     z *= f;
     return *this;
   }
   template <typename U> Normal3<T> operator/(const U &f) const {
-    CHECK(!std::isnan(f));
+    CHECK(!isnan(f));
     CHECK_NE(f, 0);
     Float inv = Float(1) / f;
     return Normal3<T>(x * inv, y * inv, z * inv);
   }
   template <typename U> Normal3<T> &operator/=(const U &f) {
-    CHECK(!std::isnan(f));
+    CHECK(!isnan(f));
     CHECK_NE(f, 0);
     Float inv = Float(1) / f;
     x *= inv;

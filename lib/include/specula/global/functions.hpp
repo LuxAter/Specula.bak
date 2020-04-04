@@ -19,6 +19,7 @@
 #include "compiler.hpp"
 #include "constants.hpp"
 #include "include.hpp"
+#include <type_traits>
 
 namespace specula {
 /**
@@ -511,6 +512,16 @@ int find_interval(int size, const Predicate &pred) {
 template <typename T> inline T lerp(Float t, const T &v1, const T &v2) {
   return (1 - t) * v1 + t * v2;
 }
+template <typename T>
+inline typename std::enable_if<std::is_floating_point<T>::value, bool>::type
+isnan(const T &v) {
+  return std::isnan(v);
+}
+template <typename T>
+inline typename std::enable_if<std::is_integral<T>::value, bool>::type
+isnan(const T &) {
+  return false;
+}
 /**
  * @brief Finds solution of quadratic equations.
  * @ingroup global-functions
@@ -520,8 +531,8 @@ template <typename T> inline T lerp(Float t, const T &v1, const T &v2) {
  * at^2+bt+c=0.
  * \f]
  *
- * This implementation allways uses double-precision floating-point values to
- * reduce floating-point error.
+ * This implementation allways uses double-precision floating-point values
+ * to reduce floating-point error.
  *
  * @param a First coefficient of quadratic equation.
  * @param b Second coefficient of quadratic equation.

@@ -50,9 +50,7 @@ public:
     CHECK(!has_nans());
   }
 
-  inline bool has_nans() const SPECULA_NOEXCEPT {
-    return std::isnan(x) || std::isnan(y);
-  }
+  inline bool has_nans() const SPECULA_NOEXCEPT { return isnan(x) || isnan(y); }
 
   Point2<T> operator+(const Vector2<T> &v) const {
     CHECK(!v.has_nans());
@@ -89,23 +87,23 @@ public:
     return *this;
   }
   template <typename U> Point2<T> operator*(const U &f) const {
-    CHECK(!std::isnan(f));
+    CHECK(!isnan(f));
     return Point2<T>(x * f, y * f);
   }
   template <typename U> Point2<T> &operator*=(const U &f) {
-    CHECK(!std::isnan(f));
+    CHECK(!isnan(f));
     x *= f;
     y *= f;
     return *this;
   }
   template <typename U> Point2<T> operator/(const U &f) const {
-    CHECK(!std::isnan(f));
+    CHECK(!isnan(f));
     CHECK_NE(f, 0);
     Float inv = Float(1) / f;
     return Point2<T>(x * inv, y * inv);
   }
   template <typename U> Point2<T> &operator/=(const U &f) {
-    CHECK(!std::isnan(f));
+    CHECK(!isnan(f));
     CHECK_NE(f, 0);
     Float inv = Float(1) / f;
     x *= inv;
@@ -187,7 +185,7 @@ public:
   }
 
   inline bool has_nans() const SPECULA_NOEXCEPT {
-    return std::isnan(x) || std::isnan(y) || std::isnan(z);
+    return isnan(x) || isnan(y) || isnan(z);
   }
 
   Point3<T> operator+(const Vector3<T> &v) const {
@@ -228,24 +226,24 @@ public:
     return *this;
   }
   template <typename U> Point3<T> operator*(const U &f) const {
-    CHECK(!std::isnan(f));
+    CHECK(!isnan(f));
     return Point3<T>(x * f, y * f, z * f);
   }
   template <typename U> Point3<T> &operator*=(const U &f) {
-    CHECK(!std::isnan(f));
+    CHECK(!isnan(f));
     x *= f;
     y *= f;
     z *= f;
     return *this;
   }
   template <typename U> Point3<T> operator/(const U &f) const {
-    CHECK(!std::isnan(f));
+    CHECK(!isnan(f));
     CHECK_NE(f, 0);
     Float inv = Float(1) / f;
     return Point3<T>(x * inv, y * inv, z * inv);
   }
   template <typename U> Point3<T> &operator/=(const U &f) {
-    CHECK(!std::isnan(f));
+    CHECK(!isnan(f));
     CHECK_NE(f, 0);
     Float inv = Float(1) / f;
     x *= inv;

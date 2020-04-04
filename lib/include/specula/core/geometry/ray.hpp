@@ -16,7 +16,7 @@ public:
 
   Point3f operator()(Float t) const { return o + d * t; }
   inline bool has_nans() const SPECULA_NOEXCEPT {
-    return o.has_nans() || d.has_nans() || std::isnan(t_max);
+    return o.has_nans() || d.has_nans() || isnan(t_max);
   }
 
   inline std::string fmt() const {

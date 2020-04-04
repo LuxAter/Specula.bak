@@ -172,7 +172,7 @@ void specula::parallel_for(const std::function<void(Point2i)> &func,
   }
 }
 
-// Add option to control maximum number of threads.
+// TODO: Add option to control maximum number of threads.
 int specula::max_thread_index() { return num_system_cores(); }
 int specula::num_system_cores() {
   return std::max(1u, std::thread::hardware_concurrency());
