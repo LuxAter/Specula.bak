@@ -33,7 +33,7 @@ class BxDF;
 class Camera;
 struct CameraSample;
 template <std::size_t N> class CoefficientSpectrum;
-struct Distribution1D;
+class Distribution1D;
 class Distribution2D;
 class Film;
 class FilmTile;
