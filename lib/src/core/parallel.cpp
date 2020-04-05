@@ -12,6 +12,7 @@
 #include <list>
 #include <mutex>
 #include <thread>
+#include <utility>
 #include <vector>
 
 namespace specula {
@@ -30,16 +31,15 @@ SPECULA_THREAD_LOCAL int thread_index;
 
 class ParallelForLoop {
 public:
-  ParallelForLoop(const std::function<void(int64_t)> &func1D, int64_t max_index,
+  ParallelForLoop(std::function<void(int64_t)> func1D, int64_t max_index,
                   int chunk_size)
       : func1D(std::move(func1D)), max_index(max_index),
         chunk_size(chunk_size) {}
-  ParallelForLoop(const std::function<void(Point2i)> &func2D,
-                  const Point2i &count)
+  ParallelForLoop(std::function<void(Point2i)> func2D, const Point2i &count)
       : func2D(std::move(func2D)), max_index(count.x * count.y), chunk_size(1),
         nx(count.x) {}
 
-  bool finished() const {
+  [[nodiscard]] bool finished() const {
     return next_index >= max_index && active_worker == 0;
   }
 
@@ -61,10 +61,11 @@ static void worker_thread_func(int tindex, std::shared_ptr<Barrier> barrier) {
   std::unique_lock<std::mutex> lock(work_list_mutex);
   while (!shutdown_threads) {
     if (report_worker_stats) {
-      if (--reporter_count == 0)
+      if (--reporter_count == 0) {
         report_done_condition.notify_one();
+      }
       work_list_condition.wait(lock);
-    } else if (!work_list) {
+    } else if (work_list == nullptr) {
       work_list_condition.wait(lock);
     } else {
       ParallelForLoop &loop = *work_list;
@@ -72,8 +73,9 @@ static void worker_thread_func(int tindex, std::shared_ptr<Barrier> barrier) {
       int64_t index_end =
           std::min(index_start + loop.chunk_size, loop.max_index);
       loop.next_index = index_end;
-      if (loop.next_index == loop.max_index)
+      if (loop.next_index == loop.max_index) {
         work_list = loop.next;
+      }
       loop.active_worker++;
 
       lock.unlock();
@@ -87,8 +89,9 @@ static void worker_thread_func(int tindex, std::shared_ptr<Barrier> barrier) {
       }
       lock.lock();
       loop.active_worker--;
-      if (loop.finished())
+      if (loop.finished()) {
         work_list_condition.notify_all();
+      }
     }
   }
   LINFO("Exiting worker thread {}", tindex);
@@ -98,21 +101,23 @@ static void worker_thread_func(int tindex, std::shared_ptr<Barrier> barrier) {
 void specula::Barrier::wait() {
   std::unique_lock<std::mutex> lock(mutex);
   CHECK_GT(count, 0);
-  if (--count == 0)
+  if (--count == 0) {
     cv.notify_all();
-  else
+  } else {
     cv.wait(lock, [this] { return count == 0; });
+  }
 }
 
 void specula::parallel_for(const std::function<void(int64_t)> &func,
                            int64_t count, int chunk_size) {
-  CHECK(threads.size() > 0 || max_thread_index() == 1);
+  CHECK(!threads.empty() || max_thread_index() == 1);
   if (threads.empty() || count < chunk_size) {
-    for (int64_t i = 0; i < count; ++i)
+    for (int64_t i = 0; i < count; ++i) {
       func(i);
+    }
     return;
   }
-  ParallelForLoop loop(std::move(func), count, chunk_size);
+  ParallelForLoop loop(func, count, chunk_size);
   work_list_mutex.lock();
   work_list = &loop;
   work_list_mutex.unlock();
@@ -123,8 +128,9 @@ void specula::parallel_for(const std::function<void(int64_t)> &func,
     int64_t index_start = loop.next_index;
     int64_t index_end = std::min(index_start + loop.chunk_size, loop.max_index);
     loop.next_index = index_end;
-    if (loop.next_index == loop.max_index)
+    if (loop.next_index == loop.max_index) {
       work_list = loop.next;
+    }
     loop.active_worker++;
 
     lock.unlock();
@@ -137,7 +143,7 @@ void specula::parallel_for(const std::function<void(int64_t)> &func,
 }
 void specula::parallel_for(const std::function<void(Point2i)> &func,
                            const Point2i &count) {
-  CHECK(threads.size() > 0 || max_thread_index() == 1);
+  CHECK(!threads.empty() || max_thread_index() == 1);
   if (threads.empty() || count.x * count.y <= 1) {
     for (int y = 0; y < count.y; ++y) {
       for (int x = 0; x < count.x; ++x) {
@@ -146,7 +152,7 @@ void specula::parallel_for(const std::function<void(Point2i)> &func,
     }
     return;
   }
-  ParallelForLoop loop(std::move(func), count);
+  ParallelForLoop loop(func, count);
   {
     std::lock_guard<std::mutex> lock(work_list_mutex);
     loop.next = work_list;
@@ -159,8 +165,9 @@ void specula::parallel_for(const std::function<void(Point2i)> &func,
     int64_t index_start = loop.next_index;
     int64_t index_end = std::min(index_start + loop.chunk_size, loop.max_index);
     loop.next_index = index_end;
-    if (loop.next_index == loop.max_index)
+    if (loop.next_index == loop.max_index) {
       work_list = loop.next;
+    }
     loop.active_worker++;
 
     lock.unlock();
@@ -172,33 +179,35 @@ void specula::parallel_for(const std::function<void(Point2i)> &func,
   }
 }
 
-// TODO: Add option to control maximum number of threads.
+// TODO(arden): Add option to control maximum number of threads.
 int specula::max_thread_index() { return num_system_cores(); }
 int specula::num_system_cores() {
-  return std::max(1u, std::thread::hardware_concurrency());
+  return std::max(1U, std::thread::hardware_concurrency());
 }
 
 void specula::parallel_init() {
-  CHECK_EQ(threads.size(), 0u);
+  CHECK_EQ(threads.size(), 0U);
   int nthreads = max_thread_index();
   thread_index = 0;
 
   std::shared_ptr<Barrier> barrier = std::make_shared<Barrier>(nthreads);
   for (int i = 0; i < nthreads - 1; ++i) {
-    threads.push_back(std::thread(worker_thread_func, i + 1, barrier));
+    threads.emplace_back(worker_thread_func, i + 1, barrier);
   }
   barrier->wait();
 }
 void specula::parallel_cleanup() {
-  if (threads.empty())
+  if (threads.empty()) {
     return;
+  }
   {
     std::lock_guard<std::mutex> lock(work_list_mutex);
     shutdown_threads = true;
     work_list_condition.notify_all();
   }
-  for (std::thread &thread : threads)
+  for (std::thread &thread : threads) {
     thread.join();
+  }
   threads.erase(threads.begin(), threads.end());
   shutdown_threads = false;
 }

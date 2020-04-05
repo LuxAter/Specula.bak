@@ -303,7 +303,7 @@ template <typename Sink> void register_sink() {
   push_sink(std::make_shared<Sink>(), LogLevel::TRACE);
 }
 
-void push_sink(spdlog::sink_ptr sink, const LogLevel &sink_level);
+void push_sink(const spdlog::sink_ptr &sink, const LogLevel &sink_level);
 
 bool initialize_core_logger();
 bool initialize_logger(const std::string &name);

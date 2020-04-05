@@ -24,6 +24,7 @@ if(SPECULA_BUILD_STATIC_LIBS)
   target_include_directories(specula-static PRIVATE ${SPECULA_SOURCE_DIR}/lib/include/specula)
 
   set_target_properties(specula-static PROPERTIES CXX_STANDARD 11 CXX_STANDARD_REQUIRED YES CXX_EXTENSIONS OFF)
+  set_target_properties(specula-static PROPERTIES CXX_CLANG_TIDY "${CLANG_TIDY_CMD}" CXX_CPPCHECK "${CPPCHECK_CMD}")
 
   target_link_libraries(specula-static PUBLIC spdlog fmt::fmt)
   install(TARGETS specula-static ARCHIVE DESTINATION lib)
@@ -40,6 +41,7 @@ if(SPECULA_BUILD_SHARED_LIBS)
   target_include_directories(specula-shared PRIVATE ${SPECULA_SOURCE_DIR}/lib/include/specula)
 
   set_target_properties(specula-shared PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED YES CXX_EXTENSIONS OFF)
+  set_target_properties(specula-shared PROPERTIES CXX_CLANG_TIDY "${CLANG_TIDY_CMD}" CXX_CPPCHECK "${CPPCHECK_CMD}")
 
   target_link_libraries(specula-shared PUBLIC spdlog fmt::fmt)
   install(TARGETS specula-shared LIBRARY DESTINATION lib)

@@ -60,7 +60,7 @@ public:
 
 class Distribution2D {
 public:
-  Distribution2D(const Float *data, int nu, int nv);
+  Distribution2D(const Float *func, int nu, int nv);
 
   Point2f sample_continuous(const Point2f &u, Float *pdf) const {
     Float pdfs[2];

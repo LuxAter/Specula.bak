@@ -1,3 +1,5 @@
+#include <memory>
+
 #include "specula/core/sampling.hpp"
 
 #include "global/constants.hpp"
@@ -12,25 +14,27 @@ specula::Distribution2D::Distribution2D(const Float *func, int nu, int nv) {
   }
   std::vector<Float> marginal_func;
   marginal_func.reserve(nv);
-  for (int v = 0; v < nv; ++v)
+  for (int v = 0; v < nv; ++v) {
     marginal_func.push_back(conditional_val[v]->func_int);
-  marginal.reset(new Distribution1D(&marginal_func[0], nv));
+  }
+  marginal = std::make_unique<Distribution1D>(&marginal_func[0], nv);
 }
 
 void specula::stratified_sample(Float *samples, int n, Rng &rng, bool jitter) {
   Float inv_samples = Float(1) / n;
   for (int i = 0; i < n; ++i) {
-    Float delta = jitter ? rng.uniform_float() : 0.5f;
+    Float delta = jitter ? rng.uniform_float() : 0.5F;
     samples[i] = std::min((i + delta) * inv_samples, one_minus_epsilon);
   }
 }
 void specula::stratified_sample(Point2f *samples, int nx, int ny, Rng &rng,
                                 bool jitter) {
-  Float dx = Float(1) / nx, dy = Float(1) / ny;
+  Float dx = Float(1) / nx;
+  Float dy = Float(1) / ny;
   for (int y = 0; y < ny; ++y) {
     for (int x = 0; x < nx; ++x) {
-      Float jx = jitter ? rng.uniform_float() : 0.5f;
-      Float jy = jitter ? rng.uniform_float() : 0.5f;
+      Float jx = jitter ? rng.uniform_float() : 0.5F;
+      Float jy = jitter ? rng.uniform_float() : 0.5F;
       samples->x = std::min((x + jx) * dx, one_minus_epsilon);
       samples->y = std::min((y + jy) * dy, one_minus_epsilon);
       ++samples;
@@ -87,7 +91,7 @@ specula::Vector3f specula::uniform_sample_cone(const Point2f &u,
                                                const Vector3f &x,
                                                const Vector3f &y,
                                                const Vector3f &z) {
-  Float cos_theta = lerp(u[0], theta_max, 1.0f);
+  Float cos_theta = lerp(u[0], theta_max, 1.0F);
   Float sin_theta = std::sqrt(Float(1) - cos_theta * cos_theta);
   Float phi = u[1] * 2 * PI;
   return std::cos(phi) * sin_theta * x + std::sin(phi) * sin_theta * y +
@@ -102,10 +106,12 @@ specula::Point2f specula::uniform_sample_disk(const Point2f &u) {
   return Point2f(r * std::cos(theta), r * std::sin(theta));
 }
 specula::Point2f specula::concentric_sample_disk(const Point2f &u) {
-  Point2f offset = 2.0f * u - Vector2f(1, 1);
-  if (offset.x == 0 && offset.y == 0)
+  Point2f offset = 2.0F * u - Vector2f(1, 1);
+  if (offset.x == 0 && offset.y == 0) {
     return Point2f(0, 0);
-  Float theta, r;
+  }
+  Float theta;
+  Float r;
   if (std::abs(offset.x) > std::abs(offset.y)) {
     r = offset.x;
     theta = PI_OVER4 * (offset.y / offset.x);

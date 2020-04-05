@@ -13,8 +13,10 @@ void *specula::alloc_aligned(size_t size) {
 #endif
 }
 
-void specula::free_aligned(void * ptr) {
-  if(!ptr) return;
+void specula::free_aligned(void *ptr) {
+  if (ptr == nullptr) {
+    return;
+  }
 #if SPECULA_OS_IS_Windows == 1
   _aligned_free(ptr);
 #else

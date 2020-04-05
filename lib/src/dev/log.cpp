@@ -17,7 +17,7 @@ static std::shared_ptr<spdlog::logger> core_logger;
 static std::unordered_map<std::string, std::shared_ptr<spdlog::logger>>
     client_logger;
 
-void specula::logger::push_sink(spdlog::sink_ptr sink,
+void specula::logger::push_sink(const spdlog::sink_ptr &sink,
                                 const LogLevel &sink_level) {
   sink->set_level(static_cast<spdlog::level::level_enum>(sink_level));
   core_sinks.push_back(sink);
@@ -54,11 +54,10 @@ bool specula::logger::terminate_logger(const std::string &name) {
       client_logger.find(name) != client_logger.end()) {
     client_logger.erase(client_logger.find(name));
     return true;
-  } else {
-    std::cerr
-        << "Failed to pop logger from stack, other loggers have been pushed";
-    return false;
   }
+  std::cerr
+      << "Failed to pop logger from stack, other loggers have been pushed";
+  return false;
 }
 
 std::shared_ptr<spdlog::logger> specula::logger::get_core() {

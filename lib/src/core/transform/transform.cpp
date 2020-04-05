@@ -16,46 +16,45 @@ specula::Bounds3f specula::Transform::op(const Bounds3f &b) const {
 }
 // specula::SurfaceInteraction
 // specula::Transform::op(const SurfaceInteraction &si) const {
-  // SurfaceInteraction ret;
-  // ret.p = op(si.p, si.p_error, &ret.p_error);
-  // ret.n = normalize(op(si.n));
-  // ret.wo = normalize(op(si.wo));
-  // ret.time = si.time;
-  // ret.medium_interface = si.medium_interface;
-  // ret.uv = si.uv;
-  // ret.shape = si.shape;
-  // ret.dpdu = op(si.dpdu);
-  // ret.dpdv = op(si.dpdv);
-  // ret.dndu = t(si.dndu);
-  // ret.dndv = t(si.dndv);
-  // ret.shading.n = normalize(op(si.shading.n));
-  // ret.shading.dpdu = op(si.shading.dpdu);
-  // ret.shading.dpdv = op(si.shading.dpdv);
-  // ret.shading.dndu = op(si.shading.dndu);
-  // ret.shading.dndv = op(si.shading.dndv);
-  // ret.dudx = si.dudx;
-  // ret.dvdx = si.dvdx;
-  // ret.dudy = si.dvdy;
-  // ret.dpdx = op(si.dpdx);
-  // ret.dpdy = op(si.dpdy);
-  // ret.bsdf = si.bsdf;
-  // ret.bssrdf = si.bssrdf;
-  // ret.primitive = si.primitive;
-  // ret.shading.n = faceforward(ret.shading.n, ret.n);
-  // ret.face_index = si.face_index;
-  // return ret;
+// SurfaceInteraction ret;
+// ret.p = op(si.p, si.p_error, &ret.p_error);
+// ret.n = normalize(op(si.n));
+// ret.wo = normalize(op(si.wo));
+// ret.time = si.time;
+// ret.medium_interface = si.medium_interface;
+// ret.uv = si.uv;
+// ret.shape = si.shape;
+// ret.dpdu = op(si.dpdu);
+// ret.dpdv = op(si.dpdv);
+// ret.dndu = t(si.dndu);
+// ret.dndv = t(si.dndv);
+// ret.shading.n = normalize(op(si.shading.n));
+// ret.shading.dpdu = op(si.shading.dpdu);
+// ret.shading.dpdv = op(si.shading.dpdv);
+// ret.shading.dndu = op(si.shading.dndu);
+// ret.shading.dndv = op(si.shading.dndv);
+// ret.dudx = si.dudx;
+// ret.dvdx = si.dvdx;
+// ret.dudy = si.dvdy;
+// ret.dpdx = op(si.dpdx);
+// ret.dpdy = op(si.dpdy);
+// ret.bsdf = si.bsdf;
+// ret.bssrdf = si.bssrdf;
+// ret.primitive = si.primitive;
+// ret.shading.n = faceforward(ret.shading.n, ret.n);
+// ret.face_index = si.face_index;
+// return ret;
 // }
 
 bool specula::solve_linear_system(const Float a[2][2], const Float b[2],
                                   Float *x0, Float *x1) {
   Float det = a[0][0] * a[1][1] - a[0][1] * a[1][0];
-  if (std::abs(det) < 1e-10f)
+  if (std::abs(det) < 1e-10F) {
     return false;
+  }
   *x0 = (a[1][1] * b[0] - a[0][1] * b[1]) / det;
   *x1 = (a[0][0] * b[1] - a[1][0] * b[0]) / det;
-  if (std::isnan(*x0) || std::isnan(*x1))
-    return false;
-  return true;
+  return !(std::isnan(*x0) || std::isnan(*x1));
 }
 
 specula::Transform specula::translate(const Vector3f &delta) {
