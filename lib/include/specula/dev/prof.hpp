@@ -2,6 +2,7 @@
 #define SPECULA_DEV_PROF_HPP_
 
 #include <cstdio>
+#include <mutex>
 #include <string>
 #include <thread>
 
@@ -126,14 +127,17 @@ struct Event {
 
 extern std::hash<std::thread::id> thread_hasher;
 extern std::hash<const void *> pointer_hasher;
+extern std::mutex mutex;
 extern FILE *file_stream;
 
 #ifdef __PROFILER__
 inline void open_stream_file(const char *file) {
+  std::lock_guard<std::mutex> lock(mutex);
   file_stream = std::fopen(file, "w");
   std::fprintf(file_stream, "[");
 }
 inline void close_stream_file() {
+  std::lock_guard<std::mutex> lock(mutex);
   if (file_stream)
     std::fclose(file_stream);
 }
@@ -141,6 +145,7 @@ inline void close_stream_file() {
 inline void handle_event(const Event &event) {
   if (!file_stream)
     open_stream_file("profile.json");
+  std::lock_guard<std::mutex> lock(mutex);
   fmt::print(
       file_stream, "{{{}{}\"ph\":\"{}\",\"ts\":{},\"pid\":1,\"tid\":{}{}{}}},",
       (event.name.size() == 0) ? ""
