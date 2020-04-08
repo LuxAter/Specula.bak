@@ -8,6 +8,7 @@ set(SOURCES src/core/geometry/ray.cpp src/core/geometry/point.cpp
   src/core/geometry/vector.cpp src/core/spectrum/coefficient.cpp
   src/core/spectrum/common.cpp src/core/spectrum/rgb.cpp
   src/core/spectrum/sampled.cpp src/core/transform/transform.cpp
+  src/core/film.cpp src/core/imageio.cpp
   src/core/efloat.cpp src/core/filter.cpp src/core/memory.cpp
   src/core/parallel.cpp src/core/sampling.cpp src/dev/log.cpp src/dev/prof.cpp)
 configure_file("${SPECULA_SOURCE_DIR}/lib/include/specula/version.hpp.in"
@@ -26,7 +27,7 @@ if(SPECULA_BUILD_STATIC_LIBS)
   set_target_properties(specula-static PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED YES CXX_EXTENSIONS OFF)
   set_target_properties(specula-static PROPERTIES CXX_CLANG_TIDY "${CLANG_TIDY_CMD}" CXX_CPPCHECK "${CPPCHECK_CMD}")
 
-  target_link_libraries(specula-static PUBLIC spdlog fmt::fmt)
+  target_link_libraries(specula-static PUBLIC spdlog fmt::fmt CImg::CImg)
   install(TARGETS specula-static ARCHIVE DESTINATION lib)
 endif()
 
@@ -43,7 +44,7 @@ if(SPECULA_BUILD_SHARED_LIBS)
   set_target_properties(specula-shared PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED YES CXX_EXTENSIONS OFF)
   set_target_properties(specula-shared PROPERTIES CXX_CLANG_TIDY "${CLANG_TIDY_CMD}" CXX_CPPCHECK "${CPPCHECK_CMD}")
 
-  target_link_libraries(specula-shared PUBLIC spdlog fmt::fmt)
+  target_link_libraries(specula-shared PUBLIC spdlog fmt::fmt CImg::CImg)
   install(TARGETS specula-shared LIBRARY DESTINATION lib)
 endif()
 

@@ -13,3 +13,6 @@
 [submodule "external/Catch2"]
 	path = external/Catch2
 	url = https://github.com/catchorg/Catch2
+[submodule "external/CImg"]
+	path = external/CImg
+	url = https://github.com/dtschump/CImg

@@ -20,39 +20,12 @@
 #define SPECULA_PROF_STRINGIFY_IMPL(x) #x
 #define SPECULA_PROF_STRINGIFY(x) SPECULA_PROF_STRINGIFY_IMPL(x)
 
+#define SPECULA_PROF_FUNC_KEY(val) #val, val
+#define SPECULA_PROF_KEY_VAL(obj, key) #key, (obj)->key
+
 #define SPECULA_PROF_FUNCTION_NAME __PRETTY_FUNCTION__
 #define SPECULA_PROFILER_NAME                                                  \
   SPECULA_PROF_CONCAT(__PROFILER_, __COUNTER__, _, __LINE__)
-
-#define SPECULA_PROF_FE0(func, obj, ...)
-#define SPECULA_PROF_FE1(func, obj, x, ...)                                    \
-  func(obj, x) SPECULA_PROF_FE0(func, obj, __VA_ARGS__)
-#define SPECULA_PROF_FE2(func, obj, x, ...)                                    \
-  func(obj, x) SPECULA_PROF_FE1(func, obj, __VA_ARGS__)
-#define SPECULA_PROF_FE3(func, obj, x, ...)                                    \
-  func(obj, x) SPECULA_PROF_FE2(func, obj, __VA_ARGS__)
-#define SPECULA_PROF_FE4(func, obj, x, ...)                                    \
-  func(obj, x) SPECULA_PROF_FE3(func, obj, __VA_ARGS__)
-#define SPECULA_PROF_FE5(func, obj, x, ...)                                    \
-  func(obj, x) SPECULA_PROF_FE4(func, obj, __VA_ARGS__)
-#define SPECULA_PROF_FE6(func, obj, x, ...)                                    \
-  func(obj, x) SPECULA_PROF_FE5(func, obj, __VA_ARGS__)
-#define SPECULA_PROF_FE7(func, obj, x, ...)                                    \
-  func(obj, x) SPECULA_PROF_FE6(func, obj, __VA_ARGS__)
-#define SPECULA_PROF_FE8(func, obj, x, ...)                                    \
-  func(obj, x) SPECULA_PROF_FE7(func, obj, __VA_ARGS__)
-#define SPECULA_PROF_FE9(func, obj, x, ...)                                    \
-  func(obj, x) SPECULA_PROF_FE8(func, obj, __VA_ARGS__)
-#define SPECULA_PROF_FE10(func, obj, x, ...)                                   \
-  func(obj, x) SPECULA_PROF_FE9(func, obj, __VA_ARGS__)
-#define SPECULA_PROF_GET_FE(_0, _1, _2, _3, _4, _5, _6, _7, _8, _9, NAME, ...) \
-  NAME
-#define SPECULA_PROF_FOREACH(func, obj, ...)                                   \
-  SPECULA_GET_FE(__VA_ARGS__, SPECULA_PROF_FE10, SPECULA_PROF_FE9,             \
-                 SPECULA_PROF_FE8, SPECULA_PROF_FE7, SPECULA_PROF_FE6,         \
-                 SPECULA_PROF_FE5, SPECULA_PROF_FE4, SPECULA_PROF_FE3,         \
-                 SPECULA_PROF_FE2, SPECULA_PROF_FE1, SPECULA_PROF_FE0)         \
-  (func, obj, __VA_ARGS__)
 
 #define SPECULA_PROF_SCOPED_NAME                                               \
   SPECULA_PROF_CONCAT(__ProfilerScoped_, __LINE__, _, __COUNTER__)
@@ -60,20 +33,69 @@
   SPECULA_PROF_STRINGIFY(SPECULA_PROF_SCOPED_NAME)
 #define SPECULA_PROF_FUNCTION __PRETTY_FUNCTION__
 
-#define SPECULA_PROF_FUNC_KEY(_0, val) , #val, val
-#define SPECULA_PROF_KEY_VAL(obj, key) , #key, (obj)->key
+#define FUNC_OBJ(FUNC, obj, x) FUNC(obj, x);
+#define FUNC_NO_OBJ(FUNC, obj, x) FUNC(x);
+#define FUNC_OBJ_LIST(FUNC, obj, x) , FUNC(obj, x)
+#define FUNC_NO_OBJ_LIST(FUNC, obj, x) , FUNC(x)
+
+#define EVAL0(CALLER, FUNC, obj, ...)
+#define EVAL1(CALLER, FUNC, obj, ...) CALLER(FUNC, obj, __VA_ARGS__)
+#define EVAL2(CALLER, FUNC, obj, x, ...)                                       \
+  CALLER(FUNC, obj, x) EVAL1(CALLER, FUNC, obj, __VA_ARGS__)
+#define EVAL3(CALLER, FUNC, obj, x, ...)                                       \
+  CALLER(FUNC, obj, x) EVAL2(CALLER, FUNC, obj, __VA_ARGS__)
+#define EVAL4(CALLER, FUNC, obj, x, ...)                                       \
+  CALLER(FUNC, obj, x) EVAL3(CALLER, FUNC, obj, __VA_ARGS__)
+#define EVAL5(CALLER, FUNC, obj, x, ...)                                       \
+  CALLER(FUNC, obj, x) EVAL4(CALLER, FUNC, obj, __VA_ARGS__)
+#define EVAL6(CALLER, FUNC, obj, x, ...)                                       \
+  CALLER(FUNC, obj, x) EVAL5(CALLER, FUNC, obj, __VA_ARGS__)
+#define EVAL7(CALLER, FUNC, obj, x, ...)                                       \
+  CALLER(FUNC, obj, x) EVAL6(CALLER, FUNC, obj, __VA_ARGS__)
+#define EVAL8(CALLER, FUNC, obj, x, ...)                                       \
+  CALLER(FUNC, obj, x) EVAL7(CALLER, FUNC, obj, __VA_ARGS__)
+#define EVAL9(CALLER, FUNC, obj, x, ...)                                       \
+  CALLER(FUNC, obj, x) EVAL8(CALLER, FUNC, obj, __VA_ARGS__)
+#define EVAL10(CALLER, FUNC, obj, x, ...)                                      \
+  CALLER(FUNC, obj, x) EVAL9(CALLER, FUNC, obj, __VA_ARGS__)
+
+#define GET_MACRO(_0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, NAME, ...) NAME
+
+#define FOR_EACH(FUNC, ...)                                                    \
+  GET_MACRO(_0 __VA_OPT__(, ) __VA_ARGS__, EVAL10, EVAL9, EVAL8, EVAL7, EVAL6, \
+            EVAL5, EVAL4, EVAL3, EVAL2, EVAL1, EVAL0)                          \
+  (FUNC_NO_OBJ, FUNC, _0, __VA_ARGS__)
+#define FOR_EACH_OBJ(FUNC, obj, ...)                                           \
+  GET_MACRO(_0 __VA_OPT__(, ) __VA_ARGS__, EVAL10, EVAL9, EVAL8, EVAL7, EVAL6, \
+            EVAL5, EVAL4, EVAL3, EVAL2, EVAL1, EVAL0)                          \
+  (FUNC_OBJ, FUNC, obj, __VA_ARGS__)
+#define FOR_EACH_LIST(FUNC, ...)                                               \
+  GET_MACRO(_0 __VA_OPT__(, ) __VA_ARGS__, EVAL10, EVAL9, EVAL8, EVAL7, EVAL6, \
+            EVAL5, EVAL4, EVAL3, EVAL2, EVAL1, EVAL0)                          \
+  (FUNC_NO_OBJ_LIST, FUNC, _0, __VA_ARGS__)
+#define FOR_EACH_OBJ_LIST(FUNC, obj, ...)                                      \
+  GET_MACRO(_0 __VA_OPT__(, ) __VA_ARGS__, EVAL10, EVAL9, EVAL8, EVAL7, EVAL6, \
+            EVAL5, EVAL4, EVAL3, EVAL2, EVAL1, EVAL0)                          \
+  (FUNC_OBJ_LIST, FUNC, obj, __VA_ARGS__)
 
 #define PROF_SCOPED(...)                                                       \
   specula::prof::ScopedProfiler SPECULA_PROF_SCOPED_NAME =                     \
       specula::prof::ScopedProfiler(__VA_ARGS__);
 #define PROF_FUNC(...)                                                         \
   specula::prof::ScopedProfiler SPECULA_PROF_SCOPED_NAME =                     \
-      specula::prof::ScopedProfiler(SPECULA_PROF_FUNCTION, __VA_ARGS__);
+      specula::prof::ScopedProfiler(SPECULA_PROF_FUNCTION);
+#define PROF_FUNC_CAT(cat, ...)                                                \
+  specula::prof::ScopedProfiler SPECULA_PROF_SCOPED_NAME =                     \
+      specula::prof::ScopedProfiler(SPECULA_PROF_FUNCTION, cat);
 #define PROF_FUNC_ARGS(...)                                                    \
+  specula::prof::ScopedProfiler SPECULA_PROF_SCOPED_NAME =                     \
+      specula::prof::ScopedProfiler(SPECULA_PROF_FUNCTION FOR_EACH_LIST(       \
+          SPECULA_PROF_FUNC_KEY, __VA_ARGS__));
+#define PROF_FUNC_CAT_ARGS(cat, ...)                                           \
   specula::prof::ScopedProfiler SPECULA_PROF_SCOPED_NAME =                     \
       specula::prof::ScopedProfiler(                                           \
           SPECULA_PROF_FUNCTION,                                               \
-          SPECULA_PROF_FOREACH(SPECULA_PROF_FUNC_KEY, obj, __VA_ARGS__));
+          cat FOR_EACH_LIST(SPECULA_PROF_FUNC_KEY, __VA_ARGS__));
 
 #define PROF_BEGIN(...) specula::prof::event_begin(__VA_ARGS__);
 #define PROF_END(...) specula::prof::event_end(__VA_ARGS__);
@@ -86,7 +108,7 @@
 #define PROF_OBJ_DESTROY(ptr) specula::prof::event_object_destroy(ptr);
 #define PROF_OBJ_SNAPSHOT(obj, ...)                                            \
   specula::prof::event_obj_snapshot(                                           \
-      obj, SPECULA_PROF_FOREACH(SPECULA_KEY_VAL, obj, __VA_ARGS__));
+      obj FOR_EACH_OBJ_LIST(SPECULA_KEY_VAL, obj, __VA_ARGS__));
 
 #define PROF_STREAM_FILE(file) specula::prof::open_stream_file(file);
 #define PROF_CLOSE_STREAM() specula::prof::close_stream_file();

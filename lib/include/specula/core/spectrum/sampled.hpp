@@ -3,12 +3,17 @@
 
 #include "coefficient.hpp"
 #include "common.hpp"
-#include "global/declarations.hpp"
 #include "specula/global.hpp"
 
 namespace specula {
 class SampledSpectrum : public CoefficientSpectrum<spectral_samples> {
 public:
+  SampledSpectrum(Float v = 0.0f) : CoefficientSpectrum<spectral_samples>(v) {}
+  SampledSpectrum(const CoefficientSpectrum<spectral_samples> &other)
+      : CoefficientSpectrum<spectral_samples>(other) {}
+  SampledSpectrum(const RGBSpectrum &other,
+                  SpectrumType type = SpectrumType::REFLECTANCE);
+
   static SampledSpectrum from_rgb(const Float rgb[3],
                                   SpectrumType type = SpectrumType::ILLUMINANT);
   static SampledSpectrum

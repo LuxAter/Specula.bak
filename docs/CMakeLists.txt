@@ -16,7 +16,7 @@ configure_file(Doxyfile.in Doxyfile @ONLY)
 # ##############################################################################
 # STYLE COMPILER
 # ##############################################################################
-find_program(LESSC_EXECUTABLE lessc)
+find_program(LESSC_EXECUTABLE "lessc")
 
 if(NOT LESSC_EXECUTABLE STREQUAL "LESS-NOTFOUND")
   add_custom_command(

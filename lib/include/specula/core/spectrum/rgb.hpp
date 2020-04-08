@@ -3,7 +3,6 @@
 
 #include "coefficient.hpp"
 #include "common.hpp"
-#include "global/declarations.hpp"
 #include "specula/global.hpp"
 
 namespace specula {
@@ -11,6 +10,12 @@ class RGBSpectrum : public CoefficientSpectrum<3> {
   using CoefficientSpectrum<3>::c;
 
 public:
+  RGBSpectrum(Float v = 0.0f) : CoefficientSpectrum<3>(v) {}
+  RGBSpectrum(const CoefficientSpectrum<3> &v) : CoefficientSpectrum<3>(v) {}
+  // RGBSpectrum(const RGBSpectrum &v) : CoefficientSpectrum<3>(v.c) {}
+  RGBSpectrum(const RGBSpectrum &s, SpectrumType )
+      : CoefficientSpectrum<3>(static_cast<CoefficientSpectrum<3>>(s)) {}
+
   static RGBSpectrum from_rgb(const Float rgb[3],
                               SpectrumType = SpectrumType::REFLECTANCE) {
     RGBSpectrum s;

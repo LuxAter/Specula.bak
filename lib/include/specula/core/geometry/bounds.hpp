@@ -131,7 +131,7 @@ public:
     Point2<T> p_end(p_min.x, p_max.y);
     if (p_min.x >= p_max.x || p_min.y >= p_max.y)
       p_end = p_min;
-    return iterator(this, end);
+    return iterator(this, p_end);
   }
 
   inline std::string fmt() const {
@@ -340,6 +340,17 @@ public:
 
 typedef Bounds2<Float> Bounds2f;
 typedef Bounds3<Float> Bounds3f;
+typedef Bounds2<Int> Bounds2i;
+typedef Bounds3<Int> Bounds3i;
+
+template <typename T>
+std::ostream &operator<<(std::ostream &out, const Bounds2<T> &b) {
+  return out << b.fmt();
+}
+template <typename T>
+std::ostream &operator<<(std::ostream &out, const Bounds3<T> &b) {
+  return out << b.fmt();
+}
 
 } // namespace specula
 

@@ -13,8 +13,10 @@
  * @defgroup global-macros Global Macros
  * @ingroup global
  *
- * A collection of commonly used preprocessor macros. Preferibly this should be
+ * A collection of commonly used preprocessor macros. Preferably this should be
  * empty.
  */
+
+#define ALLOCA(TYPE, COUNT) (TYPE* ) alloca((COUNT) * sizeof(TYPE))
 
 #endif /* end of include guard: SPECULA_GLOBAL_MACROS_HPP_ */

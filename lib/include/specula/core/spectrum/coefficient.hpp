@@ -1,9 +1,7 @@
 #ifndef SPECULA_CORE_SPECTRUM_COEFFICIENT_HPP_
 #define SPECULA_CORE_SPECTRUM_COEFFICIENT_HPP_
 
-#include "core/geometry/common.hpp"
-#include "global/compiler.hpp"
-#include "global/declarations.hpp"
+#include "specula/core/geometry/common.hpp"
 #include "specula/global.hpp"
 
 namespace specula {
@@ -19,6 +17,12 @@ public:
   CoefficientSpectrum(Float v = 0.0f) {
     for (size_type i = 0; i < N; ++i)
       c[i] = v;
+    CHECK(!has_nans());
+  }
+  CoefficientSpectrum(const Float v[N]) {
+    for (size_t i = 0; i < N; ++i) {
+      c[i] = v[i];
+    }
     CHECK(!has_nans());
   }
 

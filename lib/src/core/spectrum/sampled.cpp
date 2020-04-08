@@ -4,6 +4,13 @@
 #include "global/declarations.hpp"
 #include "specula/core/spectrum/rgb.hpp"
 
+specula::SampledSpectrum::SampledSpectrum(const RGBSpectrum &other,
+                                          SpectrumType type) {
+  Float rgb[3];
+  other.to_rgb(rgb);
+  *this = SampledSpectrum::from_rgb(rgb, type);
+}
+
 specula::SampledSpectrum specula::SampledSpectrum::X,
     specula::SampledSpectrum::Y, specula::SampledSpectrum::Z;
 specula::SampledSpectrum specula::SampledSpectrum::rgb_refl_spect_white,
