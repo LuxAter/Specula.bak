@@ -23,7 +23,13 @@
 #define SPECULA_PROF_FUNC_KEY(val) #val, val
 #define SPECULA_PROF_KEY_VAL(obj, key) #key, (obj)->key
 
+#if SPECULA_COMPILER_IS_GNU == 1
 #define SPECULA_PROF_FUNCTION_NAME __PRETTY_FUNCTION__
+#elif SPECULA_COMPILER_IS_MSVC == 1
+#define SPECULA_PROF_FUNCTION_NAME __FUNCSIG__
+#else
+#define SPECULA_PROF_FUNCTION_NAME __func__
+#endif
 #define SPECULA_PROFILER_NAME                                                  \
   SPECULA_PROF_CONCAT(__PROFILER_, __COUNTER__, _, __LINE__)
 
