@@ -27,7 +27,7 @@
     SPECULA_COMPILER_IS_AppleClang == 1
 #define SPECULA_PROF_FUNCTION __PRETTY_FUNCTION__
 #else
-#define SPECULA_PROF_FUNCTION __func_
+#define SPECULA_PROF_FUNCTION __func__ 
 #endif
 #define SPECULA_PROFILER_NAME                                                  \
   SPECULA_PROF_CONCAT(__PROFILER_, __COUNTER__, _, __LINE__)
