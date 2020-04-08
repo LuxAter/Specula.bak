@@ -39,7 +39,7 @@
 #define FUNC_NO_OBJ_LIST(FUNC, obj, x) , FUNC(x)
 
 #define EVAL0(CALLER, FUNC, obj, ...)
-#define EVAL1(CALLER, FUNC, obj, ...) CALLER(FUNC, obj, __VA_ARGS__)
+#define EVAL1(CALLER, FUNC, obj, x, ...) CALLER(FUNC, obj, x)
 #define EVAL2(CALLER, FUNC, obj, x, ...)                                       \
   CALLER(FUNC, obj, x) EVAL1(CALLER, FUNC, obj, __VA_ARGS__)
 #define EVAL3(CALLER, FUNC, obj, x, ...)                                       \
