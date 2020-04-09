@@ -8,5 +8,3 @@
 ![GitHub](https://img.shields.io/github/license/LuxAter/Specula?style=for-the-badge)
 
 ---
-
-Specula Pathtracer
