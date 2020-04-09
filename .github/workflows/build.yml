@@ -15,6 +15,9 @@ jobs:
       - uses: actions/checkout@v2
       - name: clone Submodules
         run: git submodule update --init --recursive --depth 50
+      - name: install zlib
+        run: ./external/openexr/share/ci/windows/install_zlib.ps1
+        shell: pwsh
       - name: configue
         run: cmake . -DCMAKE_BUILD_TYPE=Debug -DSPECULA_BUILD_CLI=OFF -DSPECULA_BUILD_GUI=OFF -DSPECULA_BUILD_DOCS=OFF
       - name: compile
