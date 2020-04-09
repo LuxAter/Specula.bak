@@ -16,7 +16,7 @@ jobs:
       - name: clone Submodules
         run: git submodule update --init --recursive --depth 50
       - name: install zlib
-        run: ./external/openexr/share/ci/scripts/windows/install_zlib.ps1
+        run: powershell -Command "(New-Object Net.WebClient).DownloadFile('https://raw.githubusercontent.com/horta/zlib.install/master/install.bat', 'install.bat')"; ./install.bat
         shell: pwsh
         if: matrix.os == 'windows-latest'
       - name: configue
