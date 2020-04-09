@@ -1,14 +1,14 @@
 #include <specula/core/imageio.hpp>
 #include <specula/global.hpp>
 
-#include <filesystem>
+#include <ghc/fs_std.hpp>
 
 #include <catch2/catch.hpp>
 
 using namespace specula;
 
 static void test_round_trip(const char *fn, bool gamma) {
-  std::filesystem::path filepath = fn;
+  fs::path filepath = fn;
   Point2i res(16, 29);
   std::vector<Float> pixels(3 * res[0] * res[1]);
   for (int y = 0; y < res[1]; ++y) {
