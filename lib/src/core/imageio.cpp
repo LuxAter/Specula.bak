@@ -3,7 +3,7 @@
 #include "global/functions.hpp"
 #include "specula/core/spectrum.hpp"
 
-#include <filesystem>
+#include <ghc/fs_std.hpp>
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #define STB_IMAGE_IMPLEMENTATION
@@ -15,7 +15,7 @@
 
 std::unique_ptr<specula::RGBSpectrum[]>
 specula::read_image(const std::string &name, Point2i *resolution) {
-  std::filesystem::path filepath(name);
+  fs::path filepath(name);
   if (filepath.extension() == ".exr") {
     return std::unique_ptr<RGBSpectrum[]>(
         read_image_exr(filepath, &resolution->x, &resolution->y));
@@ -43,7 +43,7 @@ specula::read_image(const std::string &name, Point2i *resolution) {
 bool specula::write_image(const std::string &name, const Float *rgb,
                           const Bounds2i &output_bounds,
                           const Point2i &total_resolution) {
-  std::filesystem::path filepath(name);
+  fs::path filepath(name);
   Vector2i resolution = output_bounds.diagonal();
   if (filepath.extension() == ".exr") {
     return write_image_exr(filepath, rgb, resolution.x, resolution.y,
@@ -101,10 +101,10 @@ bool specula::write_image(const std::string &name, const Float *rgb,
   return false;
 }
 
-specula::RGBSpectrum *
-specula::read_image_exr(const std::filesystem::path &filepath, int *width,
-                        int *height, Bounds2i *data_window,
-                        Bounds2i *display_window) {
+specula::RGBSpectrum *specula::read_image_exr(const fs::path &filepath,
+                                              int *width, int *height,
+                                              Bounds2i *data_window,
+                                              Bounds2i *display_window) {
   try {
     Imf::RgbaInputFile file(filepath.c_str());
     Imath::Box2i dw = file.dataWindow();
@@ -135,9 +135,8 @@ specula::read_image_exr(const std::filesystem::path &filepath, int *width,
   }
   return nullptr;
 }
-specula::RGBSpectrum *
-specula::read_image_png(const std::filesystem::path &filepath, int *width,
-                        int *height) {
+specula::RGBSpectrum *specula::read_image_png(const fs::path &filepath,
+                                              int *width, int *height) {
   int n;
   stbi_ldr_to_hdr_scale(1.0f);
   stbi_ldr_to_hdr_gamma(1.0f);
@@ -158,9 +157,8 @@ specula::read_image_png(const std::filesystem::path &filepath, int *width,
   LINFO("Read PNG image {} ({} x {})", filepath.c_str(), *width, *height);
   return ret;
 }
-specula::RGBSpectrum *
-specula::read_image_bmp(const std::filesystem::path &filepath, int *width,
-                        int *height) {
+specula::RGBSpectrum *specula::read_image_bmp(const fs::path &filepath,
+                                              int *width, int *height) {
   int n;
   stbi_ldr_to_hdr_scale(1.0f);
   stbi_ldr_to_hdr_gamma(1.0f);
@@ -181,9 +179,8 @@ specula::read_image_bmp(const std::filesystem::path &filepath, int *width,
   LINFO("Read BMP image {} ({} x {})", filepath.c_str(), *width, *height);
   return ret;
 }
-specula::RGBSpectrum *
-specula::read_image_tga(const std::filesystem::path &filepath, int *width,
-                        int *height) {
+specula::RGBSpectrum *specula::read_image_tga(const fs::path &filepath,
+                                              int *width, int *height) {
   int n;
   stbi_ldr_to_hdr_scale(1.0f);
   stbi_ldr_to_hdr_gamma(1.0f);
@@ -204,9 +201,8 @@ specula::read_image_tga(const std::filesystem::path &filepath, int *width,
   LINFO("Read TGA image {} ({} x {})", filepath.c_str(), *width, *height);
   return ret;
 }
-specula::RGBSpectrum *
-specula::read_image_jpg(const std::filesystem::path &filepath, int *width,
-                        int *height) {
+specula::RGBSpectrum *specula::read_image_jpg(const fs::path &filepath,
+                                              int *width, int *height) {
   int n;
   stbi_ldr_to_hdr_scale(1.0f);
   stbi_ldr_to_hdr_gamma(1.0f);
@@ -227,9 +223,8 @@ specula::read_image_jpg(const std::filesystem::path &filepath, int *width,
   LINFO("Read JPG image {} ({} x {})", filepath.c_str(), *width, *height);
   return ret;
 }
-specula::RGBSpectrum *
-specula::read_image_hdr(const std::filesystem::path &filepath, int *width,
-                        int *height) {
+specula::RGBSpectrum *specula::read_image_hdr(const fs::path &filepath,
+                                              int *width, int *height) {
   int n;
   stbi_hdr_to_ldr_scale(1.0f);
   stbi_hdr_to_ldr_gamma(1.0f);
@@ -251,10 +246,9 @@ specula::read_image_hdr(const std::filesystem::path &filepath, int *width,
   return ret;
 }
 
-bool specula::write_image_exr(const std::filesystem::path &filepath,
-                              const Float *pixels, int x_res, int y_res,
-                              int total_x_res, int total_y_res, int x_offset,
-                              int y_offset) {
+bool specula::write_image_exr(const fs::path &filepath, const Float *pixels,
+                              int x_res, int y_res, int total_x_res,
+                              int total_y_res, int x_offset, int y_offset) {
   Imf::Rgba *hrgba = new Imf::Rgba[x_res * y_res];
   for (int i = 0; i < x_res * y_res; ++i) {
     hrgba[i] = Imf::Rgba(pixels[3 * i], pixels[3 * i + 1], pixels[3 * i + 2]);
@@ -277,7 +271,7 @@ bool specula::write_image_exr(const std::filesystem::path &filepath,
     return false;
   }
 }
-bool specula::write_image_png(const std::filesystem::path &filepath,
+bool specula::write_image_png(const fs::path &filepath,
                               const std::uint8_t *pixels, int x_res, int y_res,
                               int, int, int, int) {
   if (stbi_write_png(filepath.c_str(), x_res, y_res, 3, pixels,
@@ -287,7 +281,7 @@ bool specula::write_image_png(const std::filesystem::path &filepath,
   }
   return true;
 }
-bool specula::write_image_bmp(const std::filesystem::path &filepath,
+bool specula::write_image_bmp(const fs::path &filepath,
                               const std::uint8_t *pixels, int x_res, int y_res,
                               int, int, int, int) {
   if (stbi_write_bmp(filepath.c_str(), x_res, y_res, 3, pixels) == 0) {
@@ -296,7 +290,7 @@ bool specula::write_image_bmp(const std::filesystem::path &filepath,
   }
   return true;
 }
-bool specula::write_image_tga(const std::filesystem::path &filepath,
+bool specula::write_image_tga(const fs::path &filepath,
                               const std::uint8_t *pixels, int x_res, int y_res,
                               int, int, int, int) {
   if (stbi_write_tga(filepath.c_str(), x_res, y_res, 3, pixels) == 0) {
@@ -305,7 +299,7 @@ bool specula::write_image_tga(const std::filesystem::path &filepath,
   }
   return true;
 }
-bool specula::write_image_jpg(const std::filesystem::path &filepath,
+bool specula::write_image_jpg(const fs::path &filepath,
                               const std::uint8_t *pixels, int x_res, int y_res,
                               int, int, int, int) {
   if (stbi_write_jpg(filepath.c_str(), x_res, y_res, 3, pixels, 100) == 0) {
@@ -314,9 +308,8 @@ bool specula::write_image_jpg(const std::filesystem::path &filepath,
   }
   return true;
 }
-bool specula::write_image_hdr(const std::filesystem::path &filepath,
-                              const float *pixels, int x_res, int y_res, int,
-                              int, int, int) {
+bool specula::write_image_hdr(const fs::path &filepath, const float *pixels,
+                              int x_res, int y_res, int, int, int, int) {
   if (stbi_write_hdr(filepath.c_str(), x_res, y_res, 3, pixels) == 0) {
     LERROR("Error writting \"{}\"", filepath.c_str());
     return false;

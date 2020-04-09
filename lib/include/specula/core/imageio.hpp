@@ -5,7 +5,7 @@
 #include "spectrum.hpp"
 #include "specula/global.hpp"
 
-#include <filesystem>
+#include <ghc/fs_std.hpp>
 #include <memory>
 
 /**
@@ -39,42 +39,33 @@ bool write_image(const std::string &name, const Float *rgb,
                  const Bounds2i &output_bounds,
                  const Point2i &total_resolution);
 
-RGBSpectrum *read_image_exr(const std::filesystem::path &filepath, int *width,
-                            int *height, Bounds2i *data_window = nullptr,
+RGBSpectrum *read_image_exr(const fs::path &filepath, int *width, int *height,
+                            Bounds2i *data_window = nullptr,
                             Bounds2i *display_window = nullptr);
-RGBSpectrum *read_image_png(const std::filesystem::path &filepath, int *width,
-                            int *height);
-RGBSpectrum *read_image_bmp(const std::filesystem::path &filepath, int *width,
-                            int *height);
-RGBSpectrum *read_image_tga(const std::filesystem::path &filepath, int *width,
-                            int *height);
-RGBSpectrum *read_image_jpg(const std::filesystem::path &filepath, int *width,
-                            int *height);
-RGBSpectrum *read_image_hdr(const std::filesystem::path &filepath, int *width,
-                            int *height);
+RGBSpectrum *read_image_png(const fs::path &filepath, int *width, int *height);
+RGBSpectrum *read_image_bmp(const fs::path &filepath, int *width, int *height);
+RGBSpectrum *read_image_tga(const fs::path &filepath, int *width, int *height);
+RGBSpectrum *read_image_jpg(const fs::path &filepath, int *width, int *height);
+RGBSpectrum *read_image_hdr(const fs::path &filepath, int *width, int *height);
 
-bool write_image_exr(const std::filesystem::path &filepath, const Float *pixels,
+bool write_image_exr(const fs::path &filepath, const Float *pixels, int x_res,
+                     int y_res, int total_x_res, int total_y_res, int x_offset,
+                     int y_offset);
+bool write_image_png(const fs::path &filepath, const std::uint8_t *pixels,
                      int x_res, int y_res, int total_x_res, int total_y_res,
                      int x_offset, int y_offset);
-bool write_image_png(const std::filesystem::path &filepath,
-                     const std::uint8_t *pixels, int x_res, int y_res,
-                     int total_x_res, int total_y_res, int x_offset,
-                     int y_offset);
-bool write_image_bmp(const std::filesystem::path &filepath,
-                     const std::uint8_t *pixels, int x_res, int y_res,
-                     int total_x_res, int total_y_res, int x_offset,
-                     int y_offset);
-bool write_image_tga(const std::filesystem::path &filepath,
-                     const std::uint8_t *pixels, int x_res, int y_res,
-                     int total_x_res, int total_y_res, int x_offset,
-                     int y_offset);
-bool write_image_jpg(const std::filesystem::path &filepath,
-                     const std::uint8_t *pixels, int x_res, int y_res,
-                     int total_x_res, int total_y_res, int x_offset,
-                     int y_offset);
-bool write_image_hdr(const std::filesystem::path &filepath, const float *pixels,
+bool write_image_bmp(const fs::path &filepath, const std::uint8_t *pixels,
                      int x_res, int y_res, int total_x_res, int total_y_res,
                      int x_offset, int y_offset);
+bool write_image_tga(const fs::path &filepath, const std::uint8_t *pixels,
+                     int x_res, int y_res, int total_x_res, int total_y_res,
+                     int x_offset, int y_offset);
+bool write_image_jpg(const fs::path &filepath, const std::uint8_t *pixels,
+                     int x_res, int y_res, int total_x_res, int total_y_res,
+                     int x_offset, int y_offset);
+bool write_image_hdr(const fs::path &filepath, const float *pixels, int x_res,
+                     int y_res, int total_x_res, int total_y_res, int x_offset,
+                     int y_offset);
 } // namespace specula
 
 #endif /* end of include guard: SPECULA_CORE_IMAGEIO_HPP_ */

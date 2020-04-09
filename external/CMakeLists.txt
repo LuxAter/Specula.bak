@@ -39,6 +39,7 @@ load_submodule(spdlog)
 load_submodule(fmt)
 load_submodule(Catch2)
 load_submodule(openexr)
+load_submodule(filesystem)
 
 clone_git(stb)
 add_library(stb INTERFACE)

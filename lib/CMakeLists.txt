@@ -27,7 +27,7 @@ if(SPECULA_BUILD_STATIC_LIBS)
   set_target_properties(specula-static PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED YES CXX_EXTENSIONS OFF)
   set_target_properties(specula-static PROPERTIES CXX_CLANG_TIDY "${CLANG_TIDY_CMD}" CXX_CPPCHECK "${CPPCHECK_CMD}")
 
-  target_link_libraries(specula-static PUBLIC spdlog fmt::fmt stb::stb IlmImf Imath Half)
+  target_link_libraries(specula-static PUBLIC spdlog fmt::fmt stb::stb IlmImf Imath Half ghc_filesystem)
   install(TARGETS specula-static ARCHIVE DESTINATION lib)
 endif()
 
@@ -44,7 +44,7 @@ if(SPECULA_BUILD_SHARED_LIBS)
   set_target_properties(specula-shared PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED YES CXX_EXTENSIONS OFF)
   set_target_properties(specula-shared PROPERTIES CXX_CLANG_TIDY "${CLANG_TIDY_CMD}" CXX_CPPCHECK "${CPPCHECK_CMD}")
 
-  target_link_libraries(specula-shared PUBLIC spdlog fmt::fmt stb::stb IlmImf Imath Half)
+  target_link_libraries(specula-shared PUBLIC spdlog fmt::fmt stb::stb IlmImf Imath Half ghc_filesystem)
   install(TARGETS specula-shared LIBRARY DESTINATION lib)
 endif()
 
