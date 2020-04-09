@@ -13,6 +13,12 @@
 [submodule "external/Catch2"]
 	path = external/Catch2
 	url = https://github.com/catchorg/Catch2
-[submodule "external/CImg"]
-	path = external/CImg
-	url = https://github.com/dtschump/CImg
+[submodule "external/openexr"]
+	path = external/openexr
+	url = https://github.com/AcademySoftwareFoundation/openexr
+[submodule "external/libtiff"]
+	path = external/libtiff
+	url = https://gitlab.com/libtiff/libtiff
+[submodule "external/stb"]
+	path = external/stb
+	url = https://github.com/nothings/stb

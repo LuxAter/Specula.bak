@@ -1,11 +1,14 @@
 #include <specula/core/imageio.hpp>
 #include <specula/global.hpp>
 
+#include <filesystem>
+
 #include <catch2/catch.hpp>
 
 using namespace specula;
 
-TEST_CASE("ImageIO") {
+static void test_round_trip(const char *fn, bool gamma) {
+  std::filesystem::path filepath = fn;
   Point2i res(16, 29);
   std::vector<Float> pixels(3 * res[0] * res[1]);
   for (int y = 0; y < res[1]; ++y) {
@@ -13,75 +16,55 @@ TEST_CASE("ImageIO") {
       int offset = 3 * (y * res[0] + x);
       pixels[offset] = Float(x) / Float(res[0] - 1);
       pixels[offset + 1] = Float(y) / Float(res[1] - 1);
-      pixels[offset + 2] = 0.0f;
+      pixels[offset + 2] = -1.5f;
     }
   }
-  SECTION("PPM") {
-    write_image("out.ppm", &pixels[0], Bounds2i({0, 0}, res), res);
-    Point2i read_res;
-    auto read_pixels = read_image("out.ppm", &read_res);
-    REQUIRE(read_pixels.get() != nullptr);
-    REQUIRE(read_res == res);
-    for (int y = 0; y < res[1]; ++y) {
-      for (int x = 0; x < res[0]; ++x) {
-        Float rgb[3];
-        read_pixels[y * res[0] + x].to_rgb(rgb);
-        for (int c = 0; c < 3; ++c) {
-          REQUIRE(pixels[3 * (y * res[0] + x) + c] ==
-                  Approx(rgb[c]).margin(0.005));
+  write_image(fn, &pixels[0], Bounds2i({0, 0}, res), res);
+
+  Point2i read_res;
+  auto read_pixels = read_image(fn, &read_res);
+  REQUIRE(read_pixels.get() != nullptr);
+  REQUIRE(read_res == res);
+
+  for(int y = 0; y < res[1]; ++y) {
+    for(int x = 0; x < res[0]; ++x) {
+      Float rgb[3];
+      read_pixels[y * res[0] + x].to_rgb(rgb);
+
+      for(int c = 0; c < 3; ++c) {
+        if(gamma) rgb[c] = inverse_gamma_correct(rgb[c]);
+
+        float wrote = pixels[3 * (y * res[0] + x) + c];
+        float delta = wrote - rgb[c];
+        if(filepath.extension() == ".exr") {
+          if(c == 2) REQUIRE(0.0 == delta);
+          else REQUIRE(std::abs(delta) < 0.001);
+        } else {
+          if(c == 2) REQUIRE(0.0 == rgb[c]);
+          else REQUIRE(std::abs(delta) < 0.02);
         }
       }
     }
   }
+}
+
+TEST_CASE("ImageIO") {
   SECTION("PNG") {
-    write_image("out.png", &pixels[0], Bounds2i({0, 0}, res), res);
-    Point2i read_res;
-    auto read_pixels = read_image("out.png", &read_res);
-    REQUIRE(read_pixels.get() != nullptr);
-    REQUIRE(read_res == res);
-    for (int y = 0; y < res[1]; ++y) {
-      for (int x = 0; x < res[0]; ++x) {
-        Float rgb[3];
-        read_pixels[y * res[0] + x].to_rgb(rgb);
-        for (int c = 0; c < 3; ++c) {
-          REQUIRE(pixels[3 * (y * res[0] + x) + c] ==
-                  Approx(rgb[c]).margin(0.005));
-        }
-      }
-    }
+    test_round_trip("test.png", true);
+  }
+  SECTION("BMP") {
+    test_round_trip("test.bmp", true);
+  }
+  SECTION("TGA") {
+    test_round_trip("test.tga", true);
   }
   SECTION("JPEG") {
-    write_image("out.jpg", &pixels[0], Bounds2i({0, 0}, res), res);
-    Point2i read_res;
-    auto read_pixels = read_image("out.jpg", &read_res);
-    REQUIRE(read_pixels.get() != nullptr);
-    REQUIRE(read_res == res);
-    for (int y = 0; y < res[1]; ++y) {
-      for (int x = 0; x < res[0]; ++x) {
-        Float rgb[3];
-        read_pixels[y * res[0] + x].to_rgb(rgb);
-        for (int c = 0; c < 3; ++c) {
-          REQUIRE(pixels[3 * (y * res[0] + x) + c] ==
-                  Approx(rgb[c]).margin(0.02));
-        }
-      }
-    }
+    test_round_trip("test.jpg", true);
   }
-  // SECTION("EXR") {
-    // write_image("out.exr", &pixels[0], Bounds2i({0, 0}, res), res);
-    // Point2i read_res;
-    // auto read_pixels = read_image("out.exr", &read_res);
-    // REQUIRE(read_pixels.get() != nullptr);
-    // REQUIRE(read_res == res);
-    // for (int y = 0; y < res[1]; ++y) {
-      // for (int x = 0; x < res[0]; ++x) {
-        // Float rgb[3];
-        // read_pixels[y * res[0] + x].to_rgb(rgb);
-        // for (int c = 0; c < 3; ++c) {
-          // REQUIRE(pixels[3 * (y * res[0] + x) + c] ==
-                  // Approx(rgb[c]).margin(0.005));
-        // }
-      // }
-    // }
-  // }
+  SECTION("HDR") {
+    test_round_trip("test.hdr", false);
+  }
+  SECTION("EXR") {
+    test_round_trip("test.exr", false);
+  }
 }
