@@ -3,7 +3,6 @@
 #include "global/functions.hpp"
 #include "specula/core/spectrum.hpp"
 
-#include <ghc/fs_std.hpp>
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #define STB_IMAGE_IMPLEMENTATION
@@ -12,6 +11,14 @@
 #include <ImfRgbaFile.h>
 #include <stb_image.h>
 #include <stb_image_write.h>
+
+#include <ghc/filesystem.hpp>
+namespace fs {
+using namespace ghc::filesystem;
+using ifstream = ghc::filesystem::ifstream;
+using ofstream = ghc::filesystem::ofstream;
+using fstream = ghc::filesystem::fstream;
+} // namespace fs
 
 std::unique_ptr<specula::RGBSpectrum[]>
 specula::read_image(const std::string &name, Point2i *resolution) {

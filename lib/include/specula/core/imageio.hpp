@@ -5,8 +5,15 @@
 #include "spectrum.hpp"
 #include "specula/global.hpp"
 
-#include <ghc/fs_std.hpp>
 #include <memory>
+
+#include <ghc/filesystem.hpp>
+namespace fs {
+using namespace ghc::filesystem;
+using ifstream = ghc::filesystem::ifstream;
+using ofstream = ghc::filesystem::ofstream;
+using fstream = ghc::filesystem::fstream;
+} // namespace fs
 
 /**
  * @defgroup core-imageio ImageIO
