@@ -139,6 +139,8 @@ specula::RGBSpectrum *
 specula::read_image_png(const std::filesystem::path &filepath, int *width,
                         int *height) {
   int n;
+  stbi_ldr_to_hdr_scale(1.0f);
+  stbi_ldr_to_hdr_gamma(1.0f);
   float *data = stbi_loadf(filepath.c_str(), width, height, &n, 3);
   if (data == nullptr) {
     LERROR("Unable to read image file \"{}\": {}", filepath.c_str(),
@@ -149,7 +151,7 @@ specula::read_image_png(const std::filesystem::path &filepath, int *width,
   float *src = data;
   for (std::size_t y = 0; y < *height; ++y) {
     for (std::size_t x = 0; x < *width; ++x, src += 3) {
-      ret[8 * *width + x] = RGBSpectrum::from_rgb(src);
+      ret[y * *width + x] = RGBSpectrum::from_rgb(src);
     }
   }
   free(data);
@@ -160,6 +162,8 @@ specula::RGBSpectrum *
 specula::read_image_bmp(const std::filesystem::path &filepath, int *width,
                         int *height) {
   int n;
+  stbi_ldr_to_hdr_scale(1.0f);
+  stbi_ldr_to_hdr_gamma(1.0f);
   float *data = stbi_loadf(filepath.c_str(), width, height, &n, 3);
   if (data == nullptr) {
     LERROR("Unable to read image file \"{}\": {}", filepath.c_str(),
@@ -170,7 +174,7 @@ specula::read_image_bmp(const std::filesystem::path &filepath, int *width,
   float *src = data;
   for (std::size_t y = 0; y < *height; ++y) {
     for (std::size_t x = 0; x < *width; ++x, src += 3) {
-      ret[8 * *width + x] = RGBSpectrum::from_rgb(src);
+      ret[y * *width + x] = RGBSpectrum::from_rgb(src);
     }
   }
   free(data);
@@ -181,6 +185,8 @@ specula::RGBSpectrum *
 specula::read_image_tga(const std::filesystem::path &filepath, int *width,
                         int *height) {
   int n;
+  stbi_ldr_to_hdr_scale(1.0f);
+  stbi_ldr_to_hdr_gamma(1.0f);
   float *data = stbi_loadf(filepath.c_str(), width, height, &n, 3);
   if (data == nullptr) {
     LERROR("Unable to read image file \"{}\": {}", filepath.c_str(),
@@ -191,7 +197,7 @@ specula::read_image_tga(const std::filesystem::path &filepath, int *width,
   float *src = data;
   for (std::size_t y = 0; y < *height; ++y) {
     for (std::size_t x = 0; x < *width; ++x, src += 3) {
-      ret[8 * *width + x] = RGBSpectrum::from_rgb(src);
+      ret[y * *width + x] = RGBSpectrum::from_rgb(src);
     }
   }
   free(data);
@@ -202,6 +208,8 @@ specula::RGBSpectrum *
 specula::read_image_jpg(const std::filesystem::path &filepath, int *width,
                         int *height) {
   int n;
+  stbi_ldr_to_hdr_scale(1.0f);
+  stbi_ldr_to_hdr_gamma(1.0f);
   float *data = stbi_loadf(filepath.c_str(), width, height, &n, 3);
   if (data == nullptr) {
     LERROR("Unable to read image file \"{}\": {}", filepath.c_str(),
@@ -212,7 +220,7 @@ specula::read_image_jpg(const std::filesystem::path &filepath, int *width,
   float *src = data;
   for (std::size_t y = 0; y < *height; ++y) {
     for (std::size_t x = 0; x < *width; ++x, src += 3) {
-      ret[8 * *width + x] = RGBSpectrum::from_rgb(src);
+      ret[y * *width + x] = RGBSpectrum::from_rgb(src);
     }
   }
   free(data);
@@ -223,6 +231,8 @@ specula::RGBSpectrum *
 specula::read_image_hdr(const std::filesystem::path &filepath, int *width,
                         int *height) {
   int n;
+  stbi_hdr_to_ldr_scale(1.0f);
+  stbi_hdr_to_ldr_gamma(1.0f);
   float *data = stbi_loadf(filepath.c_str(), width, height, &n, 3);
   if (data == nullptr) {
     LERROR("Unable to read image file \"{}\": {}", filepath.c_str(),
@@ -233,7 +243,7 @@ specula::read_image_hdr(const std::filesystem::path &filepath, int *width,
   float *src = data;
   for (std::size_t y = 0; y < *height; ++y) {
     for (std::size_t x = 0; x < *width; ++x, src += 3) {
-      ret[8 * *width + x] = RGBSpectrum::from_rgb(src);
+      ret[y * *width + x] = RGBSpectrum::from_rgb(src);
     }
   }
   free(data);
