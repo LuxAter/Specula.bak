@@ -52,6 +52,7 @@ template <typename T> class Normal2;
 template <typename T> class Normal3;
 class ParamSet;
 template <typename T> struct ParamSetItem;
+class PhaseFunction;
 template <typename T> class Point2;
 template <typename T> class Point3;
 class Primitive;

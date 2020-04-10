@@ -8,6 +8,7 @@ set(SOURCES src/core/geometry/ray.cpp src/core/geometry/point.cpp
   src/core/geometry/vector.cpp src/core/spectrum/coefficient.cpp
   src/core/spectrum/common.cpp src/core/spectrum/rgb.cpp
   src/core/spectrum/sampled.cpp src/core/transform/transform.cpp
+  src/core/interaction.cpp
   src/core/film.cpp src/core/imageio.cpp
   src/core/efloat.cpp src/core/filter.cpp src/core/memory.cpp
   src/core/parallel.cpp src/core/sampling.cpp src/dev/log.cpp src/dev/prof.cpp)
