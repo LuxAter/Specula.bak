@@ -3,7 +3,7 @@
  * @brief Version declaration
  * @author Arden Rasmussen
  * @version 1.0
- * @date 2020-04-11
+ * @date 2020-04-13
  */
 #ifndef SPECULA_VERSION_HPP_
 #define SPECULA_VERSION_HPP_

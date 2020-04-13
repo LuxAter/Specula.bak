@@ -3,8 +3,8 @@
 
 #include "specula/global.hpp"
 
-#include "geometry.hpp"
 #include "camera.hpp"
+#include "geometry.hpp"
 #include "rng.hpp"
 #include <vector>
 

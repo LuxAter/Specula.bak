@@ -249,9 +249,9 @@ public:
   // SurfaceInteraction op(const SurfaceInteraction &si) const;
 
   template <typename T, typename... Args>
-  inline auto operator()(const T &&v, const Args &&... args) const
-      -> decltype(op(std::forward(v), std::forward(args)...)) {
-    return op(std::forward(v), std::forward(args)...);
+  inline auto operator()(const T &v, const Args &... args) const
+      -> decltype(op(v, args...)) {
+    return op(v, args...);
   }
 
   inline Transform operator*(const Transform &t) const {
