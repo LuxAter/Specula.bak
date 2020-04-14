@@ -8,7 +8,7 @@
 specula::SurfaceInteraction::SurfaceInteraction(
     const Point3f &p, const Vector3f &p_error, const Point2f &uv,
     const Vector3f &wo, const Vector3f &dpdu, const Vector3f &dpdv,
-    const Normal3f &dndu, const Normal3f &dndv, Float time, const Shape *sh,
+    const Normal3f &dndu, const Normal3f &dndv, Float time, const Shape *,
     int face_index)
     : Interaction(p, Normal3f(normalize(cross(dpdu, dpdv))), p_error, wo, time),
       uv(uv), dpdu(dpdu), dpdv(dpdv), dndu(dndu), dndv(dndv),

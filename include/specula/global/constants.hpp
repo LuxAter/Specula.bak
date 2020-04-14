@@ -31,7 +31,7 @@ namespace specula {
  */
 #define MAX_FLOAT std::numeric_limits<Float>::max()
 /**
- * @brief Inifinity representation for floating point value.
+ * @brief Infinity representation for floating point value.
  * @ingroup global-constants
  * @bug Specialization for MSVC.
  */
@@ -49,7 +49,7 @@ namespace specula {
  */
 static SPECULA_CONSTEXPR Float MAX_FLOAT = std::numeric_limits<Float>::max();
 /**
- * @brief Inifinity representation for floating point value.
+ * @brief Infinity representation for floating point value.
  * @ingroup global-constants
  */
 static SPECULA_CONSTEXPR Float INFTY = std::numeric_limits<Float>::infinity();

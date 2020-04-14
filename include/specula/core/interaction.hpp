@@ -35,7 +35,7 @@ struct Interaction {
     return Ray(origin, d, 1 - SHADOW_EPSILON, time, get_medium(d));
   }
 
-  const Medium *get_medium(const Vector3f &w) const { return nullptr; }
+  const Medium *get_medium(const Vector3f &) const { return nullptr; }
   const Medium *get_medium() const { return nullptr; }
 
   Point3f p;
@@ -48,7 +48,7 @@ class MediumInteraction : public Interaction {
 public:
   MediumInteraction() : phase(nullptr) {}
   MediumInteraction(const Point3f &p, const Vector3f &wo, Float time,
-                    const Medium *medium, const PhaseFunction *phase)
+                    const Medium *, const PhaseFunction *phase)
       : Interaction(p, wo, time), phase(phase) {}
 
   bool is_valid() const { return phase != nullptr; }

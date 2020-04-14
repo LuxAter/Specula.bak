@@ -36,7 +36,7 @@ endif()
 option(SPECULA_BUILD_CLI "Compiles CLI executable" ${SPECULA_MAIN_PROJECT})
 option(SPECULA_BUILD_DOCS "Compiles documentation" ${SPECULA_MAIN_PROJECT})
 option(SPECULA_BUILD_TESTS "Compiles Unit Test exectuable" ${SPECULA_MAIN_PROJECT})
-option(SPECULA_WARNINGS_AS_ERRORS "Treat compiler warnings as errors" ${SPECULA_MAIN_PROJECT})
+option(SPECULA_WARNINGS_AS_ERRORS "Treat compiler warnings as errors" FALSE)
 
 option(SPECULA_ENABLE_PCH "Enable Precompiled Headers" OFF)
 option(SPECULA_ENABLE_IPO "Enable Interporcedural Optimization, aka Link Time Optimization (LTO)" OFF)
@@ -66,7 +66,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
   option(SPECULA_BUILD_SHARED_LIBS "Compile shared libraries" FALSE)
   option(SPECULA_BUILD_STATIC_LIBS "Compile static libraries" TRUE)
 else()
-  option(SPECULA_BUILD_STATIC_LIBS "Compile static libraries" TRUE)
+  option(SPECULA_BUILD_STATIC_LIBS "Compile static libraries" FALSE)
   option(SPECULA_BUILD_SHARED_LIBS "Compile shared libraries" TRUE)
 endif()
 
@@ -142,52 +142,62 @@ endif()
 # ##############################################################################
 # WARNINGS
 # ##############################################################################
-set(MSVC_WARNINGS
-    /W4
-    /w14242
-    /w14254
-    /w14263
-    /w14265
-    /w14287
-    /we4289
-    /w14296
-    /w14311
-    /w14545
-    /w14546
-    /w14547
-    /w14549
-    /w14555
-    /w14619
-    /w14640
-    /w14826
-    /w14905
-    /w14906
-    /w14928)
-set(CLANG_WARNINGS
-    -Wall
-    -Wextra
-    -Wshadow
-    -Wnon-virtual-dtor
-    -Wold-style-cast
-    -Wcast-align
-    -Wunused
-    -Woverloaded-virtual
-    -Wpedantic
-    -Wconversion
-    -Wsign-conversion
-    -Wnull-dereference
-    -Wdouble-promotion
-    -Wformat=2)
+set(MSVC_WARNINGS /W4)
+set(CLANG_WARNINGS -Wall)
+# set(MSVC_WARNINGS
+    # /W4
+    # /w14242
+    # /w14254
+    # /w14263
+    # /w14265
+    # /w14287
+    # /we4289
+    # /w14296
+    # /w14311
+    # /w14545
+    # /w14546
+    # /w14547
+    # /w14549
+    # /w14555
+    # /w14619
+    # /w14640
+    # /w14826
+    # /w14905
+    # /w14906
+    # /w14928)
+# set(CLANG_WARNINGS
+    # -Wall
+    # -Wextra
+    # -Wno-shadow
+    # -Wnon-virtual-dtor
+    # -Wno-old-style-cast
+    # -Wno-cast-align
+    # -Wunused
+    # -Woverloaded-virtual
+    # -Wpedantic
+    # -Wconversion
+    # -Wno-implicit-int-conversion
+    # -Wno-sign-conversion
+    # -Wno-sign-compare
+    # -Wnull-dereference
+    # -Wno-double-promotion
+    # -Wno-implicit-float-conversion
+    # -Wno-shorten-64-to-32
+    # -Wno-float-conversion
+    # -Wno-unused-parameter
+    # -Wno-macro-redefined
+    # -Wformat=2)
 if(SPECULA_WARNINGS_AS_ERRORS)
   set(CLANG_WARNINGS ${CLANG_WARNINGS} -Werror)
-  set(MSVC_WARNIGNS ${MSVC_WARNIGNS} /Wx)
+  set(MSVC_WARNIGNS ${MSVC_WARNINGS} /Wx)
 endif()
-set(GCC_WARNINGS ${CLANG_WARNINGS} -Wmisleading-indentation -Wduplicated-cond
-                 -Wduplicated-branches -Wlogical-op -Wuseless-cast)
+set(GCC_WARNINGS ${CLANG_WARNINGS})
+# set(GCC_WARNINGS ${CLANG_WARNINGS} -Wmisleading-indentation -Wduplicated-cond
+                 # -Wduplicated-branches -Wlogical-op -Wuseless-cast)
 if(MSVC)
-  target_compile_options(specula-warnings INTERFACE ${MSVC_WARNIGNS})
+  target_compile_options(specula-warnings INTERFACE ${MSVC_WARNINGS})
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-  target_compile_options(specula-warnings INTERFACE ${GNU_WARNINGS})
+  target_compile_options(specula-warnings INTERFACE ${GCC_WARNINGS})
 else()
   target_compile_options(specula-warnings INTERFACE ${CLANG_WARNINGS})
 endif()
