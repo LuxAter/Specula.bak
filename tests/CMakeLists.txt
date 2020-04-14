@@ -1,22 +1,19 @@
 # ##############################################################################
-# SOURCE FILES
-# ##############################################################################
-set(SOURCES main.cpp spectrum.cpp parallel.cpp sampling.cpp imageio.cpp)
-
-# ##############################################################################
 # CATCH TOOLS
 # ##############################################################################
+add_library(unit-tests-main STATIC main.cpp)
+target_link_libraries(unit-tests-main PUBLIC specula-warnings specula-options specula::specula Catch2::Catch2)
 include(Catch)
 
 # ##############################################################################
-# TARGET
+# UNIT-TESTS
 # ##############################################################################
-add_executable(unit-tests ${SOURCES})
-target_include_directories(unit-tests PUBLIC ${SPECULA_SOURCE_DIR}/tests)
-set_target_properties(
-  unit-tests
-  PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED YES CXX_EXTENSIONS OFF
-             RUNTIME_OUTPUT_DIRECTORY_DEBUG "${SPECULA_BINARY_DIR}")
-target_link_libraries(unit-tests specula::specula Catch2::Catch2)
+set(UNITTEST_SOURCE spectrum.cpp parallel.cpp sampling.cpp imageio.cpp)
 
-catch_discover_tests(unit-tests)
+add_executable(unit-tests ${UNITTEST_SOURCE})
+target_include_directories(unit-tests PUBLIC ${SPECULA_SOURCE_DIR}/tests)
+target_link_libraries(unit-tests PRIVATE unit-tests-main)
+
+catch_discover_tests(unit-tests TEST_PREFIX "unittests." EXTRA_ARGS -s --reporter=xml --out=tests.xml)
+
+# TODO: Add code coverage reporting using gcovr

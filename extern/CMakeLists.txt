@@ -18,7 +18,7 @@ macro(load_submodule REPO_NAME)
   clone_git(${REPO_NAME})
   string(TOUPPER ${REPO_NAME} MODULE_NAME)
   if(${MODULE_NAME}_FOUND)
-    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/${REPO_NAME})
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/${REPO_NAME} EXCLUDE_FROM_ALL)
   endif()
 endmacro()
 
@@ -26,14 +26,11 @@ endmacro()
 # DEPENDENCIES
 # ##############################################################################
 set(SPDLOG_BUILD_SHARED
-    ${SPECULA_BUILD_SHARED_LIBS}
+  ${SPECULA_BUILD_SHARED_LIBS}
     CACHE BOOL "")
 
 set(PYILMBASE_ENABLE
     OFF
-    CACHE BOOL "")
-set(BUILD_SHARED_LIBS
-    ${SPECULA_BUILD_SHARED_LIBS}
     CACHE BOOL "")
 set(INSTALL_OPENEXR_EXAMPLES
     OFF
@@ -44,6 +41,8 @@ set(INSTALL_OPENEXR_DOCS
 set(OPENEXR_BUILD_UTILS
     OFF
     CACHE BOOL "")
+
+set(BUILD_TESTING OFF)
 
 load_submodule(spdlog)
 load_submodule(fmt)

@@ -1,27 +1,18 @@
-[submodule "external/spdlog"]
-	path = external/spdlog
+[submodule "extern/spdlog"]
+	path = extern/spdlog
 	url = https://github.com/gabime/spdlog
-[submodule "external/fmt"]
-	path = external/fmt
+[submodule "extern/fmt"]
+	path = extern/fmt
 	url = https://github.com/fmtlib/fmt
-[submodule "external/GSL"]
-	path = external/GSL
-	url = https://github.com/microsoft/GSL
-[submodule "external/stduuid"]
-	path = external/stduuid
-	url = https://github.com/mariusbancila/stduuid
-[submodule "external/Catch2"]
-	path = external/Catch2
+[submodule "extern/Catch2"]
+	path = extern/Catch2
 	url = https://github.com/catchorg/Catch2
-[submodule "external/openexr"]
-	path = external/openexr
+[submodule "extern/openexr"]
+	path = extern/openexr
 	url = https://github.com/AcademySoftwareFoundation/openexr
-[submodule "external/libtiff"]
-	path = external/libtiff
-	url = https://gitlab.com/libtiff/libtiff
-[submodule "external/stb"]
-	path = external/stb
+[submodule "extern/stb"]
+	path = extern/stb
 	url = https://github.com/nothings/stb
-[submodule "external/filesystem"]
-	path = external/filesystem
+[submodule "extern/filesystem"]
+	path = extern/filesystem
 	url = https://github.com/gulrak/filesystem

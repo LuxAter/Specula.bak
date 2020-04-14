@@ -1,6 +1,6 @@
 ### Custom
-build/
-progress/
+build*
+.progress/
 .clangd/
 
 ### C++
