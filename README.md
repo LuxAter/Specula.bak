@@ -1,26 +1,27 @@
-<center>
+<p align="center">
 
-# Specula
-
-[![Contributors][contributors-shield]][contributors-url]
-[![Forks][forks-shield]][forks-url]
-[![Stars][stars-shield]][stars-url]
-[![Issues][issues-shield]][issues-url]
-[![License][license-shield]][license-url]
-[![Tag][tag-shield]][tag-url]
-[![Build][build-shield]][build-url]
-
-A C++17 Physically Based Renderer
-
-[**Documentation**](https://luxater.github.io/Specula/)
-
-[Download](https://github.com/LuxAter/Specula/releases) **·**
-[Report Bug](https://github.com/LuxAter/Specula/issues/new?assignees=&labels=&template=bug_report.md&title=) **·**
-[Request Feature](https://github.com/LuxAter/Specula/issues/new?assignees=&labels=&template=feature_request.md&title=)
-
-</center>
-
-## Table of contents
+  <h1 align="center">SPECULA</h1>
+  <p align="center">
+    <a href="https://github.com/LuxAter/Specula/graphs/contributors"><img src="https://img.shields.io/github/contributors/LuxAter/Specula.svg?style=flat-square"></a>
+    <a href="https://github.com/LuxAter/Specula/network/members"><img src="https://img.shields.io/github/forks/LuxAter/Specula.svg?style=flat-square"></a>
+    <a href="https://github.com/LuxAter/Specula/stargazers"><img src="https://img.shields.io/github/stars/LuxAter/Specula.svg?style=flat-square"></a>
+    <a href="https://github.com/LuxAter/Specula/issues"><img src="https://img.shields.io/github/issues/LuxAter/Specula.svg?style=flat-square"></a>
+    <a href="https://github.com/LuxAter/Specula/blob/master/LICENSE.txt"><img src="https://img.shields.io/github/license/LuxAter/Specula.svg?style=flat-square"></a>
+    <a href="https://github.com/LuxAter/Specula/releases"><img src="https://img.shields.io/github/tag/LuxAter/Specula.svg?include_prereleases&sort=semver&style=flat-square"></a>
+    <a href="https://github.com/LuxAter/Specula/actions?query=workflows%3ADevelopment"><img src="https://img.shields.io/github/workflow/status/LuxAter/Specula/Development.svg?include_prereleases&sort=semver&style=flat-square"></a>
+    <br/>
+    A C++17 Physically Based Renderer
+    <br/>
+    <a href="https://luxater.github.io/Specula"><strong>Documentation</strong></a>
+    <br/>
+    <br/>
+    <a href="https://github.com/LuxAter/Specula/releases">Downloads</a>
+    ·
+    <a href="https://github.com/LuxAter/Specula/issues/new?template=bug_report.md">Report Bug</a>
+    ·
+    <a href="https://github.com/LuxAter/Specula/issues/new?template=feature_request.md">Request Feature</a>
+  </p>
+</p>
 
 ## About the Project
 
@@ -130,18 +131,3 @@ appreciated**.
 Distributed under the GNU GPLv3 license. See
 [`LICENSE.md`](https://github.com/LuxAter/Specula/blob/development/LICENSE.md)
 for more information.
-
-[contributors-shield]: https://img.shields.io/github/contributors/LuxAter/Specula.svg?style=flat-square
-[contributors-url]: https://github.com/LuxAter/Specula/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/LuxAter/Specula.svg?style=flat-square
-[forks-url]: https://github.com/LuxAter/Specula/network/members
-[stars-shield]: https://img.shields.io/github/stars/LuxAter/Specula.svg?style=flat-square
-[stars-url]: https://github.com/LuxAter/Specula/stargazers
-[issues-shield]: https://img.shields.io/github/issues/LuxAter/Specula.svg?style=flat-square
-[issues-url]: https://github.com/LuxAter/Specula/issues
-[license-shield]: https://img.shields.io/github/license/LuxAter/Specula.svg?style=flat-square
-[license-url]: https://github.com/LuxAter/Specula/blob/master/LICENSE.md
-[tag-shield]: https://img.shields.io/github/tag/LuxAter/Specula.svg?include_prereleases@sort=semver&style=flat-square
-[tag-url]: https://github.com/LuxAter/Specula/releases
-[build-shield]: https://img.shields.io/github/workflow/status/LuxAter/Specula/Development.svg?style=flat-square
-[build-url]: https://github.com/LuxAter/Specula/actions?query=workflow%3ADevelopment
