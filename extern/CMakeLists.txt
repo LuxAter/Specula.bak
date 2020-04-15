@@ -26,7 +26,7 @@ endmacro()
 # DEPENDENCIES
 # ##############################################################################
 set(SPDLOG_BUILD_SHARED
-  ${SPECULA_BUILD_SHARED_LIBS}
+    ${SPECULA_BUILD_SHARED_LIBS}
     CACHE BOOL "")
 
 set(PYILMBASE_ENABLE

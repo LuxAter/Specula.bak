@@ -5,12 +5,12 @@ add_library(specula-dependencies INTERFACE)
 target_link_libraries(
   specula-dependencies
   INTERFACE spdlog
-         fmt::fmt
-         stb::stb
-         IlmImf
-         Imath
-         Half
-         ghc_filesystem)
+            fmt::fmt
+            stb::stb
+            IlmImf
+            Imath
+            Half
+            ghc_filesystem)
 
 # ##############################################################################
 # SOURCE FILES
@@ -84,9 +84,8 @@ if(SPECULA_BUILD_STATIC_LIBS)
     specula-static PROPERTIES CXX_CLANG_TIDY "${CLANGTIDY_CMD}"
                               CXX_CPPCHECK "${CPPCHECK_CMD}")
 
-  target_link_libraries(
-    specula-static
-    PUBLIC specula-dependencies specula-options specula-warnings)
+  target_link_libraries(specula-static PUBLIC specula-dependencies
+                                              specula-options specula-warnings)
   install(TARGETS specula-static ARCHIVE DESTINATION lib)
 endif()
 
@@ -106,9 +105,8 @@ if(SPECULA_BUILD_SHARED_LIBS)
     specula-shared PROPERTIES CXX_CLANG_TIDY "${CLANGTIDY_CMD}"
                               CXX_CPPCHECK "${CPPCHECK_CMD}")
 
-  target_link_libraries(
-    specula-shared
-    PUBLIC specula-dependencies specula-options specula-warnings)
+  target_link_libraries(specula-shared PUBLIC specula-dependencies
+                                              specula-options specula-warnings)
   install(TARGETS specula-shared LIBRARY DESTINATION lib)
 endif()
 

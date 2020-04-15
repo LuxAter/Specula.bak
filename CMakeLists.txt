@@ -2,7 +2,10 @@
 # PROJECT
 # ##############################################################################
 cmake_minimum_required(VERSION 3.11 FATAL_ERROR)
-project(Specula VERSION 1.0.0 LANGUAGES CXX)
+project(
+  Specula
+  VERSION 1.0.0
+  LANGUAGES CXX)
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
   set(SPECULA_MAIN_PROJECT TRUE)
@@ -18,7 +21,8 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   set(CMAKE_BUILD_TYPE
       "Debug"
       CACHE STRING "Build Mode" FORCE)
-    set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
+  set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release"
+                                               "MinSizeRel" "RelWithDebInfo")
 endif()
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
   set(BUILD_TYPE_DEBUG ON)
@@ -35,29 +39,39 @@ endif()
 # ##############################################################################
 option(SPECULA_BUILD_CLI "Compiles CLI executable" ${SPECULA_MAIN_PROJECT})
 option(SPECULA_BUILD_DOCS "Compiles documentation" ${SPECULA_MAIN_PROJECT})
-option(SPECULA_BUILD_TESTS "Compiles Unit Test exectuable" ${SPECULA_MAIN_PROJECT})
+option(SPECULA_BUILD_TESTS "Compiles Unit Test exectuable"
+       ${SPECULA_MAIN_PROJECT})
 option(SPECULA_WARNINGS_AS_ERRORS "Treat compiler warnings as errors" FALSE)
 
 option(SPECULA_ENABLE_PCH "Enable Precompiled Headers" OFF)
-option(SPECULA_ENABLE_IPO "Enable Interporcedural Optimization, aka Link Time Optimization (LTO)" OFF)
+option(SPECULA_ENABLE_IPO
+       "Enable Interporcedural Optimization, aka Link Time Optimization (LTO)"
+       OFF)
 
 if(BUILD_TYPE_DEBUG OR REL_WITH_DEB_INFO)
   option(SPECULA_PROFILING "Enable profiling" ${SPECULA_MAIN_PROJECT})
-  option(SPECULA_STATIC_ANALYSIS "Use static analysis tools" ${SPECULA_MAIN_PROJECT})
+  option(SPECULA_STATIC_ANALYSIS "Use static analysis tools"
+         ${SPECULA_MAIN_PROJECT})
 else()
   option(SPECULA_PROFILING "Enable profiling" FALSE)
   option(SPECULA_STATIC_ANALYSIS "Use static analysis tools" FALSE)
 endif()
 
-if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-  option(SPECULA_ENABLE_COVERAGE "Enable coverage reporting for gcc/clang" FALSE)
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL
+                                           "Clang")
+  option(SPECULA_ENABLE_COVERAGE "Enable coverage reporting for gcc/clang"
+         FALSE)
 
   option(SPECULA_ENABLE_SANITIZER_ADDRESS "Enable address sanitizer" FALSE)
   option(SPECULA_ENABLE_SANITIZER_MEMORY "Enable memory sanitizer" FALSE)
-  option(SPECULA_ENALBE_SANITIZER_UNDEFINED_BEHAVIOR "Enable undefined behavior sanitizer" FALSE)
+  option(SPECULA_ENALBE_SANITIZER_UNDEFINED_BEHAVIOR
+         "Enable undefined behavior sanitizer" FALSE)
   option(SPECULA_ENABLE_SANITIZER_THREAD "Enable thread sanitizer" FALSE)
 
-  if(SPECULA_ENABLE_SANITIZER_ADDRESS OR SPECULA_ENABLE_SANITIZER_MEMORY OR SPECULA_ENALBE_SANITIZER_UNDEFINED_BEHAVIOR OR SPECULA_ENABLE_SANITIZER_THREAD)
+  if(SPECULA_ENABLE_SANITIZER_ADDRESS
+     OR SPECULA_ENABLE_SANITIZER_MEMORY
+     OR SPECULA_ENALBE_SANITIZER_UNDEFINED_BEHAVIOR
+     OR SPECULA_ENABLE_SANITIZER_THREAD)
     set(SPECULA_ENABLE_SANITIZERS)
   endif()
 endif()
@@ -108,6 +122,13 @@ target_compile_features(specula-options INTERFACE cxx_std_17)
 add_library(specula-warnings INTERFACE)
 
 # ##############################################################################
+# COMPILE COMMANDS
+# ##############################################################################
+if(BUILD_TYPE_DEBUG OR BUILD_TYPE_REL_WITH_DEB_INFO)
+  set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+endif()
+
+# ##############################################################################
 # COVERAGE
 # ##############################################################################
 if(SPECULA_ENABLE_COVERAGE)
@@ -121,16 +142,16 @@ endif()
 if(SPECULA_ENABLE_SANITIZERS)
   set(SANITIZERS "")
   if(SPECULA_ENABLE_SANITIZER_ADDRESS)
-    LIST(APPEND SANITIZERS "address")
+    list(APPEND SANITIZERS "address")
   endif()
   if(SPECULA_ENABLE_SANITIZER_MEMORY)
-    LIST(APPEND SANITIZERS "memory")
+    list(APPEND SANITIZERS "memory")
   endif()
   if(SPECULA_ENABLE_SANITIZER_UNDEFINED_BEHAVIOR)
-    LIST(APPEND SANITIZERS "undefined")
+    list(APPEND SANITIZERS "undefined")
   endif()
   if(SPECULA_ENABLE_SANITIZER_THREAD)
-    LIST(APPEND SANITIZERS "thread")
+    list(APPEND SANITIZERS "thread")
   endif()
   list(JOIN SANITIZERS "," SANITIZERS)
   if(NOT "${SANITIZERS}" STREQUAL "")
@@ -145,55 +166,22 @@ endif()
 set(MSVC_WARNINGS /W4)
 set(CLANG_WARNINGS -Wall)
 # set(MSVC_WARNINGS
-    # /W4
-    # /w14242
-    # /w14254
-    # /w14263
-    # /w14265
-    # /w14287
-    # /we4289
-    # /w14296
-    # /w14311
-    # /w14545
-    # /w14546
-    # /w14547
-    # /w14549
-    # /w14555
-    # /w14619
-    # /w14640
-    # /w14826
-    # /w14905
-    # /w14906
-    # /w14928)
+# /W4 /w14242 /w14254 /w14263 /w14265 /w14287 /we4289 /w14296 /w14311 /w14545
+# /w14546 /w14547 /w14549 /w14555 /w14619 /w14640 /w14826 /w14905 /w14906
+# /w14928)
 # set(CLANG_WARNINGS
-    # -Wall
-    # -Wextra
-    # -Wno-shadow
-    # -Wnon-virtual-dtor
-    # -Wno-old-style-cast
-    # -Wno-cast-align
-    # -Wunused
-    # -Woverloaded-virtual
-    # -Wpedantic
-    # -Wconversion
-    # -Wno-implicit-int-conversion
-    # -Wno-sign-conversion
-    # -Wno-sign-compare
-    # -Wnull-dereference
-    # -Wno-double-promotion
-    # -Wno-implicit-float-conversion
-    # -Wno-shorten-64-to-32
-    # -Wno-float-conversion
-    # -Wno-unused-parameter
-    # -Wno-macro-redefined
-    # -Wformat=2)
+# -Wall -Wextra -Wno-shadow -Wnon-virtual-dtor -Wno-old-style-cast -Wno-cast-
+# align -Wunused -Woverloaded-virtual -Wpedantic -Wconversion -Wno-implicit-int-
+# conversion -Wno-sign-conversion -Wno-sign-compare -Wnull-dereference -Wno-
+# double-promotion -Wno-implicit-float-conversion -Wno-shorten-64-to-32 -Wno-
+# float-conversion -Wno-unused-parameter -Wno-macro-redefined -Wformat=2)
 if(SPECULA_WARNINGS_AS_ERRORS)
   set(CLANG_WARNINGS ${CLANG_WARNINGS} -Werror)
   set(MSVC_WARNIGNS ${MSVC_WARNINGS} /Wx)
 endif()
 set(GCC_WARNINGS ${CLANG_WARNINGS})
 # set(GCC_WARNINGS ${CLANG_WARNINGS} -Wmisleading-indentation -Wduplicated-cond
-                 # -Wduplicated-branches -Wlogical-op -Wuseless-cast)
+# -Wduplicated-branches -Wlogical-op -Wuseless-cast)
 if(MSVC)
   target_compile_options(specula-warnings INTERFACE ${MSVC_WARNINGS})
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
@@ -223,11 +211,8 @@ if(SPECULA_STATIC_ANALYSIS)
     find_program(CPPCHECK_EXE "cppcheck")
     if(CPPCHECK_EXE)
       message(STATUS "Found cppcheck ${CPPCHECK_EXE}")
-      set(CPPCHECK_CMD
-          "${CPPCHECK_EXE}"
-          "--suppress=missingInclude"
-          "--enable=all"
-          "--inconclusive")
+      set(CPPCHECK_CMD "${CPPCHECK_EXE}" "--suppress=missingInclude"
+                       "--enable=all" "--inconclusive")
     else()
       message(STATUS "Could not find cppcheck")
     endif()
@@ -238,7 +223,20 @@ endif()
 # PCH
 # ##############################################################################
 if(SPECULA_ENABLE_PCH)
-  target_precompile_headers(specula-options INTERFACE <algorithm> <cassert> <cinttypes> <cmath> <cstdint> <cstring> <limits> <memory> <string> <type_traits> <vector>)
+  target_precompile_headers(
+    specula-options
+    INTERFACE
+    <algorithm>
+    <cassert>
+    <cinttypes>
+    <cmath>
+    <cstdint>
+    <cstring>
+    <limits>
+    <memory>
+    <string>
+    <type_traits>
+    <vector>)
 endif()
 
 # ##############################################################################
