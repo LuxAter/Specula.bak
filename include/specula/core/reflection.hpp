@@ -2,6 +2,10 @@
 #define SPECULA_CORE_REFLECTION_HPP_
 
 #include "core/geometry/vector.hpp"
+#include "core/interaction.hpp"
+#include "global/compiler.hpp"
+#include "global/declarations.hpp"
+#include "material.hpp"
 #include "spectrum.hpp"
 #include "specula/global.hpp"
 
@@ -73,6 +77,7 @@ enum BxDFType {
 };
 
 struct FourierBSDFTable {
+  static bool read(const std::string &filename, FourierBSDFTable *table);
   const Float *get_ak(int offsetI, int offsetO, int *mptr) const {
     *mptr = m[offsetO * nmu + offsetI];
     return a + aoffset[offsetO * nmu + offsetI];
@@ -90,6 +95,271 @@ struct FourierBSDFTable {
   Float *cdf;
   Float *recip;
 };
+
+class BSDF {
+public:
+  BSDF(const SurfaceInteraction &si, Float eta = 1)
+      : eta(eta), ns(si.shading.n), ng(si.n), ss(normalize(si.shading.dpdu)),
+        ts(cross(ns, ss)) {}
+
+  void add(BxDF *b) {
+    CHECK_LT(nBxDFs, max_BxDFs);
+    bxdfs[nBxDFs++] = b;
+  }
+  int num_components(BxDFType flags = BSDF_ALL) const;
+  Vector3f world_to_local(const Vector3f &v) const {
+    return Vector3f(dot(v, ss), dot(v, ts), dot(v, ns));
+  }
+  Vector3f local_to_world(const Vector3f &v) const {
+    return Vector3f(ss.x * v.x + ts.x * v.y + ns.x * v.z,
+                    ss.y * v.x + ts.y * v.y + ns.y * v.z,
+                    ss.z * v.x + ts.z * v.y + ns.z * v.z);
+  }
+  Spectrum f(const Vector3f &wow, const Vector3f &wiw,
+             BxDFType flags = BSDF_ALL) const;
+  Spectrum rho(int nSamples, const Point3f *samples1, const Point2f *samples2,
+               BxDFType flags = BSDF_ALL) const;
+  Spectrum rho(const Vector3f &wo, int nSamples, const Point3f *samples,
+               BxDFType flags = BSDF_ALL) const;
+  Spectrum sample_f(const Vector3f &wo, Vector3f *wi, const Point2f &u,
+                    Float *pdf, BxDFType type = BSDF_ALL,
+                    BxDFType *sampled_type = nullptr) const;
+
+  Float pdf(const Vector3f &wo, const Vector3f &wi,
+            BxDFType flags = BSDF_ALL) const;
+
+  std::string fmt() const;
+
+  const Float eta;
+
+private:
+  ~BSDF() {}
+
+  const Normal3f ns, ng;
+  const Vector3f ss, ts;
+  int nBxDFs = 0;
+  static SPECULA_CONSTEXPR int max_BxDFs = 8;
+  BxDF *bxdfs[max_BxDFs];
+  friend class MixMaterial;
+};
+
+class BxDF {
+public:
+  BxDF(BxDFType type) : type(type) {}
+  virtual ~BxDF() {}
+
+  bool MatchesFlags(BxDFType t) const { return (type & t) == type; }
+
+  virtual Spectrum f(const Vector3f &wo, const Vector3f &wi) const = 0;
+  virtual Spectrum rho(int nsamples, const Point3f *samples1,
+                       const Point2f *samples2) const;
+  virtual Spectrum rho(const Vector3f &wo, int nSamples,
+                       const Point3f *samples) const;
+  virtual Spectrum sample_f(const Vector3f &wo, Vector3f *wi,
+                            const Point2f &sample, Float *pdf,
+                            BxDFType *sampled_type = nullptr) const;
+
+  virtual Float pdf(const Vector3f &wo, const Vector3f &wi) const;
+
+  virtual std::string fmt() const = 0;
+
+  const BxDFType type;
+};
+
+class ScaledBxDF : public BxDF {
+public:
+  ScaledBxDF(BxDF *bxdf, const Spectrum &scale)
+      : BxDF(BxDFType(bxdf->type)), bxdf(bxdf), scale(scale) {}
+
+  Spectrum f(const Vector3f &wo, const Vector3f &wi) const;
+  Spectrum rho(int nsamples, const Point3f *samples1,
+               const Point2f *samples2) const {
+    return scale * bxdf->rho(nsamples, samples1, samples2);
+  }
+  Spectrum rho(const Vector3f &wo, int nsamples, const Point3f *samples) const {
+    return scale * bxdf->rho(wo, nsamples, samples);
+  }
+  Spectrum sample_f(const Vector3f &wo, Vector3f *wi, const Point2f &sample,
+                    Float *pdf, BxDFType *sampled_type = nullptr) const;
+  Float pdf(const Vector3f &wo, const Vector3f &wi) const;
+
+  std::string fmt() const;
+
+private:
+  BxDF *bxdf;
+  Spectrum scale;
+};
+
+class Fresnel {
+public:
+  virtual ~Fresnel();
+  virtual Spectrum evaluate(Float cosi) const = 0;
+
+  virtual std::string fmt() const = 0;
+};
+
+class FresnelConductor : public Fresnel {
+public:
+  FresnelConductor(const Spectrum &etai, const Spectrum &etat,
+                   const Spectrum &k)
+      : etai(etai), etat(etat), k(k) {}
+
+  Spectrum evaluate(Float cosi) const;
+
+  std::string fmt() const;
+
+private:
+  Spectrum etai, etat, k;
+};
+
+class FresnelDielectric : public Fresnel {
+public:
+  FresnelDielectric(Float etai, Float etat) : etai(etai), etat(etat) {}
+
+  Spectrum evaluate(Float cosi) const;
+
+  std::string fmt() const;
+
+private:
+  Float etai, etat;
+};
+
+class FresnelNoOp : public Fresnel {
+public:
+  Spectrum evaluate(Float) const { return Spectrum(1.0f); }
+  std::string fmt() const { return "[FresnelNoOp]"; }
+};
+
+class SpecularReflection : public BxDF {
+public:
+  SpecularReflection(const Spectrum &r, Fresnel *fresnel)
+      : BxDF(BxDFType(BSDF_REFLECTION | BSDF_SPECULAR)), r(r),
+        fresnel(fresnel) {}
+
+  Spectrum f(const Vector3f &wo, const Vector3f &wi) const {
+    return Spectrum(0.0f);
+  }
+  Spectrum sample_f(const Vector3f &wo, Vector3f *wi, const Point2f &sample,
+                    Float *pdf, BxDFType *sampled_type) const;
+
+  Float pdf(const Vector3f &wo, const Vector3f &wi) const { return 0; }
+
+  std::string fmt() const;
+
+private:
+  const Spectrum r;
+  const Fresnel *fresnel;
+};
+
+class SpecularTransmission : public BxDF {
+public:
+  SpecularTransmission(const Spectrum &t, Float etaa, Float etab,
+                       TransportMode mode)
+      : BxDF(BxDFType(BSDF_TRANSMISSION | BSDF_SPECULAR)), t(t), etaa(etaa),
+        etab(etab), fresnel(etaa, etab), mode(mode) {}
+
+  Spectrum f(const Vector3f &wo, const Vector3f &wi) const {
+    return Spectrum(0.0f);
+  }
+  Spectrum sample_f(const Vector3f &wo, Vector3f *wi, const Point2f &sample,
+                    Float *pdf, BxDFType *sampled_type) const;
+
+  Float pdf(const Vector3f &wo, const Vector3f &wi) const { return 0; }
+
+  std::string fmt() const;
+
+private:
+  const Spectrum t;
+  const Float etaa, etab;
+  const FresnelDielectric fresnel;
+  const TransportMode mode;
+};
+
+class FresnelSpecular : public BxDF {
+public:
+  FresnelSpecular(const Spectrum &r, const Spectrum &t, Float etaa, Float etab,
+                  TransportMode mode)
+      : BxDF(BxDFType(BSDF_REFLECTION | BSDF_TRANSMISSION | BSDF_SPECULAR)),
+        r(r), t(t), etaa(etaa), etab(etab), mode(mode) {}
+
+  Spectrum f(const Vector3f &wo, const Vector3f &wi) const {
+    return Spectrum(0.0f);
+  }
+  Spectrum sample_f(const Vector3f &wo, Vector3f *wi, const Point2f &sample,
+                    Float *pdf, BxDFType *sampled_type) const;
+
+  Float pdf(const Vector3f &wo, const Vector3f &wi) const { return 0; }
+
+  std::string fmt() const;
+
+private:
+  const Spectrum r, t;
+  const Float etaa, etab;
+  const TransportMode mode;
+};
+
+class LambertianReflection : public BxDF {
+public:
+  LambertianReflection(const Spectrum &r)
+      : BxDF(BxDFType(BSDF_REFLECTION | BSDF_DIFFUSE)), r(r) {}
+
+  Spectrum f(const Vector3f &wo, const Vector3f &wi) const;
+  Spectrum rho(int nsamples, const Point3f *samples1,
+               const Point2f *samples2) const {
+    return r;
+  }
+  Spectrum rho(const Vector3f &wo, int nSamples, const Point3f *samples) const {
+    return r;
+  }
+
+  std::string fmt() const;
+
+private:
+  const Spectrum r;
+};
+class LambertianTransmission : public BxDF {
+public:
+  LambertianTransmission(const Spectrum &t)
+      : BxDF(BxDFType(BSDF_TRANSMISSION | BSDF_DIFFUSE)), t(t) {}
+
+  Spectrum f(const Vector3f &wo, const Vector3f &wi) const;
+  Spectrum rho(int nsamples, const Point3f *samples1,
+               const Point2f *samples2) const {
+    return t;
+  }
+  Spectrum rho(const Vector3f &wo, int nSamples, const Point3f *samples) const {
+    return t;
+  }
+  Spectrum sample_f(const Vector3f &wo, Vector3f *wi, const Point2f &sample,
+                    Float *pdf, BxDFType *sampled_type) const;
+
+  Float pdf(const Vector3f &wo, const Vector3f &wi) const { return 0; }
+
+  std::string fmt() const;
+
+private:
+  const Spectrum t;
+};
+
+class OrenNayar : public BxDF {
+public:
+  OrenNayar(const Spectrum &r, Float sigma)
+      : BxDF(BxDFType(BSDF_REFLECTION | BSDF_DIFFUSE)), r(r) {
+    sigma = radians(sigma);
+    Float sigma2 = sigma * sigma;
+    a = 1.0f - (sigma2 / (2.0f * (sigma2 + 0.33f)));
+    b = 0.45f * sigma2 / (sigma2 + 0.09f);
+  }
+
+  Spectrum f(const Vector3f &wo, const Vector3f &wi) const;
+
+  std::string fmt() const;
+
+private:
+  const Spectrum r;
+  Float a, b;
+};
+
 
 } // namespace specula
 

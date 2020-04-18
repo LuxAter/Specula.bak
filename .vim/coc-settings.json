@@ -2,7 +2,9 @@
   "python.formatting.provider": "yapf",
   "cSpell.words": [
     "Doxygen",
+    "Nayar",
     "PBRT",
+    "bxdf",
     "fnewton",
     "tnewton"
   ]
