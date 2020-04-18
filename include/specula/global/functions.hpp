@@ -234,6 +234,12 @@ inline T clamp(T val, U low, V high) {
     return high;
   return val;
 }
+
+template <typename T, typename U, typename V>
+inline T smooth_step(T val, U low, V high) {
+  T v = clamp((val - low) / (high - low), T(0), T(1));
+  return v * v * (-2 * v + 3);
+}
 /**
  * @brief Computes the remainder of ``a/b``.
  * @ingroup global-functions
@@ -512,6 +518,7 @@ int find_interval(int size, const Predicate &pred) {
 template <typename T> inline T lerp(Float t, const T &v1, const T &v2) {
   return (1 - t) * v1 + t * v2;
 }
+
 template <typename T>
 inline typename std::enable_if<std::is_floating_point<T>::value, bool>::type
 isnan(const T &v) {

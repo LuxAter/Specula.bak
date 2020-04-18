@@ -33,6 +33,7 @@ set(SOURCES
     core/transform/animated_transform.cpp
     core/quaternion.cpp
     core/interaction.cpp
+    core/texture.cpp
     core/rng.cpp
     core/sampler.cpp
     core/medium.cpp
