@@ -35,6 +35,7 @@ set(SOURCES
     core/interaction.cpp
     core/texture.cpp
     core/material.cpp
+    core/reflection.cpp
     core/rng.cpp
     core/sampler.cpp
     core/medium.cpp
