@@ -34,6 +34,7 @@ set(SOURCES
     core/quaternion.cpp
     core/interaction.cpp
     core/texture.cpp
+    core/material.cpp
     core/rng.cpp
     core/sampler.cpp
     core/medium.cpp
