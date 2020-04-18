@@ -1,6 +1,6 @@
-<center align="center">
+<p align="center">
   <h1 align="center">SPECULA</h1>
-  <center align="center">
+  <p align="center">
     <a href="https://github.com/LuxAter/Specula/graphs/contributors"><img src="https://img.shields.io/github/contributors/LuxAter/Specula.svg?style=flat-square"></a>
     <a href="https://github.com/LuxAter/Specula/network/members"><img src="https://img.shields.io/github/forks/LuxAter/Specula.svg?style=flat-square"></a>
     <a href="https://github.com/LuxAter/Specula/stargazers"><img src="https://img.shields.io/github/stars/LuxAter/Specula.svg?style=flat-square"></a>
@@ -19,8 +19,8 @@
     <a href="https://github.com/LuxAter/Specula/issues/new?template=bug_report.md">Report Bug</a>
     ·
     <a href="https://github.com/LuxAter/Specula/issues/new?template=feature_request.md">Request Feature</a>
-  </center>
-</center>
+  </p>
+</p>
 
 ## About the Project
 
