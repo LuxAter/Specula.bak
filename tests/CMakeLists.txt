@@ -45,7 +45,7 @@ if(SPECULA_ENABLE_COVERAGE)
         ${GCOVR} --gcov-executable "${GCOV}" -r "${SPECULA_SOURCE_DIR}"
         --exclude "${SPECULA_SOURCE_DIR}/extern" --exclude
         "${SPECULA_SOURCE_DIR}/tests" --html coverage.html --html-detail
-        --html-title "Code Coverage Report"
+        --html-title "Code Coverage Report" --json
       DEPENDS unit-tests
       WORKING_DIRECTORY "${SPECULA_BINARY_DIR}/coverage/")
   endif()
