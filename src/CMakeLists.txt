@@ -18,37 +18,40 @@ target_link_libraries(
 include(WriteCompilerDetectionHeader)
 string(TIMESTAMP YYYYMMDD "%Y-%m-%d")
 set(SOURCES
-    core/geometry/ray.cpp
-    core/geometry/point.cpp
+    core/camera.cpp
+    core/efloat.cpp
+    core/film.cpp
+    core/filter.cpp
     core/geometry/bounds.cpp
     core/geometry/common.cpp
     core/geometry/matrix.cpp
     core/geometry/normal.cpp
+    core/geometry/point.cpp
+    core/geometry/ray.cpp
     core/geometry/vector.cpp
+    core/imageio.cpp
+    core/interaction.cpp
+    core/light.cpp
+    core/material.cpp
+    core/medium.cpp
+    core/memory.cpp
+    core/microfacet.cpp
+    core/parallel.cpp
+    core/quaternion.cpp
+    core/reflection.cpp
+    core/rng.cpp
+    core/sampler.cpp
+    core/sampling.cpp
     core/spectrum/coefficient.cpp
     core/spectrum/common.cpp
     core/spectrum/rgb.cpp
     core/spectrum/sampled.cpp
-    core/transform/transform.cpp
-    core/transform/animated_transform.cpp
-    core/quaternion.cpp
-    core/interaction.cpp
     core/texture.cpp
-    core/material.cpp
-    core/microfacet.cpp
-    core/reflection.cpp
-    core/rng.cpp
-    core/sampler.cpp
-    core/medium.cpp
-    core/film.cpp
-    core/imageio.cpp
-    core/efloat.cpp
-    core/filter.cpp
-    core/memory.cpp
-    core/parallel.cpp
-    core/sampling.cpp
+    core/transform/animated_transform.cpp
+    core/transform/transform.cpp
     dev/log.cpp
-    dev/prof.cpp)
+    dev/prof.cpp
+    )
 configure_file("${SPECULA_SOURCE_DIR}/include/specula/version.hpp.in"
                "${SPECULA_SOURCE_DIR}/include/specula/version.hpp")
 set(SPECULA_COMPILERS MSVC GNU Clang Intel AppleClang)
