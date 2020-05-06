@@ -305,11 +305,11 @@ public:
       : BxDF(BxDFType(BSDF_REFLECTION | BSDF_DIFFUSE)), r(r) {}
 
   Spectrum f(const Vector3f &wo, const Vector3f &wi) const;
-  Spectrum rho(int nsamples, const Point3f *samples1,
+  Spectrum rho(int nsamples, const Point2f *samples1,
                const Point2f *samples2) const {
     return r;
   }
-  Spectrum rho(const Vector3f &wo, int nSamples, const Point3f *samples) const {
+  Spectrum rho(const Vector3f &wo, int nSamples, const Point2f *samples) const {
     return r;
   }
 
@@ -324,11 +324,11 @@ public:
       : BxDF(BxDFType(BSDF_TRANSMISSION | BSDF_DIFFUSE)), t(t) {}
 
   Spectrum f(const Vector3f &wo, const Vector3f &wi) const;
-  Spectrum rho(int nsamples, const Point3f *samples1,
+  Spectrum rho(int nsamples, const Point2f *samples1,
                const Point2f *samples2) const {
     return t;
   }
-  Spectrum rho(const Vector3f &wo, int nSamples, const Point3f *samples) const {
+  Spectrum rho(const Vector3f &wo, int nSamples, const Point2f *samples) const {
     return t;
   }
   Spectrum sample_f(const Vector3f &wo, Vector3f *wi, const Point2f &sample,
