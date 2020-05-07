@@ -10,7 +10,8 @@ specula::SurfaceInteraction::SurfaceInteraction(
     const Vector3f &wo, const Vector3f &dpdu, const Vector3f &dpdv,
     const Normal3f &dndu, const Normal3f &dndv, Float time, const Shape *,
     int face_index)
-    : Interaction(p, Normal3f(normalize(cross(dpdu, dpdv))), p_error, wo, time),
+    : Interaction(p, Normal3f(normalize(cross(dpdu, dpdv))), p_error, wo, time,
+                  nullptr),
       uv(uv), dpdu(dpdu), dpdv(dpdv), dndu(dndu), dndv(dndv),
       face_index(face_index) {
   shading.n = n;

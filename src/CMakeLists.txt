@@ -19,6 +19,7 @@ include(WriteCompilerDetectionHeader)
 string(TIMESTAMP YYYYMMDD "%Y-%m-%d")
 set(SOURCES
     core/camera.cpp
+    core/shape.cpp
     core/efloat.cpp
     core/film.cpp
     core/filter.cpp

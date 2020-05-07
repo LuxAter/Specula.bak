@@ -1,6 +1,7 @@
 #ifndef SPECULA_CORE_INTERACTION_HPP_
 #define SPECULA_CORE_INTERACTION_HPP_
 
+#include "core/medium.hpp"
 #include "geometry.hpp"
 #include "spectrum.hpp"
 #include "specula/global.hpp"
@@ -10,11 +11,16 @@ namespace specula {
 struct Interaction {
   Interaction() : time(0) {}
   Interaction(const Point3f &p, const Normal3f &n, const Vector3f &p_error,
-              const Vector3f &wo, Float time)
-      : p(p), time(time), p_error(p_error), wo(normalize(wo)), n(n) {}
-  Interaction(const Point3f &p, const Vector3f &wo, Float time)
-      : p(p), time(time), wo(wo) {}
-  Interaction(const Point3f &p, Float time) : p(p), time(time) {}
+              const Vector3f &wo, Float time,
+              const MediumInterface &medium_interface)
+      : p(p), time(time), p_error(p_error), wo(normalize(wo)), n(n),
+        medium_interface(medium_interface) {}
+  Interaction(const Point3f &p, const Vector3f &wo, Float time,
+              const MediumInterface &medium_interface)
+      : p(p), time(time), wo(wo), medium_interface(medium_interface) {}
+  Interaction(const Point3f &p, Float time,
+              const MediumInterface &medium_interface)
+      : p(p), time(time), medium_interface(medium_interface) {}
 
   bool is_surface_interaction() const { return n != Normal3f(); }
   bool is_medium_interaction() const { return !is_surface_interaction(); }
@@ -35,21 +41,27 @@ struct Interaction {
     return Ray(origin, d, 1 - SHADOW_EPSILON, time, get_medium(d));
   }
 
-  const Medium *get_medium(const Vector3f &) const { return nullptr; }
-  const Medium *get_medium() const { return nullptr; }
+  const Medium *get_medium(const Vector3f &w) const {
+    return dot(w, n) > 0 ? medium_interface.outside : medium_interface.inside;
+  }
+  const Medium *get_medium() const {
+    CHECK_EQ(medium_interface.inside, medium_interface.outside);
+    return medium_interface.inside;
+  }
 
   Point3f p;
   Float time;
   Vector3f p_error, wo;
   Normal3f n;
+  MediumInterface medium_interface;
 };
 
 class MediumInteraction : public Interaction {
 public:
   MediumInteraction() : phase(nullptr) {}
   MediumInteraction(const Point3f &p, const Vector3f &wo, Float time,
-                    const Medium *, const PhaseFunction *phase)
-      : Interaction(p, wo, time), phase(phase) {}
+                    const Medium *medium, const PhaseFunction *phase)
+      : Interaction(p, wo, time, medium), phase(phase) {}
 
   bool is_valid() const { return phase != nullptr; }
 
